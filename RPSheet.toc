@@ -1,0 +1,29 @@
+## Interface: 120105
+## Title: RP Sheet
+## Notes: Small tabletop character sheet. Click a stat, skill or ability to roll a d20 and announce it. /sheet to toggle, /sheet config for settings.
+## Version: 0.5.0
+## SavedVariables: RPSheetDB
+## OptionalDeps: Ace3, totalRP3
+## IconTexture: Interface\ICONS\INV_Misc_Dice_02
+
+Libs\LibStub\LibStub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.xml
+Libs\AceAddon-3.0\AceAddon-3.0.xml
+Libs\AceEvent-3.0\AceEvent-3.0.xml
+Libs\AceDB-3.0\AceDB-3.0.xml
+Libs\AceConsole-3.0\AceConsole-3.0.xml
+Libs\AceComm-3.0\AceComm-3.0.xml
+Libs\AceSerializer-3.0\AceSerializer-3.0.xml
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0.lua
+Libs\AceGUI-3.0\AceGUI-3.0.xml
+Libs\AceConfig-3.0\AceConfig-3.0.xml
+
+Rules.lua
+Themes.lua
+Window.lua
+Bar.lua
+TRP3Tooltip.lua
+RPSheet.lua
+Options.lua
+Sync.lua
