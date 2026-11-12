@@ -93,14 +93,17 @@ Players who both run RP Sheet see each other's stats in the Total RP 3 tooltip.
 
 ## Bundled libraries
 
-The `Libs` folder contains unmodified copies of third-party libraries, each under its own
-licence:
+The `Libs` folder contains unmodified copies of third-party libraries. They are not covered
+by this project's licence; each keeps its own:
 
-- [Ace3](https://www.wowace.com/projects/ace3) (AceAddon, AceComm, AceConfig, AceConsole,
-  AceDB, AceEvent, AceGUI, AceSerializer, CallbackHandler, ChatThrottleLib, LibStub),
-  see `Libs/Ace3-LICENSE.txt`
-- [LibDataBroker-1.1](https://github.com/tekkub/libdatabroker-1-1)
-- [LibDBIcon-1.0](https://www.wowace.com/projects/libdbicon-1-0)
+| Library | Licence |
+|---|---|
+| [Ace3](https://www.wowace.com/projects/ace3): AceAddon, AceComm, AceConfig, AceConsole, AceDB, AceEvent, AceGUI, AceSerializer | Ace3 Style BSD, see `Libs/Ace3-LICENSE.txt` |
+| [LibDBIcon-1.0](https://www.wowace.com/projects/libdbicon-1-0) | Ace3 Style BSD, see `Libs/Ace3-LICENSE.txt` |
+| [CallbackHandler-1.0](https://www.wowace.com/projects/callbackhandler) | BSD |
+| [LibStub](https://www.wowace.com/projects/libstub) | Public domain |
+| ChatThrottleLib (inside AceComm-3.0) | Public domain |
+| [LibDataBroker-1.1](https://github.com/tekkub/libdatabroker-1-1) | No licence stated by its author; included unmodified, as is common practice for addons |
 
 ## Licence
 
