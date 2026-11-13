@@ -1,7 +1,11 @@
 ## Interface: 120105
 ## Title: RP Sheet
 ## Notes: Small tabletop character sheet. Click a stat, skill or ability to roll a d20 and announce it. /sheet to toggle, /sheet config for settings.
-## Version: 0.5.0
+## Author: PerfectionVR
+## Version: @project-version@
+## X-License: MIT
+## X-Website: https://github.com/PerfectionVR/RPSheet
+## Category-enUS: Roleplay
 ## SavedVariables: RPSheetDB
 ## OptionalDeps: Ace3, totalRP3
 ## IconTexture: Interface\ICONS\INV_Misc_Dice_02

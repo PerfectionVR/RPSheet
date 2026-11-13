@@ -25,10 +25,22 @@ Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
 
 ## Install
 
-1. Download or clone this repository.
-2. Put the folder in `World of Warcraft\_retail_\Interface\AddOns\` and make sure it is
-   named `RPSheet` (the folder must contain `RPSheet.toc`).
+1. Download the latest zip from the
+   [Releases page](https://github.com/PerfectionVR/RPSheet/releases).
+2. Extract it into `World of Warcraft\_retail_\Interface\AddOns\`. You should end up with
+   an `RPSheet` folder that contains `RPSheet.toc`.
 3. Restart the game or `/reload`.
+
+Use the release zip rather than "Download ZIP" on the repository page: the libraries the
+addon needs are added when a release is built and are not stored in the repository.
+
+### Building it yourself
+
+Releases are built by the [BigWigsMods packager](https://github.com/BigWigsMods/packager)
+from `.pkgmeta`. Pushing a tag such as `v0.6.0` publishes a release; a tag containing
+`alpha` or `beta` is published as that type. To run a development copy straight from a
+clone, copy the libraries listed under "Bundled libraries" into a `Libs` folder, or run
+the packager locally.
 
 ## Usage
 
@@ -93,8 +105,9 @@ Players who both run RP Sheet see each other's stats in the Total RP 3 tooltip.
 
 ## Bundled libraries
 
-The `Libs` folder contains unmodified copies of third-party libraries. They are not covered
-by this project's licence; each keeps its own:
+Release zips include unmodified copies of these third-party libraries in the `Libs` folder,
+downloaded from their own sources at build time. They are not covered by this project's
+licence; each keeps its own:
 
 | Library | Licence |
 |---|---|

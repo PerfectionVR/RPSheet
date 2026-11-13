@@ -1,0 +1,42 @@
+name: Package
+
+# Pushing a tag like v0.6.0 builds the addon zip and publishes it as a GitHub release
+# and, once the CF_API_TOKEN secret and the CurseForge project id are set, to CurseForge.
+# A tag containing "alpha" or "beta" is published as that release type.
+# "Run workflow" on the Actions page makes a test build without publishing anything.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history, so the packager can work out the version
+
+      - name: Package and publish
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: BigWigsMods/packager@v2
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          GH_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Test build (nothing is uploaded)
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: BigWigsMods/packager@v2
+        with:
+          args: -d
+
+      - name: Keep the test build as a download
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: RPSheet-test-build
+          path: .release/*.zip

@@ -1,0 +1,7 @@
+# Libraries are downloaded when a release is built (see .pkgmeta), not stored here.
+# Only the Ace3 licence text is kept, so it ships with every build.
+Libs/*
+!Libs/Ace3-LICENSE.txt
+
+# Packager output
+.release/
