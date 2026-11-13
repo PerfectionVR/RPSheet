@@ -40,3 +40,4 @@ jobs:
         with:
           name: RPSheet-test-build
           path: .release/*.zip
+          include-hidden-files: true # .release is a hidden folder
