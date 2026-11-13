@@ -226,6 +226,8 @@ for index, stat in ipairs(R.STATS) do
     end)
 end
 
+ns.SnapSliders({ args = args })
+
 LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
     type = "group",
     name = "RP Sheet - Level",

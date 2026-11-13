@@ -61,5 +61,6 @@ function ns.RebuildOptions()
     for _, rebuild in ipairs(Opt.rebuilders) do
         rebuild()
     end
+    ns.SnapSliders(ns.options)
     LibStub("AceConfigRegistry-3.0"):NotifyChange(ADDON)
 end

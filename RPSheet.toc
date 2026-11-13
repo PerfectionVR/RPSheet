@@ -75,6 +75,7 @@ Actions\DeathSaves.lua
 UI\Window.lua
 UI\Bar.lua
 UI\TermLabel.lua
+UI\Slider.lua
 UI\Rows.lua
 UI\SheetWindow.lua
 UI\SheetContent.lua

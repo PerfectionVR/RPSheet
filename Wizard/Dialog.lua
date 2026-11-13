@@ -71,6 +71,8 @@ for index, page in ipairs(W.pages) do
     args["page" .. index] = page
 end
 
+ns.SnapSliders({ args = args })
+
 LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
     type = "group",
     name = "RP Sheet - Create your character",
