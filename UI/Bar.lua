@@ -1,5 +1,6 @@
 -- "RPSheetBar": an AceGUI widget showing a value as a filled bar with text on top
 -- (HP, class resource, counter). Clickable like a row: fires OnClick(button), OnEnter, OnLeave.
+local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetBar", 1
 
@@ -25,8 +26,9 @@ local methods = {
 
     -- Bar colour, plus font, text colour and row height from the theme.
     SetStyle = function(self, theme, color)
+        self.bar:SetStatusBarTexture(ns.ThemeBarTexture(theme))
         self.bar:SetStatusBarColor(color[1], color[2], color[3], color[4] or 1)
-        self.text:SetFont(theme.font, theme.fontSize, "")
+        self.text:SetFont(ns.ThemeFont(theme), theme.fontSize, "")
         self.text:SetTextColor(theme.text[1], theme.text[2], theme.text[3])
         self.text:SetShadowOffset(1, -1)
         self.text:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)

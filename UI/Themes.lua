@@ -3,14 +3,23 @@
 -- To add a preset: copy one block, give it a new key, and add the key to THEME_ORDER.
 local _, ns = ...
 
-local FRIZ = "Fonts\\FRIZQT__.TTF"
+local LSM = LibStub("LibSharedMedia-3.0")
 
-ns.Fonts = {
-    [FRIZ] = "Friz Quadrata (default)",
-    ["Fonts\\ARIALN.TTF"] = "Arial Narrow",
-    ["Fonts\\MORPHEUS.TTF"] = "Morpheus",
-    ["Fonts\\SKURRI.TTF"] = "Skurri",
-}
+-- Fonts and bar textures are named as in LibSharedMedia, so anything another addon
+-- registers there can be picked too. These four fonts ship with the game.
+local FRIZ = "Friz Quadrata TT"
+
+-- File path of a theme's font. Older saved themes stored the path itself.
+function ns.ThemeFont(theme)
+    local font = theme.font or FRIZ
+    if font:find("[/\\]") then return font end
+    return LSM:Fetch("font", font)
+end
+
+-- File path of a theme's bar texture.
+function ns.ThemeBarTexture(theme)
+    return LSM:Fetch("statusbar", theme.barTexture or "Solid")
+end
 
 -- Colours are { red, green, blue, alpha } from 0 to 1.
 --   bg / border   window background and its 1px edge
@@ -30,7 +39,7 @@ ns.Themes = {
         bg = { 0.87, 0.80, 0.64, 0.96 }, border = { 0.35, 0.24, 0.12, 1 },
         accent = { 0.50, 0.14, 0.06, 1 }, text = { 0.16, 0.11, 0.06, 1 }, muted = { 0.42, 0.33, 0.22, 1 },
         highlight = { 1, 1, 1, 0.35 },
-        font = "Fonts\\MORPHEUS.TTF", fontSize = 12, scale = 1, shadow = false,
+        font = "Morpheus", fontSize = 12, scale = 1, shadow = false,
     },
     ALLIANCE = {
         name = "Alliance",
@@ -65,7 +74,7 @@ ns.Themes = {
         bg = { 0, 0, 0, 0.35 }, border = { 0, 0, 0, 0 },
         accent = { 1, 1, 1, 1 }, text = { 1, 1, 1, 1 }, muted = { 0.75, 0.75, 0.75, 1 },
         highlight = { 1, 1, 1, 0.20 },
-        font = "Fonts\\ARIALN.TTF", fontSize = 12, scale = 1, shadow = true,
+        font = "Arial Narrow", fontSize = 12, scale = 1, shadow = true,
     },
 }
 ns.THEME_ORDER = { "DARK", "PARCHMENT", "ALLIANCE", "HORDE", "FEL", "VOID", "MINIMAL" }
@@ -83,4 +92,9 @@ for _, theme in pairs(ns.Themes) do
     for key, color in pairs(BAR_DEFAULTS) do
         theme[key] = theme[key] or { unpack(color) }
     end
+end
+
+-- Bars are flat by default; "Blizzard" and any texture from other addons can be picked.
+for _, theme in pairs(ns.Themes) do
+    theme.barTexture = theme.barTexture or "Solid"
 end

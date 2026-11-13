@@ -1,6 +1,7 @@
 -- "RPSheetWindow": a plain AceGUI container whose look is entirely set by a theme
 -- (see Themes.lua). Movable by its title bar, resizable from the bottom-right corner,
 -- and it remembers size and position in a status table like AceGUI's own Window.
+local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetWindow", 1
 
@@ -105,7 +106,7 @@ local methods = {
         self.frame:SetBackdropBorderColor(unpack(theme.border))
         self.frame:SetScale(theme.scale)
         self.titleBackground:SetColorTexture(accent[1], accent[2], accent[3], 0.15)
-        self.titleText:SetFont(theme.font, theme.fontSize + 2, "")
+        self.titleText:SetFont(ns.ThemeFont(theme), theme.fontSize + 2, "")
         self.titleText:SetTextColor(accent[1], accent[2], accent[3])
         self.titleText:SetShadowOffset(1, -1)
         self.titleText:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)

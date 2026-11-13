@@ -20,7 +20,9 @@ Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
 - **One sheet per Total RP 3 profile.** Switch TRP3 profile and the sheet switches with it.
 - **Stats in the TRP3 tooltip**, below the OOC block: your own, and those of other RP Sheet
   users, which are synced automatically.
-- **Themes:** seven presets plus custom colours, font, size and scale.
+- **Import and export:** share a whole character as one text string.
+- **Themes:** seven presets plus custom colours, size and scale, and any font or bar texture
+  your other addons provide.
 - **Minimap icon**, lockable window, and announce to Emote, Party, Raid or yourself only.
 
 ## Install
@@ -55,24 +57,48 @@ the packager locally.
 | Change HP, resource or counter | Left-click +1, right-click -1, shift-click reset |
 | Switch a passive on or off | Click it |
 
-A new character starts with every stat at 8. The General tab of the settings has a
-"Load example character" button that fills in a finished sheet to learn from.
+The first time a profile has no character, a creation wizard walks through class, origin,
+ability scores, alignment and details; `/sheet new` reopens it. Everything can be changed
+afterwards in the editor. The General tab also has a "Load example character" button that
+fills in a finished sheet to learn from, and `/sheet rest` takes a long rest.
 
 ## Rules implemented
 
-- **Stats:** 27-point buy from 8 to 15 (14 and 15 cost 2 points per step), then 3 bonus
-  points (at most +2 on one stat).
-- **HP:** 6 / 8 / 10 for small / medium / large races, plus 2 x CON modifier.
-- **AC:** 5 / 6 / 7 / 8 for cloth / leather / mail / plate, plus DEX modifier, plus shield
-  (+1 small, +2 large), plus passive effects. Mail and plate show a warning below 13 and
-  14 Strength.
-- **Class resource:** main stat modifier x CON modifier x 2.
-- **Attack:** d20 + stat modifier, then damage: one-handed 1d4, ranged 1d6, two-handed 1d8,
-  or custom dice, plus the same modifier. Healing: 1d3 + modifier, no attack roll.
-- **Skills:** the standard 18 skills, each using its stat modifier plus passive effects.
+RP Sheet follows D&D 5e (2024 rules) as used by the *D&D: World of Warcraft* setting book.
+You need the books for the full text of features; the addon handles the numbers.
 
-The fixed numbers live in `Rules.lua`. The addon does not enforce limits on how many
-abilities or passives a character has; that is left to players and their DM.
+- **Classes:** the thirteen World of Warcraft classes, each using its Player's Handbook
+  class (Death Knight and Paladin use Paladin, Demon Hunter and Hunter use Ranger, Evoker
+  uses Sorcerer, Mage uses Wizard, Priest uses Cleric, Shaman uses Barbarian, Warrior uses
+  Fighter). Class sets hit die, saving throws, skill choices and spellcasting ability.
+- **Origin:** seventeen species (size, speed, darkvision, traits listed as passives) and the
+  sixteen Player's Handbook backgrounds (two skills, an origin feat, ability score increases).
+- **Ability scores:** point buy, standard array or manual, plus +2/+1 or +1/+1/+1 from the
+  background.
+- **Level 1 to 20:** proficiency bonus, hit points (maximum die at level 1, average after),
+  spell slots for full, half and pact casters, and class resources such as Rage, Focus
+  Points, Lay on Hands and Channel Divinity.
+- **Armor Class:** the standard armor table, shields, and Unarmored Defense.
+- **Class features:** each class's core features arrive as ready-made abilities and
+  passives when you reach their level. Subclass features do the same when
+  you pick a subclass.
+- **Spells:** enter the spells you know; casting one spends a slot and rolls its attack or
+  dice. No spell text is built in.
+- **Play:** advantage and disadvantage (Shift-click or Ctrl-click a roll), short and long
+  rests, hit dice, temporary HP, Heroic Inspiration and death saves.
+- **Origin extras:** lineages, allegiance, languages and faction renown.
+- **Rolls:** ability checks, saving throws, skills with proficiency or expertise,
+  initiative, weapon attacks (a natural 20 doubles the damage dice) and spell attacks.
+- **Effects:** passives add flat numbers, ability modifiers, level or proficiency bonus to
+  any of those numbers. Abilities are lists of steps (spend a resource, roll to hit, roll
+  dice, switch a passive), so custom features and feats can be built freely.
+
+Species traits, origin feats and class features that only describe behaviour are listed by
+name as reminders; the addon does not reproduce the books' text. The rules data lives in
+the `Data` folder. Sheets made with earlier versions are converted automatically.
+
+Core rules numbers follow the System Reference Document 5.2 by Wizards of the Coast,
+available under the Creative Commons Attribution 4.0 licence.
 
 ## Syncing with other players
 
@@ -86,15 +112,20 @@ Players who both run RP Sheet see each other's stats in the Total RP 3 tooltip.
 
 ## Files
 
-| File | Purpose |
+Each file does one job. `RPSheet.toc` lists them in load order.
+
+| Folder | What lives there |
 |---|---|
-| `Rules.lua` | Ruleset numbers, skill list, the example character |
-| `RPSheet.lua` | Core: saved data, derived values, rolling, the sheet window contents |
-| `Options.lua` | Settings and the character editor |
-| `Themes.lua` | Theme presets (add your own here) |
-| `Window.lua`, `Bar.lua` | The themeable window and bar widgets |
-| `Sync.lua` | Sharing stats between RP Sheet users |
-| `TRP3Tooltip.lua` | The Stats section in Total RP 3 tooltips |
+| `Core/` | The addon object, small helpers, saved-data defaults, startup and `/sheet` |
+| `Data/` | Rules data, one file each: core rules, classes, species, backgrounds, effects, the example character |
+| `Sheet/` | The character sheet: storage per profile, conversion of old sheets, derived numbers, trackers (HP, resources, slots), summary |
+| `Actions/` | What the character does: announcing, dice, weapon attacks, abilities |
+| `UI/` | The sheet window: themes, window and bar widgets, rows, window lifecycle, contents, minimap icon |
+| `Options/` | Settings and character editor, one file per tab, assembled by `Root.lua` |
+| `Wizard/` | Character creation: grants, the draft, the pages, the dialog |
+| `Integrations/` | Total RP 3 tooltip section and syncing with other players |
+
+To add a theme, edit `UI/Themes.lua`. To change rules numbers, edit the files in `Data/`.
 
 ## Known limits
 
@@ -111,11 +142,14 @@ licence; each keeps its own:
 
 | Library | Licence |
 |---|---|
-| [Ace3](https://www.wowace.com/projects/ace3): AceAddon, AceComm, AceConfig, AceConsole, AceDB, AceEvent, AceGUI, AceSerializer | Ace3 Style BSD, see `Libs/Ace3-LICENSE.txt` |
+| [Ace3](https://www.wowace.com/projects/ace3): AceAddon, AceComm, AceConfig, AceConsole, AceDB, AceDBOptions, AceEvent, AceGUI | Ace3 Style BSD, see `Libs/Ace3-LICENSE.txt` |
 | [LibDBIcon-1.0](https://www.wowace.com/projects/libdbicon-1-0) | Ace3 Style BSD, see `Libs/Ace3-LICENSE.txt` |
 | [CallbackHandler-1.0](https://www.wowace.com/projects/callbackhandler) | BSD |
 | [LibStub](https://www.wowace.com/projects/libstub) | Public domain |
 | ChatThrottleLib (inside AceComm-3.0) | Public domain |
+| [LibSerialize](https://github.com/rossnichols/LibSerialize) | MIT |
+| [LibDeflate](https://github.com/SafeteeWoW/LibDeflate) | zlib |
+| [LibSharedMedia-3.0](https://www.wowace.com/projects/libsharedmedia-3-0) | LGPL 2.1 |
 | [LibDataBroker-1.1](https://github.com/tekkub/libdatabroker-1-1) | No licence stated by its author; included unmodified, as is common practice for addons |
 
 ## Licence

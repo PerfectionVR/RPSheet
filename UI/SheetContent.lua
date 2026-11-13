@@ -1,0 +1,311 @@
+-- What the sheet window shows. Populate rebuilds every row from the saved sheet, one
+-- section at a time; Refresh only updates the text that changes during play.
+local _, ns = ...
+local R = ns.Rules
+local RPSheet = ns.addon
+local UI = ns.UI
+local Util = ns.Util
+local Signed = Util.Signed
+
+local TRACKER_HELP = "Left-click: +1\nRight-click: -1\nShift-click: reset"
+local HIT_DICE_HELP = "Left-click: spend one to heal (rolls the die and adds your Constitution modifier)\nRight-click: give one back\nShift-click: reset"
+
+-- Rebuilds the rows on the next frame. Used from a row's own click, because that row
+-- is part of what gets rebuilt.
+function RPSheet:PopulateSoon()
+    C_Timer.After(0, function() self:Populate() end)
+end
+local function PopulateSoon(self) self:PopulateSoon() end
+
+---------------------------------------------------------------------------
+-- Sections (each adds its rows to `body`)
+---------------------------------------------------------------------------
+local function HeaderSection(self, body)
+    local summary = self:Summary()
+    if summary then
+        UI.AddLabel(body, 1, UI.GREY .. summary .. "|r")
+    else
+        UI.AddLabel(body, 1, UI.ACCENT .. "No class chosen yet - click here to create your character|r", function()
+            ns.OpenWizard()
+        end)
+    end
+
+    self.channelLabel = UI.AddLabel(body, 1, "", function() self:CycleChannel() end,
+        "Announce to", "Click to switch between Emote, Party, Raid and Self only.\nSelf only rolls privately; the others use a real /roll.")
+
+    UI.AddLabel(body, 0.5, UI.ACCENT .. "Short rest|r", function() self:ShortRest() end,
+        "Short rest", "Gives back what recharges on a short rest. To heal, click the Hit Dice bar.")
+    UI.AddLabel(body, 0.5, UI.ACCENT .. "Long rest|r", function() self:LongRest() end,
+        "Long rest", "Restores HP, hit dice, class resources, your own resources and spell slots.")
+end
+
+-- Bars for HP, hit dice and resources, then temporary HP, inspiration, death saves
+-- (only at 0 HP), and spell slots as compact rows.
+local function TrackerSection(self, body)
+    local theme, state = self.db.profile.theme, self:State()
+    local barColors = { hp = theme.barHP, hitdice = theme.barHP, pool = theme.barResource, resource = theme.barCounter }
+    local trackers = self:GetTrackers()
+    self.trackerRows = {}
+
+    local function Change(tracker, button)
+        local wasDown = self:IsDown()
+        if IsShiftKeyDown() then
+            tracker.set(tracker.reset)
+        elseif tracker.kind == "hitdice" and button == "LeftButton" then
+            self:SpendHitDie()
+            return
+        else
+            tracker.set(tracker.get() + (button == "LeftButton" and 1 or -1))
+        end
+        if tracker.kind == "hp" and wasDown ~= self:IsDown() then
+            -- Dropping to 0 shows the death save row; getting back up removes it.
+            self:ClearDeathSaves()
+            PopulateSoon(self)
+        end
+        self:Refresh()
+    end
+
+    for _, tracker in ipairs(trackers) do
+        if tracker.kind ~= "slot" then
+            local bar = UI.AddBar(body, barColors[tracker.kind], function(button) Change(tracker, button) end,
+                tracker.label, tracker.kind == "hitdice" and HIT_DICE_HELP or TRACKER_HELP)
+            self.trackerRows[#self.trackerRows + 1] = { widget = bar, tracker = tracker, bar = true }
+        end
+    end
+
+    self.tempLabel = UI.AddLabel(body, 0.5, "", function(button)
+        if IsShiftKeyDown() then
+            state.tempHP = 0
+        else
+            state.tempHP = math.max(0, state.tempHP + (button == "LeftButton" and 1 or -1))
+        end
+        self:Refresh()
+    end, "Temporary HP", "A buffer that is lost before your real hit points. It doesn't stack and a long rest removes it.\n\n" .. TRACKER_HELP)
+
+    self.inspirationLabel = UI.AddLabel(body, 0.5, "", function()
+        state.inspiration = not state.inspiration
+        self:Refresh()
+    end, "Heroic Inspiration", ns.Glossary["Heroic Inspiration"] .. "\n\nClick to gain or spend it.")
+
+    self.deathLabel = nil
+    if self:IsDown() then
+        self.deathLabel = UI.AddLabel(body, 1, "", function() self:RollDeathSave() end,
+            "Death saving throw", "You are at 0 HP. Roll a d20 at the start of each turn: 10 or higher passes. Three passes and you are stable; three failures and you die. A natural 20 puts you back on 1 HP; a natural 1 counts as two failures.")
+    end
+
+    local hasSlots = false
+    for _, tracker in ipairs(trackers) do
+        if tracker.kind == "slot" then
+            if not hasSlots then
+                UI.AddHeading(body, "Spell slots")
+                hasSlots = true
+            end
+            local label = UI.AddLabel(body, 0.33, "", function(button) Change(tracker, button) end, tracker.label, TRACKER_HELP)
+            self.trackerRows[#self.trackerRows + 1] = { widget = label, tracker = tracker }
+        end
+    end
+end
+
+local function CombatSection(self, body)
+    local sheet = self:Sheet()
+    UI.AddHeading(body, "Combat")
+
+    local function Number(label, value, onClick, tip)
+        UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(label, UI.ACCENT, value), onClick, tip and label, tip)
+    end
+    Number("AC", self:AC(), nil, R.ARMOR[sheet.armor].name .. (sheet.shield and ", shield" or ""))
+    Number("Initiative", Signed(self:Initiative()),
+        function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,
+        "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP)
+    Number("Speed", self:Speed() .. " ft")
+    Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
+    Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.")
+    if self:CastStat() then
+        Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.")
+        Number("Spell attack", Signed(self:SpellAttack()),
+            function() self:RollCheck("spell attack", self:SpellAttack(), ns.RollMode()) end,
+            "Click to roll a spell attack.\n" .. ns.ROLL_MODE_HELP)
+    end
+
+    self.attackLabel = nil
+    if self:GetWeapon() then
+        self.attackLabel = UI.AddLabel(body, 1, "", function(button)
+            if button == "RightButton" then self:SwapWeapon() else self:Attack(ns.RollMode()) end
+        end, "Attack", "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP)
+    end
+end
+
+local function CheckSection(self, body)
+    UI.AddHeading(body, "Ability checks")
+    for _, stat in ipairs(R.STATS) do
+        local mod = self:CheckMod(stat)
+        UI.AddLabel(body, 0.33, ("%s %d %s(%s)|r"):format(stat, self:Score(stat), UI.GREY, Signed(mod)),
+            function() self:RollCheck(stat .. " check", mod, ns.RollMode()) end,
+            R.STAT_NAMES[stat], ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP))
+    end
+end
+
+local function SaveSection(self, body)
+    local saves = self:Sheet().saves
+    UI.AddHeading(body, "Saving throws")
+    for _, stat in ipairs(R.STATS) do
+        local mod = self:SaveMod(stat)
+        local name = saves[stat] and (UI.ACCENT .. stat .. "|r") or stat
+        UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
+            function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
+            R.STAT_NAMES[stat] .. " saving throw",
+            ("%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP))
+    end
+end
+
+local function AbilitySection(self, body)
+    local abilities = Util.Named(self:Sheet().abilities)
+    if #abilities == 0 then return end
+    UI.AddHeading(body, "Abilities")
+    for _, ability in ipairs(abilities) do
+        local lines = {}
+        if ability.desc ~= "" then lines[#lines + 1] = ability.desc end
+        for _, action in ipairs(ability.actions) do
+            lines[#lines + 1] = UI.GREEN .. self:ActionText(action) .. "|r"
+        end
+        UI.AddLabel(body, 1, ability.name, function() self:UseAbility(ability, ns.RollMode()) end,
+            ability.name, table.concat(lines, "\n"))
+    end
+end
+
+-- The spell list, cantrips first, then by level.
+local function SpellSection(self, body)
+    local spells = Util.Named(self:Sheet().spells)
+    if #spells == 0 then return end
+    table.sort(spells, function(a, b)
+        if a.level ~= b.level then return a.level < b.level end
+        return a.name < b.name
+    end)
+
+    UI.AddHeading(body, "Spells")
+    for _, spell in ipairs(spells) do
+        local level = spell.level == 0 and "cantrip" or R.ORDINALS[spell.level]
+        local info = self:SpellText(spell)
+        local lines = {}
+        if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
+        lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
+            or ("Uses your lowest free slot of %s level or higher."):format(R.ORDINALS[spell.level])
+        if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
+        UI.AddLabel(body, 1, ("%s  %s%s%s|r"):format(spell.name, UI.GREY, level, info ~= "" and (", " .. info) or ""),
+            function() self:CastSpell(spell, ns.RollMode()) end, spell.name, table.concat(lines, "\n"))
+    end
+end
+
+local function PassiveSection(self, body)
+    local passives = Util.Named(self:Sheet().passives)
+    if #passives == 0 then return end
+    UI.AddHeading(body, "Passives and traits")
+    for _, passive in ipairs(passives) do
+        local lines = {}
+        if passive.desc ~= "" then lines[#lines + 1] = passive.desc end
+        for _, effect in ipairs(passive.effects) do
+            lines[#lines + 1] = UI.GREEN .. self:EffectText(effect) .. "|r"
+        end
+        lines[#lines + 1] = "|cff909090Click to switch " .. (passive.enabled and "off" or "on") .. "|r"
+        local text = passive.enabled and passive.name or (UI.GREY .. passive.name .. " (off)|r")
+        UI.AddLabel(body, 0.5, text, function()
+            passive.enabled = not passive.enabled
+            self:ClampState()
+            PopulateSoon(self)
+        end, passive.name, table.concat(lines, "\n"))
+    end
+end
+
+local function SkillSection(self, body)
+    local ranks = self:Sheet().skills
+    UI.AddHeading(body, "Skills")
+    for _, skill in ipairs(R.SKILLS) do
+        local mod = self:SkillMod(skill)
+        local rank = ranks[skill.name] or 0
+        local name = rank > 0 and (UI.ACCENT .. skill.name .. (rank > 1 and "*" or "") .. "|r") or skill.name
+        UI.AddLabel(body, 0.5, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
+            function() self:RollCheck(skill.name, mod, ns.RollMode()) end,
+            skill.name, ("%s\n\n%s (%s), %s\n\n%s"):format(
+                ns.Glossary[skill.name], R.STAT_NAMES[skill.stat], Signed(mod), R.PROFICIENCY_NAMES[rank]:lower(), ns.ROLL_MODE_HELP))
+    end
+end
+
+-- Languages and renown, when the character has any.
+local function OriginSection(self, body)
+    local languages = self:Languages()
+    local renown = {}
+    for _, faction in ipairs(R.ALL_FACTIONS) do
+        local score = self:Sheet().renown[faction] or 0
+        if score > 0 then
+            local tier = R.RenownTier(score)
+            renown[#renown + 1] = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or "")
+        end
+    end
+    if #languages == 0 and #renown == 0 then return end
+
+    UI.AddHeading(body, "Languages and renown")
+    if #languages > 0 then
+        UI.AddLabel(body, 1, table.concat(languages, ", "))
+    end
+    for _, line in ipairs(renown) do
+        UI.AddLabel(body, 0.5, line, nil, "Renown", "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.")
+    end
+end
+
+local SECTIONS = {
+    HeaderSection, TrackerSection, CombatSection, CheckSection, SaveSection,
+    AbilitySection, SpellSection, PassiveSection, SkillSection, OriginSection,
+}
+
+---------------------------------------------------------------------------
+-- Populate and Refresh
+---------------------------------------------------------------------------
+function RPSheet:Populate()
+    local body = self.body
+    if not body then return end
+
+    body:PauseLayout()
+    body:ReleaseChildren()
+    for _, section in ipairs(SECTIONS) do
+        section(self, body)
+    end
+    -- Fill in the rows whose text comes from Refresh before laying out: a row that is
+    -- still empty has no height, and the rows below it would be placed on top of it.
+    self:Refresh()
+    body:ResumeLayout()
+    body:DoLayout()
+end
+
+function RPSheet:Refresh()
+    if not self.window or not self.channelLabel then return end
+    self:QueueBroadcast()
+    local state = self:State()
+    self.window:SetTitle(self:GetCharacterName())
+    self.channelLabel:SetText(("Announce to: %s%s|r"):format(UI.ACCENT, ns.CHANNEL_LABEL[self.db.profile.channel]))
+
+    local weapon = self:GetWeapon()
+    if weapon and self.attackLabel then
+        self.attackLabel:SetText(("%s  %s%s|r"):format(weapon.name, UI.GREY, self:WeaponText(weapon)))
+    end
+
+    for _, row in ipairs(self.trackerRows) do
+        local tracker = row.tracker
+        local value = tracker.get() or 0
+        if row.bar then
+            local text = ("%s %d/%d"):format(tracker.label, value, tracker.max)
+            if tracker.kind == "hp" and state.tempHP > 0 then text = text .. (" (+%d)"):format(state.tempHP) end
+            row.widget:SetValue(value, tracker.max)
+            row.widget:SetText(text)
+        else
+            local short = tracker.label:gsub("%-level slot", "")
+            row.widget:SetText(("%s %s%d/%d|r"):format(short, UI.ACCENT, value, tracker.max))
+        end
+    end
+
+    self.tempLabel:SetText(("Temp HP %s%d|r"):format(UI.ACCENT, state.tempHP))
+    self.inspirationLabel:SetText(("Inspiration %s%s|r"):format(UI.ACCENT, state.inspiration and "yes" or "no"))
+    if self.deathLabel then
+        self.deathLabel:SetText(("%sDeath saves: %d passed, %d failed - click to roll|r"):format(
+            "|cffff5555", state.deathPass, state.deathFail))
+    end
+end

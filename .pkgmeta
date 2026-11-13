@@ -1,19 +1,13 @@
 # Build instructions for the BigWigsMods packager (https://github.com/BigWigsMods/packager).
 # The libraries are not kept in this repository; they are downloaded into Libs/ when a
-# release zip is built.
-# Ace3 is taken from its current development code rather than its latest tagged release:
-# the addon was developed against those newer versions (the last tag, Release-r1403, has
-# AceDB 33 where development has 39+). Add "tag: latest" back to the Ace3 entries once
-# Ace3 publishes a release that includes them.
+# release zip is built, each at the current version of its own source (no pinned tags).
 package-as: RPSheet
 
 externals:
   Libs/LibStub:
     url: https://repos.wowace.com/wow/libstub/trunk
-    tag: latest
   Libs/CallbackHandler-1.0:
     url: https://repos.wowace.com/wow/callbackhandler/trunk/CallbackHandler-1.0
-    tag: latest
   Libs/AceAddon-3.0:
     url: https://repos.wowace.com/wow/ace3/trunk/AceAddon-3.0
   Libs/AceEvent-3.0:
@@ -24,8 +18,14 @@ externals:
     url: https://repos.wowace.com/wow/ace3/trunk/AceConsole-3.0
   Libs/AceComm-3.0:
     url: https://repos.wowace.com/wow/ace3/trunk/AceComm-3.0
-  Libs/AceSerializer-3.0:
-    url: https://repos.wowace.com/wow/ace3/trunk/AceSerializer-3.0
+  Libs/AceDBOptions-3.0:
+    url: https://repos.wowace.com/wow/ace3/trunk/AceDBOptions-3.0
+  Libs/LibSerialize:
+    url: https://github.com/rossnichols/LibSerialize
+  Libs/LibDeflate:
+    url: https://github.com/SafeteeWoW/LibDeflate
+  Libs/LibSharedMedia-3.0:
+    url: https://repos.wowace.com/wow/libsharedmedia-3-0/trunk/LibSharedMedia-3.0
   Libs/AceGUI-3.0:
     url: https://repos.wowace.com/wow/ace3/trunk/AceGUI-3.0
   Libs/AceConfig-3.0:
@@ -34,7 +34,6 @@ externals:
     url: https://github.com/tekkub/libdatabroker-1-1
   Libs/LibDBIcon-1.0:
     url: https://repos.wowace.com/wow/libdbicon-1-0/trunk/LibDBIcon-1.0
-    tag: latest
 
 manual-changelog:
   filename: CHANGELOG.md

@@ -3,9 +3,9 @@
 --  * your own changes are pushed to your party or raid
 -- Received stats are kept for the session only and shown in the TRP3 tooltip.
 local ADDON, ns = ...
-local RPSheet = LibStub("AceAddon-3.0"):GetAddon(ADDON)
+local RPSheet = ns.addon
 
-local PREFIX = "RPSheet2"
+local PREFIX = "RPSheet4" -- bumped whenever the shared data changes shape
 local QUERY_COOLDOWN = 30   -- seconds before asking the same player again
 local REPLY_COOLDOWN = 5    -- seconds before answering the same player again
 local BROADCAST_DELAY = 2   -- groups several quick changes into one message
@@ -33,7 +33,7 @@ end
 ---------------------------------------------------------------------------
 function RPSheet:SendStats(distribution, target)
     if not self.db.profile.share or not CanSend() then return end
-    self:SendCommMessage(PREFIX, self:Serialize("D", self:GetStatData()), distribution, target)
+    self:SendCommMessage(PREFIX, ns.Codec.Pack("addon", "D", self:GetStatData()), distribution, target)
 end
 
 function RPSheet:BroadcastToGroup()
@@ -59,7 +59,7 @@ local function QueryUnit(unit)
     local now = GetTime()
     if now - (lastQuery[fullName] or -QUERY_COOLDOWN) < QUERY_COOLDOWN then return end
     lastQuery[fullName] = now
-    RPSheet:SendCommMessage(PREFIX, RPSheet:Serialize("Q"), "WHISPER", fullName)
+    RPSheet:SendCommMessage(PREFIX, ns.Codec.Pack("addon", "Q"), "WHISPER", fullName)
 end
 
 ---------------------------------------------------------------------------
@@ -80,16 +80,19 @@ end
 local function Sanitize(data)
     if type(data) ~= "table" or type(data.stats) ~= "table" then return end
     local clean = {
-        hp = Num(data.hp), hpMax = Num(data.hpMax),
+        summary = Text(data.summary, ""):sub(1, 80),
         ac = Num(data.ac),
-        resource = Num(data.resource), resourceMax = Num(data.resourceMax),
-        resourceName = Text(data.resourceName, "Resource"),
         stats = {},
+        trackers = {},
     }
     for i = 1, 6 do clean.stats[i] = Num(data.stats[i]) end
-    if data.counterMax ~= nil then
-        clean.counter, clean.counterMax = Num(data.counter), Num(data.counterMax)
-        clean.counterName = Text(data.counterName, "Counter")
+    if type(data.trackers) == "table" then
+        for i = 1, 4 do
+            local tracker = data.trackers[i]
+            if type(tracker) == "table" then
+                clean.trackers[#clean.trackers + 1] = { Text(tracker[1], "?"), Num(tracker[2]), Num(tracker[3]) }
+            end
+        end
     end
     if type(data.weapon) == "string" then
         clean.weapon = Text(data.weapon)
@@ -105,7 +108,7 @@ function RPSheet:OnCommReceived(_, message, distribution, sender)
     end
     if sender == FullName("player") then return end
 
-    local ok, kind, data = self:Deserialize(message)
+    local ok, kind, data = ns.Codec.Unpack("addon", message)
     if not ok then return end
 
     if kind == "Q" then
