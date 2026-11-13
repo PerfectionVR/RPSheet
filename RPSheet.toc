@@ -52,6 +52,7 @@ UI\Themes.lua
 Core\Defaults.lua
 
 # The character sheet: saved data and the numbers worked out from it
+Sheet\Levels.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
@@ -90,6 +91,7 @@ Wizard\Pages.lua
 Wizard\Dialog.lua
 Options\General.lua
 Options\Character.lua
+Options\LevelDialog.lua
 Options\Origin.lua
 Options\Scores.lua
 Options\Proficiencies.lua

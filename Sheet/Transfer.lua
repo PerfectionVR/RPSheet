@@ -91,6 +91,8 @@ local function CleanSheet(source)
         sheet.bonus[stat] = math.max(0, math.min(R.BONUS_MAX, Number(bonus[stat], "score", 0)))
         sheet.asi[stat] = math.max(0, math.min(12, Number(type(source.asi) == "table" and source.asi[stat], "score", 0)))
     end
+    -- Absent in strings from older versions: the totals above are then spread over levels.
+    sheet.levels = ns.Levels.Clean(source.levels)
     if type(source.skills) == "table" then
         for _, skill in ipairs(R.SKILLS) do
             local rank = tonumber(source.skills[skill.name])

@@ -5,6 +5,11 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Levelling is done one level at a time. "Take level" opens a dialog that shows what
+  the level gives and asks for its choices: an Ability Score Improvement or a feat,
+  an Epic Boon at level 19, a subclass at level 3. "Back to level" undoes exactly
+  what the last level gave. Choices are stored per level and can be changed later
+  on the Character tab.
 - Features with a set number of uses per rest (Divine Intervention, Tireless, Stroke of
   Luck and others) are clickable and have their own bar that refills on a rest.
 - Languages grey out once you have picked as many as you are allowed.

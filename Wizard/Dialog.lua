@@ -11,9 +11,11 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local DIALOG = ADDON .. "Wizard"
 local offered = {} -- sheet keys the wizard was already offered for this session
 
+-- Closed a moment later: the options library redraws a window right after one of its
+-- buttons was pressed, which would bring a closed one straight back.
 local function Close()
-    AceConfigDialog:Close(DIALOG)
     W.draft = nil
+    C_Timer.After(0, function() AceConfigDialog:Close(DIALOG) end)
 end
 
 local args = {
@@ -49,9 +51,10 @@ local args = {
             Close()
             RPSheet:Print(("%s created. Use the gear icon on the sheet to change anything."):format(RPSheet:Summary() or "Character"))
             -- A character made above level 3 has choices the wizard doesn't ask about.
-            local points = RPSheet:ImprovementPoints()
-            if points > 0 then
-                RPSheet:Print(("At this level you have %d ability score points to place on the Ability scores tab (or feats to take instead)."):format(points))
+            local pending = ns.Levels.Pending(RPSheet:Sheet())
+            if #pending > 0 then
+                RPSheet:Print("At this level you have earlier level-up choices to make. They are asked one by one now, and stay available on the Character tab.")
+                ns.OpenLevelDialog(pending[1])
             end
         end,
     },
@@ -78,11 +81,11 @@ AceConfigDialog:SetDefaultSize(DIALOG, 620, 560)
 -- The options library's windows are see-through, which makes the wizard hard to read
 -- over anything busy. This puts a nearly solid panel behind its contents while it is open.
 -- The window itself is shared with other addons' settings, so the panel is ours alone:
--- it is attached while the wizard is showing and hidden as soon as the window closes.
+-- it is attached while one of our dialogs (wizard, level-up) is showing and hidden as soon as the window closes.
 local backing
 
-local function AddBacking()
-    local widget = AceConfigDialog.OpenFrames[DIALOG]
+function ns.AddDialogBacking(dialog)
+    local widget = AceConfigDialog.OpenFrames[dialog]
     local frame = widget and widget.frame
     if not frame then return end
     if not backing then
@@ -107,7 +110,7 @@ function ns.OpenWizard()
     -- One window at a time: the settings window would sit underneath and show through.
     AceConfigDialog:Close(ADDON)
     AceConfigDialog:Open(DIALOG)
-    AddBacking()
+    ns.AddDialogBacking(DIALOG)
 end
 
 -- Opens the wizard once per session for a profile that has no character yet.

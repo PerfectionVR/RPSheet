@@ -20,6 +20,7 @@ R.STAT_NAMES = {
 
 R.MAX_LEVEL = 20
 R.MAX_SCORE = 20
+R.BOON_MAX_SCORE = 30 -- an Epic Boon can raise a score past the usual limit
 
 -- Point buy: every score starts at 8 and can be bought up to 15.
 R.POINTS = 27

@@ -214,18 +214,18 @@ local scoreArgs = {
     summary = { type = "description", order = 2, fontSize = "medium", name = ScoreSummary, dialogControl = "RPSheetTermLabel" },
 }
 for i, stat in ipairs(R.STATS) do
-    scoreArgs["score" .. stat] = {
+    scoreArgs["score" .. stat] = Opt.Bounded({
         type = "range", order = i * 10, step = 1, name = R.STAT_NAMES[stat], min = 3, max = R.MAX_SCORE,
         desc = ns.Glossary[stat],
-        hidden = function() return W.draft.scoreMethod == "ARRAY" end,
-        get = function() return W.draft.base[stat] end,
-        set = function(_, value)
-            if W.draft.scoreMethod == "POINTBUY" then
-                value = math.max(R.BASE_MIN, math.min(R.BASE_MAX, value))
-            end
-            W.draft.base[stat] = value
-        end,
-    }
+        hidden = function() return not W.draft or W.draft.scoreMethod == "ARRAY" end,
+        get = function() return W.draft and W.draft.base[stat] end,
+        set = function(_, value) W.draft.base[stat] = value end,
+    }, function()
+        if not W.draft then return 3, R.MAX_SCORE end
+        -- Point buy: 8 up to what the remaining points can pay for.
+        if W.draft.scoreMethod == "POINTBUY" then return R.BASE_MIN, Opt.PointBuyMax(W.draft.base, stat) end
+        return 3, R.MAX_SCORE
+    end)
     scoreArgs["array" .. stat] = {
         type = "select", order = i * 10, name = R.STAT_NAMES[stat], desc = ns.Glossary[stat],
         values = Opt.ARRAY_VALUES, sorting = Opt.ARRAY_ORDER,
@@ -239,21 +239,18 @@ for i, stat in ipairs(R.STATS) do
             base[stat] = value
         end,
     }
-    scoreArgs["bonus" .. stat] = {
+    scoreArgs["bonus" .. stat] = Opt.Bounded({
         type = "range", order = i * 10 + 1, min = 0, max = R.BONUS_MAX, step = 1,
         name = R.STAT_NAMES[stat] .. " (background)",
-        disabled = function() return not Opt.BackgroundAllows(W.draft.background, stat) end,
-        get = function() return W.draft.bonus[stat] end,
-        set = function(_, value)
-            local bonus = W.draft.bonus
-            local old = bonus[stat]
-            bonus[stat] = value
-            if W.BonusSpent() > R.BONUS_TOTAL then
-                bonus[stat] = old
-                RPSheet:Print(("Only %d background points in total."):format(R.BONUS_TOTAL))
-            end
-        end,
-    }
+        hidden = function() return not W.draft end,
+        get = function() return W.draft and W.draft.bonus[stat] end,
+        set = function(_, value) W.draft.bonus[stat] = value end,
+    }, function()
+        if not W.draft then return 0, R.BONUS_MAX end
+        -- Only the abilities the background names, and only the points that are left.
+        if not Opt.BackgroundAllows(W.draft.background, stat) then return 0, 0 end
+        return 0, Opt.BonusMax(W.draft.bonus, stat)
+    end)
     scoreArgs["break" .. stat] = { type = "description", order = i * 10 + 2, name = "" }
 end
 local scorePage = Page(3, scoreArgs)

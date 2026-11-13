@@ -99,6 +99,15 @@ function ns.FeaturePools(sheet)
     return pools
 end
 
+-- The features a character of this class and subclass gains on reaching `level`.
+function ns.FeaturesGainedAt(class, subclass, level)
+    local gained = {}
+    EachFeature({ class = class, subclass = subclass, level = level, dismissed = {} }, function(feature)
+        if feature.level == level then gained[#gained + 1] = feature end
+    end)
+    return gained
+end
+
 -- Called when an entry is deleted in the editor.
 function ns.DismissAuto(sheet, entry)
     if entry.auto and entry.auto ~= "" then

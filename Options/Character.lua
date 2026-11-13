@@ -4,6 +4,7 @@ local R = ns.Rules
 local RPSheet = ns.addon
 local Opt = ns.Opt
 local Sheet, With = Opt.Sheet, Opt.With
+local Levels = ns.Levels
 
 -- Changing class, species or background hands out what they grant (saving throws,
 -- skills, traits, origin feat). Nothing already on the sheet is removed.
@@ -63,12 +64,9 @@ local function Summary()
     if class and sheet.level >= R.SUBCLASS_LEVEL and sheet.subclass == "" then
         lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
     end
-    local unspent = RPSheet:ImprovementPoints() - RPSheet:ImprovementSpent()
-    if unspent > 0 then
-        lines[#lines + 1] = ("%s%d ability score points from level-ups are unplaced. Place them on the Ability scores tab, or take a feat instead.|r"):format(Opt.RED, unspent)
-    end
-    if class and sheet.level >= R.EPIC_BOON_LEVEL then
-        lines[#lines + 1] = ("From level %d you gain an Epic Boon feat. Add it on the Passives tab."):format(R.EPIC_BOON_LEVEL)
+    local pending = Levels.Pending(sheet)
+    if #pending > 0 then
+        lines[#lines + 1] = ("%sA choice is waiting for level %s. See Level choices below.|r"):format(Opt.RED, table.concat(pending, ", "))
     end
     lines[#lines + 1] = "Changing class, species or background adds what they grant. It never removes anything already on the sheet."
     return table.concat(lines, "\n") .. "\n"
@@ -98,12 +96,24 @@ Opt.tabs.character = {
         class = Granting({
             type = "select", order = 2, name = "Class", values = Opt.CLASS_VALUES, sorting = Opt.CLASS_ORDER,
         }, "class"),
-        level = {
-            type = "range", order = 3, min = 1, max = R.MAX_LEVEL, step = 1, name = "Level",
-            desc = "Sets proficiency bonus, hit points, spell slots and class resources, and adds the class features you reach. What changed is listed in chat.",
-            get = function() return Sheet().level end,
-            set = function(_, value)
-                RPSheet:SetLevel(value)
+        break0 = { type = "description", order = 3, name = "" },
+        levelUp = {
+            type = "execute", order = 3.1,
+            name = function() return Sheet().level >= R.MAX_LEVEL and "Highest level" or ("Take level " .. (Sheet().level + 1)) end,
+            desc = "Shows what the next level gives and asks for the choices that come with it.",
+            disabled = function() return Sheet().level >= R.MAX_LEVEL end,
+            func = function() ns.OpenLevelDialog() end,
+        },
+        levelDown = {
+            type = "execute", order = 3.2,
+            name = function() return Sheet().level <= 1 and "Level 1" or ("Back to level " .. (Sheet().level - 1)) end,
+            desc = "Goes down one level. What that level gave is taken off the sheet again: its features, hit points, and the choice you made for it.",
+            disabled = function() return Sheet().level <= 1 end,
+            confirm = function()
+                return ("Go back to level %d? Everything level %d gave is removed, including the choice you made for it."):format(Sheet().level - 1, Sheet().level)
+            end,
+            func = function()
+                RPSheet:LevelDown()
                 ns.RebuildOptions()
                 Opt.Changed()
             end,
@@ -140,10 +150,22 @@ Opt.tabs.character = {
             type = "select", order = 12, name = "Alignment",
             values = Opt.ALIGNMENT_VALUES, sorting = Opt.ALIGNMENT_ORDER,
         }, Sheet, "alignment"),
+        choicesHeader = { type = "header", order = 14, name = "Level choices" },
+        choicesHelp = {
+            type = "description", order = 15,
+            name = function()
+                for level = 1, Sheet().level do
+                    if Levels.Kind(Sheet(), level) then
+                        return "What you chose at the levels that offer an Ability Score Improvement, a feat or an Epic Boon. Click one to change it.\n"
+                    end
+                end
+                return "Some levels offer an Ability Score Improvement, a feat or an Epic Boon. Your choices will be listed here.\n"
+            end,
+        },
         featuresHeader = { type = "header", order = 20, name = "Class features" },
         featuresHelp = {
             type = "description", order = 21,
-            name = "Your class's and subclass's features are added as abilities and passives when you pick them or change level, and their dice and bonuses follow your level. Delete one you don't want and it stays gone. Changing subclass swaps its features.",
+            name = "Your class's and subclass's features are added as abilities and passives as you reach their level, and taken off again if you go back down. Their dice and bonuses follow your level. Delete one you don't want and it stays gone. Changing subclass swaps its features.",
         },
         restore = {
             type = "execute", order = 22, width = "double",
@@ -160,3 +182,27 @@ Opt.tabs.character = {
         },
     },
 }
+
+-- One button per level that comes with a choice, showing what was chosen.
+table.insert(Opt.rebuilders, function()
+    local args = Opt.tabs.character.args
+    for key in pairs(args) do
+        if key:find("^levelChoice") then args[key] = nil end
+    end
+    for level = 1, Sheet().level do
+        if Levels.Kind(Sheet(), level) then
+            args["levelChoice" .. level] = {
+                type = "execute", order = 15 + level / 100, width = "double",
+                name = function()
+                    local sheet = Sheet()
+                    local record = Levels.Record(sheet, level)
+                    if not record or Levels.Problem(sheet, level, record) then
+                        return ("%sLevel %d: choose|r"):format(Opt.RED, level)
+                    end
+                    return ("Level %d: %s"):format(level, Levels.Describe(record))
+                end,
+                func = function() ns.OpenLevelDialog(level) end,
+            }
+        end
+    end
+end)

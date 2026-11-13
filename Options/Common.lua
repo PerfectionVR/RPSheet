@@ -101,6 +101,56 @@ function Opt.With(option, source, key, isText)
     return option
 end
 
+---------------------------------------------------------------------------
+-- Sliders
+---------------------------------------------------------------------------
+-- Makes a slider only reach the values it may take right now, so it never has to
+-- snap back. `limits()` returns the lowest and highest allowed value; the slider is
+-- greyed out when there is nothing to choose. The options library reads `hidden`
+-- before it sets a slider up, which is where the range is brought up to date.
+function Opt.Bounded(option, limits)
+    local hidden, disabled = option.hidden, option.disabled
+    local function Range()
+        local low, high = limits()
+        local current = option.get()
+        if type(current) == "number" then low, high = math.min(low, current), math.max(high, current) end
+        return low, math.max(low, high)
+    end
+    option.softMin, option.softMax = nil, nil
+    option.hidden = function(...)
+        local isHidden = hidden
+        if type(hidden) == "function" then isHidden = hidden(...) end
+        if not isHidden then option.min, option.max = Range() end
+        return isHidden or false
+    end
+    option.disabled = function(...)
+        local low, high = Range()
+        if high <= low then return true end
+        if type(disabled) == "function" then return disabled(...) end
+        return disabled or false
+    end
+    return option
+end
+
+-- Highest score point buy can still afford for one ability, given the others.
+function Opt.PointBuyMax(base, stat)
+    local spent = 0
+    for _, other in ipairs(R.STATS) do spent = spent + (R.COST[base[other]] or 0) end
+    local free = R.POINTS - spent + (R.COST[base[stat]] or 0)
+    local best = R.BASE_MIN
+    for value = R.BASE_MIN, R.BASE_MAX do
+        if R.COST[value] <= free then best = value end
+    end
+    return best
+end
+
+-- Most background points one ability can hold, given what the others took.
+function Opt.BonusMax(bonus, stat)
+    local spent = 0
+    for _, other in ipairs(R.STATS) do spent = spent + (bonus[other] or 0) end
+    return math.min(R.BONUS_MAX, (bonus[stat] or 0) + R.BONUS_TOTAL - spent)
+end
+
 -- True if the sheet's background lets this ability be raised (any, when none is chosen).
 function Opt.BackgroundAllows(backgroundKey, stat)
     local background = R.BACKGROUNDS[backgroundKey]

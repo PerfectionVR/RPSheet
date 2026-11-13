@@ -1,35 +1,12 @@
--- Changing level: hands out what the new level grants, grows current HP and hit dice
--- along with their maximums, and tells the player what changed.
+-- Changing level: hands out what the new level grants, takes back what a lost level
+-- gave, grows current HP and hit dice along with their maximums, and tells the player
+-- what changed. The choices a level asks for are made in Options/LevelDialog.lua.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
+local Levels = ns.Levels
 
--- Levels at which the class grants an Ability Score Improvement (or a feat instead).
-local function ImprovementLevels(class)
-    local levels = {}
-    for _, level in ipairs(R.ASI_LEVELS) do levels[#levels + 1] = level end
-    for _, level in ipairs(class and class.asiLevels or {}) do levels[#levels + 1] = level end
-    return levels
-end
-
--- Points from Ability Score Improvements reached so far: 2 per improvement.
-function RPSheet:ImprovementPoints()
-    local count = 0
-    for _, level in ipairs(ImprovementLevels(self:ClassData())) do
-        if self:Level() >= level then count = count + 1 end
-    end
-    return count * R.ASI_POINTS
-end
-
-function RPSheet:ImprovementSpent()
-    local total = 0
-    for _, stat in ipairs(R.STATS) do
-        total = total + (self:Sheet().asi[stat] or 0)
-    end
-    return total
-end
-
--- Names of everything on the sheet, to spot what a level added.
+-- Names of everything on the sheet, to spot what a level added or removed.
 local function FeatureNames(sheet)
     local names = {}
     for _, list in ipairs({ sheet.abilities, sheet.passives }) do
@@ -44,15 +21,30 @@ local function TrackerMaximums(self)
     return maximums
 end
 
+-- Names in `after` that aren't in `before`, sorted.
+local function Added(before, after)
+    local names = {}
+    for name in pairs(after) do
+        if not before[name] then names[#names + 1] = name end
+    end
+    table.sort(names)
+    return names
+end
+
 function RPSheet:SetLevel(level)
     local sheet, state = self:Sheet(), self:State()
     local old = sheet.level
+    level = math.max(1, math.min(R.MAX_LEVEL, level))
     if level == old then return end
 
     local oldHP, oldBonus = self:MaxHP(), self:ProficiencyBonus()
-    local oldNames, oldMaximums, oldPoints = FeatureNames(sheet), TrackerMaximums(self), self:ImprovementPoints()
+    local oldNames, oldMaximums = FeatureNames(sheet), TrackerMaximums(self)
 
     sheet.level = level
+    -- Going down: the choices of the lost levels are undone, and a subclass is given
+    -- up below the level it is chosen at.
+    Levels.Trim(sheet)
+    if level < R.SUBCLASS_LEVEL and old >= R.SUBCLASS_LEVEL then sheet.subclass = "" end
     ns.ApplyGrants(sheet)
     ns.NormalizeState(state)
 
@@ -72,27 +64,34 @@ function RPSheet:SetLevel(level)
     if self:ProficiencyBonus() ~= oldBonus then
         lines[#lines + 1] = ("Proficiency bonus +%d -> +%d."):format(oldBonus, self:ProficiencyBonus())
     end
-    local changed = {}
+    local changed, newMaximums = {}, TrackerMaximums(self)
     for _, tracker in ipairs(self:GetTrackers()) do
         local before = oldMaximums[tracker.label]
         if tracker.kind ~= "hp" and tracker.kind ~= "hitdice" and before ~= tracker.max then
             changed[#changed + 1] = ("%s %d -> %d"):format(tracker.label, before or 0, tracker.max)
         end
     end
+    for label, before in pairs(oldMaximums) do
+        if not newMaximums[label] then changed[#changed + 1] = ("%s %d -> 0"):format(label, before) end
+    end
+    table.sort(changed)
     if #changed > 0 then lines[#lines + 1] = table.concat(changed, ", ") .. "." end
-    local gained = {}
-    for name in pairs(FeatureNames(sheet)) do
-        if not oldNames[name] then gained[#gained + 1] = name end
-    end
-    table.sort(gained)
+    local newNames = FeatureNames(sheet)
+    local gained, lost = Added(oldNames, newNames), Added(newNames, oldNames)
     if #gained > 0 then lines[#lines + 1] = "New: " .. table.concat(gained, ", ") .. "." end
+    if #lost > 0 then lines[#lines + 1] = "Lost: " .. table.concat(lost, ", ") .. "." end
 
-    local unspent = self:ImprovementPoints() - self:ImprovementSpent()
-    if self:ImprovementPoints() > oldPoints or (level > old and unspent > 0) then
-        lines[#lines + 1] = ("You have %d ability score points to place on the Ability scores tab (or take a feat instead)."):format(unspent)
+    local pending = Levels.Pending(sheet)
+    if #pending > 0 then
+        lines[#lines + 1] = ("Choices are waiting on the Character tab for level %s."):format(table.concat(pending, ", "))
     end
-    if level >= R.SUBCLASS_LEVEL and old < R.SUBCLASS_LEVEL and sheet.subclass == "" and self:ClassData() then
-        lines[#lines + 1] = "You can now choose a subclass on the Character tab."
+    if level >= R.SUBCLASS_LEVEL and sheet.subclass == "" and self:ClassData() then
+        lines[#lines + 1] = "You can choose a subclass on the Character tab."
     end
     self:Print(table.concat(lines, " "))
+end
+
+-- Back one level. Everything that level gave is taken off the sheet again.
+function RPSheet:LevelDown()
+    self:SetLevel(self:Level() - 1)
 end

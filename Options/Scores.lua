@@ -31,10 +31,12 @@ local function Summary()
     lines[#lines + 1] = ("Background points placed: %s%d / %d|r%s"):format(
         Opt.GOLD, RPSheet:BonusSpent(), R.BONUS_TOTAL,
         background and (" on " .. ns.Terms(background.stats) .. " (+2 and +1, or +1 each).") or ".")
-    local points = RPSheet:ImprovementPoints()
-    if points > 0 then
-        lines[#lines + 1] = ("Level-up points placed: %s%d / %d|r. Each Ability Score Improvement gives 2 points; a feat taken instead uses up 2 (or 1 if the feat itself raises an ability)."):format(
-            Opt.GOLD, RPSheet:ImprovementSpent(), points)
+    local raised = {}
+    for _, stat in ipairs(R.STATS) do
+        if sheet.asi[stat] > 0 then raised[#raised + 1] = ("%s +%d"):format(ns.Term(stat), sheet.asi[stat]) end
+    end
+    if #raised > 0 then
+        lines[#lines + 1] = ("From level-ups: %s. These follow your level choices on the Character tab."):format(table.concat(raised, ", "))
     end
     local totals = {}
     for _, stat in ipairs(R.STATS) do
@@ -46,26 +48,20 @@ end
 
 -- Slider for point buy and manual scores.
 local function ScoreSlider(stat, order)
-    return {
+    return Opt.Bounded({
         type = "range", order = order, min = 3, max = R.MAX_SCORE, step = 1, name = R.STAT_NAMES[stat],
         desc = ns.Glossary[stat],
         hidden = function() return Sheet().scoreMethod == "ARRAY" end,
         get = function() return Sheet().base[stat] end,
         set = function(_, value)
-            local sheet = Sheet()
-            local old = sheet.base[stat]
-            if sheet.scoreMethod == "POINTBUY" then
-                value = math.max(R.BASE_MIN, math.min(R.BASE_MAX, value))
-            end
-            sheet.base[stat] = value
-            if sheet.scoreMethod == "POINTBUY" and RPSheet:PointsSpent() > R.POINTS then
-                sheet.base[stat] = old
-                RPSheet:Print(("Not enough points for %s %d."):format(R.STAT_NAMES[stat], value))
-                return
-            end
+            Sheet().base[stat] = value
             Opt.Changed()
         end,
-    }
+    }, function()
+        -- Point buy: 8 up to what the remaining points can pay for.
+        if Sheet().scoreMethod == "POINTBUY" then return R.BASE_MIN, Opt.PointBuyMax(Sheet().base, stat) end
+        return 3, R.MAX_SCORE
+    end)
 end
 
 -- Dropdown for the standard array: picking a value swaps it with the ability that had it.
@@ -86,55 +82,21 @@ local function ArrayPicker(stat, order)
     }
 end
 
--- Points from Ability Score Improvements gained by levelling. Shown once there are any.
-local function ImprovementSlider(stat, order)
-    return {
-        type = "range", order = order, min = 0, max = 12, softMax = 6, step = 1,
-        name = R.STAT_NAMES[stat] .. " (level-ups)",
-        desc = "Points from Ability Score Improvements: 2 per improvement, +2 to one ability or +1 to two. A score can't go above 20 this way.",
-        hidden = function() return RPSheet:ImprovementPoints() == 0 and Sheet().asi[stat] == 0 end,
-        get = function() return Sheet().asi[stat] end,
-        set = function(_, value)
-            local asi = Sheet().asi
-            local old = asi[stat]
-            asi[stat] = value
-            local problem
-            if RPSheet:ImprovementSpent() > RPSheet:ImprovementPoints() then
-                problem = ("Only %d level-up points to place."):format(RPSheet:ImprovementPoints())
-            elseif value > old and RPSheet:Score(stat) > R.MAX_SCORE then
-                problem = ("%s can't go above %d this way."):format(R.STAT_NAMES[stat], R.MAX_SCORE)
-            end
-            if problem then
-                asi[stat] = old
-                RPSheet:Print(problem)
-                return
-            end
-            Opt.Changed()
-        end,
-    }
-end
-
 local function BackgroundSlider(stat, order)
-    return {
+    return Opt.Bounded({
         type = "range", order = order, min = 0, max = R.BONUS_MAX, step = 1,
         name = R.STAT_NAMES[stat] .. " (background)",
         desc = "Points from your background: +2 and +1, or +1 on three abilities.",
-        disabled = function()
-            return not Opt.BackgroundAllows(Sheet().background, stat) and Sheet().bonus[stat] == 0
-        end,
         get = function() return Sheet().bonus[stat] end,
         set = function(_, value)
-            local bonus = Sheet().bonus
-            local old = bonus[stat]
-            bonus[stat] = value
-            if RPSheet:BonusSpent() > R.BONUS_TOTAL then
-                bonus[stat] = old
-                RPSheet:Print(("Only %d background points in total."):format(R.BONUS_TOTAL))
-                return
-            end
+            Sheet().bonus[stat] = value
             Opt.Changed()
         end,
-    }
+    }, function()
+        -- Only the abilities the background names, and only the points that are left.
+        if not Opt.BackgroundAllows(Sheet().background, stat) then return 0, 0 end
+        return 0, Opt.BonusMax(Sheet().bonus, stat)
+    end)
 end
 
 local args = {
@@ -150,7 +112,6 @@ for i, stat in ipairs(R.STATS) do
     args["score" .. stat] = ScoreSlider(stat, i * 10)
     args["array" .. stat] = ArrayPicker(stat, i * 10)
     args["bonus" .. stat] = BackgroundSlider(stat, i * 10 + 1)
-    args["asi" .. stat] = ImprovementSlider(stat, i * 10 + 2)
     args["break" .. stat] = { type = "description", order = i * 10 + 3, name = "" }
 end
 

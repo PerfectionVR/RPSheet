@@ -116,6 +116,9 @@ function ns.NormalizeState(state)
     sheet.extraLanguages = tonumber(sheet.extraLanguages) or 0
     if type(sheet.asi) ~= "table" then sheet.asi = {} end
     for _, stat in ipairs(R.STATS) do sheet.asi[stat] = tonumber(sheet.asi[stat]) or 0 end
+    -- Choices are kept per level (see Sheet/Levels.lua); the totals follow from them.
+    ns.Levels.Migrate(sheet)
+    ns.Levels.Recompute(sheet)
     for _, key in ipairs({ "dismissed", "languages", "renown" }) do
         if type(sheet[key]) ~= "table" then sheet[key] = {} end
     end
