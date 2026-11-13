@@ -20,69 +20,83 @@ local function Resolve(value, level)
     return CopyTable(value or {})
 end
 
--- Adds or refreshes every feature in `features` the character's level has reached.
--- `prefix` ("class" or "subclass") keeps the two sets of keys apart.
--- `skip` is a set of feature names to leave out.
-local function Apply(sheet, features, prefix, skip)
-    for _, feature in ipairs(features or {}) do
-        local key = ("%s:%s:%s"):format(prefix, feature.kind, feature.name)
-        if sheet.level >= feature.level and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
-            local isAbility = feature.kind == "ability"
-            local list = isAbility and sheet.abilities or sheet.passives
-            local entry = FindAuto(list, key)
-            if not entry then
-                entry = { name = feature.name, auto = key }
-                if not isAbility then entry.enabled = not feature.startsOff end
-                list[#list + 1] = entry
-            end
-            -- Refreshed every time, so dice and bonuses follow the level.
-            entry.desc = feature.desc
-            if isAbility then
-                entry.actions = Resolve(feature.actions, sheet.level)
-            else
-                entry.effects = Resolve(feature.effects, sheet.level)
-            end
-            for _, skill in ipairs(feature.skills or {}) do
-                sheet.skills[skill] = math.max(sheet.skills[skill] or 0, 1)
+local function Key(prefix, feature)
+    return ("%s:%s:%s"):format(prefix, feature.kind, feature.name)
+end
+
+-- Calls visit(feature, key) for every feature the character has right now: reached by
+-- level, not deleted by the player, and not replaced by its World of Warcraft class.
+local function EachFeature(sheet, visit)
+    local class = R.CLASSES[sheet.class]
+    if not class then return end
+    local override = R.CLASS_OVERRIDES[sheet.class] or {}
+    local replaced = {}
+    for _, name in ipairs(override.remove or {}) do replaced[name] = true end
+
+    local sources = {
+        { "class", R.FEATURES[class.base], replaced },
+        { "class", override.features },
+        { "subclass", R.SUBCLASS_FEATURES[sheet.subclass] },
+    }
+    for _, source in ipairs(sources) do
+        local prefix, features, skip = source[1], source[2], source[3]
+        for _, feature in ipairs(features or {}) do
+            local key = Key(prefix, feature)
+            if sheet.level >= feature.level and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
+                visit(feature, key)
             end
         end
     end
 end
 
--- Features of a subclass the character no longer has are taken off the sheet.
-local function RemoveOtherSubclass(sheet, features)
-    local current = {}
-    for _, feature in ipairs(features or {}) do
-        current[("subclass:%s:%s"):format(feature.kind, feature.name)] = true
+-- Adds a feature to the sheet, or refreshes the one already there.
+local function Apply(sheet, feature, key)
+    local isAbility = feature.kind == "ability"
+    local list = isAbility and sheet.abilities or sheet.passives
+    local entry = FindAuto(list, key)
+    if not entry then
+        entry = { name = feature.name, auto = key }
+        if not isAbility then entry.enabled = not feature.startsOff end
+        list[#list + 1] = entry
     end
-    for _, list in ipairs({ sheet.abilities, sheet.passives }) do
-        for index = #list, 1, -1 do
-            local auto = list[index].auto or ""
-            if auto:find("^subclass:") and not current[auto] then table.remove(list, index) end
-        end
+    -- Refreshed every time, so dice and bonuses follow the level.
+    entry.desc = feature.desc
+    if isAbility then
+        entry.actions = Resolve(feature.actions, sheet.level)
+    else
+        entry.effects = Resolve(feature.effects, sheet.level)
+    end
+    for _, skill in ipairs(feature.skills or {}) do
+        sheet.skills[skill] = math.max(sheet.skills[skill] or 0, 1)
     end
 end
 
 function ns.ApplyClassFeatures(sheet)
-    local class = R.CLASSES[sheet.class]
-    local subclass = R.SUBCLASS_FEATURES[sheet.subclass]
-    RemoveOtherSubclass(sheet, subclass)
-    if not class then return end
+    local current = {}
+    EachFeature(sheet, function(_, key) current[key] = true end)
 
-    -- A World of Warcraft class can replace some of its base class's features.
-    local override = R.CLASS_OVERRIDES[sheet.class] or {}
-    local replaced = {}
-    for _, name in ipairs(override.remove or {}) do replaced[name] = true end
+    -- Class and subclass entries the character no longer has are taken off the sheet:
+    -- another subclass's, another class's, or ones a newer version replaced.
     for _, list in ipairs({ sheet.abilities, sheet.passives }) do
         for index = #list, 1, -1 do
-            local kind, name = (list[index].auto or ""):match("^class:(%a+):(.+)$")
-            if kind and replaced[name] then table.remove(list, index) end
+            local auto = list[index].auto or ""
+            if (auto:find("^class:") or auto:find("^subclass:")) and not current[auto] then
+                table.remove(list, index)
+            end
         end
     end
 
-    Apply(sheet, R.FEATURES[class.base], "class", replaced)
-    Apply(sheet, override.features, "class")
-    Apply(sheet, subclass, "subclass")
+    EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
+end
+
+-- Resources that come with features of their own (see Kit.Limited in Data/FeatureKit.lua),
+-- in the same form as class `pools`.
+function ns.FeaturePools(sheet)
+    local pools = {}
+    EachFeature(sheet, function(feature)
+        if feature.pool then pools[#pools + 1] = feature.pool end
+    end)
+    return pools
 end
 
 -- Called when an entry is deleted in the editor.

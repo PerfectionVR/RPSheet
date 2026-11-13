@@ -8,7 +8,7 @@
 local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
-local Passive, Ability, Spend, Dice = Kit.Passive, Kit.Ability, Kit.Spend, Kit.Dice
+local Passive, Ability, Limited, Spend, Dice = Kit.Passive, Kit.Ability, Kit.Limited, Kit.Spend, Kit.Dice
 
 R.CLASS_OVERRIDES = {
     -- A Paladin whose healing touch and radiant smites become necrotic power.
@@ -20,7 +20,7 @@ R.CLASS_OVERRIDES = {
             Passive(1, "Undead", "Your creature type is Undead."),
             Ability(1, "Death Coil", "Bonus action, 60 feet. The target makes a Constitution save: necrotic damage equal to the roll, half on a success. An undead target can be healed by the roll instead. Each click spends one die; you can spend up to your Charisma modifier at once.",
                 { Spend("Death Coil Dice"), Dice(1, 8) }),
-            Passive(2, "Runic Smite", "You always have Rune Strike prepared and can cast it once per long rest without a slot."),
+            Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot.", 1),
             Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage."),
             Passive(14, "Improved Death Coil", "Death Coil deals extra necrotic damage equal to your Charisma modifier, even on a successful save, and heals undead for more."),
         },
@@ -52,8 +52,8 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
     Ability(3, "Runic Power", "Right after casting Rune Strike. Gain a benefit from your rune: Blood heals you by the necrotic damage dealt, Frost coats your weapon in ice, Unholy spreads disease.",
         { Spend("Channel Divinity") }),
     Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage."),
-    Passive(15, "Runic Mastery", "Once per long rest, invoke a stronger power of the rune on your weapon."),
-    Passive(20, "Aspect of the Horsemen", "Bonus action, once per long rest or by spending a 5th-level slot: for 10 minutes you take on the might of the Four Horsemen."),
+    Limited(15, "Runic Mastery", "Once per long rest, invoke a stronger power of the rune on your weapon.", 1),
+    Limited(20, "Aspect of the Horsemen", "Bonus action: for 10 minutes you take on the might of the Four Horsemen. Once per long rest, or again by spending a 5th-level slot.", 1),
 }
 
 R.SUBCLASS_FEATURES["Demon Hunter"] = {

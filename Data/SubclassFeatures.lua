@@ -7,7 +7,7 @@
 local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
-local AtLevel, Passive, Ability = Kit.AtLevel, Kit.Passive, Kit.Ability
+local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Roll, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Roll, Kit.Bonus
 
 -- Resources a subclass brings, in the same form as class `pools` (see Classes.lua).
@@ -55,7 +55,7 @@ R.SUBCLASS_FEATURES = {
             function(level) return { Spend("Superiority Dice"), Dice(1, AtLevel(level, { { 3, 8 }, { 10, 10 }, { 18, 12 } })) } end),
         Passive(3, "Combat Superiority", "You know three maneuvers, and learn more at levels 7, 10 and 15. Your Superiority Dice come back on a short rest."),
         Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more Fighter skill."),
-        Passive(7, "Know Your Enemy", "Bonus action, once per long rest or by spending a Superiority Die: learn a creature's immunities, resistances and vulnerabilities."),
+        Limited(7, "Know Your Enemy", "Bonus action: learn a creature's immunities, resistances and vulnerabilities. Once per long rest; after that it costs a Superiority Die, spent on its bar by hand.", 1),
         Passive(15, "Relentless", "Once per turn you can use a maneuver without spending a die, rolling a d8 in its place."),
     },
     ["Champion"] = {
@@ -76,7 +76,7 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Sacred Weapon active", "Switch on while Sacred Weapon lasts. Adds your Charisma modifier to attack rolls.", { Bonus("ATTACK", 0, "CHA") }, true),
         Passive(7, "Aura of Devotion", "You and allies in your Aura of Protection can't be charmed."),
         Passive(15, "Smite of Protection", "When you cast Divine Smite, you and allies in your aura have cover until your next turn."),
-        Passive(20, "Holy Nimbus", "Bonus action, once per long rest: for 10 minutes your aura shines with sunlight, harms enemies in it, and you have advantage on saves forced by fiends and undead."),
+        Limited(20, "Holy Nimbus", "Bonus action, once per long rest: for 10 minutes your aura shines with sunlight, harms enemies in it, and you have advantage on saves forced by fiends and undead.", 1),
     },
     ["Oath of the Holy"] = {
         AlwaysPrepared("Oath of the Holy"),
@@ -84,7 +84,7 @@ R.SUBCLASS_FEATURES = {
             { Spend("Channel Divinity") }),
         Passive(7, "Lightbringer's Aura", "When you heal a Bloodied creature in your aura with a spell or Lay on Hands, it regains 1d6 more."),
         Passive(15, "Infusion of Light", "When you cast a spell that deals radiant damage, your Lay on Hands pool regains points equal to the damage rolled, up to a limit."),
-        Passive(20, "Holy Deliverance", "Bonus action, once per long rest: for 10 minutes your aura is filled with holy power that bolsters your healing."),
+        Limited(20, "Holy Deliverance", "Bonus action, once per long rest: for 10 minutes your aura is filled with holy power that bolsters your healing.", 1),
     },
     ["Oath of Vengeance"] = {
         AlwaysPrepared("Oath of Vengeance"),
@@ -92,7 +92,7 @@ R.SUBCLASS_FEATURES = {
             { Spend("Channel Divinity") }),
         Passive(7, "Relentless Avenger", "When you hit with an opportunity attack you can reduce the target's speed to 0 for the turn and then move half your speed."),
         Passive(15, "Soul of Vengeance", "When the creature under your Vow of Enmity makes an attack, you can use your reaction to make a melee attack against it."),
-        Passive(20, "Avenging Angel", "Bonus action, once per long rest: for 10 minutes you gain a flying speed and an aura that frightens enemies."),
+        Limited(20, "Avenging Angel", "Bonus action, once per long rest: for 10 minutes you gain a flying speed and an aura that frightens enemies.", 1),
     },
 
     ---------------------------------------------------------------------------
@@ -128,7 +128,7 @@ R.SUBCLASS_FEATURES = {
             { Roll("ATTACK", "DEX"), Dice(1, 6, "DEX") }),
         Passive(3, "Psionic Power", "Psionic Energy Dice fuel your powers. Psi-Bolstered Knack: add one to a failed proficient check. Psychic Whispers: speak telepathically with several creatures for hours."),
         Passive(9, "Soul Blades", "Homing Strikes: add a Psionic Energy Die to a missed Psychic Blade attack. Psychic Teleportation: throw a blade and teleport up to 10 feet times the roll."),
-        Passive(13, "Psychic Veil", "Magic action, once per long rest or by spending a die: become invisible for an hour or until you deal damage or force a save."),
+        Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that it costs a Psionic Energy Die, spent on its bar by hand.", 1),
         Passive(17, "Rend Mind", "When your Psychic Blade deals Sneak Attack damage, the target makes a Wisdom save or is stunned for up to a minute."),
     },
     ["Swashbuckler"] = {
@@ -177,7 +177,7 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Circle of the Land Spells", "After each long rest choose arid, polar, temperate or tropical land. You have that land's spells prepared for your level."),
         Ability(3, "Land's Aid", "Magic action, a point within 60 feet. Creatures of your choice in a 10-foot sphere make a Constitution save against necrotic damage, and one creature there is healed.",
             { Spend("Wild Shape") }),
-        Passive(6, "Natural Recovery", "Once per long rest cast a Circle spell without a slot. On a short rest you can recover slots with a combined level up to half your level."),
+        Limited(6, "Natural Recovery", "Once per long rest, cast a Circle spell without a slot. Also once per long rest, on a short rest, recover slots with a combined level up to half your level; restore those by hand.", 1),
         Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type tied to your current land."),
         Passive(14, "Nature's Sanctuary", "Magic action, spending a Wild Shape use: spectral trees give you and allies half cover and your Nature's Ward resistance for a minute."),
     },
@@ -185,18 +185,19 @@ R.SUBCLASS_FEATURES = {
         AlwaysPrepared("Circle of the Moon"),
         Passive(3, "Circle Forms", "Your Wild Shape forms can be tougher: challenge rating up to a third of your level, AC of at least 13 + Wisdom modifier, and temporary HP equal to three times your level."),
         Passive(6, "Improved Circle Forms", "In Wild Shape your attacks can deal radiant damage and you add your Wisdom modifier to Constitution saves."),
-        Passive(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn. A few uses per long rest, or spend a 2nd-level slot."),
+        Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn. You have uses equal to your Wisdom modifier per long rest, and can spend a slot of 2nd level or higher for another.", { stat = "WIS" }),
         Passive(14, "Lunar Form", "Once per turn deal 2d10 extra radiant damage in Wild Shape, and Moonlight Step can bring a willing creature along."),
     },
     ["Circle of the Stars"] = {
-        Passive(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared, and can cast Guiding Bolt a few times per long rest without a slot."),
+        Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: you have uses equal to your Wisdom modifier per long rest.",
+            { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) }),
         Ability(3, "Starry Form", "Bonus action. Instead of a beast form you become starry for 10 minutes and choose a constellation: Archer (a bolt each turn), Chalice (extra healing) or Dragon (steadier concentration).",
             { Spend("Wild Shape") }),
         Ability(3, "Archer", "Starry Form, Archer constellation. Bonus action: a luminous arrow at a creature within 60 feet.",
             function(level) return { Roll("SPELL", "WIS"), Dice(level >= 10 and 2 or 1, 8, "WIS") } end),
         Ability(3, "Chalice", "Starry Form, Chalice constellation. When you heal with a slotted spell, you or a creature within 30 feet also regains this much.",
             function(level) return { Dice(level >= 10 and 2 or 1, 8, "WIS", "HEALING") } end),
-        Passive(6, "Cosmic Omen", "After a long rest roll a die. Even: a reaction that adds a d6 to a creature's roll. Odd: one that subtracts a d6. A few uses per long rest."),
+        Limited(6, "Cosmic Omen", "After a long rest roll a die. Even: a reaction that adds a d6 to a creature's roll. Odd: one that subtracts a d6. You have uses equal to your Wisdom modifier per long rest.", { stat = "WIS" }),
         Passive(10, "Twinkling Constellations", "Archer and Chalice use 2d8, the Dragon lets you fly and hover, and you can change constellation at the start of each turn."),
         Passive(14, "Full of Stars", "In Starry Form you resist bludgeoning, piercing and slashing damage."),
     },
@@ -212,7 +213,7 @@ R.SUBCLASS_FEATURES = {
             function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
         Passive(6, "Physician's Touch", "Hand of Harm can also poison its target, and Hand of Healing can end a condition such as blinded, paralysed or stunned."),
         Passive(11, "Flurry of Healing and Harm", "Each strike of a Flurry of Blows can be a free Hand of Healing, and you can use Hand of Harm with a flurry strike without spending focus."),
-        Passive(17, "Hand of Ultimate Mercy", "Magic action, 5 Focus Points, once per long rest: return a creature that died within a day to life."),
+        Limited(17, "Hand of Ultimate Mercy", "Magic action, once per long rest: return a creature that died within a day to life.", 1, { Spend("Focus Points", 5) }),
     },
     ["Warrior of Mystic Brews"] = {
         Passive(3, "Bonus Proficiencies", "Proficiency in Performance and with brewer's supplies.", nil, { skills = { "Performance" } }),
@@ -225,8 +226,8 @@ R.SUBCLASS_FEATURES = {
     },
     ["Warrior of the Open Hand"] = {
         Passive(3, "Open Hand Technique", "When a Flurry of Blows strike hits you can also stop the target's opportunity attacks, push it 15 feet, or knock it prone."),
-        Ability(6, "Wholeness of Body", "Bonus action: heal yourself. A number of uses per long rest equal to your Wisdom modifier.",
-            function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
+        Limited(6, "Wholeness of Body", "Bonus action: heal yourself by the roll. You have uses equal to your Wisdom modifier per long rest.",
+            { stat = "WIS" }, function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
         Passive(11, "Fleet Step", "After any other bonus action you can also use Step of the Wind."),
         Passive(17, "Quivering Palm", "When you hit with an unarmed strike, spend 4 Focus Points to set up lethal vibrations. Later you can end them: the target makes a Constitution save against heavy force damage."),
     },
@@ -239,8 +240,8 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Draconic Scales", "Without armor your AC is 10 + Dexterity + Charisma modifiers. Switch this off while you wear armor.", { Bonus("AC", 0, "CHA") }),
         Passive(3, "Evoker Spells", "You always have extra spells prepared at certain levels. An Evoker uses the Evoker Spells list in place of the usual draconic one."),
         Passive(6, "Elemental Affinity", "Choose acid, cold, fire, lightning or poison. You resist it, and spells that deal it add your Charisma modifier to one damage roll."),
-        Passive(14, "Dragon Wings", "Bonus action, once per long rest or for 3 Sorcery Points: wings give you a flying speed of 60 feet for an hour."),
-        Passive(18, "Dragon Companion", "You can cast Summon Dragon without its material component, once per long rest without a slot, and can make it last without concentration."),
+        Limited(14, "Dragon Wings", "Bonus action: wings give you a flying speed of 60 feet for an hour. Once per long rest; after that it costs 3 Sorcery Points, spent on their bar by hand.", 1),
+        Limited(18, "Dragon Companion", "You can cast Summon Dragon without its material component and make it last without concentration. Once per long rest you can cast it without a slot.", 1),
     },
 
     ---------------------------------------------------------------------------
@@ -249,9 +250,10 @@ R.SUBCLASS_FEATURES = {
     ["Fiend Patron"] = {
         AlwaysPrepared("Fiend"),
         Passive(3, "Dark One's Blessing", "When you reduce an enemy to 0 HP, or one drops within 10 feet of you, you gain temporary HP equal to your Charisma modifier plus your level."),
-        Passive(6, "Dark One's Own Luck", "Add 1d10 to an ability check or saving throw after seeing the roll. A few uses per long rest."),
+        Limited(6, "Dark One's Own Luck", "Add 1d10 to an ability check or saving throw after seeing the roll. You have uses equal to your Charisma modifier per long rest.", { stat = "CHA" }),
         Passive(10, "Fiendish Resilience", "After each rest choose a damage type other than force. You resist it until you choose another."),
-        Passive(14, "Hurl Through Hell", "Once per turn when you hit, the target makes a Charisma save or vanishes through the Lower Planes, returning with heavy psychic damage. Once per long rest."),
+        Limited(14, "Hurl Through Hell", "When you hit, the target makes a Charisma save or vanishes through the Lower Planes, returning with psychic damage equal to the roll. Once per long rest, or again by spending a pact slot.",
+            1, { Dice(8, 10) }),
     },
     ["Great Old One Patron"] = {
         AlwaysPrepared("Great Old One"),

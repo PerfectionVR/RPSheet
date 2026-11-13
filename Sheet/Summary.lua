@@ -45,9 +45,10 @@ function RPSheet:GetStatData()
     for i, stat in ipairs(R.STATS) do
         data.stats[i] = self:Score(stat)
     end
-    -- HP and up to three resources; spell slots are left out to keep the message small.
+    -- HP and up to three resources; hit dice and spell slots are left out to keep the
+    -- message small.
     for _, tracker in ipairs(self:GetTrackers()) do
-        if tracker.kind ~= "slot" and #data.trackers < 4 then
+        if tracker.kind ~= "slot" and tracker.kind ~= "hitdice" and #data.trackers < 4 then
             data.trackers[#data.trackers + 1] = { tracker.label, tracker.get() or 0, tracker.max }
         end
     end

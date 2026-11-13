@@ -45,7 +45,10 @@ function RPSheet:GetTrackers()
     local override = R.CLASS_OVERRIDES[sheet.class] or {}
     local dropped = {}
     for _, name in ipairs(override.removePools or {}) do dropped[name] = true end
-    local sources = { class and class.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[sheet.subclass] or {} }
+    local sources = {
+        class and class.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[sheet.subclass] or {},
+        ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
+    }
     for _, pools in ipairs(sources) do
         for _, pool in ipairs(pools) do
             if not dropped[pool.name] then

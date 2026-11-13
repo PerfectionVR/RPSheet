@@ -5,6 +5,11 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Features with a set number of uses per rest (Divine Intervention, Tireless, Stroke of
+  Luck and others) are clickable and have their own bar that refills on a rest.
+- Languages grey out once you have picked as many as you are allowed.
+- Shared stats: long summaries are no longer cut short, and Hit Dice no longer take
+  the place of a class resource in the tooltip.
 - Character creation wizard: class, origin, ability scores, alignment and details.
   Offered automatically for a profile without a character; `/sheet new` reopens it.
 - Thirteen classes, seventeen species and sixteen backgrounds to choose from.

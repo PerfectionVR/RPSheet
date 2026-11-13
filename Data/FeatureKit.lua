@@ -29,6 +29,28 @@ function Kit.Ability(level, name, desc, actions)
     return { level = level, name = name, kind = "ability", desc = desc, actions = actions }
 end
 
+-- An ability with its own uses, shown as a bar of the same name. Clicking spends one.
+--   uses   a number, { {level, uses}, ... } steps, or { stat = "WIS" } for that
+--          ability's modifier (never fewer than 1)
+--   short  what a short rest gives back: a number of uses or "ALL"; nil = long rest only
+function Kit.Limited(level, name, desc, uses, actions, short)
+    local pool = { name = name, from = level, short = short }
+    if type(uses) == "number" then
+        pool.steps = { { level, uses } }
+    elseif uses.stat then
+        pool.stat, pool.flat, pool.min = uses.stat, uses.flat or 0, uses.min or 1
+    else
+        pool.steps = uses
+    end
+    local feature = Kit.Ability(level, name, desc, function(current)
+        local list = type(actions) == "function" and actions(current) or CopyTable(actions or {})
+        table.insert(list, 1, Kit.Spend(name))
+        return list
+    end)
+    feature.pool = pool
+    return feature
+end
+
 function Kit.Spend(resource, amount)
     return { type = "SPEND", resource = resource, amount = amount or 1, freeIfFull = "" }
 end

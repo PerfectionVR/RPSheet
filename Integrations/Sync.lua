@@ -72,15 +72,15 @@ local function Num(value)
 end
 
 -- Plain text only: no colour/link escapes, no control characters, limited length.
-local function Text(value, fallback)
+local function Text(value, fallback, length)
     if type(value) ~= "string" then return fallback end
-    return (value:gsub("[|%c]", "")):sub(1, 40)
+    return (value:gsub("[|%c]", "")):sub(1, length or 40)
 end
 
 local function Sanitize(data)
     if type(data) ~= "table" or type(data.stats) ~= "table" then return end
     local clean = {
-        summary = Text(data.summary, ""):sub(1, 80),
+        summary = Text(data.summary, "", 100),
         ac = Num(data.ac),
         stats = {},
         trackers = {},

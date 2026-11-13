@@ -6,13 +6,14 @@
 -- own words. Numbers that grow with level are given as functions of the level and
 -- are refreshed whenever the character's level changes.
 --
--- Subclass features, and the changes the setting book makes for Death Knights,
--- Demon Hunters, Evokers and Shaman, are not included: add those in the editor.
+-- A feature with a set number of uses (Limited) gets a bar of its own on the sheet.
+-- Subclass features are in SubclassFeatures.lua; what Death Knights, Demon Hunters and
+-- Shaman do differently is in ClassOverrides.lua.
 local _, ns = ...
 local R = ns.Rules
 
 local Kit = ns.FeatureKit
-local AtLevel, Passive, Ability = Kit.AtLevel, Kit.Passive, Kit.Ability
+local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Bonus
 
 local WEAPON_MASTERY = Passive(1, "Weapon Mastery", "You can use the mastery property of a few kinds of weapon you are proficient with. You can change your choices after a long rest.")
@@ -35,7 +36,8 @@ R.FEATURES = {
         Passive(7, "Feral Instinct", "Advantage on initiative rolls."),
         Passive(9, "Brutal Strike", "When you attack recklessly you can give up advantage on one attack to deal 1d10 extra damage and push or slow the target."),
         Passive(11, "Relentless Rage", "While raging, when you drop to 0 HP you can make a DC 10 Constitution save to stay up with HP equal to twice your level. The DC rises by 5 each time until you rest."),
-        Passive(15, "Persistent Rage", "Your rage lasts the full 10 minutes without needing to be extended, and once per long rest you regain all Rage uses when you roll initiative."),
+        Limited(15, "Persistent Rage", "Your rage lasts the full 10 minutes without needing to be extended. Once per long rest, when you roll initiative, you regain all Rage uses.", 1,
+            { { type = "GAIN", resource = "Rage", amount = 6 } }),
         Passive(18, "Indomitable Might", "If a Strength check or save totals less than your Strength score, use the score instead."),
         Passive(20, "Primal Champion", "Your Strength and Constitution each increase by 4, to a maximum of 25."),
     },
@@ -48,7 +50,7 @@ R.FEATURES = {
             { Spend("Channel Divinity") }),
         Passive(5, "Sear Undead", "Undead that fail against Turn Undead also take radiant damage: a d8 per point of your Wisdom modifier."),
         Passive(7, "Blessed Strikes", "Divine Strike: once per turn add 1d8 necrotic or radiant damage to a weapon hit. Or Potent Spellcasting: add your Wisdom modifier to cantrip damage."),
-        Passive(10, "Divine Intervention", "Once per long rest, as a Magic action, cast any Cleric spell of 5th level or lower without a slot or components."),
+        Limited(10, "Divine Intervention", "Magic action, once per long rest. Cast any Cleric spell of 5th level or lower without a slot or components.", 1),
         Passive(14, "Improved Blessed Strikes", "Divine Strike deals 2d8. Or, with Potent Spellcasting, your damaging cantrips also grant temporary HP to you or an ally."),
     },
 
@@ -91,7 +93,8 @@ R.FEATURES = {
         Ability(2, "Step of the Wind", "Bonus action. Disengage and Dash together, and your jump distance doubles. Without spending focus you can still Dash.", { Spend("Focus Points") }),
         Passive(2, "Unarmored Movement", "Your speed increases while you wear no armor and carry no shield.",
             function(level) return { Bonus("SPEED", AtLevel(level, { { 2, 10 }, { 6, 15 }, { 10, 20 }, { 14, 25 }, { 18, 30 } })) } end),
-        Passive(2, "Uncanny Metabolism", "Once per long rest when you roll initiative, regain all Focus Points and heal by your Martial Arts die plus your level."),
+        Limited(2, "Uncanny Metabolism", "Once per long rest, when you roll initiative: regain all Focus Points and heal by the roll.", 1,
+            function(level) return { { type = "GAIN", resource = "Focus Points", amount = 20 }, Dice(1, Kit.MartialDie(level), "LEVEL", "HEALING") } end),
         Passive(3, "Deflect Attacks", "Reaction when hit by an attack: reduce the damage by 1d10 + your Dexterity modifier + your level. If it drops to 0, you can spend focus to redirect it."),
         Passive(4, "Slow Fall", "Reaction when you fall: reduce the damage by five times your level."),
         ExtraAttack(5),
@@ -113,7 +116,7 @@ R.FEATURES = {
             { Spend("1st-level slot"), Dice(2, 8) }),
         Ability(3, "Divine Sense", "Bonus action. For 10 minutes you know the location of celestials, fiends and undead within 60 feet.", { Spend("Channel Divinity") }),
         ExtraAttack(5),
-        Passive(5, "Faithful Steed", "You always have Find Steed prepared and can cast it once per long rest without a slot."),
+        Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1),
         Passive(6, "Aura of Protection", "You and allies within 10 feet add your Charisma modifier to saving throws (at least +1).", { Bonus("SAVES", 0, "CHA") }),
         Ability(9, "Abjure Foes", "Magic action. Creatures of your choice within 60 feet make a Wisdom save or are frightened for 1 minute and can do little on their turns.",
             { Spend("Channel Divinity") }),
@@ -132,9 +135,10 @@ R.FEATURES = {
         ExtraAttack(5),
         Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) }),
         Passive(9, "Expertise", "Expertise in two more skills you are proficient in."),
-        Passive(10, "Tireless", "A few times per long rest, take a Magic action for temporary HP of 1d8 + Wisdom modifier. A short rest also reduces your exhaustion by one."),
+        Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. You have uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
+            { stat = "WIS" }, { Dice(1, 8, "WIS", "HEALING") }),
         Passive(13, "Relentless Hunter", "Taking damage can't break your concentration on Hunter's Mark."),
-        Passive(14, "Nature's Veil", "Bonus action, a few times per long rest: become invisible until the end of your next turn."),
+        Limited(14, "Nature's Veil", "Bonus action: become invisible until the end of your next turn. You have uses equal to your Wisdom modifier per long rest.", { stat = "WIS" }),
         Passive(17, "Precise Hunter", "Advantage on attack rolls against the creature marked by your Hunter's Mark."),
         Passive(18, "Feral Senses", "Blindsight out to 30 feet."),
     },
@@ -153,7 +157,7 @@ R.FEATURES = {
         Passive(7, "Reliable Talent", "On checks with skills or tools you are proficient in, treat a d20 roll of 9 or lower as a 10."),
         Passive(15, "Slippery Mind", "You gain proficiency in Wisdom and Charisma saving throws."),
         Passive(18, "Elusive", "No attack roll has advantage against you unless you are incapacitated."),
-        Passive(20, "Stroke of Luck", "Once per rest, turn a failed d20 roll into a 20."),
+        Limited(20, "Stroke of Luck", "Turn a failed d20 roll into a 20. Once per short or long rest.", 1, nil, "ALL"),
     },
 
     Sorcerer = {
@@ -163,16 +167,17 @@ R.FEATURES = {
             { Bonus("SPELLDC", 1) }, true),
         Passive(2, "Font of Magic", "You can turn Sorcery Points into spell slots and spell slots into Sorcery Points."),
         Passive(2, "Metamagic", "You know Metamagic options that reshape your spells for a cost in Sorcery Points."),
-        Passive(5, "Sorcerous Restoration", "On a short rest you can regain Sorcery Points up to half your level, once per long rest."),
+        Limited(5, "Sorcerous Restoration", "Once per long rest, when you finish a short rest: regain Sorcery Points up to half your level. Raise the Sorcery Points bar by hand.", 1),
         Passive(7, "Sorcery Incarnate", "With no Innate Sorcery uses left you can spend 2 Sorcery Points to activate it, and while it is active you can use two Metamagic options on one spell."),
     },
 
     Warlock = {
         Passive(1, "Eldritch Invocations", "You know a number of invocations: fragments of forbidden knowledge that grant lasting magical abilities."),
         Passive(1, "Pact Magic", "Your spell slots are all of one level and come back on a short rest."),
-        Passive(2, "Magical Cunning", "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up."),
-        Passive(9, "Contact Patron", "You always have Contact Other Plane prepared and can cast it once per long rest without a slot, succeeding on its save."),
-        Passive(11, "Mystic Arcanum", "You learn one 6th-level spell to cast once per long rest without a slot. You gain a 7th, 8th and 9th-level one at levels 13, 15 and 17."),
+        Limited(2, "Magical Cunning", "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up. Restore the slots on the sheet by hand.", 1),
+        Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
+        Limited(11, "Mystic Arcanum", "You learn one 6th-level spell to cast once per long rest without a slot, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once; the bar counts the casts you have left.",
+            { { 11, 1 }, { 13, 2 }, { 15, 3 }, { 17, 4 } }),
     },
 
     Wizard = {
