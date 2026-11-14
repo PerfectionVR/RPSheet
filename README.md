@@ -135,8 +135,8 @@ What the rules have that the addon doesn't, kept here to track the remaining wor
 **Classes**
 
 All thirteen classes and their subclasses have been checked against the rules, feature
-by feature. Only the Warrior has been played through in game so far; the other twelve
-still need that.
+by feature. The Warrior, the Mage and the Druid have been played in game so far; the
+other ten still need that.
 
 - [x] Warrior, with Battle Master, Champion and all 25 maneuvers
 - [x] Rogue, Monk (with the brews of the Warrior of Mystic Brews), Hunter, Demon Hunter
@@ -146,7 +146,7 @@ still need that.
 - [x] A second check of the twelve classes after the Warrior against the rules, by
       one reviewer per class; what they found is fixed. The Warrior was checked the
       same way afterwards
-- [ ] An in-game play-through of every class other than the Warrior
+- [ ] An in-game play-through of the ten classes other than the Warrior, Mage and Druid
 - [x] Path of the Berserker (Shaman) and the War Domain (Priest), which the rules also list
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
@@ -166,6 +166,15 @@ still need that.
       Armor Class, speed, Strength and Dexterity while it is on
 - [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
       Armor Class, speed, Strength, Dexterity and attacks
+- [x] A beast form stops spellcasting, and ends at 0 hit points, when incapacitated,
+      and on a rest that outlasts it (a short rest below level 4, a long rest below
+      level 18)
+- [ ] Timing a beast form. It lasts half your level in hours, but the sheet keeps no
+      clock, so it can't tell when you shifted. A rest therefore assumes you were in
+      the form from its start, and counts a form that lasts exactly as long as the
+      rest as run out. If you shift partway through a rest, switch the form back on
+      afterwards. Outside rests the form never runs out by itself: switch it off when
+      its hours are up
 - [ ] Other beasts as Wild Shape forms, and a beast form's own senses and Constitution
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
