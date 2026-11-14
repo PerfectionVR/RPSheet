@@ -52,6 +52,8 @@ local args = {
             RPSheet:Print(("%s created. Use the gear icon on the sheet to change anything."):format(RPSheet:Summary() or "Character"))
             -- A character made above level 3 has choices the wizard doesn't ask about.
             local pending = ns.Levels.Pending(RPSheet:Sheet())
+            -- A subclass's own choices (a Battle Master's maneuvers) are asked for the current level.
+            if #pending == 0 and ns.OpenClassChoices(RPSheet:Sheet()) then pending = { RPSheet:Sheet().level } end
             if #pending > 0 then
                 RPSheet:Print("At this level you have earlier level-up choices to make. They are asked one by one now, and stay available on the Character tab.")
                 ns.OpenLevelDialog(pending[1])

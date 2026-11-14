@@ -131,7 +131,12 @@ function ns.RollText.Dice(label, rolls, sides, mod)
 end
 
 -- A plain d20 check: ability check, saving throw, skill, initiative, spell attack.
+-- A feature that gives advantage on this roll applies by itself; with disadvantage
+-- chosen on top, the two cancel out.
 function RPSheet:RollCheck(label, mod, mode)
+    if self:HasAdvantage(label) then
+        mode = (mode == "DIS") and "NONE" or "ADV"
+    end
     self:RollD20(mode, function(d20, note)
         self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label), d20, mod, note))
     end)

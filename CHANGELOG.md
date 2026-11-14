@@ -5,6 +5,11 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Warrior is complete. A Battle Master picks maneuvers when levelling, from all 25
+  including the setting's five; each is an ability with the right die and save DC.
+  A Champion's wider critical range, advantage on initiative and Athletics, and
+  Survivor's death saves are applied by the sheet. Tactical Mind, Indomitable,
+  Student of War and the growing Extra Attack are in.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

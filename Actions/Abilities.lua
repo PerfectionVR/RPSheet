@@ -182,7 +182,8 @@ function RPSheet:UseAbility(ability, mode)
         if action.type == "ROLL" then
             local label, mod = RollStep(self, action)
             self:RollD20(mode, function(d20, note)
-                if d20 == 20 and (action.kind == "ATTACK" or action.kind == "SPELL") then critical = true end
+                -- A widened critical range is for weapon and unarmed attacks, not spells.
+                if (action.kind == "ATTACK" and d20 >= self:CritFrom()) or (action.kind == "SPELL" and d20 == 20) then critical = true end
                 parts[#parts + 1] = RollText.Check(label, d20, mod, note)
                 step()
             end)

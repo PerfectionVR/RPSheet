@@ -24,12 +24,14 @@ function RPSheet:RollDeathSave()
         self:Print("Your character is stable at 0 HP: no more death saves. Healing brings them back up. If they take damage, right-click the death save row to start the count over.")
         return
     end
-    self:RollD20(nil, function(d20)
+    -- A Champion's Survivor: advantage, and 18 or 19 count as a 20.
+    local survivor = self:HasAdvantage("death save")
+    self:RollD20(survivor and "ADV" or nil, function(d20)
         local outcome
-        if d20 == 20 then
+        if d20 == 20 or (survivor and d20 >= 18) then
             state.hp = 1
             self:ClearDeathSaves()
-            outcome = "NATURAL 20! Back up with 1 HP"
+            outcome = d20 == 20 and "NATURAL 20! Back up with 1 HP" or "counts as a 20 for a Survivor. Back up with 1 HP"
         else
             if d20 >= 10 then
                 state.deathPass = math.min(3, state.deathPass + 1)

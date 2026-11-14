@@ -36,7 +36,45 @@ local function StyleSlot()
     end
 end
 
+-- The subclass the character will have once this dialog is confirmed.
+local function SubclassAfter()
+    local sheet = Sheet()
+    return sheet.subclass ~= "" and sheet.subclass or draft.subclass
+end
+
+-- The level the class's own choices are for: the one being taken, or the level the
+-- character has when an earlier level's choice is looked at again.
+local function ChoiceLevel()
+    return draft.taking and draft.level or Sheet().level
+end
+
+-- How many maneuvers the character should know at that level.
+local function ManeuverLimit()
+    if not draft then return 0 end
+    return ns.ManeuverLimit(SubclassAfter(), ChoiceLevel())
+end
+
+local function ManeuversPicked()
+    local count = 0
+    for _ in pairs(draft.maneuvers) do count = count + 1 end
+    return count
+end
+
+-- Features with a skill to pick, as the character will be after this dialog.
+local function SkillFeatures()
+    if not draft then return {} end
+    local sheet = Sheet()
+    return ns.SkillChoiceFeatures({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel() })
+end
+
 local function Problem()
+    local limit = ManeuverLimit()
+    if limit > 0 and ManeuversPicked() ~= limit then
+        return ("Choose %d maneuvers (%d chosen)."):format(limit, ManeuversPicked())
+    end
+    for _, feature in ipairs(SkillFeatures()) do
+        if (draft.featureSkills[feature] or "") == "" then return ("Choose a skill for %s."):format(feature) end
+    end
     if AsksSubclass() and draft.taking and draft.subclass == "" then return "Choose a subclass: it is part of this level." end
     if StyleSlot() and draft.style == "" then return "Choose a Fighting Style: it is part of this level." end
     return draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
@@ -78,7 +116,10 @@ local function Gains()
     if draft.taking and #features > 0 then
         lines[#lines + 1] = ""
         for _, feature in ipairs(features) do
-            lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feature.name, feature.desc)
+            -- Some descriptions follow the level.
+            local desc = feature.desc
+            if type(desc) == "function" then desc = desc(level) end
+            lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feature.name, desc)
         end
     end
     -- What the specialization suggests for this level.
@@ -177,6 +218,25 @@ local args = {
         sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices(Sheet(), StyleSlot() or 1), true))) end,
         get = function() return draft.style end,
         set = function(_, value) draft.style = value end,
+    },
+
+    maneuvers = {
+        type = "group", inline = true, order = 12, args = {},
+        name = function() return ("Maneuvers (%d of %d chosen)"):format(draft and ManeuversPicked() or 0, ManeuverLimit()) end,
+        hidden = function() return ManeuverLimit() == 0 end,
+    },
+    featureSkill = {
+        type = "select", order = 13, width = "double",
+        name = function() return (SkillFeatures()[1] or "Feature") .. " (skill)" end,
+        desc = "A skill from your class's list that you aren't proficient in yet.",
+        hidden = function() return #SkillFeatures() == 0 end,
+        values = function()
+            local sheet = Sheet()
+            local like = setmetatable({ subclass = SubclassAfter(), level = ChoiceLevel(), featureSkills = draft.featureSkills }, { __index = sheet })
+            return (Opt.ListMap(ns.FeatureSkillOptions(like, SkillFeatures()[1])))
+        end,
+        get = function() return draft.featureSkills[SkillFeatures()[1]] end,
+        set = function(_, value) draft.featureSkills[SkillFeatures()[1]] = value end,
     },
 
     choiceHeader = {
@@ -290,6 +350,8 @@ local args = {
             local slot = StyleSlot()
             if slot and draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = draft.style end
             if draft.kind then Levels.Set(sheet, level, draft.record) end
+            if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
+            for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
                 RPSheet:SetLevel(level)
             else
@@ -331,6 +393,21 @@ for index, stat in ipairs(R.STATS) do
     end)
 end
 
+-- One checkbox per maneuver. Once the number for the level is chosen the rest grey
+-- out; a known one can be unticked to swap it for another.
+for index, name in ipairs(R.MANEUVER_ORDER) do
+    args.maneuvers.args["maneuver" .. index] = {
+        type = "toggle", order = index, width = 1.5, name = name,
+        desc = function()
+            local maneuver = R.MANEUVERS[name]
+            return maneuver.desc .. (maneuver.save and (" " .. R.STAT_NAMES[maneuver.save] .. " save.") or "")
+        end,
+        disabled = function() return not draft.maneuvers[name] and ManeuversPicked() >= ManeuverLimit() end,
+        get = function() return draft.maneuvers[name] or false end,
+        set = function(_, value) draft.maneuvers[name] = value or nil end,
+    }
+end
+
 ns.SnapSliders({ args = args })
 
 LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
@@ -351,6 +428,7 @@ function ns.OpenLevelDialog(level, reopen)
     local record = Levels.Record(sheet, level)
     draft = {
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
+        maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     if kind == "BOON" then draft.record.choice = "FEAT" end

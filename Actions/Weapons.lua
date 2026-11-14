@@ -50,7 +50,7 @@ function RPSheet:Attack(mode)
     local count, sides = self:WeaponDice(weapon)
     local word = ns.DamageWord(weapon)
     self:RollD20(mode, function(d20, note)
-        local crit = d20 == 20
+        local crit = d20 >= self:CritFrom() -- 20, or lower for a Champion
         self:RollDice(count * (crit and 2 or 1), sides, function(rolls)
             -- Great Weapon Fighting: low damage dice count as higher.
             for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end

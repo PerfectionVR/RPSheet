@@ -61,7 +61,11 @@ local function Apply(sheet, feature, key)
     end
     -- Refreshed every time, so dice and bonuses follow the level.
     -- Some features read differently for each specialization.
-    entry.desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
+    local desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
+    if type(desc) == "function" then desc = desc(sheet.level) end -- wording that follows the level
+    entry.desc = desc
+    -- Rolls the feature gives advantage on (see RPSheet:HasAdvantage).
+    entry.advantage = feature.advantage and CopyTable(feature.advantage) or nil
     if isAbility then
         entry.actions = Resolve(feature.actions, sheet.level)
     else
@@ -89,6 +93,8 @@ function ns.ApplyClassFeatures(sheet)
 
     EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
     ns.ApplyFightingStyles(sheet)
+    ns.ApplyManeuvers(sheet)
+    ns.ApplyFeatureSkills(sheet)
 end
 
 -- Resources that come with features of their own (see Kit.Limited in Data/FeatureKit.lua),

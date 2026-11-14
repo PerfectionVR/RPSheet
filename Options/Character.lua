@@ -96,6 +96,9 @@ local function Summary()
     if class and sheet.level >= R.SUBCLASS_LEVEL and sheet.subclass == "" then
         lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
     end
+    if ns.OpenClassChoices(sheet) then
+        lines[#lines + 1] = ("%sYour class has choices to make: use \"Class choices\" below.|r"):format(Opt.RED)
+    end
     local pending = Levels.Pending(sheet)
     if #pending > 0 then
         lines[#lines + 1] = ("%sA choice is waiting for level %s. See Level choices below.|r"):format(Opt.RED, table.concat(pending, ", "))
@@ -232,6 +235,20 @@ Opt.tabs.character = {
                 ns.RebuildOptions()
                 Opt.Changed()
             end,
+        },
+        classChoices = {
+            type = "execute", order = 3.3,
+            name = function()
+                local limit = ns.ManeuverLimit(Sheet().subclass, Sheet().level)
+                if limit > 0 then return ("Maneuvers (%d of %d)"):format(ns.ManeuversKnown(Sheet()), limit) end
+                return "Class choices"
+            end,
+            desc = "The choices your class and subclass give you at this level, such as a Battle Master's maneuvers.",
+            hidden = function()
+                local sheet = Sheet()
+                return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0)
+            end,
+            func = function() ns.OpenLevelDialog(Sheet().level) end,
         },
         choicesHeader = { type = "header", order = 14, name = "Level choices", hidden = NoCharacter },
         choicesHelp = {

@@ -117,6 +117,21 @@ local function CleanSheet(source)
         end
     end
     if not R.ALLEGIANCES[sheet.allegiance] then sheet.allegiance = "" end
+    sheet.maneuvers, sheet.featureSkills, sheet.featureSkillGranted = {}, {}, {}
+    if type(source.maneuvers) == "table" then
+        for name in pairs(R.MANEUVERS) do
+            if source.maneuvers[name] == true then sheet.maneuvers[name] = true end
+        end
+    end
+    for _, field in ipairs({ "featureSkills", "featureSkillGranted" }) do
+        if type(source[field]) == "table" then
+            for name, skill in pairs(source[field]) do
+                if type(name) == "string" and type(skill) == "string" and #name <= 60 then
+                    sheet[field][Text(name, 60)] = Text(skill, 60)
+                end
+            end
+        end
+    end
     for _, field in ipairs({ "traitChoices", "traitGranted" }) do
         sheet[field] = {}
         if type(source[field]) == "table" then

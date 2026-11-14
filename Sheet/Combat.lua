@@ -130,3 +130,25 @@ function RPSheet:MasteryNote(weapon)
     local number = name == "Topple" and (8 + mod + self:ProficiencyBonus()) or math.max(0, mod)
     return ("%s %s"):format(mastery.note:format(number), ns.Mark(name))
 end
+
+---------------------------------------------------------------------------
+-- Critical hits and advantage from features
+---------------------------------------------------------------------------
+-- The lowest d20 roll that is a critical hit with a weapon or unarmed strike:
+-- 20, or lower with a passive that widens the range (a Champion's Improved Critical).
+function RPSheet:CritFrom()
+    return math.max(2, 20 - self:Bonus("CRIT"))
+end
+
+-- True if a switched-on passive gives advantage on the roll with this label
+-- ("initiative", a skill's name, "DEX save", "death save").
+function RPSheet:HasAdvantage(label)
+    for _, passive in ipairs(self:Sheet().passives) do
+        if passive.enabled and passive.advantage then
+            for _, name in ipairs(passive.advantage) do
+                if name == label then return true end
+            end
+        end
+    end
+    return false
+end

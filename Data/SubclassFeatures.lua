@@ -10,6 +10,9 @@ local Kit = ns.FeatureKit
 local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Roll, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Roll, Kit.Bonus
 
+-- A Passive's description may be a function of the level. Its `extra` table can carry
+-- advantage = { ... } (rolls it gives advantage on, by their label on the sheet) and
+-- skillChoice (a skill to pick, see Sheet/Maneuvers.lua).
 -- Resources a subclass brings, in the same form as class `pools` (see Classes.lua).
 R.SUBCLASS_POOLS = {
     ["Battle Master"] = {
@@ -51,19 +54,28 @@ R.SUBCLASS_FEATURES = {
     -- Warrior (Fighter)
     ---------------------------------------------------------------------------
     ["Battle Master"] = {
-        Ability(3, "Maneuver", "Spend a Superiority Die on a maneuver you know and roll it. Most maneuvers add the roll to an attack's damage. Saves against them use 8 + Strength or Dexterity modifier + proficiency bonus.",
-            function(level) return { Spend("Superiority Dice"), Dice(1, AtLevel(level, { { 3, 8 }, { 10, 10 }, { 18, 12 } })) } end),
-        Passive(3, "Combat Superiority", "You know three maneuvers, and learn more at levels 7, 10 and 15. Your Superiority Dice come back on a short rest."),
-        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more Fighter skill."),
-        Limited(7, "Know Your Enemy", "Bonus action: learn a creature's immunities, resistances and vulnerabilities. Once per long rest; after that it costs a Superiority Die, spent on its bar by hand.", 1),
-        Passive(15, "Relentless", "Once per turn you can use a maneuver without spending a die, rolling a d8 in its place."),
+        Passive(3, "Combat Superiority", function(level)
+            return ("You know %d maneuvers, each an ability on the sheet that spends a Superiority Die. The die is a d%d. All dice come back on a short or long rest. Only one maneuver can be used per attack. Maneuvers are chosen when you level, or under Customize."):format(
+                AtLevel(level, R.MANEUVERS_KNOWN), AtLevel(level, R.SUPERIORITY_DIE))
+        end),
+        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list.", nil, { skillChoice = "CLASS" }),
+        Limited(7, "Know Your Enemy", "Bonus action: learn the immunities, resistances and vulnerabilities of a creature you can see within 30 feet. Once per long rest; spending a Superiority Die gives the use back.", 1),
+        Passive(10, "Improved Combat Superiority", "Your Superiority Die is a d10."),
+        Passive(15, "Relentless", "Once per turn you can use a maneuver without spending a die, rolling a d8 in its place. Roll it with /roll 8."),
+        Passive(18, "Ultimate Combat Superiority", "Your Superiority Die is a d12."),
     },
     ["Champion"] = {
-        Passive(3, "Improved Critical", "Your weapon and unarmed attacks score a critical hit on a 19 or 20. From level 15, on an 18 to 20."),
-        Passive(3, "Remarkable Athlete", "Advantage on initiative rolls and Athletics checks. After a critical hit you can move half your speed without provoking opportunity attacks."),
+        Passive(3, "Improved Critical", function(level)
+            return ("Your weapon and unarmed attacks score a critical hit on a roll of %s. The sheet applies this to your attacks."):format(level >= 15 and "18, 19 or 20" or "19 or 20")
+        end, function(level) return { Bonus("CRIT", level >= 15 and 2 or 1) } end),
+        Passive(3, "Remarkable Athlete", "Advantage on initiative rolls and Athletics checks, which the sheet rolls for you. After a critical hit you can move half your speed without provoking opportunity attacks.",
+            nil, { advantage = { "initiative", "Athletics" } }),
         Passive(7, "Additional Fighting Style", "You gain another Fighting Style feat."),
         Passive(10, "Heroic Warrior", "In combat, you can give yourself Heroic Inspiration at the start of any turn you begin without it."),
-        Passive(18, "Survivor", "Advantage on death saves, with 18 to 20 counting as a 20. While Bloodied you regain 5 + Constitution modifier HP at the start of each turn."),
+        Passive(18, "Survivor", "Advantage on death saves, with 18 to 20 counting as a 20: the sheet rolls them this way. While Bloodied you regain hit points at the start of each turn: use Heroic Rally.",
+            nil, { advantage = { "death save" } }),
+        Ability(18, "Heroic Rally", "At the start of your turn, while Bloodied and above 0 hit points: regain 5 + your Constitution modifier.",
+            { Dice(0, 4, "CON", "SELFHEAL", 5) }),
     },
 
     ---------------------------------------------------------------------------

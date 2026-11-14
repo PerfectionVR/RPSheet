@@ -63,6 +63,9 @@ ns.defaults = {
                     passives = {},
                     spells = {},
                     dismissed = {}, -- class features the player deleted: [auto key] = true
+                    maneuvers = {},     -- [maneuver name] = true, for a Battle Master
+                    featureSkills = {}, -- [feature name] = skill picked for it (Student of War)
+                    featureSkillGranted = {}, -- [feature name] = skill it made proficient
                     traitChoices = {}, -- [trait name] = the skill or feat picked for it
                     traitGranted = {}, -- [trait name] = skill it made proficient
                 },

@@ -67,15 +67,20 @@ R.FEATURES = {
 
     Fighter = {
         Passive(1, "Fighting Style", FIGHTING_STYLE),
-        Ability(1, "Second Wind", "Bonus action. Regain hit points equal to the roll.",
+        Ability(1, "Second Wind", "Bonus action. Regain hit points equal to the roll. One use comes back on a short rest, all on a long rest.",
             { Spend("Second Wind"), Dice(1, 10, "LEVEL", "SELFHEAL") }),
         WEAPON_MASTERY,
-        Ability(2, "Action Surge", "Take one additional action this turn, other than the Magic action.", { Spend("Action Surge") }),
-        Passive(2, "Tactical Mind", "When you fail an ability check you can spend a Second Wind use to add 1d10 to it. If it still fails, the use isn't spent."),
-        Passive(5, "Extra Attack", "You attack twice when you take the Attack action. Three times from level 11, four at level 20."),
+        Ability(2, "Action Surge", "Take one additional action this turn, other than the Magic action. Once per turn.", { Spend("Action Surge") }),
+        Ability(2, "Tactical Mind", "When you fail an ability check: spend a Second Wind use and add the roll to the check. If it still fails the use isn't spent: left-click the Second Wind bar to take it back.",
+            { Spend("Second Wind"), Dice(1, 10, "", "OTHER") }),
+        Passive(5, "Extra Attack", function(level)
+            local attacks = (level >= 20 and "four times") or (level >= 11 and "three times") or "twice"
+            return ("You attack %s, instead of once, when you take the Attack action. Click the weapon once per attack."):format(attacks)
+        end),
         Passive(5, "Tactical Shift", "When you use Second Wind you can move up to half your speed without provoking opportunity attacks."),
-        Ability(9, "Indomitable", "Reroll a saving throw you failed, adding your Fighter level to the new roll.", { Spend("Indomitable") }),
-        Passive(9, "Tactical Master", "When you attack with a weapon whose mastery you can use, you can swap that mastery for Push, Sap or Slow."),
+        Ability(9, "Indomitable", "When you fail a saving throw: reroll it, adding your level. You must use the new roll. Click this, then roll the save again and add the bonus shown.",
+            { Spend("Indomitable"), Dice(0, 4, "LEVEL", "OTHER") }),
+        Passive(9, "Tactical Master", "When you attack with a weapon whose mastery you can use, you can swap that mastery for Push, Sap or Slow for that attack."),
         Passive(13, "Studied Attacks", "If you miss a creature with an attack, you have advantage on your next attack against it before the end of your next turn."),
     },
 

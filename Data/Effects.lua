@@ -29,9 +29,10 @@ R.EFFECT_TARGETS = {
     SAVES = "All saving throws",
     CHECKS = "All ability checks",
     SKILLS = "All skill checks",
+    CRIT = "Critical hit range (1 = also on a 19)",
 }
 R.EFFECT_TARGET_ORDER = {
-    "AC", "HP", "INIT", "SPEED", "ATTACK", "DAMAGE", "HEALING", "SPELLDC", "SPELLATK", "SAVES", "CHECKS", "SKILLS",
+    "AC", "HP", "INIT", "SPEED", "ATTACK", "DAMAGE", "HEALING", "SPELLDC", "SPELLATK", "SAVES", "CHECKS", "SKILLS", "CRIT",
 }
 for _, stat in ipairs(R.STATS) do
     R.EFFECT_TARGETS["SAVE:" .. stat] = "Saving throw: " .. R.STAT_NAMES[stat]
