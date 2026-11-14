@@ -46,6 +46,7 @@ Data\SpellsAzeroth.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
+Data\Picks.lua
 Data\Weapons.lua
 Data\Example.lua
 Data\Glossary.lua
@@ -74,6 +75,7 @@ Sheet\Explain.lua
 Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
 Sheet\Maneuvers.lua
+Sheet\Picks.lua
 Sheet\LineageSpells.lua
 Sheet\Traits.lua
 Sheet\LevelUp.lua

@@ -121,6 +121,7 @@ function W.Finish()
     local draft = W.draft
     local old = RPSheet:Sheet()
     local sheet = ns.NewSheet()
+    for _, key in ipairs(R.PICK_LIST_ORDER) do sheet.picks[key] = {} end
 
     -- A subclass picked before the level was lowered below 3 doesn't count.
     local subclass = draft.level >= R.SUBCLASS_LEVEL and draft.subclass or ""

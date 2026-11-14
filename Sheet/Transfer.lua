@@ -123,6 +123,16 @@ local function CleanSheet(source)
             if source.maneuvers[name] == true then sheet.maneuvers[name] = true end
         end
     end
+    sheet.picks = {}
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        sheet.picks[key] = {}
+        local source = type(source.picks) == "table" and source.picks[key]
+        if type(source) == "table" then
+            for name in pairs(R.PICK_LISTS[key].items) do
+                if source[name] == true then sheet.picks[key][name] = true end
+            end
+        end
+    end
     sheet.featureOptions = {}
     for _, field in ipairs({ "featureSkills", "featureSkillGranted", "featureOptions" }) do
         if type(source[field]) == "table" then

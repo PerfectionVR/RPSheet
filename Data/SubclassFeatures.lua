@@ -356,41 +356,55 @@ R.SUBCLASS_FEATURES = {
     ["Draconic Sorcery"] = {
         Passive(3, "Draconic Resilience", "Your maximum hit points increase by 1 for every Sorcerer level.", { Bonus("HP", 0, "LEVEL") }),
         Passive(3, "Draconic Scales", "Without armor your AC is 10 + Dexterity + Charisma modifiers. Switch this off while you wear armor.", { Bonus("AC", 0, "CHA") }),
-        Passive(3, "Evoker Spells", "You always have extra spells prepared at certain levels. An Evoker uses the Evoker Spells list in place of the usual draconic one."),
-        Passive(6, "Elemental Affinity", "Choose acid, cold, fire, lightning or poison. You resist it, and spells that deal it add your Charisma modifier to one damage roll."),
+        Passive(3, "Evoker Spells", "You always have extra spells prepared at certain levels. An Evoker takes the spells of its specialization from the Evoker list in place of the usual draconic ones. Add them under Customize, Spells, ticked as not counting."),
+        Kit.Choice(6, "Elemental Affinity", "The damage type your draconic magic is attuned to. You resist it, and add your Charisma modifier to one damage roll of a spell that deals it.", {
+            Kit.Option("Acid", "You resist acid damage, and add your Charisma modifier to one damage roll of a spell that deals acid damage."),
+            Kit.Option("Cold", "You resist cold damage, and add your Charisma modifier to one damage roll of a spell that deals cold damage."),
+            Kit.Option("Fire", "You resist fire damage, and add your Charisma modifier to one damage roll of a spell that deals fire damage."),
+            Kit.Option("Lightning", "You resist lightning damage, and add your Charisma modifier to one damage roll of a spell that deals lightning damage."),
+            Kit.Option("Poison", "You resist poison damage, and add your Charisma modifier to one damage roll of a spell that deals poison damage."),
+        }),
         Limited(14, "Dragon Wings", "Bonus action: wings give you a flying speed of 60 feet for an hour. Once per long rest; after that it costs 3 Sorcery Points, spent on their bar by hand.", 1),
-        Limited(18, "Dragon Companion", "You can cast Summon Dragon without its material component and make it last without concentration. Once per long rest you can cast it without a slot.", 1),
+        Limited(18, "Dragon Companion", "You can cast Summon Dragon without its material component and make it last a minute without concentration. Once per long rest you can cast it without a slot.", 1),
     },
 
     ---------------------------------------------------------------------------
     -- Warlock
     ---------------------------------------------------------------------------
     ["Fiend Patron"] = {
-        AlwaysPrepared("Fiend"),
-        Passive(3, "Dark One's Blessing", "When you reduce an enemy to 0 HP, or one drops within 10 feet of you, you gain temporary HP equal to your Charisma modifier plus your level."),
-        Limited(6, "Dark One's Own Luck", "Add 1d10 to an ability check or saving throw after seeing the roll. You have uses equal to your Charisma modifier per long rest.", { stat = "CHA" }),
-        Passive(10, "Fiendish Resilience", "After each rest choose a damage type other than force. You resist it until you choose another."),
-        Limited(14, "Hurl Through Hell", "When you hit, the target makes a Charisma save or vanishes through the Lower Planes, returning with psychic damage equal to the roll. Once per long rest, or again by spending a pact slot.",
-            1, { Dice(8, 10) }),
+        AlwaysPrepared("Fiend", { { 3, "Burning Hands, Command, Scorching Ray, Suggestion" }, { 5, "Fireball, Stinking Cloud" }, { 7, "Fire Shield, Wall of Fire" }, { 9, "Geas, Insect Plague" } }),
+        Ability(3, "Dark One's Blessing", "When you reduce an enemy to 0 hit points, or one drops within 10 feet of you: you gain temporary hit points equal to your Charisma modifier plus your level.",
+            function(level) return { Dice(0, 4, "CHA", "TEMPHP", level) } end),
+        Limited(6, "Dark One's Own Luck", "Add the roll to an ability check or saving throw after seeing the d20, once per roll. Uses equal to your Charisma modifier per long rest.",
+            { stat = "CHA" }, { Dice(1, 10, "", "OTHER") }),
+        Passive(10, "Fiendish Resilience", "After each short or long rest choose a damage type other than force. You resist it until you choose another."),
+        Limited(14, "Hurl Through Hell", function(_, sheet)
+            return ("Once per turn when you hit: the target makes a Charisma save, DC %d, or vanishes through the Lower Planes, taking the roll as psychic damage (unless it is a fiend) and returning incapacitated at the end of your next turn. Once per long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
+        end, 1, { Dice(8, 10) }),
     },
     ["Great Old One Patron"] = {
-        AlwaysPrepared("Great Old One"),
-        Passive(3, "Awakened Mind", "Bonus action: link minds with a creature within 30 feet and speak telepathically for a number of minutes equal to your level."),
+        AlwaysPrepared("Great Old One", { { 3, "Detect Thoughts, Dissonant Whispers, Phantasmal Force, Tasha's Hideous Laughter" }, { 5, "Clairvoyance, Hunger of Hadar" }, { 7, "Confusion, Summon Aberration" }, { 9, "Modify Memory, Telekinesis" } }),
+        Passive(3, "Awakened Mind", function(level)
+            return ("Bonus action: link minds with a creature you can see within 30 feet and speak telepathically for %d minutes, over a number of miles equal to your Charisma modifier."):format(level)
+        end),
         Passive(3, "Psychic Spells", "You can change the damage of your Warlock spells to psychic, and cast enchantments and illusions without words or gestures."),
-        Passive(6, "Clairvoyant Combatant", "When you link minds you can force a Wisdom save: on a failure the creature has disadvantage attacking you and you have advantage attacking it."),
+        Limited(6, "Clairvoyant Combatant", function(_, sheet)
+            return ("When you link minds with Awakened Mind: the creature makes a Wisdom save, DC %d. On a failure it has disadvantage attacking you and you have advantage attacking it while the link lasts. Once per short or long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
+        end, 1, nil, "ALL"),
         Passive(10, "Eldritch Hex", "You always have Hex prepared, and its target also has disadvantage on saves with the chosen ability."),
         Passive(10, "Thought Shield", "Your thoughts can't be read, you resist psychic damage, and creatures that deal it to you take the same amount."),
-        Passive(14, "Create Thrall", "Summon Aberration can last a minute without concentration, and the summoned creature gains temporary HP and deals extra damage to the target of your Hex."),
+        Passive(14, "Create Thrall", "Summon Aberration can last a minute without concentration; the creature then gains temporary hit points equal to your level plus Charisma modifier and deals your Hex's extra damage once per turn."),
     },
 
     ---------------------------------------------------------------------------
     -- Mage (Wizard)
     ---------------------------------------------------------------------------
     ["Evoker"] = {
-        Passive(3, "Evocation Savant", "Two free evocation spells in your spellbook now, and another each time you gain a new level of spell slots."),
-        Passive(3, "Potent Cantrip", "A damaging cantrip still deals half damage when it misses or the target saves."),
-        Passive(6, "Sculpt Spells", "When you cast an evocation spell you can protect a few creatures you can see: they pass the save and take no damage."),
+        Passive(3, "Evocation Savant", "Two free evocation spells of 2nd level or lower in your spellbook now, and another each time you gain a new level of spell slots."),
+        Passive(3, "Potent Cantrip", "A damaging cantrip still deals half damage when it misses or the target saves, with no other effect."),
+        Passive(6, "Sculpt Spells", "When you cast an evocation spell you can protect creatures you can see, one more than the spell's level: they pass the save and take no damage."),
         Passive(10, "Empowered Evocation", "Add your Intelligence modifier to one damage roll of any evocation spell you cast."),
-        Passive(14, "Overchannel", "Deal maximum damage with a damaging spell of level 1 to 5. The first use each long rest is free; later ones cost you necrotic damage."),
+        Ability(14, "Overchannel", "Deal maximum damage with a damaging spell of level 1 to 5 on the turn you cast it. The first use each long rest is free. After that, roll this for each level of the slot and take it as necrotic damage; it grows by 1d12 per level with each further use.",
+            { Dice(2, 12) }),
     },
 }

@@ -129,6 +129,7 @@ function ns.ApplyClassFeatures(sheet)
     EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)
+    ns.ApplyPicks(sheet)
     ns.ApplyFeatureSkills(sheet)
 end
 

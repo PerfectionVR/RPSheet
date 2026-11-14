@@ -299,31 +299,45 @@ R.FEATURES = {
     },
 
     Sorcerer = {
-        Ability(1, "Innate Sorcery", "Bonus action. For 1 minute your spell save DC rises by 1 and you have advantage on spell attack rolls.",
+        Ability(1, "Innate Sorcery", "Bonus action. For 1 minute your spell save DC rises by 1 and you have advantage on the attack rolls of your spells. Switches it on.",
             { Spend("Innate Sorcery"), SwitchOn("Innate Sorcery active") }),
-        Passive(1, "Innate Sorcery active", "Switch on while Innate Sorcery lasts. Adds 1 to your spell save DC; remember the advantage on spell attacks.",
-            { Bonus("SPELLDC", 1) }, true),
-        Passive(2, "Font of Magic", "You can turn Sorcery Points into spell slots and spell slots into Sorcery Points."),
-        Passive(2, "Metamagic", "You know Metamagic options that reshape your spells for a cost in Sorcery Points."),
-        Limited(5, "Sorcerous Restoration", "Once per long rest, when you finish a short rest: regain Sorcery Points up to half your level. Raise the Sorcery Points bar by hand.", 1),
-        Passive(7, "Sorcery Incarnate", "With no Innate Sorcery uses left you can spend 2 Sorcery Points to activate it, and while it is active you can use two Metamagic options on one spell."),
+        Passive(1, "Innate Sorcery active", "Switch on while Innate Sorcery lasts. Adds 1 to your spell save DC, and the sheet rolls your spell attacks with advantage.",
+            { Bonus("SPELLDC", 1) }, { startsOff = true, advantage = { "spell attack" } }),
+        Passive(2, "Font of Magic", "Sorcery Points come back on a long rest. No action: turn a spell slot into points equal to its level. Bonus action: make a slot from points (2 for 1st, 3 for 2nd, 5 for 3rd, 6 for 4th, 7 for 5th); such slots vanish on a long rest. Change the bars by hand."),
+        Passive(2, "Metamagic", function(level)
+            return ("You know %d Metamagic options, each an ability that spends Sorcery Points. One option per spell, unless it says otherwise. They are chosen when you level."):format(AtLevel(level, R.PICK_LISTS.metamagic.known))
+        end),
+        Limited(5, "Sorcerous Restoration", function(level)
+            return ("Once per long rest, when you finish a short rest: regain up to %d Sorcery Points."):format(math.floor(level / 2))
+        end, 1, function(level) return { { type = "GAIN", resource = "Sorcery Points", amount = math.floor(level / 2) } } end),
+        Ability(7, "Sorcery Incarnate", "With no Innate Sorcery uses left you can spend 2 Sorcery Points to activate it. While it is active you can use two Metamagic options on one spell.",
+            { Spend("Sorcery Points", 2), SwitchOn("Innate Sorcery active") }),
+        Passive(20, "Arcane Apotheosis", "While Innate Sorcery is active, one Metamagic option each turn costs no Sorcery Points."),
     },
 
     Warlock = {
-        Passive(1, "Eldritch Invocations", "You know a number of invocations: fragments of forbidden knowledge that grant lasting magical abilities."),
+        Passive(1, "Eldritch Invocations", function(level)
+            return ("You know %d invocations: fragments of forbidden knowledge that grant lasting magical abilities. They are chosen when you level, and you can swap one each level."):format(AtLevel(level, R.PICK_LISTS.invocations.known))
+        end),
         Passive(1, "Pact Magic", "Your spell slots are all of one level and come back on a short rest."),
-        Limited(2, "Magical Cunning", "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up. Restore the slots on the sheet by hand.", 1),
+        Limited(2, "Magical Cunning", function(level)
+            return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots. Restore the slots on the sheet by hand."
+                or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up. Restore the slots on the sheet by hand."
+        end, 1),
         Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
         Limited(11, "Mystic Arcanum", "You learn one 6th-level spell to cast once per long rest without a slot, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once; the bar counts the casts you have left.",
             { { 11, 1 }, { 13, 2 }, { 15, 3 }, { 17, 4 } }),
+        Passive(20, "Eldritch Master", "Magical Cunning restores all your pact slots."),
     },
 
     Wizard = {
         Passive(1, "Ritual Adept", "You can cast any ritual spell in your spellbook as a ritual without preparing it."),
-        Ability(1, "Arcane Recovery", "After a short rest, recover spell slots with a combined level of up to half your level, rounded up, none above 5th. Restore the slots on the sheet by hand.",
-            { Spend("Arcane Recovery") }),
-        Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in."),
+        Ability(1, "Arcane Recovery", function(level)
+            return ("After a short rest, recover spell slots with a combined level of up to %d, none above 5th. Once per long rest. Restore the slots on the sheet by hand."):format(math.ceil(level / 2))
+        end, { Spend("Arcane Recovery") }),
+        Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. Set it under Customize, Proficiencies."),
         Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
-        Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook: you can cast them at their lowest level without a slot."),
+        Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. Mark them as not counting under Customize, Spells."),
+        Limited(20, "Signature Spells", "Two 3rd-level spells from your spellbook are always prepared, and each can be cast once at 3rd level without a slot. Both come back on a short or long rest.", 2, nil, "ALL"),
     },
 }

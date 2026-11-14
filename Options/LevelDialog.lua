@@ -76,7 +76,25 @@ local function OptionFeatures()
     return draft.taking and ns.OpenOptionFeatures(like) or ns.OptionFeatures(like)
 end
 
+-- How many options of a pick list (Metamagic, Invocations) the character should know.
+local function PickLimit(key)
+    if not draft then return 0 end
+    return ns.PickLimit(key, Sheet().class, ChoiceLevel())
+end
+
+local function PicksChosen(key)
+    local count = 0
+    for _ in pairs(draft.picks[key]) do count = count + 1 end
+    return count
+end
+
 local function Problem()
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        local limit = PickLimit(key)
+        if limit > 0 and PicksChosen(key) ~= limit then
+            return ("Choose %d %s (%d chosen)."):format(limit, R.PICK_LISTS[key].title, PicksChosen(key))
+        end
+    end
     for _, feature in ipairs(OptionFeatures()) do
         if (draft.options[feature.name] or "") == "" then return ("Choose an option for %s."):format(feature.name) end
     end
@@ -363,6 +381,9 @@ local args = {
             if slot and draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = draft.style end
             if draft.kind then Levels.Set(sheet, level, draft.record) end
             for _, feature in ipairs(OptionFeatures()) do sheet.featureOptions[feature.name] = draft.options[feature.name] end
+            for _, key in ipairs(R.PICK_LIST_ORDER) do
+                if PickLimit(key) > 0 then sheet.picks[key] = CopyTable(draft.picks[key]) end
+            end
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
@@ -421,6 +442,34 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
     }
 end
 
+-- A group of checkboxes per pick list. An option greys out at the limit, below its
+-- level, or without the pick it builds on.
+for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
+    local list = R.PICK_LISTS[key]
+    local group = {
+        type = "group", inline = true, order = 12.5 + listIndex / 10, args = {},
+        name = function() return ("%s (%d of %d chosen)"):format(list.title, draft and PicksChosen(key) or 0, PickLimit(key)) end,
+        hidden = function() return PickLimit(key) == 0 end,
+    }
+    for index, name in ipairs(list.order) do
+        group.args["pick" .. index] = {
+            type = "toggle", order = index, width = 1.5,
+            name = function()
+                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key])
+                return blocked and ("|cff888888%s (%s)|r"):format(name, blocked) or name
+            end,
+            desc = list.items[name].desc,
+            disabled = function()
+                if draft.picks[key][name] then return false end
+                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key]) ~= nil
+            end,
+            get = function() return draft.picks[key][name] or false end,
+            set = function(_, value) draft.picks[key][name] = value or nil end,
+        }
+    end
+    args["picks" .. key] = group
+end
+
 -- A dropdown for each feature that offers options (four at most at one level).
 for index = 1, 4 do
     local function Feature() return OptionFeatures()[index] end
@@ -468,7 +517,7 @@ function ns.OpenLevelDialog(level, reopen)
     draft = {
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
-        options = CopyTable(sheet.featureOptions),
+        options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     if kind == "BOON" then draft.record.choice = "FEAT" end
