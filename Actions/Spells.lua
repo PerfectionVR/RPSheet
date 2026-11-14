@@ -47,6 +47,19 @@ function RPSheet:SpellDiceCount(spell)
     return spell.count * tier
 end
 
+-- The number of separate attacks one casting makes: more beams for a scaling cantrip,
+-- more rays for a higher slot.
+function RPSheet:SpellHits(spell, slot)
+    local hits = math.max(1, spell.hits or 1)
+    if spell.hitsScale and spell.level == 0 then
+        for _, step in ipairs({ 5, 11, 17 }) do
+            if self:Level() >= step then hits = hits + 1 end
+        end
+    end
+    if slot and (spell.hitsUp or 0) > 0 then hits = hits + (slot.level - spell.level) * spell.hitsUp end
+    return hits
+end
+
 -- Short description for the spell's row, e.g. "attack +5, 2d8" or "DEX save DC 13, 8d6".
 function RPSheet:SpellText(spell)
     local parts = {}
@@ -109,27 +122,35 @@ function RPSheet:CastSpell(spell, mode, ritual)
     end
 
     -- A natural 20 on the spell attack doubles the dice.
-    local function rollDice(critical)
-        if spell.count <= 0 then return finish() end
+    local function rollDice(critical, after)
+        if spell.count <= 0 then return after() end
         self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (note and (" (" .. note .. ")") or "")
-            finish()
+            after()
         end)
     end
 
     if spell.kind == "ATTACK" then
         -- A feature that gives advantage on spell attacks (Innate Sorcery) applies by itself.
         mode = self:ResolveMode("spell attack", mode) -- conditions count too
-        self:RollD20(mode, function(d20, note)
-            parts[#parts + 1] = RollText.Check("spell attack", d20, self:SpellAttack() or 0, note)
-            rollDice(d20 == 20)
-        end)
+        -- A spell of several rays, beams or shards rolls each attack in turn.
+        local hits = self:SpellHits(spell, slot)
+        local function attack(index)
+            self:RollD20(mode, function(d20, note)
+                local label = hits > 1 and ("attack %d"):format(index) or "spell attack"
+                parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack() or 0, note)
+                rollDice(d20 == 20, function()
+                    if index < hits then attack(index + 1) else finish() end
+                end)
+            end)
+        end
+        attack(1)
     else
         if spell.kind == "SAVE" then
             parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
         end
-        rollDice(false)
+        rollDice(false, finish)
     end
 end

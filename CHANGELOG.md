@@ -55,6 +55,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   concentrating rolls the Constitution save and ends the spell on a failure.
 - Tool proficiencies: the tools your class and background name are on the sheet, others
   are ticked under Customize, and each has a check to click.
+- Spells with several rays, beams or shards roll every attack in one click, with more
+  of them for a higher slot or level.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

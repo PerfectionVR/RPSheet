@@ -35,6 +35,10 @@ function ns.ApplyPreparedSpells(sheet)
     for _, spell in ipairs(sheet.spells) do
         local known = R.SPELLS[spell.name]
         if known and known.ritual and known.level == spell.level then spell.ritual = true end
+        -- Spells that make several attacks learn how many.
+        if known and known.level == spell.level and (known.hits > 1 or known.hitsUp > 0 or known.hitsScale) then
+            spell.hits, spell.hitsUp, spell.hitsScale, spell.desc = known.hits, known.hitsUp, known.hitsScale, known.desc
+        end
         if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
             spell.up = known.up
         end

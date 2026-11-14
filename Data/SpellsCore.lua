@@ -430,3 +430,16 @@ for line in DATA:gmatch("[^\n]+") do
         end
     end
 end
+
+-- Spells that make several attacks in one casting, and those that add something
+-- other than dice of their own kind with a higher slot.
+local function Set(name, fields)
+    local spell = R.SPELLS[name]
+    if not spell then return end
+    for key, value in pairs(fields) do spell[key] = value end
+end
+Set("Eldritch Blast", { hitsScale = true, desc = "A beam of force at a creature within 120 feet. You fire two beams at level 5, three at 11 and four at 17, each with its own attack roll; the sheet rolls them all." })
+Set("Scorching Ray", { hits = 3, hitsUp = 1, desc = "Evocation. Range 120 feet. Three rays of fire, each a spell attack for 2d6 fire damage, at one target or several; one more ray for each slot level above 2nd. The sheet rolls them all." })
+Set("Flurry", { hits = 3, count = 3, desc = "Three shards of ice at one target or several, each with its own spell attack; the sheet rolls them all. A critical hit restrains the target." })
+Set("Azure Strike", { hits = 2, desc = "Rays of force at up to two targets, each with its own spell attack; the sheet rolls both. A hit also slows the target by 10 feet." })
+Set("Magic Missile", { up = 1, desc = "Three darts that always hit, each dealing 1d4 + 1 force damage to a creature within 120 feet: add 1 per dart to the total rolled. One more dart for each slot level above 1st, which the sheet adds." })

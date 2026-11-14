@@ -176,7 +176,8 @@ still need that.
 - [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
 - [ ] Spells that grow in another way with the slot (more targets, more darts, a
       different die)
-- [ ] Spells that make several attacks or hit several targets in one click
+- [x] Spells that make several attacks roll them all in one click (Scorching Ray,
+      Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
 - [ ] Material components
 
