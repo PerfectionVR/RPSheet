@@ -14,7 +14,7 @@ local MAX_STEPS = 30    -- effects per passive, steps per ability
 -- Limits for numeric fields, by field name. Anything not listed is kept within -999..999.
 local LIMITS = {
     level = { 1, R.MAX_LEVEL }, hpAdjust = { -100, 100 },
-    dice = { 1, 20 }, count = { 1, 20 }, sides = { 2, 100 },
+    dice = { 1, 20 }, count = { 1, 20 }, sides = { 1, 100 },
     times = { 1, 10 }, amount = { 0, 999 }, flat = { -200, 200 },
 }
 
