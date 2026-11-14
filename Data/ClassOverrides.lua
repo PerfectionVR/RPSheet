@@ -3,6 +3,8 @@
 --   remove       base class features this class doesn't get
 --   removePools  base class resources this class doesn't get
 --   features     features it gets instead or in addition (same form as Features.lua)
+--   A feature can carry bySpec = { [specialization] = description } to read
+--   differently once the specialization is chosen.
 --   pools        resources it gets; a pool with `stat` has  flat + that ability's
 --                modifier  uses, never fewer than `min`
 local _, ns = ...
@@ -29,7 +31,6 @@ R.CLASS_OVERRIDES = {
     DEMONHUNTER = {
         remove = { "Feral Senses" },
         features = {
-            Passive(2, "Void Warrior", "In place of a Fighting Style feat you can take the Void Warrior option, which grants void cantrips."),
             Passive(18, "Improved Spectral Sight", "Truesight out to 30 feet."),
         },
     },
@@ -55,6 +56,26 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
     Limited(15, "Runic Mastery", "Once per long rest, invoke a stronger power of the rune on your weapon.", 1),
     Limited(20, "Aspect of the Horsemen", "Bonus action: for 10 minutes you take on the might of the Four Horsemen. Once per long rest, or again by spending a 5th-level slot.", 1),
 }
+
+-- A Death Knight's rune is its specialization.
+do
+    local features = R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]
+    local RUNE = {
+        Blood = "Blood rune: you regain hit points equal to the necrotic damage the strike dealt.",
+        Frost = "Frost rune: your weapon is coated in ice.",
+        Unholy = "Unholy rune: the strike spreads disease.",
+    }
+    for _, feature in ipairs(features) do
+        if feature.name == "Runeforging" or feature.name == "Runic Power" then
+            feature.bySpec = {}
+            for spec, text in pairs(RUNE) do
+                feature.bySpec[spec] = feature.name == "Runeforging"
+                    and ("Your weapon carries the %s rune, which is your specialization. It can be changed when you gain a level."):format(spec)
+                    or ("Right after casting Rune Strike. %s"):format(text)
+            end
+        end
+    end
+end
 
 R.SUBCLASS_FEATURES["Demon Hunter"] = {
     Passive(3, "Demon Hunter Spells", "You gain extra spells at certain levels, some shared by all demon hunters and some from your specialization. They are always prepared."),

@@ -59,13 +59,15 @@ R.ROLL_KIND_ORDER = { "ATTACK", "SPELL", "CHECK", "SAVE" }
 R.DICE_KINDS = {
     DAMAGE = "Damage", HEALING = "Healing (someone else)",
     SELFHEAL = "Healing (heals you)", TEMPHP = "Temporary HP (yours)",
+    DRAIN = "Damage that heals you by the same amount", OTHER = "Other (added to a roll)",
 }
-R.DICE_KIND_ORDER = { "DAMAGE", "HEALING", "SELFHEAL", "TEMPHP" }
+R.DICE_KIND_ORDER = { "DAMAGE", "DRAIN", "HEALING", "SELFHEAL", "TEMPHP", "OTHER" }
 R.TOGGLE_MODES = { ON = "Switch on", OFF = "Switch off", TOGGLE = "Flip" }
 
 -- Blank entries for the lists a player can add to. There is no limit on how many.
 R.TEMPLATES = {
-    weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false },
+    -- style: the character's Fighting Style applies to it; mastery: see Rules.MASTERIES
+    weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "" },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },
@@ -73,7 +75,7 @@ R.TEMPLATES = {
     action = {
         type = "ROLL",
         kind = "ATTACK", stat = "STR", stat2 = "", proficient = true, -- ROLL
-        count = 1, sides = 6, dice = "DAMAGE",                         -- DICE (uses stat too)
+        count = 1, sides = 6, dice = "DAMAGE", flat = 0,               -- DICE (uses stat too)
         times = 1,                                                     -- WEAPON
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
@@ -101,4 +103,5 @@ R.TEMPLATES.spell = {
     addMod = false,            -- add the spellcasting modifier to the dice
     concentration = false,
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
+    free = false,              -- doesn't count against cantrips known or spells prepared
 }

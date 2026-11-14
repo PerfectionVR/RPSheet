@@ -11,8 +11,10 @@ local PREFIX = "lineagespell:"
 -- and not deleted.
 local function Spells(sheet)
     local _, option = R.Lineage(sheet.species, sheet.lineage)
+    local species = R.SPECIES[sheet.species]
     local list = {}
-    for index, name in ipairs(option and option.spells or {}) do
+    -- From the chosen lineage, or from the species itself (Haranir Magic).
+    for index, name in ipairs(option and option.spells or species and species.spells or {}) do
         local level = LEVELS[index]
         if level and sheet.level >= level and not sheet.dismissed[PREFIX .. name] then
             list[#list + 1] = { name = name, level = level }

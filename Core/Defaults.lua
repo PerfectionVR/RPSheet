@@ -40,6 +40,7 @@ ns.defaults = {
                     version = 2,
                     level = 1,
                     class = "", subclass = "", spec = "",
+                    fightingStyle = "", fightingStyle2 = "", -- see Rules.FIGHTING_STYLES
                     species = "", lineage = "", size = "M",
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
@@ -62,6 +63,8 @@ ns.defaults = {
                     passives = {},
                     spells = {},
                     dismissed = {}, -- class features the player deleted: [auto key] = true
+                    traitChoices = {}, -- [trait name] = the skill or feat picked for it
+                    traitGranted = {}, -- [trait name] = skill it made proficient
                 },
             },
         },

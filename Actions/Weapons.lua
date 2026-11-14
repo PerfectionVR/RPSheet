@@ -22,9 +22,12 @@ function RPSheet:WeaponText(weapon)
     if weapon.heal then
         return ("%dd%d %s healing"):format(weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("HEALING")))
     end
-    local toHit = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK")
-    return ("%s to hit, %dd%d %s damage"):format(
-        Util.Signed(toHit), weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("DAMAGE")))
+    local styleAttack, styleDamage = self:WeaponStyle(weapon)
+    local toHit = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
+    local text = ("%s to hit, %dd%d %s damage"):format(
+        Util.Signed(toHit), weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("DAMAGE") + styleDamage))
+    local mastery = self:WeaponMastery(weapon)
+    return mastery and (text .. ", " .. mastery) or text
 end
 
 -- Attack: d20 + ability + proficiency, then the weapon's dice + ability.
@@ -39,14 +42,20 @@ function RPSheet:Attack(mode)
         end)
         return
     end
-    local attackMod = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK")
-    local damageMod = mod + self:Bonus("DAMAGE")
+    local styleAttack, styleDamage, minDie = self:WeaponStyle(weapon)
+    local attackMod = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
+    local damageMod = mod + self:Bonus("DAMAGE") + styleDamage
+    local mastery = self:MasteryNote(weapon)
     self:RollD20(mode, function(d20, note)
         local crit = d20 == 20
         self:RollDice(weapon.dice * (crit and 2 or 1), weapon.sides, function(rolls)
-            self:Announce(("attacks with %s - %s, %s"):format(
+            -- Great Weapon Fighting: low damage dice count as higher.
+            for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end
+            local text = ("attacks with %s - %s, %s"):format(
                 weapon.name, RollText.Check("to hit", d20, attackMod, note),
-                RollText.Dice(crit and "critical damage" or "damage", rolls, weapon.sides, damageMod)))
+                RollText.Dice(crit and "critical damage" or "damage", rolls, weapon.sides, damageMod))
+            if mastery then text = text .. ". " .. mastery end
+            self:Announce(text)
         end)
     end)
 end

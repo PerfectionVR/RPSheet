@@ -39,6 +39,27 @@ local function ClassList(option, field)
     return option
 end
 
+-- Dropdown for the first or second Fighting Style, shown once the feature is there.
+local function StylePicker(slot, order, name)
+    local field = ns.STYLE_FIELDS[slot]
+    return {
+        type = "select", order = order, name = name,
+        desc = function()
+            local lines = {}
+            for _, style in ipairs(R.FIGHTING_STYLE_ORDER) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, style, R.FIGHTING_STYLES[style].desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function() return not ns.HasStyleSlot(Sheet(), slot) end,
+        -- Every style is offered here; the wizards only offer the ones the class may take.
+        values = function() return (Opt.ListMap(R.FIGHTING_STYLE_ORDER, true)) end,
+        sorting = function() return (select(2, Opt.ListMap(R.FIGHTING_STYLE_ORDER, true))) end,
+        get = function() return Sheet()[field] end,
+        set = function(_, value) Sheet()[field] = value; Opt.Regrant() end,
+    }
+end
+
 local function Summary()
     local sheet = Sheet()
     local lines = { Opt.GOLD .. (RPSheet:Summary() or "No class chosen yet") .. "|r" }
@@ -64,6 +85,14 @@ local function Summary()
             ns.Term("Origin feat", "origin feat"), ns.Term(background.feat))
     end
     -- Choices that are waiting for the player
+    for _, trait in ipairs(ns.OpenTraitChoices(sheet)) do
+        lines[#lines + 1] = ("%s%s has a choice to make, under Customize, Lineage, languages, renown.|r"):format(Opt.RED, trait)
+    end
+    for slot, field in ipairs(ns.STYLE_FIELDS) do
+        if ns.HasStyleSlot(sheet, slot) and not R.FIGHTING_STYLES[sheet[field]] then
+            lines[#lines + 1] = ("%sYou have a Fighting Style to choose, under Customize, Class and origin.|r"):format(Opt.RED)
+        end
+    end
     if class and sheet.level >= R.SUBCLASS_LEVEL and sheet.subclass == "" then
         lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
     end
@@ -102,6 +131,11 @@ Opt.custom.identity = {
             type = "select", order = 2, name = "Class", values = Opt.CLASS_VALUES, sorting = Opt.CLASS_ORDER,
         }, "class"),
         break1 = { type = "description", order = 4, name = "" },
+        subclassLater = {
+            type = "description", order = 5,
+            name = function() return ("%sBy the rules a subclass is chosen at level %d; its features start then.|r\n"):format(Opt.RED, R.SUBCLASS_LEVEL) end,
+            hidden = function() return Sheet().level >= R.SUBCLASS_LEVEL or Sheet().subclass == "" end,
+        },
         subclass = ClassList({
             type = "select", order = 5, name = "Subclass",
             get = ListedSubclass,
@@ -117,10 +151,15 @@ Opt.custom.identity = {
                 Opt.Regrant()
             end,
         },
-        spec = With(ClassList({
+        fightingStyle = StylePicker(1, 7.1, "Fighting Style"),
+        fightingStyle2 = StylePicker(2, 7.2, "Second Fighting Style"),
+        spec = ClassList({
             type = "select", order = 7, name = "Specialization",
-            desc = "A World of Warcraft specialization to guide your choices. It has no rules of its own.",
-        }, "specs"), Sheet, "spec"),
+            desc = "Your World of Warcraft specialization. It guides your choice of subclass, spells and feats and has no rules of its own, except that a Death Knight's rune is its specialization. It is shown with your class.",
+            get = function() return Sheet().spec end,
+            -- Features that follow the specialization are refreshed.
+            set = function(_, value) Sheet().spec = value; Opt.Regrant() end,
+        }, "specs"),
         break2 = { type = "description", order = 8, name = "" },
         species = Granting({
             type = "select", order = 9, name = "Species", values = Opt.SPECIES_VALUES, sorting = Opt.SPECIES_ORDER,
@@ -156,6 +195,11 @@ Opt.custom.identity = {
 
 local function NoCharacter() return RPSheet:ClassData() == nil end
 
+-- The lowest level a character can go back to.
+local function MinLevel()
+    return 1
+end
+
 Opt.tabs.character = {
     type = "group", order = 1, name = "Character",
     args = {
@@ -177,9 +221,9 @@ Opt.tabs.character = {
         levelDown = {
             hidden = NoCharacter,
             type = "execute", order = 3.2,
-            name = function() return Sheet().level <= 1 and "Level 1" or ("Back to level " .. (Sheet().level - 1)) end,
+            name = function() return Sheet().level <= MinLevel() and ("Level " .. Sheet().level) or ("Back to level " .. (Sheet().level - 1)) end,
             desc = "Goes down one level. What that level gave is taken off the sheet again: its features, hit points, and the choice you made for it.",
-            disabled = function() return Sheet().level <= 1 end,
+            disabled = function() return Sheet().level <= MinLevel() end,
             confirm = function()
                 return ("Go back to level %d? Everything level %d gave is removed, including the choice you made for it."):format(Sheet().level - 1, Sheet().level)
             end,

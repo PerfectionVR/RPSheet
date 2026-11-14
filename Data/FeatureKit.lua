@@ -59,8 +59,9 @@ function Kit.SwitchOn(passive)
     return { type = "TOGGLE", passive = passive, mode = "ON" }
 end
 
-function Kit.Dice(count, sides, stat, kind)
-    return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE" }
+-- A count of 0 rolls nothing and gives just the flat amount and the modifier.
+function Kit.Dice(count, sides, stat, kind, flat)
+    return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE", flat = flat or 0 }
 end
 
 function Kit.Roll(kind, stat, proficient)

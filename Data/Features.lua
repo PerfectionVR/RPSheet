@@ -16,7 +16,7 @@ local Kit = ns.FeatureKit
 local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Bonus
 
-local WEAPON_MASTERY = Passive(1, "Weapon Mastery", "You can use the mastery property of a few kinds of weapon you are proficient with. You can change your choices after a long rest.")
+local WEAPON_MASTERY = Passive(1, "Weapon Mastery", "You can use the mastery property of a few kinds of weapon you are proficient with, and change your choices after a long rest. Set each weapon's mastery under Customize, Weapons: it shows on the weapon row and is called out when you attack.")
 local FIGHTING_STYLE = "You gain a Fighting Style feat of your choice."
 local function ExtraAttack(level)
     return Passive(level, "Extra Attack", "You attack twice, instead of once, when you take the Attack action.")

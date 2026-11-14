@@ -28,10 +28,12 @@ function W.NewDraft()
         step = 1,
         class = "", subclass = "", spec = "", level = 1, classSkills = {},
         species = "", lineage = "", size = "M", background = "", allegiance = "",
+        traitChoices = {}, -- picks for species traits such as Skillful and Versatile
         scoreMethod = "POINTBUY",
         base = { STR = 8, DEX = 8, CON = 8, INT = 8, WIS = 8, CHA = 8 },
         bonus = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 },
         alignment = "",
+        fightingStyle = "",
         armor = "NONE", shield = false,
         weaponName = "Weapon", weaponStat = "STR", weaponSides = 8,
         -- A new character starts clean. What the player made by hand on the current one
@@ -60,19 +62,40 @@ function W.SkillsPicked()
     return count
 end
 
+-- True if the draft's class has the Fighting Style feature by its level.
+function W.NeedsFightingStyle()
+    local draft = W.draft
+    if not draft or not R.CLASSES[draft.class] then return false end
+    for level = 1, draft.level do
+        for _, feature in ipairs(ns.FeaturesGainedAt(draft.class, draft.subclass, level)) do
+            if feature.name == ns.STYLE_FEATURES[1] then return true end
+        end
+    end
+    return false
+end
+
 -- Returns a message when the current step isn't complete, nil when it is.
 function W.StepProblem()
     local draft = W.draft
     if draft.step == 1 then
         local class = R.CLASSES[draft.class]
         if not class then return "Choose a class first." end
-        if W.SkillsPicked() > class.skillCount then
-            return ("Pick at most %d class skills."):format(class.skillCount)
+        if W.SkillsPicked() ~= class.skillCount then
+            return ("Pick %d class skills."):format(class.skillCount)
+        end
+        if draft.level >= R.SUBCLASS_LEVEL and #class.subclasses > 0 and draft.subclass == "" then
+            return ("Choose a subclass: a character of level %d or higher has one."):format(R.SUBCLASS_LEVEL)
+        end
+        if W.NeedsFightingStyle() and draft.fightingStyle == "" then
+            return "Choose a Fighting Style."
         end
     elseif draft.step == 2 then
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
         if R.LINEAGES[draft.species] and draft.lineage == "" then return "Choose a lineage." end
+        for _, trait in ipairs(ns.TraitChoices(draft)) do
+            if (draft.traitChoices[trait] or "") == "" then return ("Make your choice for %s."):format(trait) end
+        end
     elseif draft.step == 4 then
         if draft.allegiance == "" then return "Choose an allegiance." end
     elseif draft.step == 3 then
@@ -91,12 +114,19 @@ function W.Finish()
     local old = RPSheet:Sheet()
     local sheet = ns.NewSheet()
 
-    sheet.class, sheet.subclass, sheet.spec, sheet.level = draft.class, draft.subclass, draft.spec, draft.level
+    -- A subclass picked before the level was lowered below 3 doesn't count.
+    local subclass = draft.level >= R.SUBCLASS_LEVEL and draft.subclass or ""
+    -- A hero class is its subclass, fixed when the character is made.
+    local class = R.CLASSES[draft.class]
+    if class.hero then subclass = class.subclasses[1] end
+    sheet.class, sheet.subclass, sheet.spec, sheet.level = draft.class, subclass, draft.spec, draft.level
     sheet.species, sheet.size, sheet.background, sheet.alignment = draft.species, draft.size, draft.background, draft.alignment
     sheet.lineage, sheet.allegiance = draft.lineage, draft.allegiance
+    for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
     sheet.scoreMethod = draft.scoreMethod
     sheet.base, sheet.bonus = CopyTable(draft.base), CopyTable(draft.bonus)
     sheet.armor, sheet.shield = draft.armor, draft.shield
+    sheet.fightingStyle = W.NeedsFightingStyle() and draft.fightingStyle or ""
     for skill, picked in pairs(draft.classSkills) do
         if picked then sheet.skills[skill] = 1 end
     end

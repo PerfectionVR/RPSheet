@@ -36,15 +36,19 @@ Core\Codec.lua
 # Rules data
 Data\Rules.lua
 Data\Classes.lua
+Data\SpecGuide.lua
 Data\Species.lua
 Data\Backgrounds.lua
 Data\Effects.lua
 Data\Feats.lua
 Data\Spells.lua
+Data\SpellsAzeroth.lua
 Data\Conditions.lua
+Data\Combat.lua
 Data\Example.lua
 Data\Glossary.lua
 Data\FeatureKit.lua
+Data\Traits.lua
 Data\Features.lua
 Data\SubclassFeatures.lua
 Data\ClassOverrides.lua
@@ -59,11 +63,14 @@ Sheet\Levels.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
+Sheet\Combat.lua
+Sheet\Requirements.lua
 Sheet\Trackers.lua
 Sheet\Summary.lua
 Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
 Sheet\LineageSpells.lua
+Sheet\Traits.lua
 Sheet\LevelUp.lua
 
 # Things the character does

@@ -15,6 +15,13 @@ local function Summary()
             class and class.hitDie or R.DEFAULT_HIT_DIE),
     }
     local armor = R.ARMOR[sheet.armor]
+    local training, kind = RPSheet:ArmorTraining(), ns.ArmorKind(sheet.armor)
+    if kind and not training[kind] then
+        lines[#lines + 1] = ("%sYou have no training with %s armor: disadvantage on Strength and Dexterity rolls, and you can't cast spells.|r"):format(Opt.RED, kind)
+    end
+    if sheet.shield and not training.shield then
+        lines[#lines + 1] = ("%sYou have no training with shields: disadvantage on Strength and Dexterity rolls, and you can't cast spells.|r"):format(Opt.RED)
+    end
     if armor.minStr and RPSheet:Score("STR") < armor.minStr then
         lines[#lines + 1] = ("%s%s needs Strength %d, or your speed drops by 10 feet.|r"):format(Opt.RED, armor.name, armor.minStr)
     end
@@ -31,10 +38,13 @@ Opt.custom.defense = {
         summary = { type = "description", order = 1, fontSize = "medium", name = Summary },
         armor = With({
             type = "select", order = 2, name = "Armor",
-            desc = "Light armor adds your full Dexterity modifier, medium armor at most +2, heavy armor none.",
+            desc = "Light armor adds your full Dexterity modifier, medium armor at most +2, heavy armor none. Armor you aren't trained with is flagged above.",
             values = Opt.ARMOR_VALUES, sorting = R.ARMOR_ORDER,
         }, Sheet, "armor"),
-        shield = With({ type = "toggle", order = 3, name = "Shield (+2 AC)" }, Sheet, "shield"),
+        shield = With({
+            type = "toggle", order = 3, name = "Shield (+2 AC)",
+            desc = "Flagged above if you have no shield training.",
+        }, Sheet, "shield"),
         hpAdjust = With({
             type = "range", order = 4, min = -100, max = 100, softMin = -20, softMax = 40, step = 1,
             name = "Hit point adjustment",

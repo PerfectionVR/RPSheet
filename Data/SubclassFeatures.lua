@@ -146,8 +146,8 @@ R.SUBCLASS_FEATURES = {
     ["Discipline Domain"] = {
         AlwaysPrepared("Discipline"),
         Passive(3, "Atonement", "Creatures you heal with a spell of level 1 or higher are blessed until the end of your next turn. When you then damage a creature with a slotted spell, the blessed are healed too."),
-        Ability(3, "Holy Bolt", "Bonus action. A ranged spell attack against a creature within 60 feet that deals radiant damage on a hit.",
-            { Spend("Channel Divinity"), Roll("SPELL", "WIS") }),
+        Ability(3, "Holy Bolt", "Bonus action. A ranged spell attack against a creature within 60 feet: radiant damage on a hit, and a creature you choose within 60 feet is healed by the second roll.",
+            { Spend("Channel Divinity"), Roll("SPELL", "WIS"), Dice(2, 10, "WIS"), Dice(1, 10, "WIS", "HEALING") }),
         Ability(6, "Luminous Barrier", "Bonus action. Each creature blessed by your Atonement gains temporary HP equal to your level plus your Wisdom modifier.",
             { Spend("Channel Divinity") }),
         Passive(17, "Ultimate Penitence", "Holy Bolt lets you teleport up to 30 feet first, and you can spend more to fire additional bolts."),
@@ -162,8 +162,8 @@ R.SUBCLASS_FEATURES = {
     },
     ["Shadow Domain"] = {
         AlwaysPrepared("Shadow"),
-        Ability(3, "Devouring Plague", "When a creature you can see within 30 feet fails a saving throw: it takes the roll as necrotic damage and you regain the same amount. A limited number of uses per long rest.",
-            { Dice(1, 10) }),
+        Limited(3, "Devouring Plague", "When a creature you can see within 30 feet fails a saving throw: it takes the roll as necrotic damage and you regain the same amount. Uses equal to your Wisdom modifier per long rest.",
+            { stat = "WIS" }, { Dice(1, 10, "", "DRAIN") }),
         Ability(3, "Shadowform", "Bonus action. Take a shadowy form: you can Hide as a bonus action in dim light or darkness, and your void magic grows stronger.",
             { Spend("Channel Divinity") }),
         Passive(6, "Dispersion", "Reaction when hit: until the end of your next turn you resist all damage but can't act or cast."),

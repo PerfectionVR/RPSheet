@@ -53,11 +53,35 @@ local function ClassSummary()
 end
 
 -- Dropdown of the chosen class's subclasses or specializations.
-local function ClassChoice(option, field, key)
-    option.hidden = function() return not DraftClass() end
+-- `minLevel` hides the choice until the character is of that level.
+local function ClassChoice(option, field, key, minLevel)
+    option.hidden = function() return not DraftClass() or (minLevel ~= nil and W.draft.level < minLevel) end
     option.values = function() return (Opt.ListMap(DraftClass()[field], true)) end
     option.sorting = function() return (select(2, Opt.ListMap(DraftClass()[field], true))) end
     return Field(option, key)
+end
+
+-- One checkbox per skill, shown for the skills the class offers. Once the class's
+-- number of skills is picked the rest grey out, until one is unticked.
+local skillArgs = {}
+for index, skill in ipairs(R.SKILLS) do
+    local name = skill.name
+    local function Offered()
+        for _, offered in ipairs(DraftClass() and DraftClass().skills or {}) do
+            if offered == name then return true end
+        end
+        return false
+    end
+    skillArgs["skill" .. index] = {
+        -- 1.5 units (255px) fits two per row in this window.
+        type = "toggle", order = index, width = 1.5, name = name, desc = ns.Glossary[name],
+        hidden = function() return not Offered() end,
+        disabled = function()
+            return not W.draft.classSkills[name] and W.SkillsPicked() >= DraftClass().skillCount
+        end,
+        get = function() return W.draft.classSkills[name] or false end,
+        set = function(_, value) W.draft.classSkills[name] = value or nil end,
+    }
 end
 
 local classPage = Page(1, {
@@ -69,33 +93,82 @@ local classPage = Page(1, {
             local draft = W.draft
             draft.class = value
             draft.subclass, draft.spec, draft.classSkills = "", "", {}
+            -- A hero class is its subclass: the choice is fixed from the start.
+            if R.CLASSES[value].hero then draft.subclass = R.CLASSES[value].subclasses[1] end
             if R.CLASSES[value].hero and draft.level < R.HERO_START_LEVEL then
                 draft.level = R.HERO_START_LEVEL
             end
         end,
     },
-    level = Field({ type = "range", order = 2, min = 1, max = R.MAX_LEVEL, step = 1, name = "Level" }, "level"),
+    level = Field({
+        type = "range", order = 2, min = 1, max = R.MAX_LEVEL, step = 1, name = "Level",
+        desc = "A hero class normally starts at level 3 or higher; a lower level needs your DM's permission.",
+    }, "level"),
     summary = { type = "description", order = 3, fontSize = "medium", name = ClassSummary, dialogControl = "RPSheetTermLabel" },
     subclass = ClassChoice({
         type = "select", order = 4, name = "Subclass",
-        desc = "Usually chosen at level 3. Other subclasses can be typed in later in the editor.",
-    }, "subclasses", "subclass"),
-    spec = ClassChoice({
-        type = "select", order = 5, name = "Specialization",
-        desc = "A World of Warcraft specialization to guide your choices. It has no rules of its own.",
-    }, "specs", "spec"),
+        desc = "Every class chooses its subclass at level 3, so this appears from that level.",
+    }, "subclasses", "subclass", R.SUBCLASS_LEVEL),
+    spec = (function()
+        local option = ClassChoice({
+            type = "select", order = 5, name = "Specialization",
+            desc = "How you play your class. It has no rules of its own: it guides your choice of subclass, Fighting Style, weapons and spells, and the suggestions below follow it.",
+        }, "specs", "spec")
+        -- Picking one pre-selects what it suggests, where that is a single choice.
+        option.set = function(_, value)
+            local draft = W.draft
+            draft.spec = value
+            local guide = R.SpecGuide(draft.class, value)
+            if guide then
+                if guide.subclass then draft.subclass = guide.subclass end
+                if guide.style then draft.fightingStyle = guide.style end
+            end
+        end
+        return option
+    end)(),
+    specGuide = {
+        type = "description", order = 5.2, fontSize = "medium",
+        hidden = function() return not W.draft or #R.SpecSuggestions(W.draft.class, W.draft.spec, W.draft.level, 1) == 0 end,
+        name = function()
+            local draft = W.draft
+            if not draft then return "" end
+            local lines = R.SpecSuggestions(draft.class, draft.spec, draft.level, 1)
+            return ("%sSuggested for %s|r\n%s\n"):format(GOLD, draft.spec, table.concat(lines, "\n"))
+        end,
+    },
+    fightingStyle = {
+        type = "select", order = 5.5, name = "Fighting Style",
+        desc = function()
+            local lines = {}
+            for _, style in ipairs(R.FIGHTING_STYLE_ORDER) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, style, R.FIGHTING_STYLES[style].desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        -- Only for a class that has the feature by the chosen level.
+        hidden = function()
+            local draft = W.draft
+            if not draft or not DraftClass() then return true end
+            for level = 1, draft.level do
+                for _, feature in ipairs(ns.FeaturesGainedAt(draft.class, draft.subclass, level)) do
+                    if feature.name == ns.STYLE_FEATURES[1] then return false end
+                end
+            end
+            return true
+        end,
+        values = function() return (Opt.ListMap(ns.StyleChoices({ class = W.draft.class, passives = {} }, 1), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices({ class = W.draft.class, passives = {} }, 1), true))) end,
+        get = function() return W.draft.fightingStyle end,
+        set = function(_, value) W.draft.fightingStyle = value end,
+    },
     skills = {
-        -- width applies to each checkbox: 1.5 units (255px) fits two per row in this window.
-        type = "multiselect", order = 6, width = 1.5,
+        type = "group", inline = true, order = 6, args = skillArgs,
         -- The dialog asks for the name even while the option is hidden (no class chosen yet).
         name = function()
             local class = DraftClass()
             return ("Class skills (%d of %d picked)"):format(W.SkillsPicked(), class and class.skillCount or 0)
         end,
         hidden = function() return not DraftClass() end,
-        values = function() return (Opt.ListMap(DraftClass().skills)) end,
-        get = function(_, skill) return W.draft.classSkills[skill] or false end,
-        set = function(_, skill, value) W.draft.classSkills[skill] = value or nil end,
     },
 })
 
@@ -130,7 +203,67 @@ local function OriginSummary()
     return table.concat(lines, "\n") .. "\n"
 end
 
+-- What the draft can pick for a species trait: skills its class and background don't
+-- already give, or origin feats other than the background's.
+local function DraftTraitOptions(name)
+    local draft, trait, names = W.draft, R.TRAITS[name], {}
+    local background = R.BACKGROUNDS[draft.background]
+    if trait.choice == "SKILL" then
+        local taken = {}
+        for skill, picked in pairs(draft.classSkills) do taken[skill] = picked end
+        for _, skill in ipairs(background and background.skills or {}) do taken[skill] = true end
+        for other, choice in pairs(draft.traitChoices) do
+            if other ~= name then taken[choice] = true end
+        end
+        local pool = trait.options
+        if not pool then
+            pool = {}
+            for _, skill in ipairs(R.SKILLS) do pool[#pool + 1] = skill.name end
+        end
+        for _, skill in ipairs(pool) do
+            if not taken[skill] then names[#names + 1] = skill end
+        end
+    else
+        for _, feat in ipairs(R.FEAT_NAMES.GENERAL) do
+            local data = R.FEATS[feat]
+            local allowed = not data.needSpecies or data.needSpecies == draft.species
+            if data.kind == "ORIGIN" and allowed and (data.repeatable or not (background and background.feat == feat)) then
+                names[#names + 1] = feat
+            end
+        end
+    end
+    return names
+end
+
+local function DraftTraitPicker(name, order)
+    return {
+        type = "select", order = order,
+        name = function() return name .. (R.TRAITS[name].choice == "FEAT" and " (origin feat)" or " (skill)") end,
+        desc = function()
+            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[name] end
+            local lines = { ns.Glossary[name] or "" }
+            for _, feat in ipairs(DraftTraitOptions(name)) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(GOLD, feat, R.FEATS[feat].desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function()
+            for _, trait in ipairs(W.draft and ns.TraitChoices(W.draft) or {}) do
+                if trait == name then return false end
+            end
+            return true
+        end,
+        values = function() return (Opt.ListMap(DraftTraitOptions(name))) end,
+        sorting = function() return (select(2, Opt.ListMap(DraftTraitOptions(name)))) end,
+        get = function() return W.draft.traitChoices[name] end,
+        set = function(_, value) W.draft.traitChoices[name] = value end,
+    }
+end
+
 local originPage = Page(2, {
+    traitSkillful = DraftTraitPicker("Skillful", 3.1),
+    traitKeenSenses = DraftTraitPicker("Keen Senses", 3.2),
+    traitVersatile = DraftTraitPicker("Versatile", 3.3),
     species = {
         type = "select", order = 1, name = "Species",
         values = Opt.NameMap(R.SPECIES, R.SPECIES_ORDER), sorting = R.SPECIES_ORDER,
@@ -138,6 +271,7 @@ local originPage = Page(2, {
         set = function(_, value)
             local sizes = R.SPECIES[value].sizes
             W.draft.species, W.draft.size, W.draft.lineage = value, sizes[#sizes], ""
+            wipe(W.draft.traitChoices)
         end,
     },
     size = Field({
@@ -286,9 +420,15 @@ local detailsPage = Page(5, {
         name = "Starting gear. Hit points, Armor Class, proficiency bonus, saving throws, spell slots and class resources are worked out for you. More weapons, abilities and passives can be added in the editor afterwards.\n",
     },
     armor = Field({
-        type = "select", order = 2, name = "Armor", values = Opt.ARMOR_VALUES, sorting = R.ARMOR_ORDER,
+        type = "select", order = 2, name = "Armor",
+        desc = "Only armor your class is trained with is offered.",
+        values = function() return (ns.ArmorChoices(ns.ArmorTraining(W.draft.class), W.draft.armor)) end,
+        sorting = function() return (select(2, ns.ArmorChoices(ns.ArmorTraining(W.draft.class), W.draft.armor))) end,
     }, "armor"),
-    shield = Field({ type = "toggle", order = 3, name = "Shield (+2 AC)" }, "shield"),
+    shield = Field({
+        type = "toggle", order = 3, name = "Shield (+2 AC)",
+        disabled = function() return not W.draft.shield and not ns.ArmorTraining(W.draft.class).shield end,
+    }, "shield"),
     weaponHeader = { type = "header", order = 10, name = "Main weapon" },
     weaponName = Field({ type = "input", order = 11, name = "Name" }, "weaponName"),
     weaponStat = Field({

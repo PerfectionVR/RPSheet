@@ -118,6 +118,7 @@ end
 -- applies to them.
 function ns.DiceWord(kind)
     if kind == "TEMPHP" then return "temporary HP" end
+    if kind == "OTHER" then return "bonus" end
     if kind == "HEALING" or kind == "SELFHEAL" then return "healing", "HEALING" end
     return "damage", "DAMAGE"
 end
@@ -129,7 +130,7 @@ function RPSheet:ApplyDice(kind, rolls, mod)
     for _, roll in ipairs(rolls) do total = total + roll end
     total = math.max(0, total)
     local state = self:State()
-    if kind == "SELFHEAL" then
+    if kind == "SELFHEAL" or kind == "DRAIN" then
         local max = self:MaxHP()
         state.hp = math.min(max, (state.hp or max) + total)
         if total > 0 then self:ClearDeathSaves() end

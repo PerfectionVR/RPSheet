@@ -10,11 +10,18 @@ local function Build(spell)
     local rollsDice = function() return spell.count == 0 end
     return {
         name = With({ type = "input", order = 1, name = "Name" }, self, "name", true),
-        level = With({
+        level = {
             type = "select", order = 2, name = "Level",
-            desc = "Cantrips need no slot. Other spells use your lowest free slot of that level or higher.",
+            desc = "Cantrips need no slot. Other spells use your lowest free slot of that level or higher, so a spell above your slots can't be cast.",
             values = R.SPELL_LEVELS,
-        }, self, "level"),
+            get = function() return spell.level end,
+            set = function(_, value) spell.level = value; Opt.Changed() end,
+        },
+        free = With({
+            type = "toggle", order = 2.5, width = "double",
+            name = "Doesn't count against my limit",
+            desc = "For spells that are always prepared, or that come from a subclass, a lineage or a feat. They are left out of the counts above.",
+        }, self, "free"),
         concentration = With({
             type = "toggle", order = 3, name = "Concentration",
         }, self, "concentration"),
@@ -59,12 +66,31 @@ end
 ---------------------------------------------------------------------------
 local picked = "" -- the spell chosen in the dropdown
 
+-- "Cantrips 3 of 3. Prepared spells 4 of 5, up to 1st level."
+local function Limits()
+    local maxCantrips, maxPrepared, highest = RPSheet:SpellLimits()
+    local cantrips, prepared = RPSheet:SpellCounts()
+    if maxPrepared == 0 and maxCantrips == 0 then
+        return "Your class doesn't cast spells. Spells from a lineage or a feat can still be added; they don't count against a limit.\n"
+    end
+    local function Count(have, limit)
+        return ("%s%d of %d|r"):format(have > limit and Opt.RED or Opt.GOLD, have, limit)
+    end
+    local text = ("Prepared spells %s, with spell slots up to %s."):format(Count(prepared, maxPrepared), highest > 0 and R.SPELL_LEVELS[highest]:lower() or "none")
+    if maxCantrips > 0 then text = ("Cantrips %s. "):format(Count(cantrips, maxCantrips)) .. text end
+    return text .. " Spells marked as not counting are left out.\n"
+end
+
 -- Spells of the character's class that aren't on the sheet yet, cantrips first.
 local function Available()
     local class = RPSheet:ClassData()
     local have, names = {}, {}
     for _, spell in ipairs(Opt.Sheet().spells) do have[spell.name] = true end
     for _, name in ipairs(class and R.SPELL_LISTS[class.base] or {}) do
+        if not have[name] then names[#names + 1] = name end
+    end
+    -- Spells the class's own subclass gives are always prepared: they only need the slots.
+    for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
         if not have[name] then names[#names + 1] = name end
     end
     table.sort(names, function(a, b)
@@ -76,14 +102,15 @@ end
 
 -- Extra controls on the Spells page, above the list.
 local function Extra(args)
+    args.limits = { type = "description", order = 0.4, fontSize = "medium", name = Limits }
     args.known = {
-        type = "select", order = 0.5, name = "Common spells for your class", width = "double",
-        desc = "Cantrips and 1st-level spells with their dice and saves filled in. Any other spell can be added by hand.",
+        type = "select", order = 0.5, name = "Spells for your class", width = "double",
+        desc = "Your class's own spells and the common cantrips and 1st-level spells, with their dice and saves filled in. Any other spell can be added by hand. The counts above turn red when you go past what your class allows.",
         hidden = function() return #Available() == 0 and picked == "" end,
         values = function()
             local values = {}
             for _, name in ipairs(Available()) do
-                values[name] = ("%s (%s)"):format(name, R.SPELLS[name].level == 0 and "cantrip" or "1st level")
+                values[name] = ("%s (%s)"):format(name, R.SPELL_LEVELS[R.SPELLS[name].level]:lower())
             end
             return values
         end,
@@ -97,7 +124,11 @@ local function Extra(args)
         disabled = function() return not R.SPELLS[picked] end,
         func = function()
             local spells = Opt.Sheet().spells
-            spells[#spells + 1] = CopyTable(R.SPELLS[picked])
+            local spell = CopyTable(R.SPELLS[picked])
+            for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
+                if name == picked then spell.free = true end -- always prepared
+            end
+            spells[#spells + 1] = spell
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()

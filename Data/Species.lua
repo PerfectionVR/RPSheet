@@ -5,7 +5,8 @@ local R = ns.Rules
 ---------------------------------------------------------------------------
 -- Species
 -- Traits are listed by name and become passives on the sheet. A trait with `effects`
--- changes numbers by itself; the others are reminders to look up in the book.
+-- changes numbers by itself; one with a choice, uses or dice is in Data/Traits.lua.
+-- `spells` are learned at levels 3 and 5 and cast once per long rest without a slot.
 ---------------------------------------------------------------------------
 R.SPECIES = {
     DRACTHYR  = { name = "Dracthyr", sizes = { "M" }, speed = 30, darkvision = 60,
@@ -27,7 +28,8 @@ R.SPECIES = {
                   traits = { "Fey Ancestry", "Fury of the Small", "Nimble Escape" } },
     HARANIR   = { name = "Haranir", sizes = { "M" }, speed = 30, darkvision = 120,
                   traits = { "Gift of the World Tree", "Haranir Magic" },
-                  skills = { "Nature", "Survival" } }, -- granted by Gift of the World Tree
+                  skills = { "Nature", "Survival" }, -- granted by Gift of the World Tree
+                  spells = { "Entangle", "Spike Growth" } }, -- Haranir Magic, at levels 3 and 5
     HUMAN     = { name = "Human", sizes = { "S", "M" }, speed = 30,
                   traits = { "Resourceful", "Skillful", "Versatile" } },
     MECHAGNOME = { name = "Mechagnome", sizes = { "S" }, speed = 30,

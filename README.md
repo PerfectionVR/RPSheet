@@ -128,12 +128,57 @@ Each file does one job. `RPSheet.toc` lists them in load order.
 
 To add a theme, edit `UI/Themes.lua`. To change rules numbers, edit the files in `Data/`.
 
-## Known limits
+## Not built yet
 
-- Once-per-combat abilities, timed buffs and Heroic Interception are not automated.
-- The TRP3 tooltip section relies on Total RP 3 internals and may need an update when
-  TRP3 changes its tooltip code. If that happens the section disappears; nothing else breaks.
-- No `/say` announcements: the game blocks addons from sending those outside a direct click.
+What the rules have that the addon doesn't, kept here to track the remaining work.
+
+**Classes**
+
+- [ ] Hunter pets: the companion's stat block, pet families, and the Pet Specialization
+      feature a Beast Mastery hunter takes at level 6 in place of Roving
+- [ ] Druid Wild Shape forms (Cat Form, Bear Form and the other beast stat blocks)
+- [ ] Warlock Eldritch Invocations as a list to choose from, including the setting's
+      own (Pact of the Legion, Health Funnel and the rest)
+- [ ] Battle Master maneuvers as a list to choose from, including the setting's own
+      (Battle Shout, Mortal Strike, Heroic Leap and the rest)
+- [ ] Sorcerer Metamagic options as a list to choose from
+- [ ] Shaman totems as separate abilities, and the Path of the Elements options
+- [ ] Monk brews for the Warrior of Mystic Brews
+- [ ] Always-prepared subclass spells added automatically (only Death Knight and Demon
+      Hunter spells are offered today)
+- [ ] Multiclassing
+
+**Spells**
+
+- [ ] Core-rule spells above 1st level (the setting's own spells are in at every level)
+- [ ] Extra dice when a spell is cast with a higher slot
+- [ ] Spells that make several attacks or hit several targets in one click
+- [ ] Ritual casting and material components
+
+**Character**
+
+- [ ] Tool proficiencies and the professions and crafting rules
+- [ ] Weapon and armor lists to pick from, with weapon proficiency by class
+- [ ] Equipment, currency and magic items
+- [ ] Mounts, vehicles and companion creatures
+- [ ] Resistances, immunities and senses as tracked values
+- [ ] Renown perks by tier
+- [ ] The choices inside a feat (which spell for Magic Initiate, which skills for Skilled)
+- [ ] Tauren lineage abilities with their save DC
+
+**Play**
+
+- [ ] Conditions changing rolls by themselves (only exhaustion does)
+- [ ] Concentration saves when taking damage
+- [ ] Initiative order and turn tracking
+- [ ] A view for the DM of the whole party
+
+**Addon**
+
+- [ ] Syncing tested between two players
+- [ ] Languages other than English
+- [ ] The creation wizard and level dialog drawn in the sheet's theme (they have a
+      themed background only)
 
 ## Bundled libraries
 

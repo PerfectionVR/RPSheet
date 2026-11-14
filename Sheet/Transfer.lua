@@ -117,6 +117,14 @@ local function CleanSheet(source)
         end
     end
     if not R.ALLEGIANCES[sheet.allegiance] then sheet.allegiance = "" end
+    for _, field in ipairs({ "traitChoices", "traitGranted" }) do
+        sheet[field] = {}
+        if type(source[field]) == "table" then
+            for name in pairs(R.TRAITS) do
+                if type(source[field][name]) == "string" then sheet[field][name] = Text(source[field][name], 60) end
+            end
+        end
+    end
 
     sheet.resources = CleanList(source.resources, R.TEMPLATES.resource)
     sheet.weapons = CleanList(source.weapons, R.TEMPLATES.weapon)

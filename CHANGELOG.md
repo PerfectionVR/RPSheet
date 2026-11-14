@@ -5,6 +5,31 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Specialization suggestions: the creation wizard and the level dialog show what
+  your specialization suggests at each level (subclass, Fighting Style, weapons,
+  spells) and pre-select the single picks.
+- The wizards follow the rules; the Customize pages don't hold you to them and flag
+  in red where a choice goes beyond what the rules allow.
+- The setting's own spells for every class (69 of them, from Rune Strike to Tree of
+  Life) can be added from the spell list, at any level you have slots for. A Death
+  Knight's and Demon Hunter's subclass spells are added as always prepared.
+- Numbers checked against the rules: Darkflight, Azerite Surge, Devouring Plague and
+  Holy Bolt now roll and track what they should; Haranir learn Entangle and Spike
+  Growth; the setting's feats and the class-only Fighting Styles are included.
+- Species traits work: Skillful and Keen Senses ask for a skill and Versatile for an
+  origin feat (in the wizard and under Customize); traits with uses, such as
+  Adrenaline Rush, Stonecunning and Relentless Endurance, are clickable with a bar;
+  Troll Healing, Inner Peace and Quiet Contemplation change what hit dice heal.
+- Choices follow the rules' limits: feat prerequisites, how many weapon masteries a
+  class can use, cantrips known and spells prepared, spell levels you have slots for,
+  armor and shield training, the level a hero class starts at, and a subclass and
+  Fighting Style being part of the level that grants them. Casting a concentration
+  spell marks you as concentrating and ends the earlier one.
+- Fighting Style is a choice with working effects: Archery, Dueling, Thrown Weapon
+  Fighting and Great Weapon Fighting change your weapon rolls, Defense your Armor
+  Class. It is asked in the creation wizard and when a level grants it.
+- Weapon Mastery: each weapon can have a mastery, shown on its row and called out
+  when you attack, with the Topple save DC and Graze damage worked out.
 - Conditions and exhaustion on the sheet. Conditions are picked from a menu and
   announced; exhaustion lowers d20 rolls and speed by itself. Both are shared with
   other RP Sheet users.

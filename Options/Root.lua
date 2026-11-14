@@ -12,7 +12,7 @@ local customize = {
     args = {
         intro = {
             type = "description", order = 0, fontSize = "medium",
-            name = "Change any part of the character directly. Pick a page on the left.\n\nA new character is made with the creation wizard, and levels are taken on the Character tab. The pages here are for everything else: fixing a choice, a DM's ruling, or your own weapons, spells, abilities and passives.\n",
+            name = "Change any part of the character directly. Pick a page on the left.\n\nThe creation wizard and the level dialog follow the rules. These pages don't hold you to them: anything can be set, for a DM's ruling, a house rule or an experiment. Where a choice goes beyond what the rules allow, the page says so in red.\n",
         },
     },
 }

@@ -49,7 +49,12 @@ function RPSheet:SpendHitDie()
     end
     local sides = class and class.hitDie or ns.Rules.DEFAULT_HIT_DIE
     local mod = self:Mod("CON")
+    -- Species traits: a hit die that always heals its maximum, or a little extra per die.
+    local extra = self:TraitValue("hitDie")
+    if type(extra) == "number" then mod = mod + extra end
+    local maximum = self:TraitValue("hitDieMax") == true
     self:RollDice(1, sides, function(rolls)
+        if maximum then rolls[1] = sides end
         local healed = math.max(1, rolls[1] + mod)
         state.hitDice = state.hitDice - 1
         state.hp = math.min(self:MaxHP(), (state.hp or 0) + healed)

@@ -92,6 +92,37 @@ local function RenownRow(faction, order)
     }
 end
 
+---------------------------------------------------------------------------
+-- Species traits that ask for a choice
+---------------------------------------------------------------------------
+local function TraitPicker(name, order)
+    return {
+        type = "select", order = order,
+        name = function() return name .. (R.TRAITS[name].choice == "FEAT" and " (origin feat)" or " (skill)") end,
+        desc = function()
+            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[name] end
+            local lines = { ns.Glossary[name] or "" }
+            for _, feat in ipairs(ns.TraitOptions(Sheet(), name, true)) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feat, R.FEATS[feat].desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function()
+            for _, trait in ipairs(ns.TraitChoices(Sheet())) do
+                if trait == name then return false end
+            end
+            return true
+        end,
+        values = function() return (Opt.ListMap(ns.TraitOptions(Sheet(), name, true), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.TraitOptions(Sheet(), name, true), true))) end,
+        get = function() return Sheet().traitChoices[name] or "" end,
+        set = function(_, value)
+            Sheet().traitChoices[name] = value ~= "" and value or nil
+            Opt.Regrant()
+        end,
+    }
+end
+
 local args = {
     allegiance = {
         type = "select", order = 1, name = "Allegiance",
@@ -112,6 +143,10 @@ local args = {
         type = "description", order = 3, fontSize = "medium", name = LineageInfo,
         hidden = function() return not Lineages() end,
     },
+
+    traitSkillful = TraitPicker("Skillful", 4),
+    traitKeenSenses = TraitPicker("Keen Senses", 4.1),
+    traitVersatile = TraitPicker("Versatile", 4.2),
 
     languageHeader = { type = "header", order = 10, name = "Languages" },
     languageInfo = { type = "description", order = 11, fontSize = "medium", name = LanguageInfo },

@@ -60,7 +60,8 @@ local function Apply(sheet, feature, key)
         list[#list + 1] = entry
     end
     -- Refreshed every time, so dice and bonuses follow the level.
-    entry.desc = feature.desc
+    -- Some features read differently for each specialization.
+    entry.desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
     if isAbility then
         entry.actions = Resolve(feature.actions, sheet.level)
     else
@@ -87,6 +88,7 @@ function ns.ApplyClassFeatures(sheet)
     end
 
     EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
+    ns.ApplyFightingStyles(sheet)
 end
 
 -- Resources that come with features of their own (see Kit.Limited in Data/FeatureKit.lua),

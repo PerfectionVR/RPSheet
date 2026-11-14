@@ -1,4 +1,4 @@
--- Common cantrips and 1st-level spells, ready to add to a character's spell list
+-- Common cantrips and 1st-level spells from the core rules, ready to add to a character's spell list
 -- (see Options/Spells.lua), with short summaries in our own words. This is a starting
 -- set, not every spell: anything else is entered by hand.
 --
@@ -11,7 +11,7 @@ R.SPELLS = {}
 
 -- how: "ATTACK" (spell attack), a saving throw ability such as "DEX", or nil for no roll.
 -- dice: { count, sides } or nil. extra: other template fields.
-local function Spell(name, level, how, dice, desc, extra)
+function R.DefineSpell(name, level, how, dice, desc, extra)
     local spell = CopyTable(R.TEMPLATES.spell)
     spell.name, spell.level, spell.desc = name, level, desc
     if how == "ATTACK" then
@@ -25,6 +25,7 @@ local function Spell(name, level, how, dice, desc, extra)
     for key, value in pairs(extra or {}) do spell[key] = value end
     R.SPELLS[name] = spell
 end
+local Spell = R.DefineSpell
 
 local HEAL = { dice = "HEALING", addMod = true }
 local CONC = { concentration = true }
@@ -111,6 +112,25 @@ Spell("Thunderous Smite", 1, nil, { 2, 6 }, "After a weapon hit: extra thunder d
 Spell("Thunderwave", 1, "CON", { 2, 8 }, "Thunder damage to each creature in a 15-foot cube from you, pushing it 10 feet; half and no push on a success.")
 Spell("Witch Bolt", 1, "ATTACK", { 2, 12 }, "Lightning damage to a creature within 60 feet. On later turns a bonus action deals 1d12 more while you concentrate.", CONC)
 Spell("Wrathful Smite", 1, nil, { 1, 6 }, "After a weapon hit: extra necrotic damage, and the target is frightened of you if it fails a Wisdom save.")
+
+-- Cantrips known as { {level, cantrips}, ... } and spells prepared at each level,
+-- by Player's Handbook class.
+R.CANTRIPS_KNOWN = {
+    Cleric = { { 1, 3 }, { 4, 4 }, { 10, 5 } },
+    Druid = { { 1, 2 }, { 4, 3 }, { 10, 4 } },
+    Sorcerer = { { 1, 4 }, { 4, 5 }, { 10, 6 } },
+    Warlock = { { 1, 2 }, { 4, 3 }, { 10, 4 } },
+    Wizard = { { 1, 3 }, { 4, 4 }, { 10, 5 } },
+}
+R.SPELLS_PREPARED = {
+    Cleric = { 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 },
+    Druid = { 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 },
+    Paladin = { 2, 3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15 },
+    Ranger = { 2, 3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15 },
+    Sorcerer = { 2, 4, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 18, 19, 20, 21, 22 },
+    Warlock = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15 },
+    Wizard = { 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 18, 19, 21, 22, 23, 24, 25 },
+}
 
 R.SPELL_LISTS = {
     Cleric = {

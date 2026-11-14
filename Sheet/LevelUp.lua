@@ -44,7 +44,9 @@ function RPSheet:SetLevel(level)
     -- Going down: the choices of the lost levels are undone, and a subclass is given
     -- up below the level it is chosen at.
     Levels.Trim(sheet)
-    if level < R.SUBCLASS_LEVEL and old >= R.SUBCLASS_LEVEL then sheet.subclass = "" end
+    local class = R.CLASSES[sheet.class]
+    -- A hero class keeps its subclass: it is fixed when the character is made.
+    if level < R.SUBCLASS_LEVEL and old >= R.SUBCLASS_LEVEL and not (class and class.hero) then sheet.subclass = "" end
     ns.ApplyGrants(sheet)
     ns.NormalizeState(state)
 

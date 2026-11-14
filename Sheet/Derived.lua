@@ -134,7 +134,7 @@ function RPSheet:AC()
         end
     end
     if sheet.shield then ac = ac + R.SHIELD_AC end
-    return ac + self:Bonus("AC")
+    return ac + self:Bonus("AC") + self:StyleAC()
 end
 
 function RPSheet:Initiative()

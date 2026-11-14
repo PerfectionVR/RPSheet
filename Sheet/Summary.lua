@@ -22,11 +22,11 @@ function RPSheet:GetCharacterName()
     return UnitName("player")
 end
 
--- e.g. "Level 3 Rogue (Swashbuckler) - Human - Chaotic Good". Nil until a class is chosen.
+-- e.g. "Level 3 Outlaw Rogue (Swashbuckler) - Human - Chaotic Good". Nil until a class is chosen.
 function RPSheet:Summary()
     local sheet, class, species = self:Sheet(), self:ClassData(), self:SpeciesData()
     if not class then return end
-    local text = ("Level %d %s"):format(sheet.level, class.name)
+    local text = ("Level %d %s%s"):format(sheet.level, sheet.spec ~= "" and (sheet.spec .. " ") or "", class.name)
     if sheet.subclass ~= "" then text = text .. " (" .. sheet.subclass .. ")" end
     local parts = { text }
     if species then parts[#parts + 1] = sheet.lineage ~= "" and sheet.lineage or species.name end

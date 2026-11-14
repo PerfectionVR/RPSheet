@@ -11,6 +11,7 @@ local function PoolMax(self, pool, level)
     if pool.perLevel then
         return pool.perLevel * level
     end
+    if pool.prof then return self:ProficiencyBonus() end
     if pool.stat then
         return math.max(pool.min or 0, (pool.flat or 0) + self:Mod(pool.stat))
     end
@@ -49,6 +50,7 @@ function RPSheet:GetTrackers()
         class and class.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[sheet.subclass] or {},
         ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
         ns.LineagePools(sheet), -- a lineage's once-per-rest spells
+        ns.TraitPools(sheet),   -- species traits with uses
     }
     for _, pools in ipairs(sources) do
         for _, pool in ipairs(pools) do

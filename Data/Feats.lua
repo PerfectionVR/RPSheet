@@ -4,6 +4,11 @@
 --   stats    abilities the feat can raise by 1; none for origin feats
 --   effects  passive effects the feat has by itself (see Data/Effects.lua)
 --   repeatable  true if it can be taken more than once
+--   needStats     prerequisite: one of these abilities at 13 or higher
+--   needTraining  prerequisite: armor training ("light", "medium", "heavy", "shield")
+--   needCaster    prerequisite: a class that casts spells
+--   needAllStats  prerequisite: every one of these abilities at 13 or higher
+--   needSpecies   prerequisite: this species
 --   save     true if it also grants saving throw proficiency in the raised ability
 local _, ns = ...
 local R = ns.Rules
@@ -40,7 +45,7 @@ local LIST = {
     General("Dual Wielder", BODY, "When you attack with a light weapon you can make the extra bonus-action attack with a different weapon that isn't two-handed, and you can draw or stow two weapons at once."),
     General("Durable", { "CON" }, "Advantage on death saving throws, and as a bonus action you can spend one Hit Die to heal."),
     General("Elemental Adept", MIND, "Choose acid, cold, fire, lightning or thunder. Your spells ignore resistance to it, and you treat any 1 on its damage dice as a 2. Can be taken again for another damage type.", { repeatable = true }),
-    General("Fey Touched", MIND, "You learn Misty Step and one 1st-level divination or enchantment spell. Each can be cast once per long rest without a slot, and with your slots."),
+    General("Fey-Touched", MIND, "You learn Misty Step and one 1st-level divination or enchantment spell. Each can be cast once per long rest without a slot, and with your slots."),
     General("Grappler", BODY, "Once per turn an unarmed strike can both damage and grapple. You have advantage on attacks against a creature you grapple, and moving it doesn't slow you."),
     General("Great Weapon Master", { "STR" }, "A hit with a heavy weapon as part of the Attack action deals extra damage equal to your proficiency bonus. After a critical hit or a kill you can attack as a bonus action."),
     General("Heavily Armored", { "STR", "CON" }, "You gain training with heavy armor."),
@@ -59,8 +64,17 @@ local LIST = {
     General("Polearm Master", BODY, "Bonus action: strike with the butt of a quarterstaff, spear or reach weapon for a d4. Reaction: attack a creature that enters your reach."),
     General("Resilient", ANY, "You gain proficiency in saving throws with the ability this feat raises.", { save = true }),
     General("Ritual Caster", MIND, "You always have a few 1st-level ritual spells prepared, and once per long rest you can cast a ritual at its normal casting time."),
+    General("Sharpshooter", { "DEX" }, "Your ranged weapon attacks ignore half and three-quarters cover, being next to an enemy doesn't hinder them, and long range gives no disadvantage."),
+    General("Clearcasting", { "INT" }, "After a critical hit with a spell attack you can cast a cantrip as a reaction, and you treat any 1 on force damage dice as a 2."),
+    General("Elusive Brawler", { "DEX", "WIS" }, "Reaction when you take damage: take the Dodge action."),
+    General("Enveloping Mist", { "DEX", "WIS" }, "When you heal a creature, a mist wraps it: note one of the healing dice. As a reaction you can reduce the next hit on it by that much; otherwise it becomes temporary HP at the start of its turn."),
+    General("Fingers of Frost", { "INT" }, "Your spells ignore resistance to cold damage, and cold damage to a restrained creature adds a d4 per point of your proficiency bonus."),
+    General("Fists of Fury", { "DEX", "WIS" }, "Treat any 1 on unarmed or light-weapon damage dice as a 2, and each earlier melee hit on a creature this turn adds 1 to your unarmed damage against it."),
+    General("Hot Streak", { "INT" }, "Your spells ignore resistance to fire damage, and creatures you burn keep burning, harder each time you add fire damage."),
+    General("Inscription Adept", MIND, "You always have Illusory Script prepared and can cast it once per long rest without a slot, using herbs in place of its material component."),
+    General("Stagger and Sway", { "DEX", "WIS" }, "When you take damage, reduce it by your Dexterity modifier and add a d6 to a delayed pool, which you roll and take as force damage at the end of your turn. A bonus action removes dice equal to your Wisdom modifier."),
     General("Sentinel", BODY, "You can make an opportunity attack when a nearby creature disengages or attacks someone else. A creature you hit with one has its speed reduced to 0."),
-    General("Shadow Touched", MIND, "You learn Invisibility and one 1st-level illusion or necromancy spell. Each can be cast once per long rest without a slot, and with your slots."),
+    General("Shadow-Touched", MIND, "You learn Invisibility and one 1st-level illusion or necromancy spell. Each can be cast once per long rest without a slot, and with your slots."),
     General("Shield Master", { "STR" }, "After a melee hit you can bash with your shield to push the target 5 feet or knock it prone. Reaction: take no damage from a Dexterity save you passed."),
     General("Skill Expert", ANY, "Proficiency in one skill, and expertise in one skill you are proficient in."),
     General("Skulker", { "DEX" }, "Blindsight out to 10 feet, advantage on Stealth checks to hide during combat, and missing an attack doesn't reveal where you are."),
@@ -81,6 +95,9 @@ local LIST = {
     Origin("Savage Attacker", "Once per turn, roll a weapon's damage dice twice and use either result."),
     Origin("Skilled", "Proficiency in any three skills or tools."),
     Origin("Tavern Brawler", "Your unarmed strikes deal 1d4 + Strength, you reroll 1s on them, and once per turn a hit can push the target 5 feet. Improvised weapons count as proficient."),
+    Origin("Arathi Heritage", "Advantage on saves against being charmed, and once in a while you can turn a failed save against falling unconscious into a success. Humans only."),
+    Origin("Child of the Sea", "You can hold your breath for 2 + your Constitution modifier minutes, and you have a swimming speed equal to your speed. Humans only."),
+    Origin("Will to Survive", "While incapacitated but conscious you can ignore the condition on your turn, at the cost of one level of exhaustion. Humans only."),
     Origin("Tough", "Your maximum hit points increase by 2 for every level.", { Effect("HP", 0, "LEVEL", 2) }),
 
     Boon("Combat Prowess", "Once per turn, turn an attack that missed into a hit."),
@@ -96,6 +113,30 @@ local LIST = {
     Boon("the Night Spirit", "In dim light or darkness you can turn invisible as a bonus action, and you resist all damage except psychic and radiant."),
     Boon("Truesight", "You have truesight out to 60 feet."),
 }
+
+-- Prerequisites, beyond the level a feat becomes available at.
+local NEED_STATS = {
+    ["Actor"] = { "CHA" }, ["Athlete"] = BODY, ["Charger"] = BODY, ["Crossbow Expert"] = { "DEX" },
+    ["Defensive Duelist"] = { "DEX" }, ["Dual Wielder"] = BODY, ["Grappler"] = BODY, ["Great Weapon Master"] = { "STR" },
+    ["Inspiring Leader"] = { "WIS", "CHA" }, ["Keen Mind"] = { "INT" }, ["Observant"] = { "INT", "WIS" },
+    ["Polearm Master"] = BODY, ["Ritual Caster"] = MIND, ["Sentinel"] = BODY, ["Skulker"] = { "DEX" },
+    ["Speedy"] = { "DEX", "CON" }, ["Sharpshooter"] = { "DEX" },
+}
+-- These need every listed ability at 13 or higher.
+local NEED_ALL_STATS = {
+    ["Elusive Brawler"] = { "DEX", "WIS" }, ["Enveloping Mist"] = { "DEX", "WIS" },
+    ["Fists of Fury"] = { "DEX", "WIS" }, ["Stagger and Sway"] = { "DEX", "WIS" },
+}
+local NEED_SPECIES = { ["Arathi Heritage"] = "HUMAN", ["Child of the Sea"] = "HUMAN", ["Will to Survive"] = "HUMAN" }
+local NEED_TRAINING = {
+    ["Moderately Armored"] = "light", ["Heavily Armored"] = "medium", ["Medium Armor Master"] = "medium",
+    ["Heavy Armor Master"] = "heavy", ["Shield Master"] = "shield",
+}
+local NEED_CASTER = { ["Elemental Adept"] = true, ["Spell Sniper"] = true, ["War Caster"] = true, ["Boon of Spell Recall"] = true }
+for _, feat in ipairs(LIST) do
+    feat.needStats, feat.needTraining, feat.needCaster = NEED_STATS[feat.name], NEED_TRAINING[feat.name], NEED_CASTER[feat.name]
+    feat.needAllStats, feat.needSpecies = NEED_ALL_STATS[feat.name], NEED_SPECIES[feat.name]
+end
 
 R.FEATS = {}           -- by name
 R.FEAT_NAMES = { GENERAL = {}, BOON = {} } -- names for the dropdowns, in alphabetical order

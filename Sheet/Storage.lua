@@ -48,6 +48,7 @@ function RPSheet:UpdateSheetKey()
     if sheets[key].created then
         ns.ApplyClassFeatures(sheets[key].sheet)
         ns.ApplyLineageSpells(sheets[key].sheet)
+        ns.ApplyTraits(sheets[key].sheet)
         ns.NormalizeState(sheets[key]) -- features added just now get their full shape
     end
     self:ClampState()
@@ -79,6 +80,7 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
     ns.ApplyLineageSpells(sheet)
+    ns.ApplyTraits(sheet)
     ns.NormalizeState(state)
     self:ClampState(true)
     ns.RebuildOptions()

@@ -1,6 +1,7 @@
 -- "Weapons" tab.
 local _, ns = ...
 local R = ns.Rules
+local RPSheet = ns.addon
 local Opt = ns.Opt
 local With = Opt.With
 
@@ -27,6 +28,35 @@ local function Build(weapon)
             type = "toggle", order = 6, name = "Healing, no attack roll",
             desc = "Rolls the dice as healing and skips the d20.",
         }, self, "heal"),
+        style = With({
+            type = "toggle", order = 7, name = "Fighting Style applies",
+            desc = "Adds your Fighting Style's bonus to this weapon. Untick it for weapons the style doesn't cover, such as a melee weapon with Archery.",
+            hidden = function() return not RPSheet:StyleAffectsWeapons() end,
+        }, self, "style"),
+        mastery = With({
+            type = "select", order = 8,
+            name = function()
+                local limit = RPSheet:MasteryLimit()
+                local used = RPSheet:MasteriesUsed()
+                if limit == 0 then return "Mastery" end
+                return ("Mastery (%s%d of %d used|r)"):format(used > limit and Opt.RED or "", used, limit)
+            end,
+            desc = function()
+                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature. Your class allows the mastery of a set number of weapons; the count turns red when you go over it." }
+                for _, name in ipairs(R.MASTERY_ORDER) do
+                    if name ~= "" then lines[#lines + 1] = ("|cffffd100%s|r: %s"):format(name, R.MASTERIES[name].desc) end
+                end
+                return table.concat(lines, "\n\n")
+            end,
+            values = function()
+                local values = { [""] = "None" }
+                for _, name in ipairs(R.MASTERY_ORDER) do
+                    if name ~= "" then values[name] = name end
+                end
+                return values
+            end,
+            sorting = R.MASTERY_ORDER,
+        }, self, "mastery"),
     }
 end
 

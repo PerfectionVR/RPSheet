@@ -24,7 +24,21 @@ local function AsksSubclass()
     return draft.level >= R.SUBCLASS_LEVEL and Sheet().subclass == "" and class and #class.subclasses > 0
 end
 
+-- The Fighting Style slot (1 or 2) this level opens, or nil.
+local function StyleSlot()
+    if not draft or not draft.taking then return end
+    local sheet = Sheet()
+    local subclass = sheet.subclass ~= "" and sheet.subclass or draft.subclass
+    for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, subclass, draft.level)) do
+        for slot, name in ipairs(ns.STYLE_FEATURES) do
+            if feature.name == name then return slot end
+        end
+    end
+end
+
 local function Problem()
+    if AsksSubclass() and draft.taking and draft.subclass == "" then return "Choose a subclass: it is part of this level." end
+    if StyleSlot() and draft.style == "" then return "Choose a Fighting Style: it is part of this level." end
     return draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
 end
 
@@ -67,6 +81,11 @@ local function Gains()
             lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feature.name, feature.desc)
         end
     end
+    -- What the specialization suggests for this level.
+    local suggestions = R.SpecSuggestions(sheet.class, sheet.spec, level)
+    if #suggestions > 0 then
+        lines[#lines + 1] = ("\n%sSuggested for %s|r: %s"):format(Opt.GOLD, sheet.spec, table.concat(suggestions, " "))
+    end
     if draft.taking and class and class.cast then
         lines[#lines + 1] = "\nSpell slots and class resources that grow are listed in chat when you take the level."
     end
@@ -92,16 +111,20 @@ local function FeatStats()
     return allowed
 end
 
--- Listed feats the character can still take here: one it already has from elsewhere
--- is left out, unless that feat can be taken more than once.
+-- The listed feats for this level, those the character can take first. Returns the
+-- names in order and, for the ones it can't take, why not.
 local function FeatChoices()
-    local names = {}
+    local open, closed, why = {}, {}, {}
     for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do
-        if R.FEATS[name].repeatable or not Levels.HasFeat(Sheet(), name, draft and draft.level or 0) then
-            names[#names + 1] = name
+        local block = Levels.FeatBlock(Sheet(), draft and draft.level or 0, name)
+        if block then
+            closed[#closed + 1], why[name] = name, block
+        else
+            open[#open + 1] = name
         end
     end
-    return names
+    for _, name in ipairs(closed) do open[#open + 1] = name end
+    return open, why
 end
 
 local function Text(value, length)
@@ -140,6 +163,22 @@ local args = {
         set = function(_, value) draft.subclass = value end,
     },
 
+    style = {
+        type = "select", order = 11, name = "Fighting Style", width = "double",
+        desc = function()
+            local lines = {}
+            for _, style in ipairs(R.FIGHTING_STYLE_ORDER) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, style, R.FIGHTING_STYLES[style].desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function() return not StyleSlot() end,
+        values = function() return (Opt.ListMap(ns.StyleChoices(Sheet(), StyleSlot() or 1), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices(Sheet(), StyleSlot() or 1), true))) end,
+        get = function() return draft.style end,
+        set = function(_, value) draft.style = value end,
+    },
+
     choiceHeader = {
         type = "header", order = 20,
         name = function() return draft and draft.kind == "BOON" and "Epic Boon" or "Ability Score Improvement or feat" end,
@@ -172,12 +211,15 @@ local args = {
         hidden = function() return not IsFeat() end,
         values = function()
             local values = { [""] = "Other (type a name)" }
-            for _, name in ipairs(FeatChoices()) do values[name] = name end
+            local names, why = FeatChoices()
+            for _, name in ipairs(names) do
+                values[name] = why[name] and ("|cff888888%s (%s)|r"):format(name, why[name]) or name
+            end
             return values
         end,
         sorting = function()
             local order = FeatChoices()
-            order[#order + 1] = ""
+            table.insert(order, 1, "")
             return order
         end,
         get = function() return KnownFeat() and draft.record.feat or "" end,
@@ -245,6 +287,8 @@ local args = {
         func = function()
             local sheet, level, taking = Sheet(), draft.level, draft.taking
             if AsksSubclass() and draft.subclass ~= "" then sheet.subclass = draft.subclass end
+            local slot = StyleSlot()
+            if slot and draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = draft.style end
             if draft.kind then Levels.Set(sheet, level, draft.record) end
             if taking then
                 RPSheet:SetLevel(level)
@@ -306,10 +350,21 @@ function ns.OpenLevelDialog(level, reopen)
     local kind = Levels.Kind(sheet, level)
     local record = Levels.Record(sheet, level)
     draft = {
-        level = level, taking = level > sheet.level, kind = kind, subclass = "", reopen = reopen,
+        level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     if kind == "BOON" then draft.record.choice = "FEAT" end
+    -- The specialization's suggestions are pre-selected; the player can pick otherwise.
+    local guide = R.SpecGuide(sheet.class, sheet.spec)
+    if guide then
+        if guide.subclass and AsksSubclass() then draft.subclass = guide.subclass end
+        local slot = StyleSlot()
+        if guide.style and slot then
+            for _, name in ipairs(ns.StyleChoices(sheet, slot)) do
+                if name == guide.style then draft.style = name end
+            end
+        end
+    end
     -- One window at a time: the settings window would sit underneath and show through.
     -- A moment later, for the reason given at Finish.
     C_Timer.After(0, function()

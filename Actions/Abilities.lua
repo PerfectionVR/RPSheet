@@ -16,7 +16,9 @@ function RPSheet:ActionText(action)
         if action.proficient then parts[#parts + 1] = "proficiency" end
         return ("%s: %s"):format(R.ROLL_KINDS[action.kind] or "Roll", table.concat(parts, " + "))
     elseif kind == "DICE" then
-        local text = ("%s: %dd%d"):format(R.DICE_KINDS[action.dice] or "Dice", action.count, action.sides)
+        local text = R.DICE_KINDS[action.dice] or "Dice"
+        text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
+        if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
         if R.AMOUNT_SOURCES[action.stat] and action.stat ~= "" then
             text = text .. " + " .. (R.AMOUNT_SHORT[action.stat] or action.stat)
         end
@@ -186,12 +188,14 @@ function RPSheet:UseAbility(ability, mode)
             end)
         elseif action.type == "DICE" then
             local word, bonus = ns.DiceWord(action.dice)
-            local mod = self:Amount(0, action.stat, 1) + PassiveBonus(bonus)
+            local mod = self:Amount(action.flat or 0, action.stat, 1) + PassiveBonus(bonus)
             local doubled = critical and word == "damage"
             self:RollDice(action.count * (doubled and 2 or 1), action.sides, function(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
-                parts[#parts + 1] = RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
-                    .. (note and (" (" .. note .. ")") or "")
+                -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
+                local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
+                    or ("%s %d"):format(word, mod)
+                parts[#parts + 1] = text .. (note and (" (" .. note .. ")") or "")
                 step()
             end)
         elseif action.type == "WEAPON" then

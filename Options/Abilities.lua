@@ -50,8 +50,13 @@ local function StepOptions(ability, index, action)
 
             -- Roll dice
             count = With({
-                type = "range", order = 6, min = 1, max = 20, step = 1, name = "Number of dice", hidden = Only("DICE"),
+                type = "range", order = 6, min = 0, max = 20, step = 1, name = "Number of dice", hidden = Only("DICE"),
+                desc = "0 rolls nothing and gives just the flat amount and the modifier.",
             }, this, "count"),
+            flat = With({
+                type = "range", order = 6.5, min = -20, max = 100, softMin = 0, softMax = 20, step = 1, name = "Flat amount",
+                hidden = Only("DICE"),
+            }, this, "flat"),
             sides = With({
                 type = "select", order = 7, name = "Die", hidden = Only("DICE"),
                 values = Opt.DIE_VALUES, sorting = Opt.DIE_ORDER,

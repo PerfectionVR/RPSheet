@@ -89,7 +89,8 @@ local function ApplySpecies(sheet, species)
 
     local lineages = R.LINEAGES[sheet.species]
     for _, trait in ipairs(species.traits) do
-        if not (lineages and lineages.trait == trait) then
+        -- A trait with uses or dice is an ability, added by ns.ApplyTraits.
+        if not (lineages and lineages.trait == trait) and not R.TraitIsAbility(trait) then
             AddPassive(sheet, trait, Describe(trait, species.name .. " trait."), species.effects and species.effects[trait])
         end
     end
@@ -122,4 +123,5 @@ function ns.ApplyGrants(sheet)
     if background then ApplyBackground(sheet, background) end
     ns.ApplyClassFeatures(sheet)
     ns.ApplyLineageSpells(sheet)
+    ns.ApplyTraits(sheet)
 end

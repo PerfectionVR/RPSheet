@@ -65,6 +65,13 @@ function RPSheet:CastSpell(spell, mode)
 
     local function finish()
         if slot then slot.set(slot.get() - 1) end
+        -- Only one spell can be concentrated on: a new one replaces the old.
+        if spell.concentration then
+            local conditions = self:State().conditions
+            parts[#parts + 1] = conditions.Concentrating and "concentrating on it now, the earlier spell ends" or "concentrating"
+            conditions.Concentrating = true
+            self:PopulateSoon()
+        end
         local text = "casts " .. spell.name
         if slot then text = text .. (" (%s)"):format(slot.label) end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end

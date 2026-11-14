@@ -156,10 +156,19 @@ local function CombatSection(self, body)
     end
 
     self.attackLabel = nil
-    if self:GetWeapon() then
+    local weapon = self:GetWeapon()
+    if weapon then
+        local help = "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP
+        local name, mastery = self:WeaponMastery(weapon)
+        if name then help = help .. ("\n\n%s%s|r: %s"):format(UI.ACCENT, name, mastery.desc) end
         self.attackLabel = UI.AddLabel(body, 1, "", function(button)
-            if button == "RightButton" then self:SwapWeapon() else self:Attack(ns.RollMode()) end
-        end, "Attack", "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP)
+            if button == "RightButton" then
+                self:SwapWeapon()
+                self:PopulateSoon() -- the tooltip follows the weapon
+            else
+                self:Attack(ns.RollMode())
+            end
+        end, "Attack", help)
     end
 end
 
