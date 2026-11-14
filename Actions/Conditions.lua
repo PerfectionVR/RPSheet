@@ -18,11 +18,29 @@ function RPSheet:Exhaustion()
     return self:State().exhaustion or 0
 end
 
+-- Conditions that leave a character incapacitated, which ends concentration.
+local INCAPACITATES = { Incapacitated = true, Paralyzed = true, Petrified = true, Stunned = true, Unconscious = true }
+
+-- Ends the spell being concentrated on, with the reason for the announcement. Does
+-- nothing when the character isn't concentrating.
+function RPSheet:EndConcentration(reason)
+    local conditions = self:State().conditions
+    if not conditions.Concentrating then return end
+    conditions.Concentrating = nil
+    -- A save still waiting for the damage clicks to stop is no longer needed.
+    if self.concentrationTimer then self.concentrationTimer:Cancel() end
+    self.concentrationDamage, self.concentrationTimer = nil, nil
+    self:Announce(("loses %s: %s."):format(ns.Mark("Concentrating"), reason))
+    self:QueueBroadcast()
+    self:PopulateSoon()
+end
+
 function RPSheet:ToggleCondition(name)
     local conditions = self:State().conditions
     conditions[name] = not conditions[name] or nil
     local term = ns.Mark(name)
     self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
+    if conditions[name] and INCAPACITATES[name] then self:EndConcentration(name:lower()) end
     self:QueueBroadcast()
     self:PopulateSoon()
 end

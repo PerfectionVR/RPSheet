@@ -6,7 +6,7 @@ local R = ns.Rules
 R.CONDITIONS = {
     { name = "Blinded", desc = "You can't see and fail checks that need sight. Your attacks have disadvantage; attacks against you have advantage." },
     { name = "Charmed", desc = "You can't attack the charmer or target them with harmful effects, and they have advantage on social checks with you." },
-    { name = "Concentrating", desc = "You are holding a spell. Taking damage forces a Constitution save (DC 10, or half the damage if higher) to keep it. Casting another concentration spell ends it." },
+    { name = "Concentrating", desc = "You are holding a spell. Taking damage forces a Constitution save (DC 10, or half the damage if higher) to keep it. Casting another concentration spell ends it, and so does dropping to 0 hit points or being incapacitated." },
     { name = "Deafened", desc = "You can't hear and fail checks that need hearing." },
     { name = "Frightened", desc = "Disadvantage on checks and attacks while the source of your fear is in sight, and you can't willingly move closer to it." },
     { name = "Grappled", desc = "Your speed is 0. You have disadvantage on attacks against anyone but the grappler, who can drag you along." },

@@ -75,6 +75,7 @@ local function TrackerSection(self, body)
         if tracker.kind == "hp" and wasDown ~= self:IsDown() then
             -- Dropping to 0 shows the death save row; getting back up removes it.
             self:ClearDeathSaves()
+            if self:IsDown() then self:EndConcentration("at 0 hit points") end
             PopulateSoon(self)
         end
         self:Refresh()

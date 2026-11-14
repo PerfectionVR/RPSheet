@@ -76,6 +76,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   Azeroth are shown apart: in the level dialog, the spellbook and the dropdowns.
 - Spells are listed per spell level, in the level dialog, the spellbook and on the
   sheet, and each level's line shows the spell slots left of that level.
+- Concentration ends by itself at 0 hit points and when you become incapacitated,
+  paralyzed, petrified, stunned or unconscious.
 - Arcane Pulse no longer grows with level.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
