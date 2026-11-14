@@ -74,6 +74,7 @@ Sheet\Storage.lua
 Sheet\Derived.lua
 Sheet\Forms.lua
 Sheet\RollModes.lua
+Sheet\Limits.lua
 Sheet\Senses.lua
 Sheet\Tools.lua
 Sheet\Combat.lua

@@ -81,8 +81,11 @@ end
 
 -- The mode a roll ends up with: `mode` is what the player chose ("ADV", "DIS" or nil).
 -- Advantage and disadvantage from any number of sources cancel each other out.
-function RPSheet:ResolveMode(label, mode)
+-- `also` is a second label the roll goes by, such as "STR attack" for an attack made
+-- with Strength.
+function RPSheet:ResolveMode(label, mode, also)
     local advantage = mode == "ADV" or self:HasAdvantage(label) or self:AdvantageFrom(label) ~= nil
+        or (also ~= nil and self:HasAdvantage(also))
     local disadvantage = mode == "DIS" or self:DisadvantageFrom(label) ~= nil
     if advantage and disadvantage then return nil end
     return (advantage and "ADV") or (disadvantage and "DIS") or nil

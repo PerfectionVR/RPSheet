@@ -32,7 +32,7 @@ local function AddBonuses(self, parts, target)
         Add(parts, "exhaustion", -R.EXHAUSTION_SPEED * exhaustion)
     end
     for _, passive in ipairs(self:Sheet().passives) do
-        if passive.enabled and passive.name ~= "" then
+        if passive.enabled and passive.name ~= "" and not self:PassiveBlocked(passive) then
             for _, effect in ipairs(passive.effects) do
                 if effect.target == target then Add(parts, passive.name, self:EffectValue(effect)) end
             end
@@ -208,6 +208,7 @@ function RPSheet:ExplainWeapon(weapon)
     if weapon.proficient then Add(hit, "proficiency", self:ProficiencyBonus()) end
     AddBonuses(self, hit, "ATTACK")
     AddBonuses(self, damage, "DAMAGE")
+    if self:WeaponStat(weapon) == "STR" then AddBonuses(self, damage, "STRDAMAGE") end
     -- Fighting Styles that fit this weapon (see RPSheet:WeaponStyle).
     local seen = {}
     for slot, field in ipairs(ns.STYLE_FIELDS) do

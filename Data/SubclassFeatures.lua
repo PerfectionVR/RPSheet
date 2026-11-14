@@ -19,7 +19,7 @@ R.SUBCLASS_POOLS = {
         { name = "Superiority Dice", short = "ALL", steps = { { 3, 4 }, { 7, 5 }, { 15, 6 } } },
     },
     ["Warrior of Mystic Brews"] = {
-        { name = "Refreshing Dip Dice", from = 6, stat = "WIS", halfLevel = true, min = 1 },
+        { name = "Refreshing Dip Dice", from = 6, stat = "WIS", halfLevel = true, min = 1, short = "ALL" },
     },
     ["Soulknife"] = {
         { name = "Psionic Energy Dice", short = 1, steps = { { 3, 4 }, { 5, 6 }, { 9, 8 }, { 13, 10 }, { 17, 12 } } },
@@ -433,8 +433,10 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Implements of Mercy", "Proficiency in Insight and Medicine and with the herbalism kit.", nil, { skills = { "Insight", "Medicine" } }),
         Ability(3, "Hand of Harm", "Once per turn when you hit with an unarmed strike: extra necrotic damage.",
             function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS") } end),
-        Ability(3, "Hand of Healing", "Magic action: touch a creature to heal it. It can also replace one strike of your Flurry of Blows at no cost.",
+        Ability(3, "Hand of Healing", "Magic action: touch a creature to heal it. In place of a Flurry of Blows strike it costs nothing: use Hand of Healing: with Flurry.",
             function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
+        Ability(3, "Hand of Healing: with Flurry", "In place of one strike of your Flurry of Blows: the same healing, without spending focus.",
+            function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
         Passive(6, "Physician's Touch", "Hand of Harm can also poison its target until the end of your next turn. Hand of Healing can also end one of blinded, deafened, paralyzed, poisoned or stunned."),
         Limited(11, "Flurry of Healing and Harm", "With Flurry of Blows, each strike can be a free Hand of Healing, and one damaging strike can use Hand of Harm without spending focus. Uses equal to your Wisdom modifier per long rest.",
             { stat = "WIS" }),
@@ -452,7 +454,7 @@ R.SUBCLASS_FEATURES = {
             return ("Brew. Magic action: toxic flames in a 30-foot cone. Fire damage and poisoned until the end of its next turn; half damage only on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
         end, function(level) return { Dice(4, Kit.MartialDie(level)) } end),
         Passive(6, "Heavenly Spirit", "Brew. Resistance to two of cold, necrotic, psychic and radiant damage, your choice.", nil, true),
-        Ability(6, "Refreshing Dip", "Brew. Whenever you regain hit points, spend a die from the pool to regain that much more.",
+        Ability(6, "Refreshing Dip", "Brew. Whenever you regain hit points, spend a die from the pool to regain that much more. The pool is your Wisdom modifier plus half your level, and is full again with each new brew, so after every rest.",
             function(level) return { Spend("Refreshing Dip Dice"), Dice(1, Kit.MartialDie(level), "", "SELFHEAL") } end),
         Passive(6, "Tipsy Sway", "You can stand up from prone for 5 feet of movement."),
         Ability(6, "Redirect Attack", "Reaction when an enemy misses you with a melee attack: it hits another creature of your choice within 5 feet of you, other than the attacker.",
@@ -473,8 +475,11 @@ R.SUBCLASS_FEATURES = {
             { stat = "WIS" }, function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "SELFHEAL") } end),
         Passive(11, "Fleet Step", "After any bonus action other than Step of the Wind you can also use Step of the Wind."),
         Ability(17, "Quivering Palm", function(_, sheet)
-            return ("When you hit with an unarmed strike: set up lethal vibrations that last a number of days equal to your level. Later, as an action or in place of an attack, end them: the target takes the roll as force damage, half on a successful Constitution save, DC %d. Click once to set up (spends the focus); roll the damage when you end them."):format(Kit.DC(sheet, "WIS"))
-        end, { Spend("Focus Points", 4), Dice(10, 12) }),
+            return ("When you hit with an unarmed strike: set up lethal vibrations that last a number of days equal to your level. Later, as an action or in place of an attack, end them: the target takes the roll as force damage, half on a successful Constitution save, DC %d. This click sets them up and spends the focus; Quivering Palm: end rolls the damage."):format(Kit.DC(sheet, "WIS"))
+        end, { Spend("Focus Points", 4) }),
+        Ability(17, "Quivering Palm: end", function(_, sheet)
+            return ("As an action, or in place of an attack: end the vibrations you set up. The target takes the roll as force damage, half on a successful Constitution save, DC %d."):format(Kit.DC(sheet, "WIS"))
+        end, { Dice(10, 12) }),
     },
 
     ---------------------------------------------------------------------------
@@ -550,7 +555,7 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Potent Cantrip", "A damaging cantrip still deals half damage when it misses or the target saves, with no other effect."),
         Passive(6, "Sculpt Spells", "When you cast an evocation spell you can protect creatures you can see, one more than the spell's level: they pass the save and take no damage."),
         Passive(10, "Empowered Evocation", "Add your Intelligence modifier to one damage roll of any evocation spell you cast."),
-        Ability(14, "Overchannel", "Deal maximum damage with a damaging spell of level 1 to 5 on the turn you cast it. The first use each long rest is free. After that, roll this for each level of the slot and take it as necrotic damage; it grows by 1d12 per level with each further use.",
-            { Dice(2, 12) }),
+        Limited(14, "Overchannel", "Deal maximum damage with a damaging spell of level 1 to 5 on the turn you cast it. The first use after a long rest costs nothing. Each later use rolls necrotic damage that you take and that ignores resistance and immunity: 2d12 for each level of the slot, and 1d12 more per level with every further use. Set the slot's level at \"Cast at\" before you click, and lower your HP by the roll. The bar counts the uses.",
+            10, { Kit.Strain(Kit.PerSlot(Dice(2, 12)), "Overchannel") }),
     },
 }

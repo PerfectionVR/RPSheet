@@ -286,6 +286,8 @@ local function PassiveSection(self, body)
         for _, effect in ipairs(passive.effects) do
             lines[#lines + 1] = UI.GREEN .. self:EffectText(effect) .. "|r"
         end
+        local stopped = self:PassiveBlocked(passive)
+        if stopped then lines[#lines + 1] = ("Not counted now: you have %s on."):format(stopped) end
         lines[#lines + 1] = "|cff909090Click to switch " .. (passive.enabled and "off" or "on") .. "|r"
         local text = passive.enabled and passive.name or (UI.GREY .. passive.name .. " (off)|r")
         UI.AddLabel(body, 0.5, text, function()

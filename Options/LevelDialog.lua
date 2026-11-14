@@ -541,7 +541,23 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
                 return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
-            set = function(_, value) draft.picks[key][name] = value or nil end,
+            set = function(_, value)
+                local picked = draft.picks[key]
+                picked[name] = value or nil
+                -- Dropping a pick drops the ones that build on it.
+                local dropped = not value
+                while dropped do
+                    dropped = false
+                    for other in pairs(picked) do
+                        local needs = list.items[other] and list.items[other].needs
+                        if needs and not picked[needs] then
+                            picked[other] = nil
+                            dropped = true
+                            break
+                        end
+                    end
+                end
+            end,
         }
     end
     args["picks" .. key] = group

@@ -27,6 +27,7 @@ end
 --   scores = { DEX = 4 }  ability scores it raises, to a maximum of 25
 --   strike = { sides = 8, damage = "radiant" }  a die added to every melee weapon hit
 --   spec = "Blood"     only for a character of that specialization (abilities too)
+--   limit = "UNARMORED" or "NOHEAVY"  armor that stops its effects (Sheet/Limits.lua)
 --   when = function(sheet)  only while this is true (any kind of feature); the sheet
 --                      may be a stand-in with just class, subclass and level
 function Kit.Passive(level, name, desc, effects, extra)
@@ -113,6 +114,13 @@ end
 -- Dice that gain `more` dice for each level of the spent slot above 1st (a smite).
 function Kit.SlotAdd(dice, more)
     dice.slotAdd = more
+    return dice
+end
+
+-- Dice that grow by one for each earlier use of `resource` since a long rest; the
+-- first use rolls nothing (Overchannel).
+function Kit.Strain(dice, resource)
+    dice.strain = resource
     return dice
 end
 

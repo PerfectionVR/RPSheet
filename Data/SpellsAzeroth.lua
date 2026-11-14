@@ -29,7 +29,7 @@ Spell("Void Eruption", 5, "CON", { 5, 6 }, "Bonus action. Void energy bursts in 
 Spell("Apotheosis", 9, nil, nil, "Bonus action. You take a spectral, angelic form: a flying speed of 90 feet, damage resistances and stronger healing.")
 
 -- Wizard (Mage)
-Spell("Arcane Pulse", 0, "CON", { 1, 8 }, "A pulse of arcane force within 10 feet of you: force damage to creatures you choose on a failed save.")
+Spell("Arcane Pulse", 0, "CON", { 1, 8 }, "A pulse of arcane force within 10 feet of you: force damage to creatures you choose on a failed save, and their speed drops by 10 feet until the end of your next turn. It does not grow with your level.")
 Spell("Frost Nova", 1, "CON", { 2, 6 }, "A burst of frost within 15 feet of you: cold damage to creatures you choose, half on a successful save. Those who fail are also held in place.")
 Spell("Flurry", 3, "ATTACK", { 3, 6 }, "Three shards of ice at one target or several, each with its own spell attack: click once per shard. A critical hit restrains the target.")
 Spell("Combustion", 6, nil, nil, "You wreathe yourself in flames: immunity to fire damage and advantage on your spell attacks while it lasts. At the end of each of your turns, creatures you choose within 5 feet take 3d8 fire damage.")

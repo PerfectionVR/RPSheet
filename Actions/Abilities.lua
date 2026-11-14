@@ -21,6 +21,7 @@ function RPSheet:ActionText(action)
         text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
         if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
         if action.perSlot then text = text .. " per slot level" end
+        if (action.strain or "") ~= "" then text = text .. ", more with each use" end
         if (action.slotAdd or 0) > 0 then text = text .. (", +%dd%d per slot level above 1st"):format(action.slotAdd, action.sides) end
         if R.AMOUNT_SOURCES[action.stat] and action.stat ~= "" then
             text = text .. " + " .. (R.AMOUNT_SHORT[action.stat] or action.stat)
@@ -182,13 +183,17 @@ function RPSheet:UseAbility(ability, mode)
     -- passive damage bonus, and a natural 20 doubles its damage dice. Dice without an
     -- attack roll (Sneak Attack, a smite) are extra damage on top of a hit that already
     -- had the bonus. Each bonus is added once per use, however many dice steps there are.
-    local isAttack, critical, bonusUsed = false, false, {}
+    local isAttack, critical, bonusUsed, attackStat = false, false, {}, nil
     for _, action in ipairs(ability.actions) do
-        if action.type == "ROLL" and (action.kind == "ATTACK" or action.kind == "SPELL") then isAttack = true end
+        if action.type == "ROLL" and (action.kind == "ATTACK" or action.kind == "SPELL") then
+            isAttack = true
+            if action.kind == "ATTACK" then attackStat = action.stat end
+        end
     end
     local function PassiveBonus(target)
         if not target or bonusUsed[target] or (target == "DAMAGE" and not isAttack) then return 0 end
         bonusUsed[target] = true
+        if target == "DAMAGE" then return self:DamageBonus(attackStat) end
         return self:Bonus(target)
     end
 
@@ -221,7 +226,7 @@ function RPSheet:UseAbility(ability, mode)
             local label, mod = RollStep(self, action)
             local rollMode = mode
             if action.kind == "ATTACK" then
-                rollMode = self:ResolveMode("attack", mode)
+                rollMode = self:ResolveMode("attack", mode, action.stat == "STR" and "STR attack" or nil)
             elseif action.kind == "SPELL" then
                 rollMode = self:ResolveMode("spell attack", mode)
             end
@@ -234,11 +239,23 @@ function RPSheet:UseAbility(ability, mode)
         elseif action.type == "DICE" then
             local word, bonus = ns.DiceWord(action.dice)
             -- Some dice count once per level of the slot the ability spent.
-            local times = action.perSlot and (costs.slotLevel or 1) or 1
+            -- Without a slot of its own the ability goes by the "Cast at" row.
+            local times = action.perSlot and (costs.slotLevel or self.castLevel or 1) or 1
+            -- Dice that grow with each use since a long rest; the first use rolls none.
+            local count = action.count
+            if (action.strain or "") ~= "" then
+                local tracker = self:FindTracker(action.strain)
+                local used = tracker and (tracker.max - tracker.get()) or 0
+                if used == 0 then
+                    parts[#parts + 1] = "the first use costs nothing"
+                    return step()
+                end
+                count = count + used - 1
+            end
             local mod = self:Amount((action.flat or 0) * times, action.stat, 1) + PassiveBonus(bonus)
             local doubled = critical and word == "damage"
             local more = (action.slotAdd or 0) * math.max(0, (costs.slotLevel or 1) - 1)
-            self:RollDice((action.count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
+            self:RollDice((count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
@@ -251,7 +268,8 @@ function RPSheet:UseAbility(ability, mode)
             if not weapon then return step() end
             -- The weapon's own damage always counts as an attack's damage.
             local target = weapon.heal and "HEALING" or "DAMAGE"
-            local mod = self:Mod(self:WeaponStat(weapon)) + (bonusUsed[target] and 0 or self:Bonus(target))
+            local stat = self:WeaponStat(weapon)
+            local mod = self:Mod(stat) + (bonusUsed[target] and 0 or (weapon.heal and self:Bonus(target) or self:DamageBonus(stat)))
             bonusUsed[target] = true
             local doubled = critical and not weapon.heal
             local count, sides = self:WeaponDice(weapon)

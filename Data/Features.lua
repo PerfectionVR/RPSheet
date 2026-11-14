@@ -49,16 +49,16 @@ R.FEATURES = {
         Ability(1, "Rage", "Bonus action, not in heavy armor. Until the end of your next turn, extended each turn you attack, force a save or spend a bonus action (up to 10 minutes): resistance to bludgeoning, piercing and slashing damage, bonus damage on Strength attacks, and advantage on Strength checks and saves. You can't cast spells or concentrate. One use comes back on a short rest. Switches Raging on.",
             { Spend("Rage"), SwitchOn("Raging") }),
         Passive(1, "Raging", function(level)
-            return ("Switch on while you rage. Adds %d to your damage rolls and gives advantage on Strength checks, Strength saves and Athletics, which the sheet rolls for you."):format(Kit.RageDamage(level))
-        end, function(level) return { Bonus("DAMAGE", Kit.RageDamage(level)) } end,
+            return ("Switch on while you rage. Adds %d to the damage of your Strength attacks and gives advantage on Strength checks, Strength saves and Athletics, which the sheet rolls for you."):format(Kit.RageDamage(level))
+        end, function(level) return { Bonus("STRDAMAGE", Kit.RageDamage(level)) } end,
             { startsOff = true, advantage = { "STR check", "STR save", "Athletics" } }),
         WEAPON_MASTERY,
         Passive(2, "Danger Sense", "Advantage on Dexterity saving throws unless you are incapacitated. The sheet rolls them this way.", nil, { advantage = { "DEX save" } }),
         Ability(2, "Reckless Attack", "On your first attack of a turn: advantage on Strength attacks until your next turn, but attacks against you have advantage too. Switches Reckless on; switch it off at the start of your next turn.",
             { SwitchOn("Reckless") }),
-        Passive(2, "Reckless", "Switch on while you attack recklessly: the sheet rolls your attacks with advantage.", nil, { startsOff = true, advantage = { "attack" } }),
+        Passive(2, "Reckless", "Switch on while you attack recklessly: the sheet rolls your Strength attacks with advantage.", nil, { startsOff = true, advantage = { "STR attack" } }),
         ExtraAttack(5),
-        Passive(5, "Fast Movement", "Your speed increases by 10 feet while you aren't wearing heavy armor.", { Bonus("SPEED", 10) }),
+        Passive(5, "Fast Movement", "Your speed increases by 10 feet while you aren't wearing heavy armor; the sheet leaves it out when you are.", { Bonus("SPEED", 10) }, { limit = "NOHEAVY" }),
         Passive(7, "Feral Instinct", "Advantage on initiative rolls, which the sheet rolls for you.", nil, { advantage = { "initiative" } }),
         Passive(7, "Instinctive Pounce", "When you enter your Rage you can move up to half your speed as part of that bonus action."),
         Ability(9, "Brutal Strike", function(level)
@@ -197,8 +197,8 @@ R.FEATURES = {
             return "Bonus action. Disengage and Dash together, and your jump distance doubles. Without spending focus you can still Dash."
                 .. (level >= 10 and " You can carry a willing Large or smaller creature within 5 feet along with you." or "")
         end, { Spend("Focus Points") }),
-        Passive(2, "Unarmored Movement", "Your speed increases while you wear no armor and carry no shield.",
-            function(level) return { Bonus("SPEED", AtLevel(level, { { 2, 10 }, { 6, 15 }, { 10, 20 }, { 14, 25 }, { 18, 30 } })) } end),
+        Passive(2, "Unarmored Movement", "Your speed increases while you wear no armor and carry no shield; the sheet leaves it out otherwise.",
+            function(level) return { Bonus("SPEED", AtLevel(level, { { 2, 10 }, { 6, 15 }, { 10, 20 }, { 14, 25 }, { 18, 30 } })) } end, { limit = "UNARMORED" }),
         Limited(2, "Uncanny Metabolism", "Once per long rest, when you roll initiative: regain all Focus Points and heal by the roll.", 1,
             function(level) return { { type = "GAIN", resource = "Focus Points", amount = 20 }, Dice(1, Kit.MartialDie(level), "LEVEL", "SELFHEAL") } end),
         Ability(3, "Deflect Attacks", function(level)
@@ -265,8 +265,8 @@ R.FEATURES = {
         Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in, and two more languages of your choice. The skill is chosen when you level.", nil, { flags = { languages = 2 }, expertise = { steps = { { 2, 1 } } } }),
         Passive(2, "Fighting Style", FIGHTING_STYLE),
         ExtraAttack(5),
-        Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) },
-            { when = function(sheet) return sheet.subclass ~= "Beast Master" end }), -- a Beast Master has Pet Specialization in its place
+        Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor (the sheet leaves it out in heavy armor), and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) },
+            { limit = "NOHEAVY", when = function(sheet) return sheet.subclass ~= "Beast Master" end }), -- a Beast Master has Pet Specialization in its place
         Passive(9, "Expertise", "Expertise in two more skills you are proficient in. They are chosen when you level.", nil, { expertise = { steps = { { 9, 2 } } } }),
         Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. Uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
             { stat = "WIS" }, { Dice(1, 8, "WIS", "TEMPHP") }),

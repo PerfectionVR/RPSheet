@@ -96,6 +96,7 @@ local function Apply(sheet, feature, key)
     if type(advantage) == "function" then advantage = advantage(sheet.level, sheet) end
     entry.advantage = advantage and CopyTable(advantage) or nil
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
+    entry.limit = feature.limit -- armor that stops it (see Sheet/Limits.lua)
     entry.strike = feature.strike and CopyTable(feature.strike) or nil
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     for stat, points in pairs(feature.scores or {}) do

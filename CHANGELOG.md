@@ -59,6 +59,13 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   of them for a higher slot or level.
 - A spell's tooltip says when it is a bonus action, a reaction or a long casting, and
   when it needs a component with a price.
+- Rage adds its damage, and Reckless Attack its advantage, to Strength attacks only.
+- Unarmored Movement, Fast Movement, Roving and Martial Arts stop counting in the
+  armor the rules name; the passive's tooltip says so.
+- A Warlock can take Agonizing Blast, Eldritch Spear, Repelling Blast and Lessons of
+  the First Ones more than once. Unticking a pick also drops what builds on it.
+- Overchannel keeps count of its uses and rolls the growing damage for the slot level.
+- A Death Knight's undead steed has its Ghostly Stride.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

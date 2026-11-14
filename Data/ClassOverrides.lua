@@ -30,6 +30,7 @@ R.CLASS_OVERRIDES = {
             Ability(14, "Improved Death Coil", "Once for each use of Death Coil, however many dice you spent: this much more damage. When it heals an undead, add your level instead.",
                 function(_, sheet) return { Dice(0, 4, "", "DAMAGE", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
             Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
+            Limited(5, "Ghostly Stride", "Your Find Steed can call an undead steed: its slam deals necrotic damage. Bonus action of the steed, once per long rest: it and its rider move through creatures and objects this turn as if through difficult terrain. Each takes 1d10 force damage if it ends the turn inside an object.", 1),
             Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage. The sheet rolls it with every melee attack.",
                 nil, { strike = { sides = 8, damage = "necrotic" } }),
             Passive(14, "Improved Death Coil", "Death Coil deals extra necrotic damage equal to your Charisma modifier (at least 1), even on a successful save, and an undead you heal with it regains your level more."),
@@ -49,7 +50,9 @@ R.CLASS_OVERRIDES = {
             Ability(3, "Earthbind Totem", "Totem. Each enemy within 30 feet has its speed reduced by 10 feet until the end of your next turn.", {}),
             Ability(3, "Tremor Totem", "Totem. Each ally within 30 feet can't be charmed or frightened until the end of your next turn.", {}),
             Ability(3, "Wind Rush Totem", "Totem. Each ally within 30 feet gains 10 feet of speed until the end of your next turn.", {}),
-            Limited(3, "Primal Knowledge Totem", "Totem. Allies within 30 feet can make Acrobatics, Intimidation, Perception, Stealth and Survival checks as Strength checks until the end of your next turn. Once per long rest; spending a Rage use gives it back.", 1),
+            Limited(3, "Primal Knowledge Totem", "Totem. Allies within 30 feet can make Acrobatics, Intimidation, Perception, Stealth and Survival checks as Strength checks until the end of your next turn. Once per long rest; Primal Knowledge Totem: restore gives it back for a Rage use.", 1),
+            Ability(3, "Primal Knowledge Totem: restore", "No action needed: spend a Rage use to plant the Primal Knowledge Totem again before a long rest.",
+                { Spend("Rage"), { type = "GAIN", resource = "Primal Knowledge Totem", amount = 1 } }),
         },
     },
 }
@@ -121,12 +124,13 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
         local rune = {
             Blood = "Reaction when a creature within 10 feet of you is hit: reduce the damage by the amount shown (your level). You then lose that many hit points.",
             Frost = ("In place of one attack: frost in a 30-foot cone. The roll as cold damage, half on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "CHA")),
-            Unholy = "When you cast Summon Undead it needs no concentration and lasts 1 minute; the spirit gains temporary hit points equal to your level plus Charisma modifier and deals extra necrotic damage once per turn.",
+            Unholy = "When you cast Summon Undead it needs no concentration and lasts 1 minute; the spirit gains temporary hit points equal to your level plus Charisma modifier, and the first time it hits each turn it deals extra necrotic damage: the amount shown, half your level rounded up.",
         }
         return "Once per long rest. " .. (rune[sheet.spec] or "Its effect depends on your rune.")
     end, 1, function(_, sheet)
         if sheet.spec == "Blood" then return { Dice(0, 4, "LEVEL", "OTHER") } end
         if sheet.spec == "Frost" then return { Dice(8, 6) } end
+        if sheet.spec == "Unholy" then return { Dice(0, 4, "", "DAMAGE", math.ceil(sheet.level / 2)) } end
         return {}
     end),
     Limited(20, "Aspect of the Horsemen", "Bonus action, for 10 minutes: you can restore Runic Mastery by spending a 4th-level slot, and Runic Power and Runic Mastery can use any rune's effect. Once per long rest, or again by spending a 5th-level slot.", 1),
@@ -168,8 +172,10 @@ R.SUBCLASS_FEATURES["Demon Hunter"] = {
             return steps
         end }),
         Passive(3, "Soul Fragments", function(_, sheet)
-            return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one), one more from level 13 and two more from level 17. They fuel your demon hunter powers. Reaction when an enemy you can see within 30 feet dies: regain a spent fragment; raise the bar by hand. Saves against your powers use DC %d."):format(Kit.DC(sheet, "WIS"))
+            return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one), one more from level 13 and two more from level 17. They fuel your demon hunter powers. Reaction when an enemy you can see within 30 feet dies: regain a spent fragment with Soul Fragments: reclaim. Saves against your powers use DC %d."):format(Kit.DC(sheet, "WIS"))
         end),
+        Ability(3, "Soul Fragments: reclaim", "Reaction when an enemy you can see within 30 feet dies: you regain one spent soul fragment.",
+            { { type = "GAIN", resource = "Soul Fragments", amount = 1 } }),
         Ability(3, "Double Jump", "Cast Feather Fall or Jump without a spell slot.", { Spend("Soul Fragments") }),
         Ability(3, "Soul Cleave", function(_, sheet)
             return ("Once per turn, in place of one attack: creatures within 10 feet make a Dexterity save, DC %d, or take the roll as psychic damage. You regain hit points equal to your Wisdom modifier."):format(Kit.DC(sheet, "WIS"))

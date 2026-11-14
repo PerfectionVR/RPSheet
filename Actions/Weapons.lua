@@ -18,7 +18,8 @@ end
 
 -- Text for the weapon row on the sheet, e.g. "+5 to hit, 1d8 +3 damage".
 function RPSheet:WeaponText(weapon)
-    local mod = self:Mod(self:WeaponStat(weapon))
+    local stat = self:WeaponStat(weapon)
+    local mod = self:Mod(stat)
     if weapon.heal then
         return ("%dd%d %s healing"):format(weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("HEALING")))
     end
@@ -26,7 +27,7 @@ function RPSheet:WeaponText(weapon)
     local toHit = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
     local count, sides = self:WeaponDice(weapon)
     local text = ("%s to hit, %dd%d %s %s"):format(
-        Util.Signed(toHit), count, sides, Util.Signed(mod + self:Bonus("DAMAGE") + styleDamage), ns.DamageWord(weapon))
+        Util.Signed(toHit), count, sides, Util.Signed(mod + self:DamageBonus(stat) + styleDamage), ns.DamageWord(weapon))
     local mastery = self:WeaponMastery(weapon)
     return mastery and (text .. ", " .. mastery) or text
 end
@@ -36,7 +37,8 @@ end
 function RPSheet:Attack(mode)
     local weapon = self:GetWeapon()
     if not weapon then return end
-    local mod = self:Mod(self:WeaponStat(weapon))
+    local stat = self:WeaponStat(weapon)
+    local mod = self:Mod(stat)
     if weapon.heal then
         self:RollDice(weapon.dice, weapon.sides, function(rolls)
             self:Announce(("uses %s - %s"):format(ns.Mark(weapon.name), RollText.Dice("healing", rolls, weapon.sides, mod + self:Bonus("HEALING"))))
@@ -45,9 +47,10 @@ function RPSheet:Attack(mode)
     end
     local styleAttack, styleDamage, minDie = self:WeaponStyle(weapon)
     local attackMod = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
-    local damageMod = mod + self:Bonus("DAMAGE") + styleDamage
+    local damageMod = mod + self:DamageBonus(stat) + styleDamage
     -- A feature that gives advantage on attacks (switched on) applies by itself.
-    mode = self:ResolveMode("attack", mode) -- conditions count too
+    -- Conditions count too, and some advantage is for Strength attacks only.
+    mode = self:ResolveMode("attack", mode, stat == "STR" and "STR attack" or nil)
     local mastery = self:MasteryNote(weapon)
     local count, sides = self:WeaponDice(weapon)
     local word = ns.DamageWord(weapon)

@@ -95,7 +95,8 @@ function RPSheet:Bonus(target)
         total = -R.EXHAUSTION_SPEED * exhaustion
     end
     for _, passive in ipairs(self:Sheet().passives) do
-        if passive.enabled and passive.name ~= "" then
+        -- A passive that armor stops adds nothing (see Sheet/Limits.lua).
+        if passive.enabled and passive.name ~= "" and not self:PassiveBlocked(passive) then
             for _, effect in ipairs(passive.effects) do
                 if effect.target == target then
                     total = total + self:EffectValue(effect)

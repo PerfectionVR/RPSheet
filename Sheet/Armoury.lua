@@ -54,13 +54,14 @@ end
 
 -- The abilities a basic weapon can attack with, and why.
 --   melee: Strength          ranged: Dexterity          finesse: either
---   a Monk's Martial Arts: either, for simple melee and light martial melee weapons
+--   a Monk's Martial Arts: either, for simple melee and light martial melee weapons,
+--   without armor or a shield
 -- No weapon adds two abilities at once; where there is a choice the higher one is used.
 function ns.WeaponAbilities(data, sheet)
     if data.props.F then return { "STR", "DEX" }, "finesse" end
     if data.ranged then return { "DEX" }, "ranged" end
     local monkWeapon = data.category == "SIMPLE" or data.props.L
-    if monkWeapon and sheet and ns.HasFeature(sheet, "Martial Arts") then return { "STR", "DEX" }, "Martial Arts" end
+    if monkWeapon and sheet and ns.HasFeature(sheet, "Martial Arts") and ns.Unarmored(sheet) then return { "STR", "DEX" }, "Martial Arts" end
     return { "STR" }, "melee"
 end
 
@@ -84,7 +85,7 @@ function RPSheet:WeaponDice(weapon)
     if data and data.versatile and weapon.twoHands then sides = data.versatile end
     -- Martial Arts: a monk weapon rolls the Martial Arts die when that is the larger one.
     local sheet = self:Sheet()
-    if data and count == 1 and not data.ranged and (data.category == "SIMPLE" or data.props.L) and ns.HasFeature(sheet, "Martial Arts") then
+    if data and count == 1 and not data.ranged and (data.category == "SIMPLE" or data.props.L) and ns.HasFeature(sheet, "Martial Arts") and ns.Unarmored(sheet) then
         sides = math.max(sides, ns.FeatureKit.MartialDie(sheet.level))
     end
     return count, sides

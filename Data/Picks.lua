@@ -72,6 +72,21 @@ R.PICK_LISTS = {
         },
     },
 }
+-- Invocations that can be taken again, each time for another cantrip or feat. Every
+-- further time is an option of its own that builds on the one before.
+local AGAIN = {
+    ["Agonizing Blast"] = "cantrip", ["Eldritch Spear"] = "cantrip", ["Repelling Blast"] = "cantrip",
+    ["Lessons of the First Ones"] = "origin feat",
+}
+for name, what in pairs(AGAIN) do
+    local items = R.PICK_LISTS.invocations.items
+    local previous = name
+    for _, nth in ipairs({ "second", "third" }) do
+        local again = ("%s (%s)"):format(name, nth)
+        items[again] = { level = items[name].level, needs = previous, desc = ("%s Taken again, for a different %s."):format(items[name].desc, what) }
+        previous = again
+    end
+end
 R.PICK_LIST_ORDER = { "metamagic", "invocations" }
 
 for _, list in pairs(R.PICK_LISTS) do
