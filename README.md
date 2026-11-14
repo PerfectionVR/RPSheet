@@ -192,8 +192,10 @@ still need that.
 - [x] Casting times, and components with a price, shown on each spell
 - [x] A Mage's spellbook: a page under Customize to write spells in and take them
       out, and a spellbook window on the sheet to cast from and to prepare spells
-- [ ] The two spellbook spells a Mage gains each level, chosen in the level dialog,
-      and the six chosen in the creation wizard
+- [x] Spells chosen when a character is made and when it levels: the cantrips of
+      every spellcasting class, and a Mage's spellbook spells (six, and two per level)
+- [ ] The prepared spells of the other classes chosen the same way (they are added on
+      the Spells page)
 - [ ] Copying spells into the book for gold and time; preparing only after a long rest
 - [ ] Tracking the gold and the components themselves
 

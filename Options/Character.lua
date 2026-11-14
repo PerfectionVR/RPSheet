@@ -284,9 +284,8 @@ Opt.tabs.character = {
             hidden = function()
                 local sheet = Sheet()
                 return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
-                    and #ns.OptionFeatures(sheet) == 0 and ns.PickLimit("metamagic", sheet.class, sheet.level) == 0
-                    and ns.PickLimit("invocations", sheet.class, sheet.level) == 0
-                    and ns.PickLimit("forms", sheet.class, sheet.level) == 0 and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0)
+                    and #ns.OptionFeatures(sheet) == 0 and not ns.HasPickList(sheet)
+                    and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0)
             end,
             func = function() ns.OpenLevelDialog(Sheet().level) end,
         },

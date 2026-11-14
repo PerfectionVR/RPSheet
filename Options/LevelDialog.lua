@@ -533,7 +533,15 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             type = "toggle", order = index, width = 1.5,
             name = function()
                 local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter())
-                return blocked and ("|cff888888%s (%s)|r"):format(name, blocked) or name
+                -- A spell shows its level behind the name.
+                local tag = list.items[name].tag
+                local shown = tag and ("%s |cff888888(%s)|r"):format(name, tag) or name
+                return blocked and ("|cff888888%s (%s)|r"):format(name, blocked) or shown
+            end,
+            -- A long list leaves out what the character can't pick yet.
+            hidden = function()
+                return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
+                    and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
             end,
             desc = list.items[name].desc,
             disabled = function()

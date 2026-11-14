@@ -52,6 +52,7 @@ Data\Forms.lua
 Data\Pets.lua
 Data\Picks.lua
 Data\Beasts.lua
+Data\SpellPicks.lua
 Data\Tools.lua
 Data\Weapons.lua
 Data\Example.lua
@@ -87,6 +88,7 @@ Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
 Sheet\Maneuvers.lua
 Sheet\Picks.lua
+Sheet\SpellPicks.lua
 Sheet\BeastForms.lua
 Sheet\Expertise.lua
 Sheet\LineageSpells.lua

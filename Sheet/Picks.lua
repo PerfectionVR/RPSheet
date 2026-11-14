@@ -30,6 +30,14 @@ function ns.PickBlocked(key, name, level, picked, subclass)
     if item.needs and not picked[item.needs] then return "needs " .. item.needs end
 end
 
+-- True if the character picks from any list at all.
+function ns.HasPickList(sheet)
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        if ns.PickLimit(key, sheet.class, sheet.level) > 0 then return true end
+    end
+    return false
+end
+
 -- True if any list has the wrong number of picks.
 function ns.OpenPicks(sheet)
     for _, key in ipairs(R.PICK_LIST_ORDER) do

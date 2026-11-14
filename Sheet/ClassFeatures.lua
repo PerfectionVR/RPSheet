@@ -136,6 +136,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFeatureSkills(sheet)
     ns.ApplyFeatSkills(sheet)
     ns.ApplyExpertise(sheet)
+    ns.ApplySpellPicks(sheet)
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
 end

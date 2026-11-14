@@ -32,8 +32,8 @@ local args = {
             local sheet = Sheet()
             local _, maxPrepared = RPSheet:SpellLimits()
             local _, prepared = RPSheet:SpellCounts()
-            return ("Your spellbook holds the spells of level 1 and higher that you own. You start with six and write in two more each level; others can be copied in from scrolls and other books. Cantrips are not in the book: they are on the Spells page.\n\nIn the book: %s for level %d by the rules. Prepared: %s.\n\nOnly prepared spells can be cast, except rituals. Open the book from the Spells section of the sheet to cast and prepare.\n"):format(
-                Count(#ns.SpellbookNames(sheet), ns.SpellbookSize(sheet.level)), sheet.level, Count(prepared, maxPrepared))
+            return ("Your spellbook holds the spells of level 1 and higher that you own. You start with six and write in two more each level, chosen when you make the character and when you level; others can be copied in from scrolls and other books. Cantrips are not in the book: they are on the Spells page.\n\nIn the book: %s for level %d by the rules. Prepared: %s.\n\nOnly prepared spells can be cast, except rituals. Open the book from the Spells section of the sheet to cast and prepare.\n"):format(
+                Count(#ns.SpellbookNames(sheet), ns.SpellbookSize(sheet)), sheet.level, Count(prepared, maxPrepared))
         end,
     },
     known = {
@@ -56,7 +56,7 @@ local args = {
         hidden = function() return #Choices() == 0 and picked == "" end,
         disabled = function() return not R.SPELLS[picked] end,
         func = function()
-            ns.Spellbook(Sheet())[picked] = true
+            ns.SpellbookAdd(Sheet(), picked)
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()
@@ -89,7 +89,7 @@ table.insert(Opt.rebuilders, function()
             desc = ("Takes %s out of the book, and off your prepared spells."):format(name),
             func = function()
                 RPSheet:UnprepareSpell(name)
-                ns.Spellbook(Sheet())[name] = nil
+                ns.SpellbookRemove(Sheet(), name)
                 ns.RebuildOptions()
                 Opt.Changed()
             end,
