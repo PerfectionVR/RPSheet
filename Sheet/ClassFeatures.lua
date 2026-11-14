@@ -140,6 +140,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplySpellPicks(sheet)
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
+    ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
 end
 
 -- The features of the character that offer a choice between options, in level order.

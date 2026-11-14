@@ -285,9 +285,17 @@ local function SpellSection(self, body)
         local info = self:SpellText(spell)
         local lines = {}
         if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
-        lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
-            or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\".%s"):format(R.ORDINALS[spell.level],
-                (spell.up or 0) > 0 and (" Each slot level above adds %dd%d."):format(spell.up, spell.sides) or "")
+        -- A spell chosen for a class feature says so, and how it is cast without a slot.
+        local mark, note, noSlots = self:ChosenSpellNote(spell)
+        if mark then
+            info = info ~= "" and (info .. ", " .. mark) or mark
+            lines[#lines + 1] = note
+        end
+        if not noSlots then
+            lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
+                or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\".%s"):format(R.ORDINALS[spell.level],
+                    (spell.up or 0) > 0 and (" Each slot level above adds %dd%d."):format(spell.up, spell.sides) or "")
+        end
         local casting = R.SpellCastingNote(spell)
         if casting then lines[#lines + 1] = casting end
         if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end

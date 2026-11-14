@@ -53,6 +53,10 @@ function RPSheet:ShortRest()
             if tracker.get() > before then regained[#regained + 1] = tracker.label end
         end
     end
+    -- Signature Spells: the casting without a slot is back.
+    local spells = self:RestoreChosenCastings(true)
+    for _, name in ipairs(spells) do regained[#regained + 1] = name .. " without a slot" end
+    if #spells > 0 then self:PopulateSoon() end
     local text = "finishes a short rest"
     if #regained > 0 then text = text .. " (regains " .. table.concat(regained, ", ") .. ")" end
     self:Announce(text .. ".")

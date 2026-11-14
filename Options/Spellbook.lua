@@ -96,6 +96,7 @@ table.insert(Opt.rebuilders, function()
             func = function()
                 RPSheet:UnprepareSpell(name)
                 ns.SpellbookRemove(Sheet(), name)
+                ns.ApplySpellChoices(Sheet()) -- a mastered or signature spell is open again
                 ns.RebuildOptions()
                 Opt.Changed()
             end,

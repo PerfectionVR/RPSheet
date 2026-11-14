@@ -98,7 +98,14 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
     ritual = ritual and spell.ritual and spell.level > 0
-    if spell.level > 0 and not ritual then
+    -- A spell chosen for a class feature may need no slot (see Actions/SpellChoices.lua).
+    local chosen, spent
+    if spell.level > 0 and not ritual then chosen, spent = self:ChosenCasting(spell) end
+    if spent then
+        self:Print(spent)
+        return
+    end
+    if spell.level > 0 and not ritual and not chosen then
         local level = math.max(spell.level, self.castLevel or 0)
         slot = FindSlot(self, level)
         if not slot then
@@ -122,6 +129,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
 
     local function finish()
         if slot then slot.set(slot.get() - 1) end
+        if chosen then self:SpendChosenCasting(spell, chosen) end
         self.castLevel = nil
         if R.GROWING_SPELLS[spell.name] then
             self:StartGrowingSpell(spell)
@@ -141,6 +149,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         end
         local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
+        if chosen then text = text .. (" (%s, no slot)"):format(chosen.feature) end
         if ritual then text = text .. " (as a ritual, no slot)" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
