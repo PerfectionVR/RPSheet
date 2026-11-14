@@ -51,6 +51,7 @@ Data\Forms.lua
 Data\Pets.lua
 Data\Picks.lua
 Data\Beasts.lua
+Data\Tools.lua
 Data\Weapons.lua
 Data\Example.lua
 Data\Glossary.lua
@@ -73,6 +74,7 @@ Sheet\Derived.lua
 Sheet\Forms.lua
 Sheet\RollModes.lua
 Sheet\Senses.lua
+Sheet\Tools.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua

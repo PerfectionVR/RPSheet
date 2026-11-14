@@ -65,6 +65,7 @@ ns.defaults = {
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")
+                    tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
                     featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
                     expertise = {},        -- [skill] = true: expertise picked for a class feature

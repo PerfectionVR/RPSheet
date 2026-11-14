@@ -21,7 +21,7 @@ end
 
 -- Ability checks: skills, plain ability checks and initiative.
 local function IsCheck(label)
-    return label == "initiative" or IsSkill(label) or label:find(" check$") ~= nil
+    return label == "initiative" or IsSkill(label) or R.TOOLS[label] ~= nil or label:find(" check$") ~= nil
 end
 
 -- A condition or armor that gives disadvantage on the roll: its name, or nil.

@@ -309,6 +309,20 @@ local function SkillSection(self, body)
     end
 end
 
+-- The tools the character is proficient with, each a check to click.
+local function ToolSection(self, body)
+    local tools = self:Tools()
+    if #tools == 0 then return end
+    UI.AddHeading(body, "Tools")
+    for _, tool in ipairs(tools) do
+        local mod = self:ToolMod(tool)
+        UI.AddLabel(body, 0.5, ("%s%s|r %s%s|r"):format(UI.ACCENT, tool.name, UI.GREY, Signed(mod)),
+            function() self:RollCheck(tool.name, mod, ns.RollMode()) end,
+            tool.name, ("%s. A check with it uses %s and your proficiency bonus (%s). The DM can ask for another ability.\n\n%s"):format(
+                R.TOOL_KINDS[tool.kind], R.STAT_NAMES[tool.stat], Signed(mod), ns.ROLL_MODE_HELP))
+    end
+end
+
 -- Languages and renown, when the character has any.
 local function OriginSection(self, body)
     local languages = self:Languages()
@@ -333,7 +347,7 @@ end
 
 local SECTIONS = {
     HeaderSection, TrackerSection, ConditionSection, CombatSection, CheckSection, SaveSection,
-    AbilitySection, SpellSection, PassiveSection, SkillSection, OriginSection,
+    AbilitySection, SpellSection, PassiveSection, SkillSection, ToolSection, OriginSection,
 }
 
 ---------------------------------------------------------------------------

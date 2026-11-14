@@ -16,6 +16,16 @@ local args = {
     },
     savesHeader = { type = "header", order = 10, name = "Saving throws" },
     skillsHeader = { type = "header", order = 30, name = "Skills" },
+    toolsHeader = { type = "header", order = 60, name = "Tools" },
+    toolsHelp = {
+        type = "description", order = 60.5,
+        name = function()
+            local sheet = Sheet()
+            local choice = R.BACKGROUND_TOOL_CHOICE[sheet.background]
+            return "The tools your class and background name are ticked for you. Tick any others you are proficient with."
+                .. (choice and (" Your background gives %s of your choice."):format(choice) or "") .. "\n"
+        end,
+    },
     castHeader = { type = "header", order = 80, name = "Spellcasting" },
     castStat = Opt.With({
         type = "select", order = 81, name = "Spellcasting ability",
@@ -40,6 +50,17 @@ for i, skill in ipairs(R.SKILLS) do
         values = R.PROFICIENCY_NAMES,
         get = function() return Sheet().skills[skill.name] or 0 end,
         set = function(_, value) Sheet().skills[skill.name] = value > 0 and value or nil; Opt.Changed() end,
+    }
+end
+
+for i, name in ipairs(R.TOOL_ORDER) do
+    args["tool" .. i] = {
+        type = "toggle", order = 61 + i / 100, name = name,
+        desc = ("%s. A check with it uses %s."):format(R.TOOL_KINDS[R.TOOLS[name].kind], R.STAT_NAMES[R.TOOLS[name].stat]),
+        -- One from the class or background can't be unticked.
+        disabled = function() local source = RPSheet:ToolSource(name) return source == "class" or source == "background" end,
+        get = function() return RPSheet:ToolSource(name) ~= nil end,
+        set = function(_, value) Sheet().tools[name] = value or nil; Opt.Changed() end,
     }
 end
 

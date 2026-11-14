@@ -142,7 +142,9 @@ function RPSheet:RollCheck(label, mod, mode)
     -- Features, conditions and armor can give advantage or disadvantage by themselves.
     mode = self:ResolveMode(label, mode)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
-    local reliable = (self:Sheet().skills[label] or 0) >= 1 and self:FeatureFlag("reliable")
+    -- It covers checks with a tool you are proficient with too.
+    local proficient = (self:Sheet().skills[label] or 0) >= 1 or (ns.Rules.TOOLS[label] and self:ToolSource(label) ~= nil)
+    local reliable = proficient and self:FeatureFlag("reliable")
     self:RollD20(mode, function(d20, note)
         if reliable and d20 < 10 then
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)

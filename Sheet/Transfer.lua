@@ -131,6 +131,12 @@ local function CleanSheet(source)
             end
         end
     end
+    sheet.tools = {}
+    if type(source.tools) == "table" then
+        for _, name in ipairs(R.TOOL_ORDER) do
+            if source.tools[name] == true then sheet.tools[name] = true end
+        end
+    end
     sheet.picks = {}
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         sheet.picks[key] = {}

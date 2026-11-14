@@ -182,7 +182,9 @@ still need that.
 
 **Character**
 
-- [ ] Tool proficiencies and the professions and crafting rules
+- [x] Tool proficiencies: granted by class and background or ticked by hand, with a
+      check to click for each
+- [ ] The professions and crafting rules
 - [ ] An armoury for weapons of your own, kept between characters
 - [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
       Strength for it
