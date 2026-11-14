@@ -72,15 +72,39 @@ R.FEATURES = {
     },
 
     Cleric = {
-        Passive(1, "Divine Order", "Protector: heavy armor and martial weapons. Thaumaturge: an extra cantrip and a bonus to Arcana or Religion checks."),
-        Ability(2, "Divine Spark", "Magic action, 30 feet. Heal a creature by the roll, or make it roll a Constitution save: it takes the roll as radiant or necrotic damage, half on a success.",
-            function(level) return { Spend("Channel Divinity"), Dice(AtLevel(level, { { 2, 1 }, { 7, 2 }, { 13, 3 }, { 18, 4 } }), 8, "WIS", "HEALING") } end),
-        Ability(2, "Turn Undead", "Magic action. Each undead of your choice within 30 feet makes a Wisdom save or is frightened and incapacitated for 1 minute.",
-            { Spend("Channel Divinity") }),
-        Passive(5, "Sear Undead", "Undead that fail against Turn Undead also take radiant damage: a d8 per point of your Wisdom modifier."),
-        Passive(7, "Blessed Strikes", "Divine Strike: once per turn add 1d8 necrotic or radiant damage to a weapon hit. Or Potent Spellcasting: add your Wisdom modifier to cantrip damage."),
-        Limited(10, "Divine Intervention", "Magic action, once per long rest. Cast any Cleric spell of 5th level or lower without a slot or components.", 1),
-        Passive(14, "Improved Blessed Strikes", "Divine Strike deals 2d8. Or, with Potent Spellcasting, your damaging cantrips also grant temporary HP to you or an ally."),
+        Kit.Choice(1, "Divine Order", "The sacred role you dedicated yourself to.", {
+            Kit.Option("Protector", "You are proficient with martial weapons and trained with heavy armor.", { training = { "heavy" } }),
+            Kit.Option("Thaumaturge", "You know one more Cleric cantrip, and add your Wisdom modifier (at least +1) to Arcana and Religion checks.",
+                { effects = function(_, sheet)
+                    local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
+                    return { Bonus("SKILL:Arcana", bonus), Bonus("SKILL:Religion", bonus) }
+                end }),
+        }),
+        Ability(2, "Divine Spark", function(_, sheet)
+            return ("Magic action, a creature within 30 feet. Heal it by the roll, or it makes a Constitution save, DC %d: necrotic or radiant damage equal to the roll, half on a success."):format(Kit.DC(sheet, "WIS"))
+        end, function(level) return { Spend("Channel Divinity"), Dice(AtLevel(level, { { 2, 1 }, { 7, 2 }, { 13, 3 }, { 18, 4 } }), 8, "WIS", "HEALING") } end),
+        Ability(2, "Turn Undead", function(_, sheet)
+            return ("Magic action. Each undead you choose within 30 feet makes a Wisdom save, DC %d, or is frightened and incapacitated for 1 minute, fleeing from you, until it takes damage."):format(Kit.DC(sheet, "WIS"))
+        end, { Spend("Channel Divinity") }),
+        Ability(5, "Sear Undead", "When you use Turn Undead: each undead that fails its save also takes the roll as radiant damage. A d8 per point of your Wisdom modifier.",
+            function(_, sheet) return { Dice(math.max(1, Kit.Mod(sheet, "WIS")), 8) } end),
+        Kit.Choice(7, "Blessed Strikes", "How divine power fills you in battle.", {
+            Kit.Option("Divine Strike", function(level)
+                return ("Once per turn when you hit with a weapon: %s extra necrotic or radiant damage. Use the Divine Strike ability."):format(level >= 14 and "2d8" or "1d8")
+            end),
+            Kit.Option("Potent Spellcasting", function(level)
+                return "Add your Wisdom modifier to the damage of your Cleric cantrips: tick \"Add spellcasting modifier\" on them."
+                    .. (level >= 14 and " When a cantrip damages a creature, you or someone within 60 feet gains temporary hit points equal to twice your Wisdom modifier." or "")
+            end),
+        }),
+        Kit.For("Blessed Strikes", "Divine Strike", Ability(7, "Divine Strike", "Once per turn when you hit with a weapon: extra necrotic or radiant damage.",
+            function(level) return { Dice(level >= 14 and 2 or 1, 8) } end)),
+        Limited(10, "Divine Intervention", function(level)
+            return "Magic action, once per long rest. Cast any Cleric spell of 5th level or lower without a slot or components."
+                .. (level >= 20 and " You can choose Wish; if you do, this comes back only after 2d4 long rests." or "")
+        end, 1),
+        Passive(14, "Improved Blessed Strikes", "Your Blessed Strikes option grows stronger, as its description says."),
+        Passive(20, "Greater Divine Intervention", "Divine Intervention can cast Wish, after which it takes 2d4 long rests to return."),
     },
 
     Druid = {

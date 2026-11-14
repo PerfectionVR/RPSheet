@@ -69,7 +69,9 @@ local function OptionPicker(index)
         desc = function()
             local feature, lines = Feature(), {}
             for _, option in ipairs(feature and feature.options or {}) do
-                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, option.desc)
+                local desc = option.desc
+                if type(desc) == "function" then desc = desc(Sheet().level, Sheet()) end -- some follow the level
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, desc)
             end
             return table.concat(lines, "\n\n")
         end,
