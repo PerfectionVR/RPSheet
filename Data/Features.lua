@@ -258,7 +258,8 @@ R.FEATURES = {
         Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in, and two more languages of your choice. The skill is chosen when you level.", nil, { flags = { languages = 2 }, expertise = { steps = { { 2, 1 } } } }),
         Passive(2, "Fighting Style", FIGHTING_STYLE),
         ExtraAttack(5),
-        Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) }),
+        Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) },
+            { when = function(sheet) return sheet.subclass ~= "Beast Master" end }), -- a Beast Master has Pet Specialization in its place
         Passive(9, "Expertise", "Expertise in two more skills you are proficient in. They are chosen when you level.", nil, { expertise = { steps = { { 9, 2 } } } }),
         Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. Uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
             { stat = "WIS" }, { Dice(1, 8, "WIS", "TEMPHP") }),

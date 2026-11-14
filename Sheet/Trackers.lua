@@ -11,6 +11,7 @@ local function PoolMax(self, pool, level)
     if pool.perLevel then
         return pool.perLevel * level
     end
+    if pool.max then return pool.max end -- worked out where the pool is made
     if pool.prof then return self:ProficiencyBonus() end
     if pool.stat then
         -- An ability modifier, plus half the level for some.
@@ -52,6 +53,7 @@ function RPSheet:GetTrackers()
         ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
         ns.LineagePools(sheet), -- a lineage's once-per-rest spells
         ns.TraitPools(sheet),   -- species traits with uses
+        ns.PetPools(sheet),     -- a Beast Master's companion
     }
     for _, pools in ipairs(sources) do
         for _, pool in ipairs(pools) do

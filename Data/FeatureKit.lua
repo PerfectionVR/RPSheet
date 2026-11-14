@@ -27,6 +27,8 @@ end
 --   scores = { DEX = 4 }  ability scores it raises, to a maximum of 25
 --   strike = { sides = 8, damage = "radiant" }  a die added to every melee weapon hit
 --   spec = "Blood"     only for a character of that specialization (abilities too)
+--   when = function(sheet)  only while this is true (any kind of feature); the sheet
+--                      may be a stand-in with just class, subclass and level
 function Kit.Passive(level, name, desc, effects, extra)
     local feature = { level = level, name = name, kind = "passive", desc = desc, effects = effects }
     if extra == true then extra = { startsOff = true } end

@@ -20,3 +20,9 @@ function RPSheet:FormSkill(name)
     end
     return false
 end
+
+-- The hit points of a Beast Master's companion, as a bar (data in Data/Pets.lua).
+function ns.PetPools(sheet)
+    if sheet.subclass ~= "Beast Master" or sheet.level < 3 then return {} end
+    return { { name = "Pet HP", max = R.PetHP(sheet, sheet.level) } }
+end

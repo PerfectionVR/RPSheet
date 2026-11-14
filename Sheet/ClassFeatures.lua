@@ -45,6 +45,7 @@ local function EachFeature(sheet, visit)
             local specFits = not feature.spec or feature.spec == sheet.spec -- some belong to one specialization
             -- ...and some to one option of a choice the character made.
             if feature.option and (sheet.featureOptions or {})[feature.option[1]] ~= feature.option[2] then specFits = false end
+            if feature.when and not feature.when(sheet) then specFits = false end
             if sheet.level >= feature.level and specFits and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
                 visit(feature, key)
             end

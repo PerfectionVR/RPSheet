@@ -144,8 +144,9 @@ still need that.
 - [x] Mage, Warlock (with all Eldritch Invocations, the setting's own included) and
       Evoker (with Metamagic)
 - [ ] An in-game play-through of every class other than the Warrior
-- [ ] Hunter pets: the companion's stat block, pet families, and the Pet Specialization
-      feature a Beast Mastery hunter takes at level 6 in place of Roving
+- [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
+      Specialization at level 6 in place of Roving
+- [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
 - [ ] Ordinary beasts as Wild Shape forms (Elk, Panther and the other beast stat blocks)

@@ -37,6 +37,9 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   fail without a roll, and a speed of 0. Armor gives disadvantage on Stealth and
   costs speed without the Strength for it. Losing hit points while concentrating
   reminds you of the save and its DC.
+- A Beast Master picks a pet family for its companion. The sheet has a bar for the
+  companion's hit points and its strike as an ability, and from level 6 the family's
+  specialization (Cunning, Ferocity or Tenacity) in place of Roving.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

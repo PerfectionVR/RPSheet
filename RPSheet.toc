@@ -48,6 +48,7 @@ Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
 Data\Forms.lua
+Data\Pets.lua
 Data\Picks.lua
 Data\Weapons.lua
 Data\Example.lua
