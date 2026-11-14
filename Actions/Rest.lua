@@ -10,9 +10,20 @@ local function HasPassive(sheet, name)
     return false
 end
 
+-- A beast form lasts half the character's level in hours (rounded down), so a rest of
+-- `hours` outlasts it below twice that level, plus one level for a form that would run
+-- out exactly as the rest ends.
+local function EndFormAfter(self, hours)
+    local form = self:Form()
+    if form and form.beast and math.floor((self:Sheet().level or 1) / 2) <= hours then
+        self:LeaveForms("the form ran out during the rest")
+    end
+end
+
 -- Everything back to full: HP, hit dice, resources and spell slots.
 function RPSheet:LongRest()
     local state = self:State()
+    EndFormAfter(self, 8)
     self:ClampState(true)
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
@@ -26,6 +37,7 @@ end
 
 -- Gives back what recharges on a short rest. HP only comes back by spending hit dice.
 function RPSheet:ShortRest()
+    EndFormAfter(self, 1)
     local regained = {}
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.short then

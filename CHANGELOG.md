@@ -82,6 +82,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- A beast form that would run out during a rest ends when you take it: on a short
+  rest below level 4, on a long rest below level 18.
 - Arcane Pulse no longer grows with level.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
