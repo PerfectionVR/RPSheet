@@ -126,3 +126,8 @@ function Kit.CunningStrike(level, name, cost, text, save)
         end,
         function(current) return { Kit.Dice(math.max(0, math.ceil(current / 2) - cost), 6) } end)
 end
+
+-- A Barbarian's Rage Damage bonus at a level. Several features roll that many dice.
+function Kit.RageDamage(level)
+    return Kit.AtLevel(level, { { 1, 2 }, { 9, 3 }, { 16, 4 } })
+end

@@ -44,7 +44,11 @@ R.CLASS_OVERRIDES = {
     -- A Barbarian who plants totems.
     SHAMAN = {
         features = {
-            Passive(3, "Totems", "Bonus action: plant a totem within 10 feet that aids you and your allies. You know the Earthbind, Primal Knowledge, Tremor and Wind Rush totems."),
+            Passive(3, "Totems", "Bonus action: plant a totem within 10 feet (AC 10, 1 hit point). It lasts a minute or until you plant another, and pulses out to 30 feet at the end of each of your turns. Each totem is an ability."),
+            Ability(3, "Earthbind Totem", "Totem. Each enemy within 30 feet has its speed reduced by 10 feet until the end of your next turn.", {}),
+            Ability(3, "Tremor Totem", "Totem. Each ally within 30 feet can't be charmed or frightened until the end of your next turn.", {}),
+            Ability(3, "Wind Rush Totem", "Totem. Each ally within 30 feet gains 10 feet of speed until the end of your next turn.", {}),
+            Limited(3, "Primal Knowledge Totem", "Totem. Allies within 30 feet can make Acrobatics, Intimidation, Perception, Stealth and Survival checks as Strength checks until the end of your next turn. Once per long rest; spending a Rage use gives it back.", 1),
         },
     },
 }
