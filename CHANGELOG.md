@@ -82,6 +82,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Psychic Veil and Rend Mind spend Psionic Energy Dice by themselves once their free
+  use is gone. The Companion section shows the pet's Armor Class, speed and darkvision.
 - Wild Shape: druids can learn any of 90 beasts, grouped by challenge rating, with the
   bigger ones for the Circle of the Moon. A beast form also gives the beast's
   Constitution for checks and saves and its darkvision or blindsight; your hit points

@@ -296,10 +296,10 @@ R.SUBCLASS_FEATURES = {
             function(level) return { Kit.Refundable(Spend("Psionic Energy Dice"), "the attack still missed"), Dice(1, PsionicDie(level), "", "OTHER") } end),
         Ability(9, "Psychic Teleportation", "Bonus action: throw a blade and teleport to where it lands, up to 10 feet times the roll.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that it costs a Psionic Energy Die, spent on its bar by hand.", 1),
+        Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that each use costs a Psionic Energy Die, which the sheet spends.", 1, nil, nil, { "Psionic Energy Dice", 1 }),
         Limited(17, "Rend Mind", function(_, sheet)
-            return ("When your Psychic Blade deals Sneak Attack damage: the target makes a Wisdom save (DC %d) or is stunned for a minute, repeating the save each turn. Once per long rest; after that it costs three Psionic Energy Dice."):format(Kit.DC(sheet, "DEX"))
-        end, 1),
+            return ("When your Psychic Blade deals Sneak Attack damage: the target makes a Wisdom save (DC %d) or is stunned for a minute, repeating the save each turn. Once per long rest; after that each use costs three Psionic Energy Dice, which the sheet spends."):format(Kit.DC(sheet, "DEX"))
+        end, 1, nil, nil, { "Psionic Energy Dice", 3 }),
     },
     ["Swashbuckler"] = {
         Passive(3, "Fancy Footwork", "A creature you make a melee attack against on your turn can't make opportunity attacks against you for the rest of that turn."),

@@ -63,6 +63,9 @@ function UI.PetSection(self, body)
     local sheet = self:Sheet()
     local pet, block = R.Pet(sheet), R.PetBlock(sheet)
     UI.AddHeading(body, pet and ("Companion: " .. pet.name) or "Companion")
+    UI.AddLabel(body, 1, ("AC %s%d|r  %sspeed %s, darkvision %d feet|r"):format(UI.ACCENT, self:PetAC(), UI.GREY, block.speed, block.darkvision),
+        nil, "Companion", ("A %s %s. Its Armor Class is 13 plus your Wisdom modifier. Its passive Perception is %d."):format(
+            block.size, block.name, 10 + self:PetRollMod("WIS")))
     StrikeRows(self, body, pet, block)
     RollRows(self, body, "check")
     RollRows(self, body, "save")

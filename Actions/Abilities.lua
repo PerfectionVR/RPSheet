@@ -33,6 +33,7 @@ function RPSheet:ActionText(action)
         local text = ("Spend %d %s"):format(action.amount, action.resource)
         if action.freeIfFull ~= "" then text = text .. (" (free when %s is full)"):format(action.freeIfFull) end
         if action.firstFree then text = text .. " (free the first time after a long rest)" end
+        if (action.otherwise or "") ~= "" then text = text .. (", or %d %s once that is used up"):format(action.otherwiseAmount, action.otherwise) end
         if (action.refund or "") ~= "" then text = text .. (" (right-click to take it back if %s)"):format(action.refund) end
         return text
     elseif kind == "GAIN" then
@@ -75,6 +76,12 @@ local function CollectCosts(self, ability)
                     end
                 end
             end
+            -- Used up, but another resource can pay for it (Psychic Veil, Rend Mind).
+            local amount = action.amount
+            if (action.otherwise or "") ~= "" and tracker.get() < amount then
+                local other = self:FindTracker(action.otherwise)
+                if other then tracker, amount = other, action.otherwiseAmount end
+            end
             local full = action.freeIfFull ~= "" and self:FindTracker(action.freeIfFull)
             if full and full.get() >= full.max then
                 texts[#texts + 1] = ("free, %s is full"):format(full.label)
@@ -83,9 +90,9 @@ local function CollectCosts(self, ability)
                 texts[#texts + 1] = "free, the first use since a long rest"
             else
                 -- `refund` lets the player take it back afterwards (Actions/Refunds.lua).
-                costs[#costs + 1] = { tracker = tracker, amount = action.amount, refund = action.refund }
+                costs[#costs + 1] = { tracker = tracker, amount = amount, refund = action.refund }
                 if tracker.kind == "slot" then costs.slotLevel = tracker.level end
-                texts[#texts + 1] = ("%d %s"):format(action.amount, tracker.label)
+                texts[#texts + 1] = ("%d %s"):format(amount, tracker.label)
             end
         end
     end

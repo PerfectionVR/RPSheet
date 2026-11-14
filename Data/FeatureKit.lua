@@ -46,7 +46,8 @@ end
 --   uses   a number, { {level, uses}, ... } steps, or { stat = "WIS" } for that
 --          ability's modifier (never fewer than 1)
 --   short  what a short rest gives back: a number of uses or "ALL"; nil = long rest only
-function Kit.Limited(level, name, desc, uses, actions, short)
+--   otherwise  { resource, amount }: what a use costs instead once its own are spent
+function Kit.Limited(level, name, desc, uses, actions, short, otherwise)
     local pool = { name = name, from = level, short = short }
     if type(uses) == "number" then
         pool.steps = { { level, uses } }
@@ -57,7 +58,9 @@ function Kit.Limited(level, name, desc, uses, actions, short)
     end
     local feature = Kit.Ability(level, name, desc, function(current, sheet)
         local list = type(actions) == "function" and actions(current, sheet) or CopyTable(actions or {})
-        table.insert(list, 1, Kit.Spend(name))
+        local spend = Kit.Spend(name)
+        if otherwise then spend.otherwise, spend.otherwiseAmount = otherwise[1], otherwise[2] end
+        table.insert(list, 1, spend)
         return list
     end)
     feature.pool = pool
