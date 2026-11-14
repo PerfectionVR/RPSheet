@@ -76,6 +76,7 @@ Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
 Sheet\Maneuvers.lua
 Sheet\Picks.lua
+Sheet\Expertise.lua
 Sheet\LineageSpells.lua
 Sheet\Traits.lua
 Sheet\LevelUp.lua

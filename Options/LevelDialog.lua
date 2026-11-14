@@ -88,7 +88,24 @@ local function PicksChosen(key)
     return count
 end
 
+-- How many skills to pick expertise in, and the set to pick from (nil = any).
+local function ExpertiseLimit()
+    if not draft then return 0 end
+    local sheet = Sheet()
+    return ns.ExpertiseLimit({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel() })
+end
+
+local function ExpertisePicked()
+    local count = 0
+    for _ in pairs(draft.expertise) do count = count + 1 end
+    return count
+end
+
 local function Problem()
+    local expertise = ExpertiseLimit()
+    if expertise > 0 and ExpertisePicked() ~= expertise then
+        return ("Choose %d skills for expertise (%d chosen)."):format(expertise, ExpertisePicked())
+    end
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         local limit = PickLimit(key)
         if limit > 0 and PicksChosen(key) ~= limit then
@@ -385,6 +402,7 @@ local args = {
                 if PickLimit(key) > 0 then sheet.picks[key] = CopyTable(draft.picks[key]) end
             end
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
+            if ExpertiseLimit() > 0 then sheet.expertise = CopyTable(draft.expertise) end
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
                 RPSheet:SetLevel(level)
@@ -439,6 +457,27 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
         disabled = function() return not draft.maneuvers[name] and ManeuversPicked() >= ManeuverLimit() end,
         get = function() return draft.maneuvers[name] or false end,
         set = function(_, value) draft.maneuvers[name] = value or nil end,
+    }
+end
+
+-- Expertise: one checkbox per skill the character is proficient in.
+args.expertise = {
+    type = "group", inline = true, order = 13.5, args = {},
+    name = function() return ("Expertise (%d of %d chosen)"):format(draft and ExpertisePicked() or 0, (ExpertiseLimit())) end,
+    hidden = function() return ExpertiseLimit() == 0 end,
+}
+for index, skill in ipairs(R.SKILLS) do
+    local name = skill.name
+    args.expertise.args["skill" .. index] = {
+        type = "toggle", order = index, width = 1, name = name,
+        desc = "Your proficiency bonus is added twice for this skill. Only skills you are proficient in can be picked.",
+        hidden = function()
+            local _, allowed = ExpertiseLimit()
+            return (allowed ~= nil and not allowed[name]) or (not draft.expertise[name] and (Sheet().skills[name] or 0) == 0)
+        end,
+        disabled = function() return not draft.expertise[name] and ExpertisePicked() >= ExpertiseLimit() end,
+        get = function() return draft.expertise[name] or false end,
+        set = function(_, value) draft.expertise[name] = value or nil end,
     }
 end
 
@@ -517,7 +556,7 @@ function ns.OpenLevelDialog(level, reopen)
     draft = {
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
-        options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks),
+        options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end

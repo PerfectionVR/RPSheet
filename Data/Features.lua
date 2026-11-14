@@ -255,11 +255,11 @@ R.FEATURES = {
         Ability(1, "Hunter's Mark: damage", "The extra force damage when you hit the marked creature.",
             function(level) return { Dice(1, level >= 20 and 10 or 6) } end),
         WEAPON_MASTERY,
-        Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in (set it under Customize, Proficiencies), and two more languages of your choice.", nil, { flags = { languages = 2 } }),
+        Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in, and two more languages of your choice. The skill is chosen when you level.", nil, { flags = { languages = 2 }, expertise = { steps = { { 2, 1 } } } }),
         Passive(2, "Fighting Style", FIGHTING_STYLE),
         ExtraAttack(5),
         Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) }),
-        Passive(9, "Expertise", "Expertise in two more skills you are proficient in. Set them under Customize, Proficiencies."),
+        Passive(9, "Expertise", "Expertise in two more skills you are proficient in. They are chosen when you level.", nil, { expertise = { steps = { { 9, 2 } } } }),
         Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. Uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
             { stat = "WIS" }, { Dice(1, 8, "WIS", "TEMPHP") }),
         Passive(13, "Relentless Hunter", "Taking damage can't break your concentration on Hunter's Mark."),
@@ -271,8 +271,8 @@ R.FEATURES = {
 
     Rogue = {
         Passive(1, "Expertise", function(level)
-            return ("Expertise in %s skills you are proficient in: your proficiency bonus counts twice. Set them under Customize, Proficiencies."):format(level >= 6 and "four" or "two")
-        end),
+            return ("Expertise in %s skills you are proficient in: your proficiency bonus counts twice. They are chosen when you level."):format(level >= 6 and "four" or "two")
+        end, nil, { expertise = { steps = { { 1, 2 }, { 6, 4 } } } }),
         Ability(1, "Sneak Attack", "Once per turn, extra damage on a hit with a finesse or ranged weapon when you have advantage, or when an ally is within 5 feet of the target and you don't have disadvantage.",
             function(level) return { Dice(math.ceil(level / 2), 6) } end),
         Passive(1, "Thieves' Cant", "You know the secret mix of jargon and signs used by thieves, and one more language of your choice.", nil, { flags = { languages = 1 } }),
@@ -321,9 +321,12 @@ R.FEATURES = {
         end),
         Passive(1, "Pact Magic", "Your spell slots are all of one level and come back on a short rest."),
         Limited(2, "Magical Cunning", function(level)
-            return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots. Restore the slots on the sheet by hand."
-                or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up. Restore the slots on the sheet by hand."
-        end, 1),
+            return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots."
+                or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up."
+        end, 1, function(level)
+            local pact = R.PACT_SLOTS[level]
+            return { { type = "GAIN", resource = R.ORDINALS[pact[2]] .. "-level slot", amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
+        end),
         Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
         Limited(11, "Mystic Arcanum", "You learn one 6th-level spell to cast once per long rest without a slot, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once; the bar counts the casts you have left.",
             { { 11, 1 }, { 13, 2 }, { 15, 3 }, { 17, 4 } }),
@@ -335,7 +338,8 @@ R.FEATURES = {
         Ability(1, "Arcane Recovery", function(level)
             return ("After a short rest, recover spell slots with a combined level of up to %d, none above 5th. Once per long rest. Restore the slots on the sheet by hand."):format(math.ceil(level / 2))
         end, { Spend("Arcane Recovery") }),
-        Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. Set it under Customize, Proficiencies."),
+        Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. It is chosen when you level.", nil,
+            { expertise = { steps = { { 2, 1 } }, skills = { "Arcana", "History", "Investigation", "Medicine", "Nature", "Religion" } } }),
         Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
         Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. Mark them as not counting under Customize, Spells."),
         Limited(20, "Signature Spells", "Two 3rd-level spells from your spellbook are always prepared, and each can be cast once at 3rd level without a slot. Both come back on a short or long rest.", 2, nil, "ALL"),

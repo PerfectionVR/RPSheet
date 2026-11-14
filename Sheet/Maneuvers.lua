@@ -135,5 +135,5 @@ end
 function ns.OpenClassChoices(sheet)
     local limit = ns.ManeuverLimit(sheet.subclass, sheet.level)
     return (limit > 0 and ns.ManeuversKnown(sheet) ~= limit) or #ns.OpenFeatureSkills(sheet) > 0
-        or #ns.OpenOptionFeatures(sheet) > 0 or ns.OpenPicks(sheet)
+        or #ns.OpenOptionFeatures(sheet) > 0 or ns.OpenPicks(sheet) or ns.OpenExpertise(sheet)
 end

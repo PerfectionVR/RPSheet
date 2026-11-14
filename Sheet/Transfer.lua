@@ -123,6 +123,14 @@ local function CleanSheet(source)
             if source.maneuvers[name] == true then sheet.maneuvers[name] = true end
         end
     end
+    sheet.expertise, sheet.expertiseGranted = {}, {}
+    for _, field in ipairs({ "expertise", "expertiseGranted" }) do
+        if type(source[field]) == "table" then
+            for _, skill in ipairs(R.SKILLS) do
+                if source[field][skill.name] == true then sheet[field][skill.name] = true end
+            end
+        end
+    end
     sheet.picks = {}
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         sheet.picks[key] = {}
