@@ -131,6 +131,13 @@ local function CleanSheet(source)
             end
         end
     end
+    sheet.featChoices, sheet.featGranted = ns.CleanFeatChoices(source.featChoices), {}
+    if type(source.featGranted) == "table" then
+        for _, skill in ipairs(R.SKILLS) do
+            local ranks = tonumber(source.featGranted[skill.name])
+            if ranks == 1 or ranks == 2 then sheet.featGranted[skill.name] = ranks end
+        end
+    end
     sheet.spellbook = {}
     if type(source.spellbook) == "table" then
         for name in pairs(source.spellbook) do

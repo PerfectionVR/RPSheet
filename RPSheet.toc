@@ -65,6 +65,7 @@ Data\SpellChoices.lua
 Data\Tools.lua
 Data\ToolPicks.lua
 Data\Weapons.lua
+Data\FeatChoices.lua
 Data\Example.lua
 Data\Glossary.lua
 Data\FeatureKit.lua
@@ -105,6 +106,9 @@ Sheet\ToolPicks.lua
 Sheet\SpellPicks.lua
 Sheet\BeastForms.lua
 Sheet\Expertise.lua
+Sheet\FeatChoices.lua
+Sheet\FeatGrants.lua
+Sheet\FeatSpells.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
@@ -153,6 +157,7 @@ Wizard\Pages.lua
 Wizard\Dialog.lua
 Options\General.lua
 Options\Character.lua
+Options\FeatChoices.lua
 Options\LevelDialog.lua
 Options\Origin.lua
 Options\Scores.lua

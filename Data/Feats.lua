@@ -12,6 +12,8 @@
 --   save     true if it also grants saving throw proficiency in the raised ability
 --   skillPicks, expertisePicks  skills to choose for proficiency and for expertise
 --   advantage  rolls the feat gives advantage on, by their label (see RPSheet:HasAdvantage)
+--   choices, spells, castStat, allSkills, named  what the feat asks and gives besides:
+--              added in Data/FeatChoices.lua
 local _, ns = ...
 local R = ns.Rules
 

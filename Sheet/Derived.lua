@@ -207,19 +207,23 @@ end
 -- Spellcasting
 ---------------------------------------------------------------------------
 -- Spellcasting ability: the sheet's override, else the class's. Nil for non-casters.
-function RPSheet:CastStat()
+-- A `spell` a feat put on the list uses the ability that goes with the feat
+-- (Sheet/FeatSpells.lua), whatever the class.
+function RPSheet:CastStat(spell)
     local sheet, class = self:Sheet(), self:ClassData()
+    local own = spell and ns.FeatSpellStat(sheet, spell)
+    if own then return own end
     if R.STAT_NAMES[sheet.castStat] then return sheet.castStat end
     return class and class.cast
 end
 
-function RPSheet:SpellDC()
-    local stat = self:CastStat()
+function RPSheet:SpellDC(spell)
+    local stat = self:CastStat(spell)
     return stat and (8 + self:ProficiencyBonus() + self:Mod(stat) + self:Bonus("SPELLDC"))
 end
 
-function RPSheet:SpellAttack()
-    local stat = self:CastStat()
+function RPSheet:SpellAttack(spell)
+    local stat = self:CastStat(spell)
     return stat and (self:ProficiencyBonus() + self:Mod(stat) + self:Bonus("SPELLATK"))
 end
 

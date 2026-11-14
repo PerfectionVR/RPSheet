@@ -163,9 +163,9 @@ function RPSheet:ExplainSpellDC()
     Out(self, ("Spell save DC |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
 end
 
-local function SpellAttackParts(self)
+local function SpellAttackParts(self, spell)
     local parts = { { "proficiency", self:ProficiencyBonus() } }
-    Ability(self, parts, self:CastStat())
+    Ability(self, parts, self:CastStat(spell))
     AddBonuses(self, parts, "SPELLATK")
     return parts
 end
@@ -177,15 +177,15 @@ end
 function RPSheet:ExplainSpell(spell)
     local lines = {}
     if spell.kind == "ATTACK" then
-        local parts = SpellAttackParts(self)
+        local parts = SpellAttackParts(self, spell)
         lines[#lines + 1] = ("spell attack |cffffd100%s|r: %s"):format(Util.Signed(Total(parts)), Join(parts))
     elseif spell.kind == "SAVE" then
-        lines[#lines + 1] = ("%s save against your spell save DC |cffffd100%d|r"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
+        lines[#lines + 1] = ("%s save against your spell save DC |cffffd100%d|r"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC(spell) or 8)
     end
     if spell.count > 0 then
         local word, bonus = ns.DiceWord(spell.dice)
         local parts = {}
-        if spell.addMod then Ability(self, parts, self:CastStat()) end
+        if spell.addMod then Ability(self, parts, self:CastStat(spell)) end
         if bonus then AddBonuses(self, parts, bonus) end
         lines[#lines + 1] = ("%s %dd%d %s: %s"):format(word, self:SpellDiceCount(spell), spell.sides, Util.Signed(Total(parts)), Join(parts))
     end

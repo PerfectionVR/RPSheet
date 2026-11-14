@@ -64,16 +64,16 @@ end
 function RPSheet:SpellText(spell)
     local parts = {}
     if spell.kind == "ATTACK" then
-        parts[#parts + 1] = "attack " .. Util.Signed(self:SpellAttack() or 0)
+        parts[#parts + 1] = "attack " .. Util.Signed(self:SpellAttack(spell) or 0)
     elseif spell.kind == "SAVE" then
-        parts[#parts + 1] = ("%s save DC %d"):format(spell.save, self:SpellDC() or 8)
+        parts[#parts + 1] = ("%s save DC %d"):format(spell.save, self:SpellDC(spell) or 8)
     end
     if spell.count > 0 then
         -- A growing spell that is running shows the die its next turn rolls.
         local grown = self:GrowingSides(spell)
         local dice = ("%dd%d"):format(self:SpellDiceCount(spell), grown or spell.sides)
         if grown then dice = "running, next " .. dice end
-        if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat())) end
+        if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat(spell))) end
         local word = ns.DiceWord(spell.dice)
         parts[#parts + 1] = dice .. (word ~= "damage" and (" " .. word) or "")
     end
@@ -123,7 +123,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     end
 
     local word, bonus = ns.DiceWord(spell.dice)
-    local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
+    local diceMod = (spell.addMod and self:Mod(self:CastStat(spell)) or 0) + (bonus and self:Bonus(bonus) or 0)
     local parts = {}
     self.busy = true
 
@@ -179,7 +179,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         local function attack(index)
             self:RollD20(mode, function(d20, note)
                 local label = hits > 1 and ("attack %d"):format(index) or "spell attack"
-                parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack() or 0, note)
+                parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack(spell) or 0, note)
                 rollDice(d20 == 20, function()
                     if index < hits then attack(index + 1) else finish() end
                 end)
@@ -188,7 +188,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         attack(1)
     else
         if spell.kind == "SAVE" then
-            parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
+            parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC(spell) or 8)
         end
         rollDice(false, finish)
     end
