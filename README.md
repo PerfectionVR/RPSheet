@@ -153,7 +153,7 @@ still need that.
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves
-- [ ] The set of spells a Demon Hunter chooses (offered in the spell list today)
+- [x] A Demon Hunter's set of spells, following the specialization
 - [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
 - [x] Arcane Recovery, Font of Magic and Magical Cunning change spell slots by the click
 - [ ] Slots made with Font of Magic going above the usual number of slots

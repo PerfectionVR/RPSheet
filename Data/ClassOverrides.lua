@@ -136,9 +136,36 @@ for _, feature in ipairs(R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]) do
     if rune then feature.spec = rune end
 end
 
+-- A Demon Hunter's always-prepared spells: one for everyone at each step, plus the set
+-- of the specialization.
+local DH_ALL = { { 3, "Throw Glaive" }, { 5, "Sigil of Flame" }, { 9, "Metamorphosis" }, { 13, "Chaos Nova" }, { 17, "Destructive Wave" } }
+local DH_SET = {
+    Devourer = { "Consume Soul", "Misty Step", "Soul Reap", "Collapsing Star", "Steel Wind Strike" },
+    Havoc = { "Fel Rush", "Eye Beam", "Blink", "Fire Shield", "Conjure Volley" },
+    Vengeance = { "Infernal Strike", "Fiery Brand", "Demon Spikes", "Banishment", "Sigil of Chains" },
+}
+
 R.SUBCLASS_FEATURES["Demon Hunter"] = {
-        Passive(3, "Demon Hunter Spells", "You always have Throw Glaive prepared, then Sigil of Flame (level 5), Metamorphosis (9), Chaos Nova (13) and Destructive Wave (17), plus the spells of one set you choose. The first are on your spell list already; add the set from Customize, Spells, where they don't count against your prepared spells.", nil,
-            { prepared = { { 3, "Throw Glaive" }, { 5, "Sigil of Flame" }, { 9, "Metamorphosis" }, { 13, "Chaos Nova" }, { 17, "Destructive Wave" } } }),
+        Passive(3, "Demon Hunter Spells", function(level, sheet)
+            local known = {}
+            for index, step in ipairs(DH_ALL) do
+                if level >= step[1] then
+                    known[#known + 1] = step[2]
+                    if DH_SET[sheet.spec] then known[#known + 1] = DH_SET[sheet.spec][index] end
+                end
+            end
+            return "Always prepared, and not counted against the number you can prepare: " .. table.concat(known, ", ")
+                .. (DH_SET[sheet.spec] and "." or ". Choosing a specialization adds its set of spells.")
+                .. " They are on your spell list already."
+        end, nil, { prepared = function(sheet)
+            local steps = {}
+            for index, step in ipairs(DH_ALL) do
+                local names = step[2]
+                if DH_SET[sheet.spec] then names = names .. ", " .. DH_SET[sheet.spec][index] end
+                steps[index] = { step[1], names }
+            end
+            return steps
+        end }),
         Passive(3, "Soul Fragments", function(_, sheet)
             return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one). They fuel your demon hunter powers. Saves against them use DC %d."):format(Kit.DC(sheet, "WIS"))
         end),
