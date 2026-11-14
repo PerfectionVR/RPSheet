@@ -107,7 +107,7 @@ Spell("Eye Beam", 2, "DEX", { 3, 6 }, "A burst of fel magic in a 15-foot cone, n
 Spell("Fiery Brand", 2, "WIS", { 3, 10 }, "A burning symbol on a creature: fire damage, half on a successful save. A failure also curses it, weakening what it does to you.")
 Spell("Sigil of Flame", 2, "CON", { 2, 8 }, "A sigil appears on a creature: fire damage, half on a success.")
 Spell("Demon Spikes", 3, nil, nil, "Bonus action. +2 AC, and a creature within 5 feet that hits you in melee takes 10 piercing damage.")
-Spell("Metamorphosis", 3, nil, nil, "Bonus action. You take on demonic features and choose one benefit: your force damage dice that show a 1 or 2 count as a 3; your melee weapon hits deal 1d6 more fire damage; or +2 Armor Class and 5 more current and maximum hit points.")
+Spell("Metamorphosis", 3, nil, nil, "Bonus action. You take on demonic features and choose one benefit: your force damage dice that show a 1 or 2 count as a 3; your melee weapon hits deal 1d6 more fire damage; or +2 Armor Class and 5 more current and maximum hit points. Casting it asks which, and switches that benefit on under Passives and traits; switch it off there when the spell ends.")
 Spell("Soul Reap", 3, "ATTACK", { 6, 6 }, "A bolt of cosmic matter that ignores cover: force damage on a hit.")
 Spell("Chaos Nova", 4, "WIS", { 2, 6 }, "Chaos bursts within 20 feet of you: creatures you choose take the force damage, and those who fail the save are also stunned.")
 Spell("Collapsing Star", 4, "CON", { 4, 12 }, "A blast of Void energy in a 20-foot sphere: force damage to creatures you choose, half on a successful save.")

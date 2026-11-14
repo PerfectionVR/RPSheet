@@ -79,8 +79,9 @@ function RPSheet:SpellText(spell)
 end
 
 -- `mode` is "ADV" or "DIS" for the spell attack roll. `ritual` casts a ritual spell
--- without a slot.
-function RPSheet:CastSpell(spell, mode, ritual)
+-- without a slot. `benefit` is the pick for a spell that offers a choice of benefits;
+-- without it the spell asks first (see Sheet/Metamorphosis.lua).
+function RPSheet:CastSpell(spell, mode, ritual, benefit)
     if self.busy or self:IsRolling() then return end
     -- A beast form can't cast (see Sheet/Forms.lua).
     local blocked = self:FormBlocksSpell(spell)
@@ -103,6 +104,12 @@ function RPSheet:CastSpell(spell, mode, ritual)
     -- A higher slot adds dice to the spells that grow with it.
     local moreDice = slot and (slot.level - spell.level) * (spell.up or 0) or 0
 
+    -- Nothing is spent until the benefit is picked: the menu casts the spell again with it.
+    local benefits = not benefit and self:SpellBenefits(spell)
+    if benefits and self:AskBenefit(spell, benefits, function(pick) self:CastSpell(spell, mode, ritual, pick) end) then
+        return
+    end
+
     local word, bonus = ns.DiceWord(spell.dice)
     local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
     local parts = {}
@@ -116,6 +123,11 @@ function RPSheet:CastSpell(spell, mode, ritual)
             local conditions = self:State().conditions
             parts[#parts + 1] = conditions.Concentrating and "concentrating on it now, the earlier spell ends" or "concentrating"
             conditions.Concentrating = true
+            self:PopulateSoon()
+        end
+        -- The benefit picked for the casting is switched on, ending any other.
+        if benefit then
+            parts[#parts + 1] = self:TakeBenefit(benefit)
             self:PopulateSoon()
         end
         local text = "casts " .. ns.Mark(spell.name)
@@ -132,8 +144,11 @@ function RPSheet:CastSpell(spell, mode, ritual)
         if spell.count <= 0 then return after() end
         self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
+            -- A feature can make low force damage dice count as higher.
+            local raised = spell.dice == "DAMAGE" and R.SPELL_DAMAGE[spell.name] == "force" and self:RaiseForceDice(rolls)
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
-            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (note and (" (" .. note .. ")") or "")
+            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
+                .. (note and (" (" .. note .. ")") or "")
             after()
         end)
     end

@@ -261,7 +261,7 @@ R.FEATURES = {
                 level >= 20 and 10 or 6, level >= 17 and " You have advantage on attack rolls against it, which the sheet applies while this is on." or "")
         end, nil, { startsOff = true, advantage = function(level) return level >= 17 and { "attack" } or nil end }),
         Ability(1, "Hunter's Mark: damage", "The extra force damage when you hit the marked creature.",
-            function(level) return { Dice(1, level >= 20 and 10 or 6) } end),
+            function(level) return { Kit.Typed(Dice(1, level >= 20 and 10 or 6), "force") } end),
         WEAPON_MASTERY,
         Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in, and two more languages of your choice. The skill is chosen when you level.", nil, { flags = { languages = 2 }, expertise = { steps = { { 2, 1 } } } }),
         Passive(2, "Fighting Style", FIGHTING_STYLE),

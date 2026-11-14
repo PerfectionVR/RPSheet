@@ -311,6 +311,7 @@ local function PassiveSection(self, body)
         local text = passive.enabled and passive.name or (UI.GREY .. passive.name .. " (off)|r")
         UI.AddLabel(body, 0.5, text, function()
             passive.enabled = not passive.enabled
+            if passive.enabled then self:PassiveSwitchedOn(passive) end -- some end others
             self:ClampState()
             PopulateSoon(self)
         end, passive.name, table.concat(lines, "\n"))

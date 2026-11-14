@@ -105,6 +105,13 @@ function Kit.Dice(count, sides, stat, kind, flat)
     return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE", flat = flat or 0 }
 end
 
+-- Damage dice of a named type, for the types a feature treats differently: low
+-- "force" dice can count as higher (see Sheet/Metamorphosis.lua).
+function Kit.Typed(dice, damage)
+    dice.damage = damage
+    return dice
+end
+
 -- Dice that count once for each level of the spell slot the ability spends.
 function Kit.PerSlot(dice)
     dice.perSlot = true

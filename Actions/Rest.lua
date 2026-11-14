@@ -24,6 +24,7 @@ end
 function RPSheet:LongRest()
     local state = self:State()
     EndFormAfter(self, 8)
+    self:EndBenefits() -- no spell benefit outlasts a rest
     self:ClampState(true)
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
@@ -38,6 +39,10 @@ end
 -- Gives back what recharges on a short rest. HP only comes back by spending hit dice.
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
+    if self:EndBenefits() then
+        self:ClampState()
+        self:PopulateSoon()
+    end
     local regained = {}
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.short then

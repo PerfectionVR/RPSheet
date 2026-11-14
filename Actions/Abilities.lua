@@ -135,6 +135,7 @@ local function ApplyChanges(self, ability, costs)
         elseif action.type == "TOGGLE" then
             for _, passive in ipairs(self:Sheet().passives) do
                 if passive.name == action.passive then
+                    local wasOn = passive.enabled
                     if action.mode == "ON" then
                         passive.enabled = true
                         -- Taking a form ends any other form.
@@ -148,6 +149,8 @@ local function ApplyChanges(self, ability, costs)
                     else
                         passive.enabled = not passive.enabled
                     end
+                    -- Some passives end others when they start (see Sheet/Metamorphosis.lua).
+                    if passive.enabled and not wasOn then self:PassiveSwitchedOn(passive) end
                     switched = true
                 end
             end
@@ -256,11 +259,13 @@ function RPSheet:UseAbility(ability, mode)
             local doubled = critical and word == "damage"
             local more = (action.slotAdd or 0) * math.max(0, (costs.slotLevel or 1) - 1)
             self:RollDice((count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
+                -- A feature can make low force damage dice count as higher.
+                local raised = action.damage == "force" and self:RaiseForceDice(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
                     or ("%s %d"):format(word, mod)
-                parts[#parts + 1] = text .. (note and (" (" .. note .. ")") or "")
+                parts[#parts + 1] = text .. (raised and (" [" .. raised .. "]") or "") .. (note and (" (" .. note .. ")") or "")
                 step()
             end)
         elseif action.type == "WEAPON" then
