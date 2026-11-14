@@ -139,7 +139,7 @@ R.CLASSES = {
         specs = { "Holy", "Protection", "Retribution" },
     }),
     PRIEST = Class("Priest", "Cleric", {
-        subclasses = { "Discipline Domain", "Life Domain", "Shadow Domain" },
+        subclasses = { "Discipline Domain", "Life Domain", "War Domain", "Shadow Domain" },
         specs = { "Discipline", "Holy", "Shadow" },
     }),
     ROGUE = Class("Rogue", "Rogue", {
@@ -147,7 +147,7 @@ R.CLASSES = {
         specs = { "Assassination", "Outlaw", "Subtlety" },
     }),
     SHAMAN = Class("Shaman", "Barbarian", {
-        subclasses = { "Path of the Elements", "Path of the Spiritual Guardian", "Path of the World Tree" },
+        subclasses = { "Path of the Berserker", "Path of the Elements", "Path of the Spiritual Guardian", "Path of the World Tree" },
         specs = { "Elemental", "Enhancement", "Restoration" },
     }),
     WARLOCK = Class("Warlock", "Warlock", {

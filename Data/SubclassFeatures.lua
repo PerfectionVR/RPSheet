@@ -201,6 +201,25 @@ R.SUBCLASS_FEATURES = {
     ---------------------------------------------------------------------------
     -- Hunter (Ranger)
     ---------------------------------------------------------------------------
+    ["Path of the Berserker"] = {
+        Ability(3, "Frenzy", "While raging, if you attacked recklessly: extra damage on the first target you hit this turn with a Strength-based attack, of the same type as the weapon.",
+            function(level) return { Dice(Kit.RageDamage(level), 6) } end),
+        Passive(6, "Mindless Rage", "While raging you can't be charmed or frightened, and entering a rage ends those conditions on you."),
+        Passive(10, "Retaliation", "Reaction when a creature within 5 feet damages you: one melee attack against it with a weapon or an unarmed strike."),
+        Limited(14, "Intimidating Presence", function(_, sheet)
+            return ("Bonus action. Creatures you choose within 30 feet make a Wisdom save, DC %d, or are frightened for a minute; they repeat the save at the end of each of their turns. Once per long rest, or again by spending a Rage use."):format(Kit.DC(sheet, "STR"))
+        end, 1),
+    },
+    ["War Domain"] = {
+        AlwaysPrepared("War Domain", { { 3, "Guiding Bolt, Magic Weapon, Shield of Faith, Spiritual Weapon" }, { 5, "Crusader's Mantle, Spirit Guardians" }, { 7, "Fire Shield, Freedom of Movement" }, { 9, "Hold Monster, Steel Wind Strike" } }),
+        Ability(3, "Guided Strike", "When you, or a creature within 30 feet, miss with an attack roll: add 10 to that roll. For another creature it takes your reaction.",
+            { Spend("Channel Divinity") }),
+        Limited(3, "War Priest", "Bonus action: one attack with a weapon or an unarmed strike; use your weapon row for it. Uses equal to your Wisdom modifier, all back on a short or long rest.",
+            { stat = "WIS" }, nil, "ALL"),
+        Ability(6, "War God's Blessing", "Cast Shield of Faith or Spiritual Weapon with a Channel Divinity use instead of a slot. It then needs no concentration and lasts a minute.",
+            { Spend("Channel Divinity") }),
+        Passive(17, "Avatar of Battle", "You have resistance to bludgeoning, piercing and slashing damage."),
+    },
     ["Beast Master"] = {
         Kit.Choice(3, R.PET_FEATURE, "You summon a primal beast of a pet family you choose; you can summon another after a long rest. It acts on your turn: it Dodges unless you spend a bonus action, or give up one of your attacks, to command it. If it dies you can bring it back with a spell slot.", PetOptions()),
         Ability(3, "Beast's Strike", function(level, sheet)

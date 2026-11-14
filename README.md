@@ -146,8 +146,7 @@ still need that.
 - [x] A second check of the twelve classes after the Warrior against the rules, by
       one reviewer per class; what they found is fixed
 - [ ] An in-game play-through of every class other than the Warrior
-- [ ] Subclasses the rules list that are left out: Path of the Berserker (Shaman) and
-      the War Domain (Priest)
+- [x] Path of the Berserker (Shaman) and the War Domain (Priest), which the rules also list
 - [ ] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
