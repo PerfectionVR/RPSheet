@@ -74,8 +74,17 @@ function RPSheet:EffectValue(effect)
 end
 
 -- Total of every switched-on passive effect aimed at `target` (see Rules.EFFECT_TARGETS).
+-- Exhaustion weighs on every d20 roll and on speed.
+local D20_TARGETS = { ATTACK = true, SPELLATK = true, SAVES = true, CHECKS = true, INIT = true }
+
 function RPSheet:Bonus(target)
     local total = 0
+    local exhaustion = self:State().exhaustion or 0
+    if D20_TARGETS[target] then
+        total = -R.EXHAUSTION_D20 * exhaustion
+    elseif target == "SPEED" then
+        total = -R.EXHAUSTION_SPEED * exhaustion
+    end
     for _, passive in ipairs(self:Sheet().passives) do
         if passive.enabled and passive.name ~= "" then
             for _, effect in ipairs(passive.effects) do

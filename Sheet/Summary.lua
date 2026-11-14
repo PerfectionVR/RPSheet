@@ -56,6 +56,8 @@ function RPSheet:GetStatData()
     if weapon then
         data.weapon, data.dice, data.sides = weapon.name, weapon.dice, weapon.sides
     end
+    local conditions = self:ConditionSummary()
+    if #conditions > 0 then data.conditions = conditions end
     return data
 end
 
@@ -83,6 +85,9 @@ function RPSheet:GetStatLines(data)
     end
     if data.weapon then
         lines[#lines + 1] = ("%s (%dd%d)"):format(data.weapon, data.dice, data.sides)
+    end
+    if data.conditions and #data.conditions > 0 then
+        lines[#lines + 1] = table.concat(data.conditions, ", ")
     end
     return lines
 end

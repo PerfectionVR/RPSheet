@@ -157,7 +157,7 @@ for index, language in ipairs(R.ALL_LANGUAGES) do
     }
 end
 
-Opt.custom.origin = { type = "group", order = 2.5, name = "Origin", args = args }
+Opt.custom.origin = { type = "group", order = 7, name = "Lineage, languages, renown", args = args }
 
 -- The renown rows follow the sheet, so they are rebuilt with the list tabs.
 table.insert(Opt.rebuilders, function()

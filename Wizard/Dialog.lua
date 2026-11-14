@@ -80,33 +80,6 @@ LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
 })
 AceConfigDialog:SetDefaultSize(DIALOG, 620, 560)
 
--- The options library's windows are see-through, which makes the wizard hard to read
--- over anything busy. This puts a nearly solid panel behind its contents while it is open.
--- The window itself is shared with other addons' settings, so the panel is ours alone:
--- it is attached while one of our dialogs (wizard, level-up) is showing and hidden as soon as the window closes.
-local backing
-
-function ns.AddDialogBacking(dialog)
-    local widget = AceConfigDialog.OpenFrames[dialog]
-    local frame = widget and widget.frame
-    if not frame then return end
-    if not backing then
-        backing = UIParent:CreateTexture(nil, "BACKGROUND", nil, -8)
-        backing:SetColorTexture(0.04, 0.04, 0.05, 0.96)
-    end
-    backing:SetParent(frame)
-    backing:ClearAllPoints()
-    backing:SetPoint("TOPLEFT", 6, -6)
-    backing:SetPoint("BOTTOMRIGHT", -6, 6)
-    backing:Show()
-    if not frame.rpSheetBackingHook then
-        frame.rpSheetBackingHook = true
-        frame:HookScript("OnHide", function(self)
-            if backing:GetParent() == self then backing:Hide() end
-        end)
-    end
-end
-
 function ns.OpenWizard()
     W.draft = W.NewDraft()
     -- One window at a time: the settings window would sit underneath and show through.
@@ -115,7 +88,6 @@ function ns.OpenWizard()
         if not W.draft then return end
         AceConfigDialog:Close(ADDON)
         AceConfigDialog:Open(DIALOG)
-        ns.AddDialogBacking(DIALOG)
     end)
 end
 

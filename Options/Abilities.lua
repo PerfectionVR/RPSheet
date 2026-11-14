@@ -129,6 +129,6 @@ local function Build(ability)
 end
 
 Opt.lists.abilities = {
-    order = 8, title = "Abilities", noun = "ability", template = R.TEMPLATES.ability, build = Build,
+    order = 3, title = "Abilities", noun = "ability", template = R.TEMPLATES.ability, build = Build,
     help = "Things you click to use: class features, spells, feats. Each is built from steps, so any ability can be recreated or invented.\n",
 }

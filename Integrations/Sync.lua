@@ -94,6 +94,13 @@ local function Sanitize(data)
             end
         end
     end
+    if type(data.conditions) == "table" then
+        clean.conditions = {}
+        for i = 1, 16 do
+            local name = Text(data.conditions[i])
+            if name and name ~= "" then clean.conditions[#clean.conditions + 1] = name end
+        end
+    end
     if type(data.weapon) == "string" then
         clean.weapon = Text(data.weapon)
         clean.dice, clean.sides = Num(data.dice), Num(data.sides)

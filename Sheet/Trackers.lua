@@ -48,6 +48,7 @@ function RPSheet:GetTrackers()
     local sources = {
         class and class.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[sheet.subclass] or {},
         ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
+        ns.LineagePools(sheet), -- a lineage's once-per-rest spells
     }
     for _, pools in ipairs(sources) do
         for _, pool in ipairs(pools) do

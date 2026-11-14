@@ -26,7 +26,7 @@ local function Summary()
 end
 
 Opt.custom.defense = {
-    type = "group", order = 5, name = "Defense",
+    type = "group", order = 10, name = "Defense",
     args = {
         summary = { type = "description", order = 1, fontSize = "medium", name = Summary },
         armor = With({

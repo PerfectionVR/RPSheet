@@ -115,4 +115,4 @@ for i, stat in ipairs(R.STATS) do
     args["break" .. stat] = { type = "description", order = i * 10 + 3, name = "" }
 end
 
-Opt.custom.scores = { type = "group", order = 3, name = "Ability scores", args = args }
+Opt.custom.scores = { type = "group", order = 8, name = "Ability scores", args = args }

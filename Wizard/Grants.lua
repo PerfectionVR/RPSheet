@@ -121,4 +121,5 @@ function ns.ApplyGrants(sheet)
     if species then ApplySpecies(sheet, species) end
     if background then ApplyBackground(sheet, background) end
     ns.ApplyClassFeatures(sheet)
+    ns.ApplyLineageSpells(sheet)
 end

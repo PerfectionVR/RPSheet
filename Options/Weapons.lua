@@ -31,6 +31,6 @@ local function Build(weapon)
 end
 
 Opt.lists.weapons = {
-    order = 7, title = "Weapons", noun = "weapon", template = R.TEMPLATES.weapon, build = Build,
+    order = 1, title = "Weapons", noun = "weapon", template = R.TEMPLATES.weapon, build = Build,
     help = "Attack = d20 + ability modifier + proficiency bonus, then damage dice + ability modifier. A natural 20 doubles the dice. Right-click the weapon row on the sheet to swap weapons.\n",
 }

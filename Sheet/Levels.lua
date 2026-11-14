@@ -5,7 +5,8 @@
 --     choice   = "ASI" (raise ability scores) or "FEAT"
 --     asi      = { STR = 2 } or { STR = 1, DEX = 1 }; with a feat, at most one +1
 --     feat     = name of the feat, for "FEAT"
---     featDesc = what the feat does, in the player's words
+--     featDesc = what the feat does
+--     gaveSave = ability whose saving throw proficiency the feat granted, if any
 -- }
 -- sheet.asi (the total from level-ups, used for the scores) is worked out from these.
 -- A feat chosen here is a passive marked auto = "level:<n>".
@@ -121,17 +122,37 @@ local function FeatPassive(sheet, level)
 end
 
 -- Stores the choice for a level and puts its feat, if any, on the sheet.
+-- A saving throw proficiency a level's feat granted is given up with that feat.
+local function TakeBackSave(sheet, level)
+    local old = sheet.levels[level]
+    if old and old.gaveSave then sheet.saves[old.gaveSave] = nil end
+end
+
 function Levels.Set(sheet, level, record)
-    sheet.levels[level] = CopyTable(record)
+    TakeBackSave(sheet, level)
+    local stored = CopyTable(record)
+    stored.gaveSave = nil
+    sheet.levels[level] = stored
+
     local passive, index = FeatPassive(sheet, level)
     if record.choice == "FEAT" and record.feat ~= "" then
+        local known = R.FEATS[record.feat] -- a listed feat brings its own effects
+        local changed = not passive or passive.name ~= record.feat
         if not passive then
-            -- Starts as a reminder; the player can give it effects on the Passives tab.
             passive = { auto = "level:" .. level, enabled = true, effects = {} }
             sheet.passives[#sheet.passives + 1] = passive
         end
         passive.name = record.feat
         passive.desc = record.featDesc ~= "" and record.featDesc or ("Feat taken at level %d."):format(level)
+        -- Effects are set when the feat is picked; after that they are the player's to edit.
+        if changed then passive.effects = CopyTable(known and known.effects or {}) end
+        if known and known.save then
+            for _, stat in ipairs(R.STATS) do
+                if (record.asi[stat] or 0) > 0 and not sheet.saves[stat] then
+                    sheet.saves[stat], stored.gaveSave = true, stat
+                end
+            end
+        end
     elseif passive then
         table.remove(sheet.passives, index)
     end
@@ -144,6 +165,7 @@ function Levels.Trim(sheet)
         if level > sheet.level then
             local _, index = FeatPassive(sheet, level)
             if index then table.remove(sheet.passives, index) end
+            TakeBackSave(sheet, level)
             sheet.levels[level] = nil
         end
     end
@@ -195,6 +217,7 @@ function Levels.Clean(source)
                     copy[key] = record[key]:gsub("[|%c]", ""):sub(1, key == "feat" and 60 or 400)
                 end
             end
+            if R.STAT_NAMES[record.gaveSave] then copy.gaveSave = record.gaveSave end
             if type(record.asi) == "table" then
                 for _, stat in ipairs(R.STATS) do
                     local points = math.floor(tonumber(record.asi[stat]) or 0)

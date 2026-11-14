@@ -73,6 +73,6 @@ local function Build(passive)
 end
 
 Opt.lists.passives = {
-    order = 9, title = "Passives", noun = "passive", template = R.TEMPLATES.passive, build = Build,
+    order = 4, title = "Passives", noun = "passive", template = R.TEMPLATES.passive, build = Build,
     help = "Always-on features, traits, feats and temporary stances. Their effects change your numbers while they are switched on.\n",
 }

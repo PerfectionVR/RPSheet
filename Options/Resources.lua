@@ -41,6 +41,6 @@ local function Build(resource)
 end
 
 Opt.lists.resources = {
-    order = 6, title = "Resources", noun = "resource", template = R.TEMPLATES.resource, build = Build,
+    order = 5, title = "Resources", noun = "resource", template = R.TEMPLATES.resource, build = Build,
     help = "Your own pools: energy, combo points, superiority dice, anything you track. Spell slots and your class's resources (Rage, Focus Points, Lay on Hands...) are added automatically from class and level and don't need an entry here.\n",
 }

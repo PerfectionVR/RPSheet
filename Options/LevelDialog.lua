@@ -79,6 +79,19 @@ end
 local function IsImprovement() return draft and draft.kind == "ASI" and draft.record.choice == "ASI" end
 local function IsFeat() return draft and draft.kind and draft.record.choice == "FEAT" end
 
+-- The listed feat the draft names, or nil for one the player typed.
+local function KnownFeat()
+    return draft and R.FEATS[draft.record.feat]
+end
+
+-- Abilities the chosen feat can raise by 1: its own list, or any for a typed feat.
+local function FeatStats()
+    local feat = KnownFeat()
+    local allowed = feat and feat.stats or R.STATS
+    if draft and draft.kind ~= "BOON" and feat and feat.kind == "BOON" then allowed = {} end
+    return allowed
+end
+
 local function Text(value, length)
     value = value:gsub("[|\r]", "")
     return value:trim():sub(1, length)
@@ -137,21 +150,58 @@ local args = {
             if IsImprovement() then
                 return ("Place %d points: +2 to one ability, or +1 to two. A score can't go above %d.\n"):format(R.ASI_POINTS, R.MAX_SCORE)
             elseif draft and draft.kind == "BOON" then
-                return ("Name the Epic Boon and say what it does. Most raise one ability by 1, up to %d.\n"):format(R.BOON_MAX_SCORE)
+                return ("Pick an Epic Boon. Each raises one ability by 1, up to %d. It is added as a passive.\n"):format(R.BOON_MAX_SCORE)
             end
-            return "Name the feat and say what it does. Most feats also raise one ability by 1. It is added as a passive, where you can give it working effects.\n"
+            return "Pick a feat, or choose Other to type one that isn't listed. Most feats also raise one ability by 1. It is added as a passive; the ones that change numbers do so by themselves.\n"
+        end,
+    },
+    featPick = {
+        type = "select", order = 39, name = "Feat", width = "double",
+        hidden = function() return not IsFeat() end,
+        values = function()
+            local values = { [""] = "Other (type a name)" }
+            for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do values[name] = name end
+            return values
+        end,
+        sorting = function()
+            local order = {}
+            for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do order[#order + 1] = name end
+            order[#order + 1] = ""
+            return order
+        end,
+        get = function() return KnownFeat() and draft.record.feat or "" end,
+        set = function(_, value)
+            local record, feat = draft.record, R.FEATS[value]
+            record.feat = value
+            record.featDesc = feat and feat.desc or ""
+            -- Keep the +1 only if this feat can raise that ability.
+            local keep
+            for _, stat in ipairs(feat and feat.stats or R.STATS) do
+                if (record.asi[stat] or 0) > 0 then keep = stat end
+            end
+            wipe(record.asi)
+            if keep then record.asi[keep] = 1 end
         end,
     },
     feat = {
         type = "input", order = 40, name = "Name", width = "double",
-        hidden = function() return not IsFeat() end,
+        hidden = function() return not IsFeat() or KnownFeat() ~= nil end,
         get = function() return draft.record.feat end,
         set = function(_, value) draft.record.feat = Text((value:gsub("\n", " ")), 60) end,
     },
     featStat = {
         type = "select", order = 41, name = "Raises by 1",
-        hidden = function() return not IsFeat() end,
-        values = Opt.STAT_OR_NONE, sorting = Opt.STAT_OR_NONE_ORDER,
+        hidden = function() return not IsFeat() or #FeatStats() == 0 end,
+        values = function()
+            local values = { [""] = "None" }
+            for _, stat in ipairs(FeatStats()) do values[stat] = R.STAT_NAMES[stat] end
+            return values
+        end,
+        sorting = function()
+            local order = { "" }
+            for _, stat in ipairs(FeatStats()) do order[#order + 1] = stat end
+            return order
+        end,
         get = function()
             for _, stat in ipairs(R.STATS) do
                 if (draft.record.asi[stat] or 0) > 0 then return stat end
@@ -255,6 +305,5 @@ function ns.OpenLevelDialog(level, reopen)
         if not draft then return end
         AceConfigDialog:Close(ADDON)
         AceConfigDialog:Open(DIALOG)
-        ns.AddDialogBacking(DIALOG)
     end)
 end

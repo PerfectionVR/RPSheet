@@ -39,6 +39,9 @@ Data\Classes.lua
 Data\Species.lua
 Data\Backgrounds.lua
 Data\Effects.lua
+Data\Feats.lua
+Data\Spells.lua
+Data\Conditions.lua
 Data\Example.lua
 Data\Glossary.lua
 Data\FeatureKit.lua
@@ -60,6 +63,7 @@ Sheet\Trackers.lua
 Sheet\Summary.lua
 Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
+Sheet\LineageSpells.lua
 Sheet\LevelUp.lua
 
 # Things the character does
@@ -67,6 +71,7 @@ Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
 Actions\Abilities.lua
+Actions\Conditions.lua
 Actions\Spells.lua
 Actions\Rest.lua
 Actions\DeathSaves.lua
@@ -76,6 +81,7 @@ UI\Window.lua
 UI\Bar.lua
 UI\TermLabel.lua
 UI\Slider.lua
+UI\DialogBacking.lua
 UI\Rows.lua
 UI\SheetWindow.lua
 UI\SheetContent.lua

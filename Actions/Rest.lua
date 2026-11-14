@@ -15,6 +15,8 @@ function RPSheet:LongRest()
     local state = self:State()
     self:ClampState(true)
     state.tempHP = 0
+    state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
+    state.conditions.Concentrating = nil
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).
     if HasPassive(self:Sheet(), "Resourceful") then state.inspiration = true end

@@ -40,7 +40,7 @@ local function RebuildList(key, list)
     wipe(args)
     args.help = { type = "description", order = 0, name = list.help }
     args.add = {
-        type = "execute", order = 1, name = "Add " .. list.noun,
+        type = "execute", order = 1, name = list.extra and ("Add an empty " .. list.noun) or ("Add " .. list.noun),
         func = function()
             local entries = Opt.Sheet()[key]
             local entry = CopyTable(list.template)
@@ -50,6 +50,7 @@ local function RebuildList(key, list)
             Opt.Changed()
         end,
     }
+    if list.extra then list.extra(args) end
     for index, entry in ipairs(Opt.Sheet()[key]) do
         local page = {
             type = "group", order = index + 1,

@@ -112,6 +112,8 @@ function ns.NormalizeState(state)
     if rawget(state, "initialized") ~= nil or rawget(state.sheet, "resourceStat") ~= nil then
         MigrateV1(state)
     end
+    if type(state.conditions) ~= "table" then state.conditions = {} end
+    state.exhaustion = tonumber(state.exhaustion) or 0
     local sheet = state.sheet
     sheet.extraLanguages = tonumber(sheet.extraLanguages) or 0
     if type(sheet.asi) ~= "table" then sheet.asi = {} end

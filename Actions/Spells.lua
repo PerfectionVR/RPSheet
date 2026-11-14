@@ -15,6 +15,17 @@ local function FindSlot(self, level)
     end
 end
 
+-- Number of dice a spell rolls: a scaling cantrip rolls one more set at character
+-- levels 5, 11 and 17.
+function RPSheet:SpellDiceCount(spell)
+    if not spell.scales or spell.level > 0 then return spell.count end
+    local level, tier = self:Level(), 1
+    for _, step in ipairs({ 5, 11, 17 }) do
+        if level >= step then tier = tier + 1 end
+    end
+    return spell.count * tier
+end
+
 -- Short description for the spell's row, e.g. "attack +5, 2d8" or "DEX save DC 13, 8d6".
 function RPSheet:SpellText(spell)
     local parts = {}
@@ -24,7 +35,7 @@ function RPSheet:SpellText(spell)
         parts[#parts + 1] = ("%s save DC %d"):format(spell.save, self:SpellDC() or 8)
     end
     if spell.count > 0 then
-        local dice = ("%dd%d"):format(spell.count, spell.sides)
+        local dice = ("%dd%d"):format(self:SpellDiceCount(spell), spell.sides)
         if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat())) end
         local word = ns.DiceWord(spell.dice)
         parts[#parts + 1] = dice .. (word ~= "damage" and (" " .. word) or "")
@@ -65,7 +76,7 @@ function RPSheet:CastSpell(spell, mode)
     -- A natural 20 on the spell attack doubles the dice.
     local function rollDice(critical)
         if spell.count <= 0 then return finish() end
-        self:RollDice(spell.count * (critical and 2 or 1), spell.sides, function(rolls)
+        self:RollDice(self:SpellDiceCount(spell) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (note and (" (" .. note .. ")") or "")

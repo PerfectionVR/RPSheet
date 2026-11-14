@@ -31,6 +31,8 @@ ns.defaults = {
                 tempHP = 0,
                 inspiration = false, -- Heroic Inspiration
                 deathPass = 0, deathFail = 0,
+                conditions = {}, -- [condition name] = true
+                exhaustion = 0,  -- exhaustion level, 0 to 6
                 res = {},   -- custom resources, by name
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level

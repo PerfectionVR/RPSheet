@@ -5,6 +5,17 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Conditions and exhaustion on the sheet. Conditions are picked from a menu and
+  announced; exhaustion lowers d20 rolls and speed by itself. Both are shared with
+  other RP Sheet users.
+- Feats can be picked from a list when levelling: 41 general feats, the 10 origin
+  feats and 12 Epic Boons, each with a summary. The ones that change numbers do so
+  by themselves.
+- Common cantrips and 1st-level spells for your class can be added from a list with
+  their dice and saves filled in. Cantrip dice grow with level.
+- A lineage's level 3 and level 5 spells are clickable, with one use per long rest.
+- The settings, creation wizard and level dialog have a solid background in the
+  theme's colour.
 - Settings are simpler: the Character tab is an overview with the creation wizard and
   levelling, and every page that edits the character directly sits under one
   Customize tab.

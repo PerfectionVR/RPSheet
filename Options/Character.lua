@@ -92,7 +92,7 @@ local function SizeValues()
 end
 
 Opt.custom.identity = {
-    type = "group", order = 1, name = "Class and origin",
+    type = "group", order = 6, name = "Class and origin",
     args = {
         intro = {
             type = "description", order = 1,

@@ -100,4 +100,5 @@ R.TEMPLATES.spell = {
     dice = "DAMAGE",           -- see DICE_KINDS
     addMod = false,            -- add the spellcasting modifier to the dice
     concentration = false,
+    scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
 }
