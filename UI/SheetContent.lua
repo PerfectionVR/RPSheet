@@ -165,6 +165,18 @@ local function CombatSection(self, body)
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
     Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)
+    -- Senses and resistances get a row each, after the numbers.
+    local senses, resistances = self:Senses(), self:Resistances()
+    local function After()
+        if #senses > 0 then
+            UI.AddLabel(body, 1, ("Senses %s%s|r"):format(UI.ACCENT, table.concat(senses, ", ")), nil, "Senses",
+                "Darkvision comes from your species or beast form. The others are read from the passives that are switched on.")
+        end
+        if #resistances > 0 then
+            UI.AddLabel(body, 1, ("Resists %s%s|r"):format(UI.ACCENT, table.concat(resistances, ", ")), nil, "Resistances",
+                "You take half damage of these types. Read from the passives that are switched on: switch one off, or write \"resistance to fire damage\" in a passive of your own, and the row follows.")
+        end
+    end
     if self:CastStat() then
         Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.",
             function() self:ExplainSpellDC() end)
@@ -172,6 +184,7 @@ local function CombatSection(self, body)
             function() self:RollCheck("spell attack", self:SpellAttack(), ns.RollMode()) end,
             "Click to roll a spell attack.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainSpellAttack() end)
     end
+    After()
 
     self.attackLabel = nil
     local weapon = self:GetWeapon()

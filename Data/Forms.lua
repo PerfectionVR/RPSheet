@@ -14,11 +14,11 @@ local R = ns.Rules
 
 R.FORMS = {
     ["Cat Form active"] = {
-        name = "Cat Form", ac = 13, acStat = "WIS", speed = 40,
+        name = "Cat Form", ac = 13, acStat = "WIS", speed = 40, darkvision = 60,
         scores = { STR = "WIS", DEX = "WIS" }, skills = { "Stealth" },
     },
     ["Bear Form active"] = {
-        name = "Bear Form", ac = 15, acStat = "WIS", speed = 30,
+        name = "Bear Form", ac = 15, acStat = "WIS", speed = 30, darkvision = 60,
         scores = { STR = "WIS", DEX = "WIS" }, skills = {},
     },
 }

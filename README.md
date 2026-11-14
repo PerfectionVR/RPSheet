@@ -188,7 +188,9 @@ still need that.
       Strength for it
 - [ ] Equipment, currency and magic items
 - [ ] Mounts, vehicles and companion creatures
-- [ ] Resistances, immunities and senses as tracked values
+- [x] Senses and damage resistances shown on the sheet, gathered from the species, the
+      beast form and the passives switched on
+- [ ] Immunities and vulnerabilities, and resistances halving damage by themselves
 - [ ] Renown perks by tier
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
 - [ ] The other choices inside a feat (which spell for Magic Initiate, Keen Mind's and
