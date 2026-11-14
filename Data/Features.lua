@@ -166,7 +166,8 @@ R.FEATURES = {
         Ability(9, "Indomitable", "When you fail a saving throw: reroll it, adding your level. You must use the new roll. Click this, then roll the save again and add the bonus shown.",
             { Spend("Indomitable"), Dice(0, 4, "LEVEL", "OTHER") }),
         Passive(9, "Tactical Master", "When you attack with a weapon whose mastery you can use, you can swap that mastery for Push, Sap or Slow for that attack."),
-        Passive(13, "Studied Attacks", "If you miss a creature with an attack, you have advantage on your next attack against it before the end of your next turn."),
+        Ability(13, "Studied Attacks", "If you miss a creature with an attack, you have advantage on your next attack against it before the end of your next turn. Click after a miss: the sheet sets advantage on your next roll.",
+            { Kit.NextRoll("ADV") }),
     },
 
     Monk = {

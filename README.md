@@ -144,7 +144,8 @@ still need that.
 - [x] Mage, Warlock (with all Eldritch Invocations, the setting's own included) and
       Evoker (with Metamagic)
 - [x] A second check of the twelve classes after the Warrior against the rules, by
-      one reviewer per class; what they found is fixed
+      one reviewer per class; what they found is fixed. The Warrior was checked the
+      same way afterwards
 - [ ] An in-game play-through of every class other than the Warrior
 - [x] Path of the Berserker (Shaman) and the War Domain (Priest), which the rules also list
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed

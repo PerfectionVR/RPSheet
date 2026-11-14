@@ -142,10 +142,13 @@ R.SUBCLASS_FEATURES = {
             return ("You know %d maneuvers, each an ability on the sheet that spends a Superiority Die. The die is a d%d. All dice come back on a short or long rest. Only one maneuver can be used per attack. Maneuvers are chosen when you level, or under Customize."):format(
                 AtLevel(level, R.MANEUVERS_KNOWN), AtLevel(level, R.SUPERIORITY_DIE))
         end),
-        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list.", nil, { skillChoice = "CLASS" }),
-        Limited(7, "Know Your Enemy", "Bonus action: learn the immunities, resistances and vulnerabilities of a creature you can see within 30 feet. Once per long rest; spending a Superiority Die gives the use back.", 1),
+        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list. The skill is chosen when you level; tick the tools under Customize.", nil, { skillChoice = "CLASS" }),
+        Limited(7, "Know Your Enemy", "Bonus action: learn the immunities, resistances and vulnerabilities of a creature you can see within 30 feet. Once per long rest; Know Your Enemy: restore gives the use back for a Superiority Die.", 1),
+        Ability(7, "Know Your Enemy: restore", "No action needed: spend a Superiority Die to use Know Your Enemy again before a long rest.",
+            { Spend("Superiority Dice"), { type = "GAIN", resource = "Know Your Enemy", amount = 1 } }),
         Passive(10, "Improved Combat Superiority", "Your Superiority Die is a d10."),
-        Passive(15, "Relentless", "Once per turn you can use a maneuver without spending a die, rolling a d8 in its place. Roll it with /roll 8."),
+        Ability(15, "Relentless", "Once per turn you can use a maneuver without spending a Superiority Die: this rolls the d8 that takes its place. Use it in place of clicking the maneuver, and add what the maneuver adds.",
+            { Dice(1, 8, "", "OTHER") }),
         Passive(18, "Ultimate Combat Superiority", "Your Superiority Die is a d12."),
     },
     ["Champion"] = {
