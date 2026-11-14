@@ -47,6 +47,7 @@ Data\SpellsCore.lua
 Data\SpellGroups.lua
 Data\GrowingSpells.lua
 Data\SpellDetails.lua
+Data\SpellDamage.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
@@ -65,6 +66,7 @@ Data\Traits.lua
 Data\Features.lua
 Data\SubclassFeatures.lua
 Data\ClassOverrides.lua
+Data\Metamorphosis.lua
 Data\Lineages.lua
 Data\Factions.lua
 
@@ -77,6 +79,7 @@ Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
 Sheet\Forms.lua
+Sheet\Metamorphosis.lua
 Sheet\RollModes.lua
 Sheet\Limits.lua
 Sheet\Senses.lua

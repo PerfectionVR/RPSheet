@@ -404,9 +404,13 @@ for class, names in pairs(R.SPELL_LISTS) do
     for _, name in ipairs(names) do listed[class][name] = true end
 end
 
+-- The damage type of each spell that has one, by name (more in Data/SpellDamage.lua).
+R.SPELL_DAMAGE = {}
+
 for line in DATA:gmatch("[^\n]+") do
     local name, level, school, how, dice, kind, range, flags, up, classes = strsplit("|", line)
     level = tonumber(level)
+    if kind ~= "" and kind ~= "heal" and kind ~= "heal+" then R.SPELL_DAMAGE[name] = kind end
     local count, sides = dice:match("^(%d+)d(%d+)$")
     -- Dice a higher slot adds, where they are the same kind of die.
     local upCount, upSides = up:match("^(%d+)d(%d+)$")

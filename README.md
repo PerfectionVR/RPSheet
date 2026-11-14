@@ -153,12 +153,15 @@ other ten still need that.
       Arts that stop in the armor the rules name
 - [x] Curse of Agony (Warlock): the die grows after each failed save. Click the spell
       again for each one; right-click ends it
-- [ ] Metamorphosis (Demon Hunter): the three benefits to choose from are described,
-      none is applied
-- [ ] Psychic Whispers and Homing Strikes (Rogue), Tactical Mind (Warrior): a die or
-      use that should not be spent is put back by hand
-- [ ] Student of War (Warrior): the artisan's tools are ticked by hand, not chosen in
-      the level dialog
+- [x] Metamorphosis (Demon Hunter): casting it asks which of the three benefits you
+      take and applies it, as a passive you switch off when the spell ends
+- [ ] Metamorphosis: the benefit ending by itself after its minute, and force damage
+      from spells typed in by hand or from custom abilities counted for Devourer
+- [x] Tactical Mind (Warrior), Psi-Bolstered Knack and Homing Strikes (Rogue): one
+      click takes the use or die back when the roll still failed; Psychic Whispers is
+      free the first time after a long rest
+- [ ] Rend Mind and Psychic Veil (Rogue): the dice they cost are spent by hand
+- [x] Student of War (Warrior): the artisan's tools are chosen in the level dialog
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
 - [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet

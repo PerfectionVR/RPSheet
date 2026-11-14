@@ -82,6 +82,16 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Casting Metamorphosis asks which benefit you take and applies it: low force damage
+  dice count as 3 (Devourer), 1d6 more fire damage on melee hits (Havoc), or +2 Armor
+  Class and 5 hit points (Vengeance). It shows as a passive you switch off when the
+  spell ends; a rest ends it too.
+- Tactical Mind, Psi-Bolstered Knack and Homing Strikes let you take the use or die
+  back with one click when the roll still fails or misses: a link in chat, or a
+  right-click on the ability. Psychic Whispers is free the first time after each long
+  rest.
+- Battle Masters choose their Student of War artisan's tools in the level dialog; the
+  sheet grants the proficiency.
 - Curse of Agony's die grows: after casting, click the spell again each time the
   target fails its save (no slot is spent), and right-click to end it.
 - A beast form that would run out during a rest ends when you take it: on a short

@@ -24,6 +24,7 @@ end
 function RPSheet:LongRest()
     local state = self:State()
     EndFormAfter(self, 8)
+    self:EndBenefits() -- no spell benefit outlasts a rest
     self:ClampState(true) -- also makes first-use-free abilities free again
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
@@ -40,6 +41,10 @@ end
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
     self:ForgetRefunds()
+    if self:EndBenefits() then
+        self:ClampState()
+        self:PopulateSoon()
+    end
     local regained = {}
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.short then
