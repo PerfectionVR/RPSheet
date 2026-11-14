@@ -44,9 +44,14 @@ function ns.ApplyBeastForms(sheet)
         if not sheet.dismissed[useKey] then
             wanted[useKey] = true
             local use = Entry(sheet.abilities, useKey, "Wild Shape: " .. name)
-            use.desc = ("Bonus action. You become a %s for %d hours, keeping your hit points and gaining temporary hit points equal to %s. %s The sheet uses the beast's numbers while the form is on."):format(
-                name:lower(), math.floor(sheet.level / 2), moon and "three times your level" or "your level", beast.desc)
-            use.actions = { Kit.Spend("Wild Shape"), Kit.Dice(0, 4, "", "TEMPHP", sheet.level * (moon and 3 or 1)), Kit.SwitchOn(passiveName) }
+            -- A swarm can't gain temporary hit points, so that form gives none.
+            local swarm = name:find("^Swarm of") ~= nil
+            use.desc = ("Bonus action. You become a %s for %d hours, keeping your hit points%s. %s The sheet uses the beast's numbers while the form is on."):format(
+                name:lower(), math.floor(sheet.level / 2),
+                swarm and "" or (" and gaining temporary hit points equal to " .. (moon and "three times your level" or "your level")), beast.desc)
+            use.actions = { Kit.Spend("Wild Shape") }
+            if not swarm then use.actions[2] = Kit.Dice(0, 4, "", "TEMPHP", sheet.level * (moon and 3 or 1)) end
+            use.actions[#use.actions + 1] = Kit.SwitchOn(passiveName)
         end
         -- The passive is what the form hangs on, so it is always there.
         wanted[onKey] = true

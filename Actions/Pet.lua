@@ -28,8 +28,9 @@ end
 --   "charge"  a beast of the land ran 20 feet straight at the target: one more die,
 --             and the target can be knocked prone
 --   "cleave"  the second attack the Cleave mastery allows: no Wisdom in the damage
--- What a hit does besides damage is said after the numbers.
-function RPSheet:PetStrike(mode, how)
+-- What a hit does besides damage is said after the numbers. `again` rolls a second
+-- strike of the same kind straight after (Bestial Fury).
+function RPSheet:PetStrike(mode, how, again)
     if self.busy or self:IsRolling() then return end
     local block = R.PetBlock(self:Sheet())
     local toHit, flat = self:PetStrikeMods()
@@ -65,6 +66,8 @@ function RPSheet:PetStrike(mode, how)
                 self.busy = false
                 self:Announce(text)
                 self:Refresh()
+                -- The charge only counts for the first of two strikes.
+                if again then self:PetStrike(mode, how == "charge" and "plain" or how) end
             end
             if how ~= "charge" then return Finish() end
             self:RollDice(crit and 2 or 1, block.charge, function(extra)

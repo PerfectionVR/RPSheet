@@ -25,6 +25,13 @@ local function StrikeRows(self, body, pet, block)
         function(button) self:PetStrike(ns.RollMode(), button == "RightButton" and "charge" or nil) end,
         "Beast's Strike", table.concat(help, "\n"))
 
+    -- Bestial Fury: the beast strikes twice when commanded.
+    if self:Sheet().level >= 11 then
+        UI.AddLabel(body, 1, ("Beast's Strike twice  %sboth strikes in one click|r"):format(UI.GREY),
+            function(button) self:PetStrike(ns.RollMode(), button == "RightButton" and "charge" or nil, true) end,
+            "Bestial Fury", "Rolls two strikes one after the other. Right-click when the first one follows a charge.\n" .. ns.ROLL_MODE_HELP)
+    end
+
     if not pet or not self:HasWeaponMastery() then return end
     UI.AddLabel(body, 1, ("Strike mastery: %s%s|r %s"):format(UI.ACCENT, pet.mastery, masteryName and "(in use)" or (UI.GREY .. "(not picked)|r")),
         function()
