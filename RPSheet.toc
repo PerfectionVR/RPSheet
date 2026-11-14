@@ -79,6 +79,7 @@ Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
 Sheet\Forms.lua
+Sheet\Pet.lua
 Sheet\Metamorphosis.lua
 Sheet\RollModes.lua
 Sheet\Limits.lua
@@ -109,6 +110,7 @@ Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
 Actions\Abilities.lua
+Actions\Pet.lua
 Actions\Refunds.lua
 Actions\Conditions.lua
 Actions\Spells.lua
@@ -127,6 +129,7 @@ UI\Rows.lua
 UI\SlotLabels.lua
 UI\SheetWindow.lua
 UI\SpellbookWindow.lua
+UI\PetSection.lua
 UI\SheetContent.lua
 UI\Minimap.lua
 

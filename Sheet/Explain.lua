@@ -245,6 +245,9 @@ end
 -- when there is nothing to work out for it.
 function RPSheet:ExplainTerm(term)
     local sheet = self:Sheet()
+    -- A companion's roll has its own numbers (Sheet/Pet.lua).
+    local petText = self:ExplainPetTerm(term)
+    if petText then return petText end
     self.explainCapture = {}
     local weapon, spell = Named(sheet.weapons, term), Named(sheet.spells, term)
     local stat, kind = term:match("^(%u%u%u) (%l+)$")

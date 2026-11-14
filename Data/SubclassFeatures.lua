@@ -229,13 +229,13 @@ R.SUBCLASS_FEATURES = {
             local pet, block = R.Pet(sheet), R.PetBlock(sheet)
             return ("Your companion's attack, with your spell attack modifier.%s %s%s"):format(
                 level >= 11 and " It strikes twice when commanded: click once for each." or "", block.strike,
-                pet and (" If the family is one of your Weapon Mastery picks, the strike has %s."):format(pet.mastery) or "")
+                pet and (" If the family is one of your Weapon Mastery picks (set in the Companion section of the sheet), the strike has %s and says so when it rolls."):format(pet.mastery) or "")
         end, function(_, sheet)
             local block = R.PetBlock(sheet)
             return { Roll("SPELL", "WIS"), Dice(1, block.die, "WIS", "DAMAGE", block.flat) }
         end),
         When(function(sheet) return R.PetBlock(sheet) == R.PET_BLOCKS.Land end,
-            Ability(3, "Beast's Strike: charge", "A beast of the land that moved 20 feet straight at the target before the hit deals this much more, and knocks a Large or smaller target prone.",
+            Ability(3, "Beast's Strike: charge", "Use this in place of Beast's Strike when a beast of the land moved 20 feet straight at the target: the whole strike is rolled with this much more damage, and a Large or smaller target is knocked prone.",
                 { Dice(1, 6) })),
         Passive(6, "Pet Specialization: Cunning", "While your companion is within 60 feet, your speed and its speeds are 10 feet higher. Switch this off while it is farther away.",
             { Bonus("SPEED", 10) }, { when = PetSpec("C") }),
