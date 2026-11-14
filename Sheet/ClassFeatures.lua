@@ -42,7 +42,8 @@ local function EachFeature(sheet, visit)
         local prefix, features, skip = source[1], source[2], source[3]
         for _, feature in ipairs(features or {}) do
             local key = Key(prefix, feature)
-            if sheet.level >= feature.level and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
+            local specFits = not feature.spec or feature.spec == sheet.spec -- some belong to one specialization
+            if sheet.level >= feature.level and specFits and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
                 visit(feature, key)
             end
         end
@@ -69,6 +70,7 @@ local function Apply(sheet, feature, key)
     if type(advantage) == "function" then advantage = advantage(sheet.level, sheet) end
     entry.advantage = advantage and CopyTable(advantage) or nil
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
+    entry.strike = feature.strike and CopyTable(feature.strike) or nil
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     for stat, points in pairs(feature.scores or {}) do
         sheet.featureScores[stat] = (sheet.featureScores[stat] or 0) + points

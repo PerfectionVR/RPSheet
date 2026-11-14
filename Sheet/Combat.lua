@@ -164,3 +164,14 @@ function RPSheet:FeatureFlag(name)
     end
     return found
 end
+
+-- Dice that switched-on passives add to every melee weapon hit (Radiant Strikes),
+-- as a list of { sides, damage }. None for a ranged basic weapon or a healing one.
+function RPSheet:StrikeDice(weapon)
+    local data, strikes = ns.WeaponData(weapon), {}
+    if weapon.heal or (data and data.ranged) then return strikes end
+    for _, passive in ipairs(self:Sheet().passives) do
+        if passive.enabled and passive.strike then strikes[#strikes + 1] = passive.strike end
+    end
+    return strikes
+end

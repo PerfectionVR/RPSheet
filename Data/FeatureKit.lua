@@ -25,6 +25,8 @@ end
 --                      skill checks), languages = n (more languages to choose)
 --   skillChoice        a skill to pick (see Sheet/Maneuvers.lua)
 --   scores = { DEX = 4 }  ability scores it raises, to a maximum of 25
+--   strike = { sides = 8, damage = "radiant" }  a die added to every melee weapon hit
+--   spec = "Blood"     only for a character of that specialization (abilities too)
 function Kit.Passive(level, name, desc, effects, extra)
     local feature = { level = level, name = name, kind = "passive", desc = desc, effects = effects }
     if extra == true then extra = { startsOff = true } end

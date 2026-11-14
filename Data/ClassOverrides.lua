@@ -16,16 +16,22 @@ local Passive, Ability, Limited, Spend, Dice = Kit.Passive, Kit.Ability, Kit.Lim
 R.CLASS_OVERRIDES = {
     -- A Paladin whose healing touch and radiant smites become necrotic power.
     DEATHKNIGHT = {
-        remove = { "Lay on Hands", "Divine Smite", "Radiant Strikes", "Restoring Touch" },
+        remove = { "Lay on Hands", "Paladin's Smite", "Divine Smite", "Radiant Strikes", "Restoring Touch" },
         removePools = { "Lay on Hands" },
         pools = { { name = "Death Coil Dice", flat = 1, stat = "CHA", min = 1 } },
         features = {
             Passive(1, "Undead", "Your creature type is Undead."),
-            Ability(1, "Death Coil", "Bonus action, 60 feet. The target makes a Constitution save: necrotic damage equal to the roll, half on a success. An undead target can be healed by the roll instead. Each click spends one die; you can spend up to your Charisma modifier at once.",
-                { Spend("Death Coil Dice"), Dice(1, 8) }),
-            Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot.", 1),
-            Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage."),
-            Passive(14, "Improved Death Coil", "Death Coil deals extra necrotic damage equal to your Charisma modifier, even on a successful save, and heals undead for more."),
+            Ability(1, "Death Coil", function(level, sheet)
+                return ("Bonus action, 60 feet. The target makes a Constitution save, DC %d: necrotic damage equal to the roll, half on a success. An undead target can be healed by the roll instead%s. Each click spends one die; you can spend up to your Charisma modifier at once."):format(
+                    Kit.DC(sheet, "CHA"), level >= 14 and ", and then regains your level more" or "")
+            end, function(level, sheet)
+                -- Improved Death Coil adds the Charisma modifier, at least 1.
+                return { Spend("Death Coil Dice"), Dice(1, 8, "", "DAMAGE", level >= 14 and math.max(1, Kit.Mod(sheet, "CHA")) or 0) }
+            end),
+            Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
+            Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage. The sheet rolls it with every melee attack.",
+                nil, { strike = { sides = 8, damage = "necrotic" } }),
+            Passive(14, "Improved Death Coil", "Death Coil deals extra necrotic damage equal to your Charisma modifier (at least 1), even on a successful save, and an undead you heal with it regains your level more."),
         },
     },
     -- A Ranger with fel sight.
@@ -48,34 +54,74 @@ R.SUBCLASS_POOLS["Demon Hunter"] = {
     { name = "Soul Fragments", from = 3, flat = 0, stat = "WIS", min = 1 },
 }
 
-R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
-    Passive(3, "Oath of the Ebon Blade Spells", "Your oath and the rune on your weapon give you extra spells at certain levels. They are always prepared."),
-    Passive(3, "Runeforging", "After a long rest, inscribe a Blood, Frost or Unholy rune on a melee weapon you hold. The rune sets your specialization and can be changed when you gain a level."),
-    Ability(3, "Runic Power", "Right after casting Rune Strike. Gain a benefit from your rune: Blood heals you by the necrotic damage dealt, Frost coats your weapon in ice, Unholy spreads disease.",
-        { Spend("Channel Divinity") }),
-    Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage."),
-    Limited(15, "Runic Mastery", "Once per long rest, invoke a stronger power of the rune on your weapon.", 1),
-    Limited(20, "Aspect of the Horsemen", "Bonus action: for 10 minutes you take on the might of the Four Horsemen. Once per long rest, or again by spending a 5th-level slot.", 1),
+-- A Death Knight's rune is its specialization: Blood, Frost or Unholy. Features marked
+-- with `spec` appear only with that rune.
+local EBON_ALL = { { 3, "Death Grip" }, { 5, "Death and Decay" }, { 9, "Summon Undead" }, { 13, "Freedom of Movement" }, { 17, "Circle of Power" } }
+local EBON_RUNE = {
+    Blood = { "Vampiric Blood", "Spiritual Weapon", "Leeching Strike", "Evard's Black Tentacles", "Bonestorm" },
+    Frost = { "Chains of Ice", "Frostscythe", "Remorseless Winter", "Ice Storm", "Cone of Cold" },
+    Unholy = { "Scourge Strike", "Ray of Enfeeblement", "Bestow Curse", "Blight", "Contagion" },
 }
 
--- A Death Knight's rune is its specialization.
-do
-    local features = R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]
-    local RUNE = {
-        Blood = "Blood rune: you regain hit points equal to the necrotic damage the strike dealt.",
-        Frost = "Frost rune: your weapon is coated in ice.",
-        Unholy = "Unholy rune: the strike spreads disease.",
-    }
-    for _, feature in ipairs(features) do
-        if feature.name == "Runeforging" or feature.name == "Runic Power" then
-            feature.bySpec = {}
-            for spec, text in pairs(RUNE) do
-                feature.bySpec[spec] = feature.name == "Runeforging"
-                    and ("Your weapon carries the %s rune, which is your specialization. It can be changed when you gain a level."):format(spec)
-                    or ("Right after casting Rune Strike. %s"):format(text)
+R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
+    Passive(3, "Oath of the Ebon Blade Spells", function(level, sheet)
+        local known = {}
+        for index, step in ipairs(EBON_ALL) do
+            if level >= step[1] then
+                known[#known + 1] = step[2]
+                if EBON_RUNE[sheet.spec] then known[#known + 1] = EBON_RUNE[sheet.spec][index] end
             end
         end
-    end
+        return "Always prepared, and not counted against the number you can prepare: " .. table.concat(known, ", ")
+            .. (EBON_RUNE[sheet.spec] and "." or ". Choosing a rune (your specialization) adds more.")
+            .. " Add them under Customize, Spells."
+    end),
+    Passive(3, "Runeforging", function(_, sheet)
+        local rune = {
+            Blood = "Blood: you gain temporary hit points equal to your Charisma modifier plus your level after a long rest, and whenever you reduce an enemy to 0 hit points.",
+            Frost = "Frost: your damage ignores resistance to cold, and the extra attack of a light weapon deals 1d4 more cold damage.",
+            Unholy = "Unholy: your damage ignores resistance to necrotic, and with a heavy weapon the first creature you hit each turn takes extra necrotic damage equal to your Charisma modifier.",
+        }
+        return "After a long rest you inscribe a rune on a melee weapon you hold; it can be changed when you gain a level. The rune is your specialization. "
+            .. (rune[sheet.spec] or "Choose Blood, Frost or Unholy as your specialization under Customize.")
+    end),
+    Ability(3, "Blood Rune", "Temporary hit points from your rune: after a long rest, and whenever you reduce an enemy to 0 hit points.",
+        function(level) return { Dice(0, 4, "CHA", "TEMPHP", level) } end),
+    Ability(3, "Frost Rune", "Extra cold damage when the extra attack of a light weapon hits.", { Dice(1, 4) }),
+    Ability(3, "Unholy Rune", "Extra necrotic damage on the first creature you hit each turn with a heavy weapon.",
+        function(_, sheet) return { Dice(0, 4, "", "DAMAGE", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
+    Ability(3, "Runic Power", function(_, sheet)
+        local rune = {
+            Blood = "You regain hit points equal to the necrotic damage your Rune Strike dealt: raise your HP by hand.",
+            Frost = "The target and each enemy within 10 feet of it take the roll as cold damage.",
+            Unholy = "The target is cursed until the end of your next turn: it subtracts the roll from its next saving throw.",
+        }
+        return "Right after you cast Rune Strike. " .. (rune[sheet.spec] or "Its effect depends on your rune.")
+    end, function(_, sheet)
+        local steps = { Spend("Channel Divinity") }
+        if sheet.spec == "Frost" then steps[2] = Dice(2, 6) end
+        if sheet.spec == "Unholy" then steps[2] = Dice(1, 6, "", "OTHER") end
+        return steps
+    end),
+    Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage."),
+    Limited(15, "Runic Mastery", function(_, sheet)
+        local rune = {
+            Blood = "Reaction when a creature within 10 feet of you is hit: reduce the damage by the amount shown (your level). You then lose that many hit points.",
+            Frost = ("In place of one attack: frost in a 30-foot cone. The roll as cold damage, half on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "CHA")),
+            Unholy = "When you cast Summon Undead it needs no concentration and lasts 1 minute; the spirit gains temporary hit points equal to your level plus Charisma modifier and deals extra necrotic damage once per turn.",
+        }
+        return "Once per long rest. " .. (rune[sheet.spec] or "Its effect depends on your rune.")
+    end, 1, function(_, sheet)
+        if sheet.spec == "Blood" then return { Dice(0, 4, "LEVEL", "OTHER") } end
+        if sheet.spec == "Frost" then return { Dice(8, 6) } end
+        return {}
+    end),
+    Limited(20, "Aspect of the Horsemen", "Bonus action, for 10 minutes: you can restore Runic Mastery by spending a 4th-level slot, and Runic Power and Runic Mastery can use any rune's effect. Once per long rest, or again by spending a 5th-level slot.", 1),
+}
+-- The rune abilities belong to one specialization each.
+for _, feature in ipairs(R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]) do
+    local rune = feature.name:match("^(%a+) Rune$")
+    if rune then feature.spec = rune end
 end
 
 R.SUBCLASS_FEATURES["Demon Hunter"] = {

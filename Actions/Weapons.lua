@@ -59,8 +59,20 @@ function RPSheet:Attack(mode)
             local text = ("attacks with %s - %s, %s"):format(
                 ns.Mark(weapon.name), RollText.Check("to hit", d20, attackMod, note),
                 RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod))
-            if mastery then text = text .. ". " .. mastery end
-            self:Announce(text)
+            -- Dice a feature adds to every melee hit are rolled next, doubled on a critical hit.
+            local strikes = self:StrikeDice(weapon)
+            local function Finish(index)
+                local strike = strikes[index]
+                if not strike then
+                    if mastery then text = text .. ". " .. mastery end
+                    return self:Announce(text)
+                end
+                self:RollDice(crit and 2 or 1, strike.sides, function(extra)
+                    text = text .. ", " .. RollText.Dice(strike.damage .. " damage", extra, strike.sides, 0)
+                    Finish(index + 1)
+                end)
+            end
+            Finish(1)
         end)
     end)
 end

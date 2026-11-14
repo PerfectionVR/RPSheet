@@ -159,21 +159,27 @@ R.FEATURES = {
     },
 
     Paladin = {
-        Ability(1, "Lay on Hands", "Bonus action. Heal a creature you touch from your pool. This spends 5 points; change the bar by hand for other amounts. Spending 5 can also remove the poisoned condition.",
-            { Spend("Lay on Hands", 5) }),
+        Ability(1, "Lay on Hands", "Bonus action. Heal a creature you touch from your pool. Each click spends 5 points and heals 5; change the bar by hand for other amounts. Spending 5 can instead remove the poisoned condition.",
+            { Spend("Lay on Hands", 5), Dice(0, 4, "", "HEALING", 5) }),
         WEAPON_MASTERY,
         Passive(2, "Fighting Style", FIGHTING_STYLE),
-        Ability(2, "Divine Smite", "After you hit with a melee weapon or unarmed strike: 2d8 radiant damage. Add 1d8 against fiends and undead, and 1d8 for each slot level above 1st.",
+        Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
+        Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. Add 1d8 against fiends and undead, and 1d8 for each slot level above 1st.",
             { Spend("1st-level slot"), Dice(2, 8) }),
         Ability(3, "Divine Sense", "Bonus action. For 10 minutes you know the location of celestials, fiends and undead within 60 feet.", { Spend("Channel Divinity") }),
         ExtraAttack(5),
         Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1),
-        Passive(6, "Aura of Protection", "You and allies within 10 feet add your Charisma modifier to saving throws (at least +1).", { Bonus("SAVES", 0, "CHA") }),
-        Ability(9, "Abjure Foes", "Magic action. Creatures of your choice within 60 feet make a Wisdom save or are frightened for 1 minute and can do little on their turns.",
-            { Spend("Channel Divinity") }),
+        Passive(6, "Aura of Protection", function(level)
+            return ("You and allies within %d feet add your Charisma modifier to saving throws (at least +1). The sheet adds it to yours."):format(level >= 18 and 30 or 10)
+        end, { Bonus("SAVES", 0, "CHA") }),
+        Ability(9, "Abjure Foes", function(_, sheet)
+            return ("Magic action. Creatures you can see within 60 feet, up to your Charisma modifier, make a Wisdom save (DC %d) or are frightened for 1 minute and can only move, act or take a bonus action on their turns."):format(Kit.DC(sheet, "CHA"))
+        end, { Spend("Channel Divinity") }),
         Passive(10, "Aura of Courage", "You and allies in your aura can't be frightened."),
-        Passive(11, "Radiant Strikes", "Your melee weapon and unarmed hits deal 1d8 extra radiant damage."),
-        Passive(14, "Restoring Touch", "When you use Lay on Hands you can spend 5 points per condition to end blinded, charmed, deafened, frightened, paralysed or stunned."),
+        Passive(11, "Radiant Strikes", "Your melee weapon and unarmed hits deal 1d8 extra radiant damage. The sheet rolls it with every melee attack.",
+            nil, { strike = { sides = 8, damage = "radiant" } }),
+        Passive(14, "Restoring Touch", "When you use Lay on Hands you can spend 5 points per condition to end blinded, charmed, deafened, frightened, paralyzed or stunned."),
+        Passive(18, "Aura Expansion", "Your Aura of Protection reaches 30 feet."),
     },
 
     Ranger = {
