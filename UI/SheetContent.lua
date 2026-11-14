@@ -331,7 +331,17 @@ local function OriginSection(self, body)
         local score = self:Sheet().renown[faction] or 0
         if score > 0 then
             local tier = R.RenownTier(score)
-            renown[#renown + 1] = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or "")
+            -- The perks of every tier reached, lowest first.
+            local perks = {}
+            for index = #R.RENOWN_TIERS, 1, -1 do
+                local step = R.RENOWN_TIERS[index]
+                if score >= step[1] then perks[#perks + 1] = ("%s%s|r: %s"):format(UI.ACCENT, step[2], R.RENOWN_PERKS[step[2]]) end
+            end
+            renown[#renown + 1] = {
+                text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),
+                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50."
+                    .. (#perks > 0 and ("\n\n" .. table.concat(perks, "\n")) or "") .. "\n\nThe faction's own perks come on top of these.",
+            }
         end
     end
     if #languages == 0 and #renown == 0 then return end
@@ -341,7 +351,7 @@ local function OriginSection(self, body)
         UI.AddLabel(body, 1, table.concat(languages, ", "))
     end
     for _, line in ipairs(renown) do
-        UI.AddLabel(body, 0.5, line, nil, "Renown", "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.")
+        UI.AddLabel(body, 0.5, line.text, nil, "Renown", line.tip)
     end
 end
 

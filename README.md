@@ -193,7 +193,8 @@ still need that.
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on
 - [ ] Immunities and vulnerabilities, and resistances halving damage by themselves
-- [ ] Renown perks by tier
+- [x] The perks every faction gives at each renown tier, shown with the score
+- [ ] Each faction's own renown perks
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
 - [ ] The other choices inside a feat (which spell for Magic Initiate, Keen Mind's and
       Observant's skill, Elemental Adept's damage type)

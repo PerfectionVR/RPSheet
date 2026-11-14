@@ -36,6 +36,13 @@ end
 -- Renown: standing with a faction, from 0 upwards
 ---------------------------------------------------------------------------
 R.RENOWN_TIERS = { { 50, "Exalted" }, { 25, "Revered" }, { 10, "Honored" }, { 3, "Friendly" } }
+-- What every faction gives at each tier. A faction's own perks come on top.
+R.RENOWN_PERKS = {
+    Friendly = "Members of the faction are friendly to you by default.",
+    Honored = "Its merchants give you 10% off ordinary equipment and Common and Uncommon magic items.",
+    Revered = "The discount is 15% and covers Rare magic items.",
+    Exalted = "The discount is 25% and covers Very Rare magic items.",
+}
 R.STARTING_RENOWN = 3
 
 R.FACTIONS = {
