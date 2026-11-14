@@ -10,6 +10,7 @@
 --   needAllStats  prerequisite: every one of these abilities at 13 or higher
 --   needSpecies   prerequisite: this species
 --   save     true if it also grants saving throw proficiency in the raised ability
+--   skillPicks, expertisePicks  skills to choose for proficiency and for expertise
 --   advantage  rolls the feat gives advantage on, by their label (see RPSheet:HasAdvantage)
 local _, ns = ...
 local R = ns.Rules
@@ -77,7 +78,7 @@ local LIST = {
     General("Sentinel", BODY, "You can make an opportunity attack when a nearby creature disengages or attacks someone else. A creature you hit with one has its speed reduced to 0."),
     General("Shadow-Touched", MIND, "You learn Invisibility and one 1st-level illusion or necromancy spell. Each can be cast once per long rest without a slot, and with your slots."),
     General("Shield Master", { "STR" }, "After a melee hit you can bash with your shield to push the target 5 feet or knock it prone. Reaction: take no damage from a Dexterity save you passed."),
-    General("Skill Expert", ANY, "Proficiency in one skill, and expertise in one skill you are proficient in."),
+    General("Skill Expert", ANY, "Proficiency in one skill, and expertise in one skill you are proficient in. Both are chosen on the Character tab.", { skillPicks = 1, expertisePicks = 1 }),
     General("Skulker", { "DEX" }, "Blindsight out to 10 feet, advantage on Stealth checks to hide during combat, and missing an attack doesn't reveal where you are."),
     General("Slasher", BODY, "Once per turn a slashing hit reduces the target's speed by 10 feet. A slashing critical hit gives the target disadvantage on attacks until your next turn."),
     General("Speedy", { "DEX", "CON" }, "Your speed increases by 10 feet, Dash ignores difficult terrain, and opportunity attacks against you have disadvantage.", { effects = { Effect("SPEED", 10) } }),
@@ -94,7 +95,7 @@ local LIST = {
     Origin("Magic Initiate", "Two cantrips and one 1st-level spell from the Cleric, Druid or Wizard list. The spell can be cast once per long rest without a slot."),
     Origin("Musician", "Proficiency with three instruments. After a rest your song gives Heroic Inspiration to as many allies as your proficiency bonus."),
     Origin("Savage Attacker", "Once per turn, roll a weapon's damage dice twice and use either result."),
-    Origin("Skilled", "Proficiency in any three skills or tools."),
+    Origin("Skilled", "Proficiency in any three skills or tools. The skills are chosen on the Character tab."),
     Origin("Tavern Brawler", "Your unarmed strikes deal 1d4 + Strength, you reroll 1s on them, and once per turn a hit can push the target 5 feet. Improvised weapons count as proficient."),
     Origin("Arathi Heritage", "Advantage on saves against being charmed, and once in a while you can turn a failed save against falling unconscious into a success. Humans only."),
     Origin("Child of the Sea", "You can hold your breath for 2 + your Constitution modifier minutes, and you have a swimming speed equal to your speed. Humans only."),
@@ -142,6 +143,7 @@ end
 R.FEATS = {}           -- by name
 R.FEAT_NAMES = { GENERAL = {}, BOON = {} } -- names for the dropdowns, in alphabetical order
 for _, feat in ipairs(LIST) do
+    if feat.name == "Skilled" then feat.skillPicks = 3 end
     R.FEATS[feat.name] = feat
     table.insert(R.FEAT_NAMES[feat.kind == "BOON" and "BOON" or "GENERAL"], feat.name)
 end

@@ -92,7 +92,18 @@ end
 local function ExpertiseLimit()
     if not draft then return 0 end
     local sheet = Sheet()
-    return ns.ExpertiseLimit({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel() })
+    return ns.ExpertiseLimit({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel(), passives = sheet.passives })
+end
+
+-- Skills to choose for the feats on the sheet (Skilled, Skill Expert).
+local function FeatSkillLimit()
+    return draft and ns.FeatSkillLimit(Sheet()) or 0
+end
+
+local function FeatSkillsPicked()
+    local count = 0
+    for _ in pairs(draft.featSkills) do count = count + 1 end
+    return count
 end
 
 local function ExpertisePicked()
@@ -102,6 +113,10 @@ local function ExpertisePicked()
 end
 
 local function Problem()
+    local featSkills = FeatSkillLimit()
+    if featSkills > 0 and FeatSkillsPicked() ~= featSkills then
+        return ("Choose %d skills for your feats (%d chosen)."):format(featSkills, FeatSkillsPicked())
+    end
     local expertise = ExpertiseLimit()
     if expertise > 0 and ExpertisePicked() ~= expertise then
         return ("Choose %d skills for expertise (%d chosen)."):format(expertise, ExpertisePicked())
@@ -403,6 +418,7 @@ local args = {
             end
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             if ExpertiseLimit() > 0 then sheet.expertise = CopyTable(draft.expertise) end
+            if FeatSkillLimit() > 0 then sheet.featSkills = CopyTable(draft.featSkills) end
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
                 RPSheet:SetLevel(level)
@@ -457,6 +473,28 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
         disabled = function() return not draft.maneuvers[name] and ManeuversPicked() >= ManeuverLimit() end,
         get = function() return draft.maneuvers[name] or false end,
         set = function(_, value) draft.maneuvers[name] = value or nil end,
+    }
+end
+
+-- Skills from feats: one checkbox per skill the character isn't proficient in yet.
+args.featSkills = {
+    type = "group", inline = true, order = 13.4, args = {},
+    name = function() return ("Skills from your feats (%d of %d chosen)"):format(draft and FeatSkillsPicked() or 0, FeatSkillLimit()) end,
+    hidden = function() return FeatSkillLimit() == 0 end,
+}
+for index, skill in ipairs(R.SKILLS) do
+    local name = skill.name
+    args.featSkills.args["skill" .. index] = {
+        type = "toggle", order = index, width = 1, name = name,
+        desc = "Proficiency in this skill, from a feat such as Skilled or Skill Expert.",
+        hidden = function()
+            local sheet = Sheet()
+            -- Shown when picked, or when the skill isn't proficient from somewhere else.
+            return not draft.featSkills[name] and (sheet.skills[name] or 0) > 0 and not sheet.featSkillGranted[name]
+        end,
+        disabled = function() return not draft.featSkills[name] and FeatSkillsPicked() >= FeatSkillLimit() end,
+        get = function() return draft.featSkills[name] or false end,
+        set = function(_, value) draft.featSkills[name] = value or nil end,
     }
 end
 
@@ -562,7 +600,7 @@ function ns.OpenLevelDialog(level, reopen)
     draft = {
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
-        options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise),
+        options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end

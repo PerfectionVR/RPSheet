@@ -7,11 +7,56 @@ local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
 
+-- Total of a field (skillPicks, expertisePicks) over the feats on the sheet. A feat
+-- taken twice counts twice.
+local function FeatPicks(sheet, field)
+    local total = 0
+    for _, passive in ipairs(sheet.passives or {}) do
+        local feat = R.FEATS[passive.name]
+        if feat and feat[field] then total = total + feat[field] end
+    end
+    return total
+end
+
+-- How many skills the character's feats let it choose for proficiency.
+function ns.FeatSkillLimit(sheet)
+    return FeatPicks(sheet, "skillPicks")
+end
+
+function ns.FeatSkillsKnown(sheet)
+    local count = 0
+    for _ in pairs(sheet.featSkills) do count = count + 1 end
+    return count
+end
+
+function ns.OpenFeatSkills(sheet)
+    local limit = ns.FeatSkillLimit(sheet)
+    return limit > 0 and ns.FeatSkillsKnown(sheet) ~= limit
+end
+
+-- Makes the skills picked for feats proficient, and gives back those no longer picked.
+function ns.ApplyFeatSkills(sheet)
+    if ns.FeatSkillLimit(sheet) == 0 then wipe(sheet.featSkills) end
+    for skill in pairs(sheet.featSkillGranted) do
+        if not sheet.featSkills[skill] then
+            if sheet.skills[skill] == 1 then sheet.skills[skill] = nil end
+            sheet.featSkillGranted[skill] = nil
+        end
+    end
+    for skill in pairs(sheet.featSkills) do
+        if (sheet.skills[skill] or 0) == 0 then
+            sheet.skills[skill], sheet.featSkillGranted[skill] = 1, true
+        end
+    end
+end
+
 -- How many skills the character picks expertise in, and the skills it may pick from
--- as a set (nil = any skill).
+-- as a set (nil = any skill). Feats on the sheet add picks of any skill.
 function ns.ExpertiseLimit(sheet)
     local count, allowed, anySkill = 0, {}, false
     if not R.CLASSES[sheet.class] then return 0 end
+    local fromFeats = FeatPicks(sheet, "expertisePicks")
+    if fromFeats > 0 then count, anySkill = fromFeats, true end
     for level = 1, sheet.level do
         for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
             if feature.expertise then

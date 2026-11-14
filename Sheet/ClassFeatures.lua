@@ -133,6 +133,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyPicks(sheet)
     ns.ApplyBeastForms(sheet)
     ns.ApplyFeatureSkills(sheet)
+    ns.ApplyFeatSkills(sheet)
     ns.ApplyExpertise(sheet)
     ns.ApplyPreparedSpells(sheet)
 end

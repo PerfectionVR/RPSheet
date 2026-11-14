@@ -190,7 +190,9 @@ still need that.
 - [ ] Mounts, vehicles and companion creatures
 - [ ] Resistances, immunities and senses as tracked values
 - [ ] Renown perks by tier
-- [ ] The choices inside a feat (which spell for Magic Initiate, which skills for Skilled)
+- [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
+- [ ] The other choices inside a feat (which spell for Magic Initiate, Keen Mind's and
+      Observant's skill, Elemental Adept's damage type)
 
 **Play**
 

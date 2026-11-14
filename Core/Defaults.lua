@@ -65,6 +65,8 @@ ns.defaults = {
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")
+                    featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
+                    featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
                     expertise = {},        -- [skill] = true: expertise picked for a class feature
                     expertiseGranted = {}, -- [skill] = true where that pick raised the skill
                     picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations (Data/Picks.lua)
