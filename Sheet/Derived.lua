@@ -111,7 +111,8 @@ function RPSheet:Bonus(target)
             end
         end
     end
-    return total
+    -- Magic items that are equipped, and attuned where needed (Sheet/Inventory.lua).
+    return total + self:ItemBonus(target)
 end
 
 -- e.g. "+3 +2x DEX to Armor Class (now +9)"

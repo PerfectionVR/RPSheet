@@ -59,6 +59,11 @@ local function Build(weapon)
             type = "toggle", order = 5, name = "Proficient",
             desc = "Adds your proficiency bonus to the attack roll.",
         }, self, "proficient"),
+        magic = With({
+            type = "range", order = 5.5, min = 0, max = 3, step = 1, name = "Magic bonus",
+            desc = "A magic weapon adds this to attack and damage rolls made with it: 1, 2 or 3. It counts for this weapon only.",
+            hidden = function() return weapon.heal end,
+        }, self, "magic"),
         heal = With({
             type = "toggle", order = 6, name = "Healing, no attack roll",
             desc = "Rolls the dice as healing and skips the d20.",

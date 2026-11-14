@@ -38,6 +38,13 @@ local function AddBonuses(self, parts, target)
             end
         end
     end
+    for _, item in ipairs(self:Sheet().items or {}) do
+        if self:ItemActive(item) then
+            for _, effect in ipairs(item.effects) do
+                if effect.target == target then Add(parts, item.name, self:EffectValue(effect)) end
+            end
+        end
+    end
 end
 
 -- "Dexterity +3, proficiency +2", or "nothing added" for an empty list.
@@ -206,6 +213,8 @@ function RPSheet:ExplainWeapon(weapon)
     Ability(self, hit, self:WeaponStat(weapon))
     Ability(self, damage, self:WeaponStat(weapon))
     if weapon.proficient then Add(hit, "proficiency", self:ProficiencyBonus()) end
+    Add(hit, "magic weapon", weapon.magic)
+    Add(damage, "magic weapon", weapon.magic)
     AddBonuses(self, hit, "ATTACK")
     AddBonuses(self, damage, "DAMAGE")
     if self:WeaponStat(weapon) == "STR" then AddBonuses(self, damage, "STRDAMAGE") end
