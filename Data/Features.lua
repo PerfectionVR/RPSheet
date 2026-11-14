@@ -347,6 +347,7 @@ R.FEATURES = {
             { expertise = { steps = { { 2, 1 } }, skills = { "Arcana", "History", "Investigation", "Medicine", "Nature", "Religion" } } }),
         Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
         Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. Mark them as not counting under Customize, Spells."),
-        Limited(20, "Signature Spells", "Two 3rd-level spells from your spellbook are always prepared, and each can be cast once at 3rd level without a slot. Both come back on a short or long rest.", 2, nil, "ALL"),
+        Limited(20, "Signature Spell: first", "Two 3rd-level spells from your spellbook are always prepared. This is the free cast of the first, at 3rd level without a slot. It comes back on a short or long rest.", 1, nil, "ALL"),
+        Limited(20, "Signature Spell: second", "The free cast of your second Signature Spell, at 3rd level without a slot. It comes back on a short or long rest.", 1, nil, "ALL"),
     },
 }

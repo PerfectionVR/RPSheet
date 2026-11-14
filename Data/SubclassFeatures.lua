@@ -66,6 +66,15 @@ local function PetOptions()
     return options
 end
 
+-- An Evoker's always-prepared spells: the shared ones at each step, plus the set of
+-- the specialization. They take the place of the usual draconic spells.
+local EVOKER_ALL = { { 3, "Chromatic Orb, Dragon's Breath" }, { 5, "Fly" }, { 7, "Arcane Eye" }, { 9, "Summon Dragon" } }
+local EVOKER_SET = {
+    Augmentation = { "Ebon Might, Eruption", "Blistering Scales", "Upheaval", "Breath of Eons" },
+    Devastation = { "Azure Strike, Scorching Ray", "Fireball", "Emberstorm", "Shattering Star" },
+    Preservation = { "Dream Breath, Living Flame", "Emerald Blossom", "Time Dilation", "Dream Flight" },
+}
+
 local function AlwaysPrepared(what, byLevel)
     if not byLevel then
         return Passive(3, what .. " Spells", "Your subclass gives you extra spells at certain levels. They are always prepared and don't count against the number you can prepare.")
@@ -231,7 +240,8 @@ R.SUBCLASS_FEATURES = {
             nil, { advantage = { "initiative" } }),
         Passive(3, "Assassin's Tools", "You have a disguise kit and a poisoner's kit, and proficiency with both."),
         Passive(9, "Infiltration Expertise", "You can mimic a person's speech and handwriting after an hour of study, and Steady Aim no longer stops you moving."),
-        Passive(13, "Envenom Weapons", "Your Poison Cunning Strike also deals 2d6 poison damage on a failed save, ignoring resistance."),
+        Ability(13, "Envenom Weapons", "Your Poison Cunning Strike also deals this poison damage each time the target fails its save, the repeated ones too. It ignores resistance.",
+            { Dice(2, 6) }),
         Passive(17, "Death Strike", function(_, sheet)
             return ("When you hit with Sneak Attack in the first round, the target makes a Constitution save (DC %d); on a failure the attack's damage is doubled."):format(Kit.DC(sheet, "DEX"))
         end),
@@ -246,9 +256,9 @@ R.SUBCLASS_FEATURES = {
             { Roll("ATTACK", "DEX"), Dice(1, 4, "DEX") }),
         Ability(3, "Psi-Bolstered Knack", "When you fail a check with a skill or tool you are proficient in: add the roll. If it still fails the die isn't spent: give it back on the bar.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Ability(3, "Psychic Whispers", "Magic action: link minds with creatures you can see, up to your proficiency bonus, for as many hours as the roll. The first use after a long rest costs no die.",
+        Ability(3, "Psychic Whispers", "Magic action: link minds with creatures you can see, up to your proficiency bonus, for as many hours as the roll. The first use after a long rest costs no die: raise the bar by one after that click.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Ability(9, "Homing Strikes", "When a Psychic Blade attack misses: add the roll to the attack roll. The die is spent only if that makes it hit.",
+        Ability(9, "Homing Strikes", "When a Psychic Blade attack misses: add the roll to the attack roll. The die is spent only if that makes it hit: raise the bar by one when it still misses.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
         Ability(9, "Psychic Teleportation", "Bonus action: throw a blade and teleport to where it lands, up to 10 feet times the roll.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
@@ -263,10 +273,11 @@ R.SUBCLASS_FEATURES = {
             { Bonus("INIT", 0, "CHA") }),
         Passive(9, "Panache", "Two more Cunning Strike options: Goad and Awe."),
         Kit.CunningStrike(9, "Goad", 1, "If it fails, until the end of its next turn the target has disadvantage attacking anyone but you and can't make opportunity attacks against others.", "Wisdom"),
-        Kit.CunningStrike(9, "Awe", 3, "Creatures you choose within 30 feet that fail are awed by you until the end of your next turn.", "Wisdom"),
+        Kit.CunningStrike(9, "Awe", 3, "Creatures you choose within 30 feet that fail are charmed by you until the end of your next turn.", "Wisdom"),
         Passive(13, "Dashing Strikes", "Two more Cunning Strike options: Invigorate and Parrying Stance."),
-        Kit.CunningStrike(13, "Invigorate", 2, "A creature you can see within 30 feet adds 1d6 to its attack rolls and saving throws until the end of its next turn."),
-        Kit.CunningStrike(13, "Parrying Stance", 2, "Roll 1d6 for a defensive bonus that lasts until the start of your next turn."),
+        Kit.CunningStrike(13, "Invigorate", 2, "A creature you can see within 30 feet adds 1d6 to its attack rolls and saving throws until the end of its next turn; roll that die with Dashing Strikes: bonus die."),
+        Kit.CunningStrike(13, "Parrying Stance", 2, "Add 1d6 to your Armor Class until the start of your next turn; roll it with Dashing Strikes: bonus die."),
+        Ability(13, "Dashing Strikes: bonus die", "The d6 that Invigorate adds to attack rolls and saves, or Parrying Stance to your Armor Class.", { Dice(1, 6, "", "OTHER") }),
         Passive(17, "Master Duelist", "Right after you use Sneak Attack you can attack the same target again, if you are within 5 feet of it and no one else is within 5 feet of you."),
     },
 
@@ -278,8 +289,10 @@ R.SUBCLASS_FEATURES = {
         Passive(3, "Atonement", "Creatures you heal with a spell of level 1 or higher are blessed until the end of your next turn. When you then damage a creature with a slotted spell, each blessed creature regains hit points equal to that slot's level."),
         Ability(3, "Holy Bolt", function(level)
             return "Bonus action. A ranged spell attack against a creature within 60 feet: radiant damage on a hit, and a creature you choose within 60 feet is healed by the second roll."
-                .. (level >= 17 and " You can teleport 30 feet first, and spend a spell slot to hurl as many more bolts as its level: click again for each." or "")
+                .. (level >= 17 and " You can teleport 30 feet first, and spend a spell slot to hurl as many more bolts as its level: use Holy Bolt: extra bolt for each, and take the slot off by hand." or "")
         end, { Spend("Channel Divinity"), Roll("SPELL", "WIS"), Dice(2, 10, "WIS"), Dice(1, 10, "WIS", "HEALING") }),
+        Ability(17, "Holy Bolt: extra bolt", "One of the extra bolts a spell slot adds to Holy Bolt. It costs no Channel Divinity.",
+            { Roll("SPELL", "WIS"), Dice(2, 10, "WIS"), Dice(1, 10, "WIS", "HEALING") }),
         Ability(6, "Luminous Barrier", "Bonus action. Each creature blessed by your Atonement gains temporary hit points equal to the amount shown (your level + Wisdom modifier), and resists all damage while it has them.",
             function(level) return { Spend("Channel Divinity"), Dice(0, 4, "WIS", "OTHER", level) } end),
         Passive(17, "Ultimate Penitence", "Holy Bolt lets you teleport up to 30 feet first, and you can spend a spell slot to fire additional bolts."),
@@ -319,7 +332,9 @@ R.SUBCLASS_FEATURES = {
             local dice = AtLevel(level, { { 3, 2 }, { 10, 3 }, { 14, 4 } })
             return { Spend("Wild Shape"), Dice(dice, 6), Dice(dice, 6, "", "HEALING") }
         end),
-        Limited(6, "Natural Recovery", "Once per long rest, cast one of your Circle spells without a slot. Also once per long rest, on a short rest, recover spell slots with a combined level up to half your level (none above 5th); restore those by hand.", 1),
+        Limited(6, "Natural Recovery", "Once per long rest, cast one of your Circle spells without a slot.", 1),
+        Limited(6, "Natural Recovery: slots", "Once per long rest, on a short rest: recover spell slots with a combined level up to half your level, rounded up, none above 5th. The highest spent slots that fit come back; change the bars by hand for another mix.", 1,
+            { Kit.Slots("RECOVER") }),
         Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type of your current land (named on your Circle of the Land Spells)."),
         Ability(14, "Nature's Sanctuary", "Magic action. Spectral trees fill a 15-foot cube within 120 feet for a minute: you and allies have half cover there, and allies gain your Nature's Ward resistance. A bonus action moves it up to 60 feet.",
             { Spend("Wild Shape") }),
@@ -437,7 +452,26 @@ R.SUBCLASS_FEATURES = {
     ["Draconic Sorcery"] = {
         Passive(3, "Draconic Resilience", "Your maximum hit points increase by 1 for every Sorcerer level.", { Bonus("HP", 0, "LEVEL") }),
         Passive(3, "Draconic Scales", "Without armor your AC is 10 + Dexterity + Charisma modifiers. Switch this off while you wear armor.", { Bonus("AC", 0, "CHA") }),
-        Passive(3, "Evoker Spells", "You always have extra spells prepared at certain levels. An Evoker takes the spells of its specialization from the Evoker list in place of the usual draconic ones. Add them under Customize, Spells, ticked as not counting."),
+        Passive(3, "Evoker Spells", function(level, sheet)
+            local known = {}
+            for index, step in ipairs(EVOKER_ALL) do
+                if level >= step[1] then
+                    known[#known + 1] = step[2]
+                    if EVOKER_SET[sheet.spec] then known[#known + 1] = EVOKER_SET[sheet.spec][index] end
+                end
+            end
+            return "Always prepared, and not counted against the number you can prepare: " .. table.concat(known, ", ")
+                .. (EVOKER_SET[sheet.spec] and "." or ". Choosing a specialization adds its set of spells.")
+                .. " They are on your spell list already."
+        end, nil, { prepared = function(sheet)
+            local steps = {}
+            for index, step in ipairs(EVOKER_ALL) do
+                local names = step[2]
+                if EVOKER_SET[sheet.spec] then names = names .. ", " .. EVOKER_SET[sheet.spec][index] end
+                steps[index] = { step[1], names }
+            end
+            return steps
+        end }),
         Kit.Choice(6, "Elemental Affinity", "The damage type your draconic magic is attuned to. You resist it, and add your Charisma modifier to one damage roll of a spell that deals it.", {
             Kit.Option("Acid", "You resist acid damage, and add your Charisma modifier to one damage roll of a spell that deals acid damage."),
             Kit.Option("Cold", "You resist cold damage, and add your Charisma modifier to one damage roll of a spell that deals cold damage."),
