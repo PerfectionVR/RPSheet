@@ -118,7 +118,7 @@ local function Gains()
         for _, feature in ipairs(features) do
             -- Some descriptions follow the level.
             local desc = feature.desc
-            if type(desc) == "function" then desc = desc(level) end
+            if type(desc) == "function" then desc = desc(level, setmetatable({ level = level }, { __index = sheet })) end
             lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feature.name, desc)
         end
     end

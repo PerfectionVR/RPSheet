@@ -15,8 +15,8 @@ local function FindAuto(list, key)
 end
 
 -- A feature's effects or actions may be a fixed table or a function of the level.
-local function Resolve(value, level)
-    if type(value) == "function" then value = value(level) end
+local function Resolve(value, level, sheet)
+    if type(value) == "function" then value = value(level, sheet) end
     return CopyTable(value or {})
 end
 
@@ -62,14 +62,16 @@ local function Apply(sheet, feature, key)
     -- Refreshed every time, so dice and bonuses follow the level.
     -- Some features read differently for each specialization.
     local desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
-    if type(desc) == "function" then desc = desc(sheet.level) end -- wording that follows the level
+    if type(desc) == "function" then desc = desc(sheet.level, sheet) end -- wording that follows the character
     entry.desc = desc
     -- Rolls the feature gives advantage on (see RPSheet:HasAdvantage).
     entry.advantage = feature.advantage and CopyTable(feature.advantage) or nil
+    entry.flags = feature.flags and CopyTable(feature.flags) or nil
+    for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     if isAbility then
-        entry.actions = Resolve(feature.actions, sheet.level)
+        entry.actions = Resolve(feature.actions, sheet.level, sheet)
     else
-        entry.effects = Resolve(feature.effects, sheet.level)
+        entry.effects = Resolve(feature.effects, sheet.level, sheet)
     end
     for _, skill in ipairs(feature.skills or {}) do
         sheet.skills[skill] = math.max(sheet.skills[skill] or 0, 1)

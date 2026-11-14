@@ -137,7 +137,13 @@ function RPSheet:RollCheck(label, mod, mode)
     if self:HasAdvantage(label) then
         mode = (mode == "DIS") and "NONE" or "ADV"
     end
+    -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
+    local reliable = (self:Sheet().skills[label] or 0) >= 1 and self:FeatureFlag("reliable")
     self:RollD20(mode, function(d20, note)
+        if reliable and d20 < 10 then
+            note = ("%s [rolled %d, counts as 10]"):format(note, d20)
+            d20 = 10
+        end
         self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label), d20, mod, note))
     end)
 end

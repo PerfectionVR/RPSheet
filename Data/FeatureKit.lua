@@ -15,8 +15,15 @@ function Kit.AtLevel(level, steps)
 end
 
 -- A reminder or number-changing passive. `effects` may be a table or function(level).
--- `extra` can carry startsOff = true (switched off until the player turns it on) and
--- skills = { ... } (skill proficiencies the feature grants).
+-- `desc` may be a function(level, sheet) for wording that follows the character.
+-- `extra` can carry:
+--   startsOff = true   switched off until the player turns it on
+--   skills = { ... }   skill proficiencies the feature grants
+--   saves = { ... }    saving throw proficiencies it grants
+--   advantage = { ... } rolls it gives advantage on, by their label on the sheet
+--   flags = { ... }    reliable = true (a d20 of 9 or lower counts as 10 on proficient
+--                      skill checks), languages = n (more languages to choose)
+--   skillChoice        a skill to pick (see Sheet/Maneuvers.lua)
 function Kit.Passive(level, name, desc, effects, extra)
     local feature = { level = level, name = name, kind = "passive", desc = desc, effects = effects }
     if extra == true then extra = { startsOff = true } end
@@ -42,13 +49,33 @@ function Kit.Limited(level, name, desc, uses, actions, short)
     else
         pool.steps = uses
     end
-    local feature = Kit.Ability(level, name, desc, function(current)
-        local list = type(actions) == "function" and actions(current) or CopyTable(actions or {})
+    local feature = Kit.Ability(level, name, desc, function(current, sheet)
+        local list = type(actions) == "function" and actions(current, sheet) or CopyTable(actions or {})
         table.insert(list, 1, Kit.Spend(name))
         return list
     end)
     feature.pool = pool
     return feature
+end
+
+-- Clicking the ability sets the sheet's "Next roll" row.
+function Kit.NextRoll(mode)
+    return { type = "NEXTROLL", mode = mode or "ADV" }
+end
+
+-- Numbers of a character, for descriptions that quote them. `sheet` is a saved sheet.
+function Kit.Mod(sheet, stat)
+    local score = (sheet.base[stat] or 10) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
+    return math.floor((score - 10) / 2)
+end
+
+function Kit.Prof(level)
+    return math.ceil(level / 4) + 1
+end
+
+-- Save DC of a feature: 8 + ability modifier + proficiency bonus.
+function Kit.DC(sheet, stat)
+    return 8 + Kit.Mod(sheet, stat) + Kit.Prof(sheet.level)
 end
 
 function Kit.Spend(resource, amount)
@@ -75,4 +102,16 @@ end
 -- The Monk's Martial Arts die at a level.
 function Kit.MartialDie(level)
     return Kit.AtLevel(level, { { 1, 6 }, { 5, 8 }, { 11, 10 }, { 17, 12 } })
+end
+
+-- A Rogue's Cunning Strike option: Sneak Attack with `cost` fewer dice, plus an effect.
+-- `save` is the ability the target saves with, against 8 + Dexterity + proficiency.
+function Kit.CunningStrike(level, name, cost, text, save)
+    return Kit.Ability(level, "Cunning Strike: " .. name,
+        function(_, sheet)
+            local desc = ("Sneak Attack with %d fewer %s. %s"):format(cost, cost == 1 and "die" or "dice", text)
+            if save then desc = ("%s %s save DC %d."):format(desc, save, Kit.DC(sheet, "DEX")) end
+            return desc
+        end,
+        function(current) return { Kit.Dice(math.max(0, math.ceil(current / 2) - cost), 6) } end)
 end

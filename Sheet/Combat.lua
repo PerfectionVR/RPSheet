@@ -152,3 +152,15 @@ function RPSheet:HasAdvantage(label)
     end
     return false
 end
+
+-- A flag that switched-on passives carry (see Kit.Passive): true if any has it, or
+-- the sum when it is a number. Nil when none does.
+function RPSheet:FeatureFlag(name)
+    local found
+    for _, passive in ipairs(self:Sheet().passives) do
+        local value = passive.enabled and passive.flags and passive.flags[name]
+        if value == true then return true end
+        if type(value) == "number" then found = (found or 0) + value end
+    end
+    return found
+end

@@ -29,7 +29,8 @@ end
 -- any that features grant.
 ---------------------------------------------------------------------------
 local function LanguageLimit()
-    return R.LANGUAGE_PICKS + 1 + Sheet().extraLanguages
+    -- The usual number, the ones features bring, and any the player added by hand.
+    return R.LANGUAGE_PICKS + 1 + Sheet().extraLanguages + (RPSheet:FeatureFlag("languages") or 0)
 end
 
 local function LanguageInfo()
@@ -152,7 +153,7 @@ local args = {
     languageInfo = { type = "description", order = 11, fontSize = "medium", name = LanguageInfo },
     extraLanguages = Opt.With({
         type = "range", order = 12, min = 0, max = 10, step = 1, name = "Extra languages",
-        desc = "Languages granted by features, such as a Ranger's Deft Explorer or a Rogue's Thieves' Cant. Raises the limit.",
+        desc = "More languages from a source the sheet doesn't know about. Class features that grant languages are counted already.",
     }, Sheet, "extraLanguages"),
     languages = { type = "group", inline = true, order = 13, name = "Languages", args = {} },
 

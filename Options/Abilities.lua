@@ -94,6 +94,10 @@ local function StepOptions(ability, index, action)
                 type = "select", order = 14, name = "Do", hidden = Only("TOGGLE"), values = R.TOGGLE_MODES,
             }, this, "mode"),
 
+            nextRoll = With({
+                type = "select", order = 15, name = "Next roll", hidden = Only("NEXTROLL"), values = R.NEXT_ROLL_MODES,
+            }, this, "mode"),
+
             remove = {
                 type = "execute", order = 20, name = "Remove step",
                 func = function()

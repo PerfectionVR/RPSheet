@@ -23,6 +23,11 @@ R.SUBCLASS_POOLS = {
     },
 }
 
+-- Size of a Soulknife's Psionic Energy Die.
+local function PsionicDie(level)
+    return AtLevel(level, { { 3, 6 }, { 5, 8 }, { 11, 10 }, { 17, 12 } })
+end
+
 local function AlwaysPrepared(what)
     return Passive(3, what .. " Spells", "Your subclass gives you extra spells at certain levels. They are always prepared and don't count against the number you can prepare.")
 end
@@ -129,27 +134,47 @@ R.SUBCLASS_FEATURES = {
     -- Rogue
     ---------------------------------------------------------------------------
     ["Assassin"] = {
-        Passive(3, "Assassinate", "Advantage on initiative rolls. In the first round you have advantage against creatures that haven't acted, and your Sneak Attack deals extra damage equal to your level."),
+        Passive(3, "Assassinate", "Advantage on initiative rolls, which the sheet rolls for you. In the first round you have advantage against creatures that haven't acted, and a Sneak Attack hit then deals extra damage equal to your level.",
+            nil, { advantage = { "initiative" } }),
         Passive(3, "Assassin's Tools", "You have a disguise kit and a poisoner's kit, and proficiency with both."),
         Passive(9, "Infiltration Expertise", "You can mimic a person's speech and handwriting after an hour of study, and Steady Aim no longer stops you moving."),
         Passive(13, "Envenom Weapons", "Your Poison Cunning Strike also deals 2d6 poison damage on a failed save, ignoring resistance."),
-        Passive(17, "Death Strike", "A Sneak Attack in the first round forces a Constitution save; on a failure its damage is doubled."),
+        Passive(17, "Death Strike", function(_, sheet)
+            return ("When you hit with Sneak Attack in the first round, the target makes a Constitution save (DC %d); on a failure the attack's damage is doubled."):format(Kit.DC(sheet, "DEX"))
+        end),
     },
     ["Soulknife"] = {
-        Ability(3, "Psychic Blade", "A blade of psychic energy you can attack with whenever you take the Attack action. Finesse and thrown; it leaves no mark.",
+        Passive(3, "Psionic Power", function(level)
+            return ("Your Psionic Energy Dice are d%ds. One comes back on a short rest, all on a long rest."):format(PsionicDie(level))
+        end),
+        Ability(3, "Psychic Blade", "A blade of psychic energy for an attack as part of the Attack action. Finesse and thrown (60 feet); it leaves no mark.",
             { Roll("ATTACK", "DEX"), Dice(1, 6, "DEX") }),
-        Passive(3, "Psionic Power", "Psionic Energy Dice fuel your powers. Psi-Bolstered Knack: add one to a failed proficient check. Psychic Whispers: speak telepathically with several creatures for hours."),
-        Passive(9, "Soul Blades", "Homing Strikes: add a Psionic Energy Die to a missed Psychic Blade attack. Psychic Teleportation: throw a blade and teleport up to 10 feet times the roll."),
+        Ability(3, "Psychic Blade (bonus action)", "After attacking with a Psychic Blade, a second blade as a bonus action if your other hand is free.",
+            { Roll("ATTACK", "DEX"), Dice(1, 4, "DEX") }),
+        Ability(3, "Psi-Bolstered Knack", "When you fail a check with a skill or tool you are proficient in: add the roll. If it still fails the die isn't spent: give it back on the bar.",
+            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(3, "Psychic Whispers", "Magic action: link minds with creatures you can see, up to your proficiency bonus, for as many hours as the roll. The first use after a long rest costs no die.",
+            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(9, "Homing Strikes", "When a Psychic Blade attack misses: add the roll to the attack roll. The die is spent only if that makes it hit.",
+            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(9, "Psychic Teleportation", "Bonus action: throw a blade and teleport to where it lands, up to 10 feet times the roll.",
+            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
         Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that it costs a Psionic Energy Die, spent on its bar by hand.", 1),
-        Passive(17, "Rend Mind", "When your Psychic Blade deals Sneak Attack damage, the target makes a Wisdom save or is stunned for up to a minute."),
+        Limited(17, "Rend Mind", function(_, sheet)
+            return ("When your Psychic Blade deals Sneak Attack damage: the target makes a Wisdom save (DC %d) or is stunned for a minute, repeating the save each turn. Once per long rest; after that it costs three Psionic Energy Dice."):format(Kit.DC(sheet, "DEX"))
+        end, 1),
     },
     ["Swashbuckler"] = {
         Passive(3, "Fancy Footwork", "A creature you make a melee attack against on your turn can't make opportunity attacks against you for the rest of that turn."),
-        Passive(3, "Rakish Audacity", "You add your Charisma modifier to initiative. You can Sneak Attack without advantage when you are next to your target and no one else is next to you.",
+        Passive(3, "Rakish Audacity", "You add your Charisma modifier to initiative. You can Sneak Attack without advantage when you are within 5 feet of your target, no one else is within 5 feet of you, and you don't have disadvantage.",
             { Bonus("INIT", 0, "CHA") }),
-        Passive(9, "Panache", "New Cunning Strike options that goad a target into attacking you or awe onlookers."),
-        Passive(13, "Dashing Strikes", "New Cunning Strike options that bolster an ally or throw a target off balance."),
-        Passive(17, "Master Duelist", "After using Sneak Attack you can attack the same target again if you are next to it and no one else is next to you."),
+        Passive(9, "Panache", "Two more Cunning Strike options: Goad and Awe."),
+        Kit.CunningStrike(9, "Goad", 1, "If it fails, until the end of its next turn the target has disadvantage attacking anyone but you and can't make opportunity attacks against others.", "Wisdom"),
+        Kit.CunningStrike(9, "Awe", 3, "Creatures you choose within 30 feet that fail are awed by you until the end of your next turn.", "Wisdom"),
+        Passive(13, "Dashing Strikes", "Two more Cunning Strike options: Invigorate and Parrying Stance."),
+        Kit.CunningStrike(13, "Invigorate", 2, "A creature you can see within 30 feet adds 1d6 to its attack rolls and saving throws until the end of its next turn."),
+        Kit.CunningStrike(13, "Parrying Stance", 2, "Roll 1d6 for a defensive bonus that lasts until the start of your next turn."),
+        Passive(17, "Master Duelist", "Right after you use Sneak Attack you can attack the same target again, if you are within 5 feet of it and no one else is within 5 feet of you."),
     },
 
     ---------------------------------------------------------------------------

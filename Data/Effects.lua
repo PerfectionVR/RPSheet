@@ -52,8 +52,10 @@ R.ACTIONS = {
     GAIN = "Regain a resource",
     EMPTY = "Empty a resource",
     TOGGLE = "Switch a passive on or off",
+    NEXTROLL = "Set advantage or disadvantage on the next roll",
 }
-R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE" }
+R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE", "NEXTROLL" }
+R.NEXT_ROLL_MODES = { ADV = "Advantage", DIS = "Disadvantage" }
 R.ROLL_KINDS = { ATTACK = "Attack", CHECK = "Check", SAVE = "Saving throw", SPELL = "Spell attack" }
 R.ROLL_KIND_ORDER = { "ATTACK", "SPELL", "CHECK", "SAVE" }
 -- What rolled dice count as. The last two act on the character itself.

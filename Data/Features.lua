@@ -149,18 +149,30 @@ R.FEATURES = {
     },
 
     Rogue = {
-        Passive(1, "Expertise", "Expertise in two skills you are proficient in. Two more at level 6."),
-        Ability(1, "Sneak Attack", "Once per turn, extra damage on a hit with a finesse or ranged weapon when you have advantage, or when an ally is next to the target.",
+        Passive(1, "Expertise", function(level)
+            return ("Expertise in %s skills you are proficient in: your proficiency bonus counts twice. Set them under Customize, Proficiencies."):format(level >= 6 and "four" or "two")
+        end),
+        Ability(1, "Sneak Attack", "Once per turn, extra damage on a hit with a finesse or ranged weapon when you have advantage, or when an ally is within 5 feet of the target and you don't have disadvantage.",
             function(level) return { Dice(math.ceil(level / 2), 6) } end),
-        Passive(1, "Thieves' Cant", "You know the secret mix of jargon and signs used by thieves, plus one other language."),
+        Passive(1, "Thieves' Cant", "You know the secret mix of jargon and signs used by thieves, and one more language of your choice.", nil, { flags = { languages = 1 } }),
         WEAPON_MASTERY,
         Passive(2, "Cunning Action", "Dash, Disengage or Hide as a bonus action."),
-        Passive(3, "Steady Aim", "Bonus action, if you haven't moved: advantage on your next attack this turn, and your speed is 0 until the turn ends."),
-        Passive(5, "Cunning Strike", "Give up Sneak Attack dice to add an effect to the hit, such as poison, a trip or a withdrawal."),
+        Ability(3, "Steady Aim", "Bonus action, if you haven't moved this turn: advantage on your next attack roll, and your speed is 0 until the turn ends. Sets your next roll to advantage.",
+            { Kit.NextRoll("ADV") }),
+        Passive(5, "Cunning Strike", function(level)
+            return ("When you deal Sneak Attack damage you can give up dice for an effect: use the Cunning Strike abilities in place of Sneak Attack. %s"):format(
+                level >= 11 and "You can use two effects on one Sneak Attack, paying for both." or "One effect per Sneak Attack.")
+        end),
+        Kit.CunningStrike(5, "Poison", 1, "The target is poisoned for a minute if it fails, repeating the save each turn. Needs a poisoner's kit.", "Constitution"),
+        Kit.CunningStrike(5, "Trip", 1, "A Large or smaller target falls prone if it fails.", "Dexterity"),
+        Kit.CunningStrike(5, "Withdraw", 1, "Right after the attack you move up to half your speed without provoking opportunity attacks."),
         Passive(5, "Uncanny Dodge", "Reaction when an attacker you can see hits you: halve the damage."),
         Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure."),
-        Passive(7, "Reliable Talent", "On checks with skills or tools you are proficient in, treat a d20 roll of 9 or lower as a 10."),
-        Passive(15, "Slippery Mind", "You gain proficiency in Wisdom and Charisma saving throws."),
+        Passive(7, "Reliable Talent", "On checks with skills you are proficient in, a d20 roll of 9 or lower counts as a 10. The sheet applies this.", nil, { flags = { reliable = true } }),
+        Kit.CunningStrike(14, "Daze", 2, "If it fails, on its next turn the target can only move, or take an action, or take a bonus action.", "Constitution"),
+        Kit.CunningStrike(14, "Knock Out", 6, "If it fails, the target is unconscious for a minute or until it takes damage, repeating the save each turn.", "Constitution"),
+        Kit.CunningStrike(14, "Obscure", 3, "If it fails, the target is blinded until the end of its next turn.", "Dexterity"),
+        Passive(15, "Slippery Mind", "You are proficient in Wisdom and Charisma saving throws.", nil, { saves = { "WIS", "CHA" } }),
         Passive(18, "Elusive", "No attack roll has advantage against you unless you are incapacitated."),
         Limited(20, "Stroke of Luck", "Turn a failed d20 roll into a 20. Once per short or long rest.", 1, nil, "ALL"),
     },

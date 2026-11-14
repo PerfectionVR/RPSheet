@@ -35,6 +35,8 @@ function RPSheet:ActionText(action)
         return ("Empty %s"):format(action.resource)
     elseif kind == "TOGGLE" then
         return ("%s: %s"):format(R.TOGGLE_MODES[action.mode] or "Flip", action.passive)
+    elseif kind == "NEXTROLL" then
+        return ("Next roll: %s"):format(action.mode == "DIS" and "disadvantage" or "advantage")
     end
     return "?"
 end
@@ -129,6 +131,9 @@ local function ApplyChanges(self, ability, costs)
                     switched = true
                 end
             end
+        elseif action.type == "NEXTROLL" then
+            -- Sets the "Next roll" row; it is used up by the next d20.
+            self.rollMode, self.rollModeLocked = action.mode == "DIS" and "DIS" or "ADV", false
         end
     end
     return switched
