@@ -167,7 +167,7 @@ local function Gains()
     if draft.taking then
         local die = class and class.hitDie or R.DEFAULT_HIT_DIE
         lines[#lines + 1] = ("Maximum HP %s%s|r, and one more d%d Hit Die."):format(
-            Opt.GREEN, Util.Signed(die / 2 + 1 + RPSheet:Mod("CON")), die)
+            Opt.GREEN, Util.Signed(die / 2 + 1 + RPSheet:OwnMod("CON")), die)
         local before, after = math.ceil((level - 1) / 4) + 1, math.ceil(level / 4) + 1
         if after ~= before then
             lines[#lines + 1] = ("Proficiency bonus %s+%d|r."):format(Opt.GREEN, after)

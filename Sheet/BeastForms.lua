@@ -58,10 +58,24 @@ function ns.ApplyBeastForms(sheet)
             if not sheet.dismissed[key] then
                 wanted[key] = true
                 local ability = Entry(sheet.abilities, key, ("%s: %s"):format(name, attack[1]))
-                ability.desc = ("%s form. A melee attack, %s damage.%s"):format(name, attack[6], attack[7] and (" " .. attack[7]) or "")
-                local roll = Kit.Roll("ATTACK", "", false)
-                roll.rollFlat = attack[2] -- the beast's own attack bonus
-                ability.actions = { roll, Kit.Dice(attack[3], attack[4], "", "DAMAGE", attack[5]) }
+                local note, plus = attack[7] and (" " .. attack[7]) or "", attack.plus
+                ability.actions = {}
+                if attack[2] then
+                    local kind = attack.ranged and ("A ranged attack (%s feet)"):format(attack.ranged)
+                        or attack.reach and ("A melee attack with a reach of %d feet"):format(attack.reach) or "A melee attack"
+                    ability.desc = ("%s form. %s, %s damage%s.%s"):format(name, kind, attack[6],
+                        plus and (" plus %dd%d %s, rolled second"):format(plus[1], plus[2], plus[3]) or "", note)
+                    local roll = Kit.Roll("ATTACK", "", false)
+                    roll.rollFlat = attack[2] -- the beast's own attack bonus
+                    ability.actions[1] = roll
+                else
+                    -- No attack roll: the target saves, or it simply happens.
+                    ability.desc = ("%s form.%s%s"):format(name, note, attack[3] > 0 and (" The damage is %s."):format(attack[6]) or "")
+                end
+                if attack[3] > 0 or attack[5] ~= 0 then
+                    ability.actions[#ability.actions + 1] = Kit.Dice(attack[3], attack[4], "", "DAMAGE", attack[5])
+                end
+                if plus then ability.actions[#ability.actions + 1] = Kit.Dice(plus[1], plus[2], "", "DAMAGE", 0) end
             end
         end
     end

@@ -32,7 +32,10 @@ function ns.PickBlocked(key, name, level, picked, subclass, sheet)
     local item = list.items[name]
     local why = list.blocked and sheet and list.blocked(sheet, name)
     if why then return why end
-    local need = (subclass == "Circle of the Moon" and item.moonLevel) or item.level
+    local moon = subclass == "Circle of the Moon"
+    -- A beast with only a moonLevel is beyond any other druid.
+    if item.moonLevel and not item.level and not moon then return "Circle of the Moon only" end
+    local need = (moon and item.moonLevel) or item.level
     if need and level < need then return ("needs level %d"):format(need) end
     if item.needs and not picked[item.needs] then return "needs " .. item.needs end
 end

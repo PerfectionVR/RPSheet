@@ -43,6 +43,10 @@ function RPSheet:Senses()
     local species, form = self:SpeciesData(), self:Form()
     if species and species.darkvision then range.Darkvision = species.darkvision end
     if form and form.darkvision then range.Darkvision = math.max(range.Darkvision or 0, form.darkvision) end
+    -- A beast's own senses count while the character is that beast.
+    for sense, feet in pairs(form and form.senses or {}) do
+        range[sense] = math.max(range[sense] or 0, feet)
+    end
     EachPassiveText(self, function(text)
         for _, sense in ipairs(SENSES) do
             -- "blindsight out to 30 feet", "darkvision of 60 feet", "truesight 30 feet"

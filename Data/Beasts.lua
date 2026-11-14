@@ -1,80 +1,47 @@
--- Beasts a druid can know as Wild Shape forms: the ones the rules recommend for the
--- classic cat, bear, travel, aquatic and flight forms. Each is an option of the
--- "forms" pick list (see Data/Picks.lua) and a form (see Data/Forms.lua) that is in
--- effect while the passive "<Beast> form" is switched on.
+-- Beasts a druid can know as Wild Shape forms. The beasts themselves are in the
+-- Data/BeastsCR*.lua files, by challenge rating; Data/BeastPicks.lua turns them into
+-- the "forms" pick list (see Data/Picks.lua) and into forms (see Data/Forms.lua) that
+-- are in effect while the passive "<Beast> form" is switched on.
 --
 -- R.BEASTS[name] = {
---     level      druid level that can learn it; moonLevel for the Circle of the Moon,
---                which reaches higher challenge ratings sooner (never sooner for flying)
---     ac, speed  Armor Class and walking speed; moves = its other ways of moving
---     str, dex   the scores the character takes on
+--     cr         challenge rating, which decides the druid level that can learn it
+--     fly        true if it has a flying speed (never before level 8)
+--     size, ac   size and Armor Class
+--     speed      walking speed; moves = its other ways of moving
+--     str, dex, con   the scores the character takes on
+--     senses     { Darkvision = 60, Blindsight = 10 }: ranges in feet
 --     skills     skills the beast is proficient in
---     attacks    { { name, attack bonus, dice, sides, flat damage, damage type, note } }
+--     attacks    { { name, attack bonus, dice, sides, flat damage, damage type, note,
+--                    plus = { dice, sides, type }   more damage of another type
+--                    reach = feet                    when longer than 5 feet
+--                    ranged = "25/50" } }            a thrown or shot attack
+--                An attack bonus of false is an action without an attack roll, such
+--                as one the target saves against; the note says how it works.
 --     note       anything else worth knowing
 -- }
+-- BeastPicks adds level, moonLevel (Circle of the Moon) and desc to each.
 local _, ns = ...
 local R = ns.Rules
 
-R.BEASTS = {
-    ["Rat"] = { level = 2, ac = 10, speed = 20, moves = "climbing 20 feet", str = 2, dex = 11, skills = { "Perception" }, size = "Tiny",
-        attacks = { { "Bite", 2, 0, 4, 1, "piercing" } } },
-    ["Riding Horse"] = { level = 2, ac = 11, speed = 60, str = 16, dex = 13, skills = {}, size = "Large",
-        attacks = { { "Hooves", 5, 1, 8, 3, "bludgeoning" } } },
-    ["Spider"] = { level = 2, ac = 12, speed = 20, moves = "climbing 20 feet, also on ceilings and webs", str = 2, dex = 14, skills = { "Stealth" }, size = "Tiny",
-        attacks = { { "Bite", 4, 1, 4, 1, "piercing, the die is poison" } } },
-    ["Wolf"] = { level = 2, ac = 12, speed = 40, str = 14, dex = 15, skills = { "Perception", "Stealth" }, size = "Medium",
-        note = "Advantage on attacks against a creature with one of your allies next to it.",
-        attacks = { { "Bite", 4, 1, 6, 2, "piercing", "A Medium or smaller target is knocked prone." } } },
-    ["Panther"] = { level = 2, ac = 13, speed = 50, moves = "climbing 40 feet", str = 14, dex = 16, skills = { "Perception", "Stealth" }, size = "Medium",
-        attacks = { { "Rend", 5, 1, 6, 3, "slashing" } } },
-    ["Elk"] = { level = 2, ac = 10, speed = 50, str = 16, dex = 10, skills = { "Perception" }, size = "Large",
-        attacks = { { "Ram", 5, 1, 6, 3, "bludgeoning", "After moving 20 feet straight at a Large or smaller target: 1d6 more, and it is knocked prone." } } },
-    ["Black Bear"] = { level = 4, moonLevel = 3, ac = 11, speed = 30, moves = "climbing and swimming 30 feet", str = 15, dex = 12, skills = { "Perception" }, size = "Medium",
-        attacks = { { "Rend", 4, 1, 6, 2, "slashing", "Two of these with the Attack action: click once for each." } } },
-    ["Giant Seahorse"] = { level = 4, moonLevel = 3, ac = 14, speed = 5, moves = "swimming 40 feet, breathes only water", str = 15, dex = 12, skills = {}, size = "Large",
-        attacks = { { "Ram", 4, 2, 6, 2, "bludgeoning", "After moving 20 feet straight at the target the dice are d8s." } } },
-    ["Tiger"] = { level = 8, moonLevel = 3, ac = 13, speed = 40, str = 17, dex = 16, skills = { "Perception", "Stealth" }, size = "Large",
-        attacks = { { "Rend", 5, 2, 6, 3, "slashing", "A Large or smaller target is knocked prone." } } },
-    ["Brown Bear"] = { level = 8, moonLevel = 3, ac = 11, speed = 40, moves = "climbing 30 feet", str = 17, dex = 12, skills = { "Perception" }, size = "Large",
-        note = "One Bite and one Claw with the Attack action.",
-        attacks = { { "Bite", 5, 1, 8, 3, "piercing" }, { "Claw", 5, 1, 4, 3, "slashing", "A Large or smaller target is knocked prone." } } },
-    ["Eagle"] = { level = 8, ac = 12, speed = 10, moves = "flying 60 feet", str = 6, dex = 15, skills = { "Perception" }, size = "Small",
-        attacks = { { "Talons", 4, 1, 4, 2, "slashing" } } },
-    ["Giant Bat"] = { level = 8, ac = 13, speed = 10, moves = "flying 60 feet", str = 15, dex = 16, skills = {}, size = "Large",
-        attacks = { { "Bite", 5, 1, 6, 3, "piercing" } } },
-    ["Hawk"] = { level = 8, ac = 13, speed = 10, moves = "flying 60 feet", str = 5, dex = 16, skills = { "Perception" }, size = "Tiny",
-        attacks = { { "Talons", 5, 0, 4, 1, "slashing" } } },
-    ["Pteranodon"] = { level = 8, ac = 13, speed = 10, moves = "flying 60 feet, without provoking opportunity attacks when it flies out of reach", str = 12, dex = 15, skills = { "Perception" }, size = "Medium",
-        attacks = { { "Bite", 4, 1, 8, 2, "piercing" } } },
-    ["Raven"] = { level = 8, ac = 12, speed = 10, moves = "flying 50 feet", str = 2, dex = 14, skills = { "Perception" }, size = "Tiny",
-        note = "It can mimic simple sounds it has heard.",
-        attacks = { { "Beak", 4, 0, 4, 1, "piercing" } } },
+R.BEASTS = {}
+
+-- Riders that many beasts share.
+R.BEAST_NOTES = {
+    pack = "Advantage on attacks against a creature with one of your allies next to it.",
+    agile = "Moving out of an enemy's reach doesn't provoke opportunity attacks.",
+    flyby = "Flying out of an enemy's reach doesn't provoke opportunity attacks.",
+    water = "It breathes only water.",
+    amphibious = "It breathes air and water.",
+    swarm = "A swarm: it can share a space with other creatures, fits through any gap one of its animals fits through, and can't regain hit points or gain temporary hit points.",
+    escape = "Bonus action: Disengage or Hide.",
+    ink = "Once a day it can release a cloud of ink as a reaction.",
+    twice = "Two of these with the Attack action: click once for each.",
+    wounded = "Advantage if the target is below its full hit points.",
+    thinned = "While you are Bloodied, count only one of the two dice.",
+    recharge = "Once used, it comes back on a 6 on a d6 rolled at the start of your turn.",
 }
 
 -- The name of the passive that marks a beast form as taken.
 function R.BeastFormPassive(name)
     return name .. " form"
 end
-
-local items, order = {}, {}
-for name, beast in pairs(R.BEASTS) do
-    order[#order + 1] = name
-    local skills = #beast.skills > 0 and (" Proficient in " .. table.concat(beast.skills, " and ") .. ".") or ""
-    beast.desc = ("%s beast. Armor Class %d, speed %d feet%s. Strength %d, Dexterity %d.%s%s"):format(
-        beast.size, beast.ac, beast.speed, beast.moves and (", " .. beast.moves) or "", beast.str, beast.dex, skills,
-        beast.note and (" " .. beast.note) or "")
-    items[name] = { desc = beast.desc, level = beast.level, moonLevel = beast.moonLevel }
-    R.FORMS[R.BeastFormPassive(name)] = {
-        name = name, beast = true, ac = beast.ac, speed = beast.speed,
-        scores = { STR = beast.str, DEX = beast.dex }, skills = beast.skills,
-    }
-end
-table.sort(order)
-
--- Known forms by druid level. `custom`: put on the sheet by Sheet/BeastForms.lua.
-R.PICK_LISTS.forms = {
-    title = "Wild Shape forms", base = "Druid", custom = true,
-    known = { { 2, 4 }, { 4, 6 }, { 8, 8 } },
-    items = items, order = order,
-}
-R.PICK_LIST_ORDER[#R.PICK_LIST_ORDER + 1] = "forms"

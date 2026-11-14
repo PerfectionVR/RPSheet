@@ -25,10 +25,11 @@ end
 -- Ability scores
 ---------------------------------------------------------------------------
 -- Starting score, plus the background's points, plus points from level-ups.
-function RPSheet:Score(stat)
+-- `own`: the character's own score, whatever form it is in.
+function RPSheet:Score(stat, own)
     local sheet = self:Sheet()
     -- In a beast form some abilities take the score of another.
-    local form = self:Form()
+    local form = not own and self:Form()
     local taken = form and form.scores[stat]
     if type(taken) == "number" then return taken end -- a beast's own score
     if taken then stat = taken end
@@ -43,6 +44,12 @@ end
 function RPSheet:Mod(stat)
     if not R.STAT_NAMES[stat] then return 0 end
     return Util.ScoreMod(self:Score(stat))
+end
+
+-- The character's own modifier, whatever form it is in: hit points stay its own.
+function RPSheet:OwnMod(stat)
+    if not R.STAT_NAMES[stat] then return 0 end
+    return Util.ScoreMod(self:Score(stat, true))
 end
 
 function RPSheet:PointsSpent()
@@ -127,7 +134,8 @@ function RPSheet:MaxHP()
     local class = self:ClassData()
     local die = class and class.hitDie or R.DEFAULT_HIT_DIE
     local level = self:Level()
-    local total = die + (level - 1) * (die / 2 + 1) + level * self:Mod("CON")
+    -- A beast form's Constitution doesn't change the hit points.
+    local total = die + (level - 1) * (die / 2 + 1) + level * self:OwnMod("CON")
     return math.max(1, total + self:Bonus("HP") + self:Sheet().hpAdjust)
 end
 

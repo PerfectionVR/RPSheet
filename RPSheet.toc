@@ -55,6 +55,11 @@ Data\Forms.lua
 Data\Pets.lua
 Data\Picks.lua
 Data\Beasts.lua
+Data\BeastsCR0.lua
+Data\BeastsCRQuarter.lua
+Data\BeastsCR1.lua
+Data\BeastsCRMoon.lua
+Data\BeastPicks.lua
 Data\SpellPicks.lua
 Data\Tools.lua
 Data\ToolPicks.lua
