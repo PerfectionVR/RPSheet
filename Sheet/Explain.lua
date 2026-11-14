@@ -111,9 +111,16 @@ function RPSheet:ExplainInitiative()
 end
 
 function RPSheet:ExplainSpeed()
-    local species = self:SpeciesData()
+    local stuck = self:Immobile()
+    if stuck then
+        Out(self, ("Speed |cffffd1000 ft|r: you are %s."):format(stuck))
+        return
+    end
+    local species, form = self:SpeciesData(), self:Form()
     local parts = { { species and species.name or "base", species and species.speed or 30 } }
+    if form then parts = { { form.name, form.speed } } end
     AddBonuses(self, parts, "SPEED")
+    Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty())
     Out(self, ("Speed |cffffd100%d ft|r: %s."):format(Total(parts), Join(parts)))
 end
 

@@ -134,9 +134,13 @@ end
 -- A feature that gives advantage on this roll applies by itself; with disadvantage
 -- chosen on top, the two cancel out.
 function RPSheet:RollCheck(label, mod, mode)
-    if self:HasAdvantage(label) then
-        mode = (mode == "DIS") and "NONE" or "ADV"
+    local failed = self:AutoFail(label)
+    if failed then
+        self:Announce(("fails the %s without a roll (%s)."):format(ns.Mark(label), ns.Mark(failed)))
+        return
     end
+    -- Features, conditions and armor can give advantage or disadvantage by themselves.
+    mode = self:ResolveMode(label, mode)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
     local reliable = (self:Sheet().skills[label] or 0) >= 1 and self:FeatureFlag("reliable")
     self:RollD20(mode, function(d20, note)

@@ -70,6 +70,7 @@ local function TrackerSection(self, body)
             return
         else
             tracker.set(tracker.get() + (button == "LeftButton" and 1 or -1))
+            if tracker.kind == "hp" and button ~= "LeftButton" then self:DamageTaken(1) end
         end
         if tracker.kind == "hp" and wasDown ~= self:IsDown() then
             -- Dropping to 0 shows the death save row; getting back up removes it.

@@ -152,10 +152,11 @@ function RPSheet:Initiative()
 end
 
 function RPSheet:Speed()
+    if self:Immobile() then return 0 end
     local form = self:Form()
-    if form then return form.speed + self:Bonus("SPEED") end
+    if form then return math.max(0, form.speed + self:Bonus("SPEED")) end
     local species = self:SpeciesData()
-    return (species and species.speed or 30) + self:Bonus("SPEED")
+    return math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") - self:ArmorSpeedPenalty())
 end
 
 ---------------------------------------------------------------------------

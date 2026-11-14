@@ -37,6 +37,22 @@ function RPSheet:ChangeExhaustion(delta)
     self:PopulateSoon()
 end
 
+-- Damage taken while concentrating calls for a Constitution save. Hit points go down
+-- a click at a time, so the reminder waits until the clicking stops.
+function RPSheet:DamageTaken(amount)
+    if not self:State().conditions.Concentrating then return end
+    self.concentrationDamage = (self.concentrationDamage or 0) + amount
+    if self.concentrationTimer then self.concentrationTimer:Cancel() end
+    self.concentrationTimer = C_Timer.NewTimer(2.5, function()
+        local damage = self.concentrationDamage or 0
+        self.concentrationDamage, self.concentrationTimer = nil, nil
+        if damage > 0 and self:State().conditions.Concentrating then
+            self:Print(("You took %d damage while concentrating: roll a Constitution save, DC %d, to keep the spell. If it was more than one hit, each needs its own save."):format(
+                damage, math.max(10, math.floor(damage / 2))))
+        end
+    end)
+end
+
 -- A menu at the cursor with a tick box per condition.
 function RPSheet:OpenConditionMenu(owner)
     if not (MenuUtil and MenuUtil.CreateContextMenu) then

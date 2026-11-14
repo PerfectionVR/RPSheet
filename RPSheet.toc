@@ -69,6 +69,7 @@ Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
 Sheet\Forms.lua
+Sheet\RollModes.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua

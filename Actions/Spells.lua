@@ -118,7 +118,7 @@ function RPSheet:CastSpell(spell, mode)
 
     if spell.kind == "ATTACK" then
         -- A feature that gives advantage on spell attacks (Innate Sorcery) applies by itself.
-        if self:HasAdvantage("spell attack") then mode = (mode == "DIS") and "NONE" or "ADV" end
+        mode = self:ResolveMode("spell attack", mode) -- conditions count too
         self:RollD20(mode, function(d20, note)
             parts[#parts + 1] = RollText.Check("spell attack", d20, self:SpellAttack() or 0, note)
             rollDice(d20 == 20)

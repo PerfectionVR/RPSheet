@@ -26,4 +26,5 @@ R.CONDITIONS = {
 R.MAX_EXHAUSTION = 6
 R.EXHAUSTION_D20 = 2
 R.EXHAUSTION_SPEED = 5
+R.CONDITION_HELP = "The sheet applies what a condition does to your own rolls: disadvantage on attacks and checks, saves that fail, a speed of 0. What it does to rolls against you is for the others to apply."
 R.EXHAUSTION_HELP = "Each level takes 2 from your d20 rolls and 5 feet from your speed, which the sheet applies for you. At level 6 you die. A long rest removes one level."

@@ -32,6 +32,11 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 - A Circle of the Moon druid has Cat Form and Bear Form. While a form is on, the sheet
   uses its Armor Class, speed, Strength and Dexterity, and the form's attacks are
   abilities: Pounce, Primal Wrath, Mangle and Frenzied Regeneration.
+- Conditions change your own rolls: disadvantage on attacks and checks where the
+  condition gives it, advantage while invisible, Strength and Dexterity saves that
+  fail without a roll, and a speed of 0. Armor gives disadvantage on Stealth and
+  costs speed without the Strength for it. Losing hit points while concentrating
+  reminds you of the save and its DC.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

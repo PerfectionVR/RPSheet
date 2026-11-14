@@ -47,7 +47,7 @@ function RPSheet:Attack(mode)
     local attackMod = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
     local damageMod = mod + self:Bonus("DAMAGE") + styleDamage
     -- A feature that gives advantage on attacks (switched on) applies by itself.
-    if self:HasAdvantage("attack") then mode = (mode == "DIS") and "NONE" or "ADV" end
+    mode = self:ResolveMode("attack", mode) -- conditions count too
     local mastery = self:MasteryNote(weapon)
     local count, sides = self:WeaponDice(weapon)
     local word = ns.DamageWord(weapon)

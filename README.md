@@ -175,7 +175,8 @@ still need that.
 
 - [ ] Tool proficiencies and the professions and crafting rules
 - [ ] An armoury for weapons of your own, kept between characters
-- [ ] Armor's disadvantage on Stealth and the Heavy property applied to rolls
+- [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
+      Strength for it
 - [ ] Equipment, currency and magic items
 - [ ] Mounts, vehicles and companion creatures
 - [ ] Resistances, immunities and senses as tracked values
@@ -185,8 +186,9 @@ still need that.
 
 **Play**
 
-- [ ] Conditions changing rolls by themselves (only exhaustion does)
-- [ ] Concentration saves when taking damage
+- [x] Conditions changing your own rolls and speed by themselves
+- [x] A reminder with the DC for the concentration save when you take damage
+- [ ] The concentration save rolled by itself, and conditions that end by themselves
 - [ ] Initiative order and turn tracking
 - [ ] A view for the DM of the whole party
 
