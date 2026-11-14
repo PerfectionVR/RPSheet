@@ -68,6 +68,9 @@ local function Apply(sheet, feature, key)
     entry.advantage = feature.advantage and CopyTable(feature.advantage) or nil
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
+    for stat, points in pairs(feature.scores or {}) do
+        sheet.featureScores[stat] = (sheet.featureScores[stat] or 0) + points
+    end
     if isAbility then
         entry.actions = Resolve(feature.actions, sheet.level, sheet)
     else
@@ -93,6 +96,7 @@ function ns.ApplyClassFeatures(sheet)
         end
     end
 
+    sheet.featureScores = {} -- worked out again from the features the character has
     EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)

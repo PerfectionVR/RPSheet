@@ -11,10 +11,7 @@ local Kit = ns.FeatureKit
 
 local PREFIX = "maneuver:"
 
-local function Mod(sheet, stat)
-    local score = (sheet.base[stat] or 10) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
-    return math.floor((score - 10) / 2)
-end
+local Mod = Kit.Mod
 
 ---------------------------------------------------------------------------
 -- Maneuvers

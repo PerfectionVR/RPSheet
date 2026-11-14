@@ -18,6 +18,21 @@ local Spend, SwitchOn, Dice, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Bonu
 
 local WEAPON_MASTERY = Passive(1, "Weapon Mastery", "You can use the mastery property of a few kinds of weapon you are proficient with, and change your choices after a long rest. Set each weapon's mastery under Customize, Weapons: it shows on the weapon row and is called out when you attack.")
 local FIGHTING_STYLE = "You gain a Fighting Style feat of your choice."
+-- The better of Strength and Dexterity, for a Monk's strikes.
+local function MonkStat(sheet)
+    return Kit.Mod(sheet, "DEX") > Kit.Mod(sheet, "STR") and "DEX" or "STR"
+end
+
+-- `count` unarmed strikes: an attack roll and the Martial Arts die for each.
+local function UnarmedStrikes(count, level, sheet)
+    local stat, steps = MonkStat(sheet), {}
+    for _ = 1, count do
+        steps[#steps + 1] = Kit.Roll("ATTACK", stat)
+        steps[#steps + 1] = Dice(1, Kit.MartialDie(level), stat)
+    end
+    return steps
+end
+
 local function ExtraAttack(level)
     return Passive(level, "Extra Attack", "You attack twice, instead of once, when you take the Attack action.")
 end
@@ -39,7 +54,7 @@ R.FEATURES = {
         Limited(15, "Persistent Rage", "Your rage lasts the full 10 minutes without needing to be extended. Once per long rest, when you roll initiative, you regain all Rage uses.", 1,
             { { type = "GAIN", resource = "Rage", amount = 6 } }),
         Passive(18, "Indomitable Might", "If a Strength check or save totals less than your Strength score, use the score instead."),
-        Passive(20, "Primal Champion", "Your Strength and Constitution each increase by 4, to a maximum of 25."),
+        Passive(20, "Primal Champion", "Your Strength and Constitution each increase by 4, to a maximum of 25. The sheet applies this.", nil, { scores = { STR = 4, CON = 4 } }),
     },
 
     Cleric = {
@@ -85,31 +100,62 @@ R.FEATURES = {
     },
 
     Monk = {
-        Passive(1, "Martial Arts", "Your unarmed strikes and monk weapons can use Dexterity and your Martial Arts die, and you can make one unarmed strike as a bonus action."),
-        Ability(1, "Unarmed Strike", "A punch, kick or headbutt using your Martial Arts die.",
-            function(level)
-                return {
-                    { type = "ROLL", kind = "ATTACK", stat = "DEX", stat2 = "", proficient = true },
-                    Dice(1, AtLevel(level, { { 1, 6 }, { 5, 8 }, { 11, 10 }, { 17, 12 } }), "DEX"),
-                }
-            end),
-        Ability(2, "Flurry of Blows", "Bonus action. Make two unarmed strikes, or three from level 10.", { Spend("Focus Points") }),
-        Ability(2, "Patient Defense", "Bonus action. Disengage and Dodge together. Without spending focus you can still Disengage.", { Spend("Focus Points") }),
-        Ability(2, "Step of the Wind", "Bonus action. Disengage and Dash together, and your jump distance doubles. Without spending focus you can still Dash.", { Spend("Focus Points") }),
+        Passive(1, "Martial Arts", function(level)
+            return ("Unarmed and with monk weapons (simple melee weapons and light martial ones), without armor or a shield: you can use Dexterity for attacks and damage, roll a d%d in place of their normal damage, and make one unarmed strike as a bonus action."):format(Kit.MartialDie(level))
+        end),
+        Ability(1, "Unarmed Strike", "A punch, kick or headbutt using your Martial Arts die. Also your bonus-action strike.",
+            function(level, sheet) return UnarmedStrikes(1, level, sheet) end),
+        Passive(2, "Monk's Focus", function(_, sheet)
+            return ("Focus Points fuel your techniques and all come back on a short or long rest. Saves against them use DC %d (8 + Wisdom modifier + proficiency bonus)."):format(Kit.DC(sheet, "WIS"))
+        end),
+        Ability(2, "Flurry of Blows", function(level)
+            return ("Bonus action. %s unarmed strikes."):format(level >= 10 and "Three" or "Two")
+        end, function(level, sheet)
+            local steps = UnarmedStrikes(level >= 10 and 3 or 2, level, sheet)
+            table.insert(steps, 1, Spend("Focus Points"))
+            return steps
+        end),
+        Ability(2, "Patient Defense", function(level)
+            return "Bonus action. Disengage and Dodge together. Without spending focus you can still Disengage."
+                .. (level >= 10 and " You also gain temporary hit points equal to the roll." or "")
+        end, function(level)
+            local steps = { Spend("Focus Points") }
+            if level >= 10 then steps[2] = Dice(2, Kit.MartialDie(level), "", "TEMPHP") end
+            return steps
+        end),
+        Ability(2, "Step of the Wind", function(level)
+            return "Bonus action. Disengage and Dash together, and your jump distance doubles. Without spending focus you can still Dash."
+                .. (level >= 10 and " You can carry a willing Large or smaller creature within 5 feet along with you." or "")
+        end, { Spend("Focus Points") }),
         Passive(2, "Unarmored Movement", "Your speed increases while you wear no armor and carry no shield.",
             function(level) return { Bonus("SPEED", AtLevel(level, { { 2, 10 }, { 6, 15 }, { 10, 20 }, { 14, 25 }, { 18, 30 } })) } end),
         Limited(2, "Uncanny Metabolism", "Once per long rest, when you roll initiative: regain all Focus Points and heal by the roll.", 1,
             function(level) return { { type = "GAIN", resource = "Focus Points", amount = 20 }, Dice(1, Kit.MartialDie(level), "LEVEL", "SELFHEAL") } end),
-        Passive(3, "Deflect Attacks", "Reaction when hit by an attack: reduce the damage by 1d10 + your Dexterity modifier + your level. If it drops to 0, you can spend focus to redirect it."),
-        Passive(4, "Slow Fall", "Reaction when you fall: reduce the damage by five times your level."),
+        Ability(3, "Deflect Attacks", function(level)
+            return ("Reaction when an attack hits you with %s: reduce it by the roll."):format(level >= 13 and "any damage" or "bludgeoning, piercing or slashing damage")
+        end, function(level) return { Dice(1, 10, "DEX", "OTHER", level) } end),
+        Ability(3, "Deflect Attacks: redirect", function(_, sheet)
+            return ("When Deflect Attacks reduces the damage to 0: send it at a creature within 5 feet (60 feet for a ranged attack), which takes the roll unless it passes a Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
+        end, function(level) return { Spend("Focus Points"), Dice(2, Kit.MartialDie(level), "DEX") } end),
+        Passive(4, "Slow Fall", function(level)
+            return ("Reaction when you fall: reduce the damage by %d."):format(5 * level)
+        end),
         ExtraAttack(5),
-        Ability(5, "Stunning Strike", "Once per turn when you hit with a monk weapon or unarmed strike: the target makes a Constitution save or is stunned until the start of your next turn.",
-            { Spend("Focus Points") }),
+        Ability(5, "Stunning Strike", function(_, sheet)
+            return ("Once per turn when you hit with a monk weapon or unarmed strike: the target makes a Constitution save, DC %d. On a failure it is stunned until the start of your next turn. On a success its speed is halved and the next attack against it has advantage."):format(Kit.DC(sheet, "WIS"))
+        end, { Spend("Focus Points") }),
         Passive(6, "Empowered Strikes", "Your unarmed strikes can deal force damage."),
         Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure."),
+        Passive(9, "Acrobatic Movement", "Without armor or a shield you can move along vertical surfaces and across liquids on your turn without falling."),
+        Passive(10, "Heightened Focus", "Flurry of Blows makes three strikes, Patient Defense grants temporary hit points, and Step of the Wind can carry a creature along."),
         Passive(10, "Self-Restoration", "At the end of each turn you can end the charmed, frightened or poisoned condition on yourself. Going without food or drink doesn't exhaust you."),
-        Passive(14, "Disciplined Survivor", "You are proficient in all saving throws, and can spend 1 Focus Point to reroll a failed save."),
-        Passive(18, "Superior Defense", "At the start of your turn you can spend 3 Focus Points to resist all damage except force for 1 minute."),
+        Passive(13, "Deflect Energy", "Deflect Attacks works against attacks of any damage type."),
+        Passive(14, "Disciplined Survivor", "You are proficient in all saving throws.", nil, { saves = { "STR", "DEX", "CON", "INT", "WIS", "CHA" } }),
+        Ability(14, "Disciplined Survivor: reroll", "When you fail a saving throw: reroll it. You must use the new roll.", { Spend("Focus Points") }),
+        Passive(15, "Perfect Focus", "When you roll initiative without using Uncanny Metabolism and have 3 or fewer Focus Points, you go up to 4. Raise the bar by hand."),
+        Ability(18, "Superior Defense", "At the start of your turn: for 1 minute, or until you are incapacitated, you resist all damage except force.",
+            { Spend("Focus Points", 3) }),
+        Passive(20, "Body and Mind", "Your Dexterity and Wisdom each increase by 4, to a maximum of 25. The sheet applies this.", nil, { scores = { DEX = 4, WIS = 4 } }),
     },
 
     Paladin = {

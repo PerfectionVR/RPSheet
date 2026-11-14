@@ -24,6 +24,7 @@ end
 --   flags = { ... }    reliable = true (a d20 of 9 or lower counts as 10 on proficient
 --                      skill checks), languages = n (more languages to choose)
 --   skillChoice        a skill to pick (see Sheet/Maneuvers.lua)
+--   scores = { DEX = 4 }  ability scores it raises, to a maximum of 25
 function Kit.Passive(level, name, desc, effects, extra)
     local feature = { level = level, name = name, kind = "passive", desc = desc, effects = effects }
     if extra == true then extra = { startsOff = true } end
@@ -64,9 +65,17 @@ function Kit.NextRoll(mode)
 end
 
 -- Numbers of a character, for descriptions that quote them. `sheet` is a saved sheet.
-function Kit.Mod(sheet, stat)
+-- An ability score: starting score, background points, level-up points, and what
+-- features add (which stops at 25).
+function Kit.Score(sheet, stat)
     local score = (sheet.base[stat] or 10) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
-    return math.floor((score - 10) / 2)
+    local raised = sheet.featureScores and sheet.featureScores[stat]
+    if raised then score = math.max(score, math.min(25, score + raised)) end
+    return score
+end
+
+function Kit.Mod(sheet, stat)
+    return math.floor((Kit.Score(sheet, stat) - 10) / 2)
 end
 
 function Kit.Prof(level)

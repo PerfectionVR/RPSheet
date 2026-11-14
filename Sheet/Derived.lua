@@ -27,7 +27,11 @@ end
 -- Starting score, plus the background's points, plus points from level-ups.
 function RPSheet:Score(stat)
     local sheet = self:Sheet()
-    return (sheet.base[stat] or R.BASE_MIN) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
+    local score = (sheet.base[stat] or R.BASE_MIN) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
+    -- A capstone feature can raise a score further, up to 25.
+    local raised = sheet.featureScores and sheet.featureScores[stat]
+    if raised then score = math.max(score, math.min(25, score + raised)) end
+    return score
 end
 
 -- Modifier of an ability; an empty or unknown ability counts as +0.

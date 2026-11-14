@@ -18,6 +18,9 @@ R.SUBCLASS_POOLS = {
     ["Battle Master"] = {
         { name = "Superiority Dice", short = "ALL", steps = { { 3, 4 }, { 7, 5 }, { 15, 6 } } },
     },
+    ["Warrior of Mystic Brews"] = {
+        { name = "Refreshing Dip Dice", from = 6, stat = "WIS", halfLevel = true, min = 1 },
+    },
     ["Soulknife"] = {
         { name = "Psionic Energy Dice", short = 1, steps = { { 3, 4 }, { 5, 6 }, { 9, 8 }, { 13, 10 }, { 17, 12 } } },
     },
@@ -248,25 +251,46 @@ R.SUBCLASS_FEATURES = {
             function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS") } end),
         Ability(3, "Hand of Healing", "Magic action: touch a creature to heal it. It can also replace one strike of your Flurry of Blows at no cost.",
             function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
-        Passive(6, "Physician's Touch", "Hand of Harm can also poison its target, and Hand of Healing can end a condition such as blinded, paralysed or stunned."),
-        Passive(11, "Flurry of Healing and Harm", "Each strike of a Flurry of Blows can be a free Hand of Healing, and you can use Hand of Harm with a flurry strike without spending focus."),
-        Limited(17, "Hand of Ultimate Mercy", "Magic action, once per long rest: return a creature that died within a day to life.", 1, { Spend("Focus Points", 5) }),
+        Passive(6, "Physician's Touch", "Hand of Harm can also poison its target until the end of your next turn. Hand of Healing can also end one of blinded, deafened, paralyzed, poisoned or stunned."),
+        Limited(11, "Flurry of Healing and Harm", "With Flurry of Blows, each strike can be a free Hand of Healing, and one damaging strike can use Hand of Harm without spending focus. Uses equal to your Wisdom modifier per long rest.",
+            { stat = "WIS" }),
+        Limited(17, "Hand of Ultimate Mercy", "Magic action: touch a creature that died within a day. It returns to life with hit points equal to the roll, and several conditions removed. Once per long rest.",
+            1, { Spend("Focus Points", 5), Dice(4, 10, "WIS", "HEALING") }),
     },
     ["Warrior of Mystic Brews"] = {
         Passive(3, "Bonus Proficiencies", "Proficiency in Performance and with brewer's supplies.", nil, { skills = { "Performance" } }),
         Passive(3, "Drunken Technique", "When you spend focus on Patient Defense, your speed rises by 10 feet for the turn and you can make one unarmed strike."),
-        Passive(6, "Mystic Brew", "After a rest with brewer's supplies you make one magical beverage with a lasting benefit. You can spend 1 Focus Point to make it last 8 hours."),
-        Passive(6, "Tipsy Sway", "You can stand up from prone for 5 feet of movement. Reaction, 1 Focus Point: make a melee attack that missed you hit another creature next to you."),
-        Passive(11, "Wizened Brewer", "You learn more complex brews with stronger effects."),
-        Passive(17, "Intoxicated Frenzy", "After Patient Defense you can move your speed, making an unarmed strike against each creature you pass."),
+        Passive(6, "Mystic Brew", function(level)
+            return ("After a short or long rest with brewer's supplies you make one magical beverage, which only you can drink (1 minute). Its benefit lasts an hour, or 8 hours if you spend 1 Focus Point, or until you drink another. Brews: Cinnamon Dragon, Heavenly Spirit, Refreshing Dip%s. Switch on the brew you drank."):format(
+                level >= 11 and ", Blue Lightning, Drunkard's Luck, Stumbling Monk" or "")
+        end),
+        Ability(6, "Cinnamon Dragon", function(_, sheet)
+            return ("Brew. Magic action: toxic flames in a 30-foot cone. Fire damage and poisoned until the end of its next turn; half damage only on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
+        end, function(level) return { Dice(4, Kit.MartialDie(level)) } end),
+        Passive(6, "Heavenly Spirit", "Brew. Resistance to two of cold, necrotic, psychic and radiant damage, your choice.", nil, true),
+        Ability(6, "Refreshing Dip", "Brew. Whenever you regain hit points, spend a die from the pool to regain that much more.",
+            function(level) return { Spend("Refreshing Dip Dice"), Dice(1, Kit.MartialDie(level), "", "SELFHEAL") } end),
+        Passive(6, "Tipsy Sway", "You can stand up from prone for 5 feet of movement."),
+        Ability(6, "Redirect Attack", "Reaction when an enemy misses you with a melee attack: it hits another creature of your choice within 5 feet of you, other than the attacker.",
+            { Spend("Focus Points") }),
+        Passive(11, "Blue Lightning", "Brew. Whenever you take a reaction that isn't an opportunity attack or a spell, you can make one unarmed strike as part of it.", nil, true),
+        Passive(11, "Drunkard's Luck", "Brew. You gain Heroic Inspiration, and can give it to yourself whenever you make a check or save without it.", nil, true),
+        Passive(11, "Stumbling Monk", "Brew. After any bonus action other than Patient Defense you can also use Patient Defense.", nil, true),
+        Passive(17, "Intoxicated Frenzy", function(_, sheet)
+            return ("Right after Patient Defense you can move up to your speed, making an unarmed strike against each creature you pass (once each). A creature hit falls prone unless it passes a Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
+        end),
         Passive(17, "Master Brewer", "One beverage can carry the effects of two different brews."),
     },
     ["Warrior of the Open Hand"] = {
-        Passive(3, "Open Hand Technique", "When a Flurry of Blows strike hits you can also stop the target's opportunity attacks, push it 15 feet, or knock it prone."),
-        Limited(6, "Wholeness of Body", "Bonus action: heal yourself by the roll. You have uses equal to your Wisdom modifier per long rest.",
+        Passive(3, "Open Hand Technique", function(_, sheet)
+            return ("When a Flurry of Blows strike hits you can add one effect: Addle (no opportunity attacks until its next turn), Push (Strength save or pushed 15 feet) or Topple (Dexterity save or prone). Save DC %d."):format(Kit.DC(sheet, "WIS"))
+        end),
+        Limited(6, "Wholeness of Body", "Bonus action: heal yourself by the roll. Uses equal to your Wisdom modifier per long rest.",
             { stat = "WIS" }, function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "SELFHEAL") } end),
-        Passive(11, "Fleet Step", "After any other bonus action you can also use Step of the Wind."),
-        Passive(17, "Quivering Palm", "When you hit with an unarmed strike, spend 4 Focus Points to set up lethal vibrations. Later you can end them: the target makes a Constitution save against heavy force damage."),
+        Passive(11, "Fleet Step", "After any bonus action other than Step of the Wind you can also use Step of the Wind."),
+        Ability(17, "Quivering Palm", function(_, sheet)
+            return ("When you hit with an unarmed strike: set up lethal vibrations that last a number of days equal to your level. Later, as an action or in place of an attack, end them: the target takes the roll as force damage, half on a successful Constitution save, DC %d. Click once to set up (spends the focus); roll the damage when you end them."):format(Kit.DC(sheet, "WIS"))
+        end, { Spend("Focus Points", 4), Dice(10, 12) }),
     },
 
     ---------------------------------------------------------------------------

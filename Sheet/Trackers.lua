@@ -13,7 +13,8 @@ local function PoolMax(self, pool, level)
     end
     if pool.prof then return self:ProficiencyBonus() end
     if pool.stat then
-        return math.max(pool.min or 0, (pool.flat or 0) + self:Mod(pool.stat))
+        -- An ability modifier, plus half the level for some.
+        return math.max(pool.min or 0, (pool.flat or 0) + self:Mod(pool.stat) + (pool.halfLevel and math.floor(level / 2) or 0))
     end
     local max = 0
     for _, step in ipairs(pool.steps) do

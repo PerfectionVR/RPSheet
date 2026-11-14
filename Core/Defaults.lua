@@ -63,6 +63,7 @@ ns.defaults = {
                     passives = {},
                     spells = {},
                     dismissed = {}, -- class features the player deleted: [auto key] = true
+                    featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     maneuvers = {},     -- [maneuver name] = true, for a Battle Master
                     featureSkills = {}, -- [feature name] = skill picked for it (Student of War)
                     featureSkillGranted = {}, -- [feature name] = skill it made proficient
