@@ -19,7 +19,7 @@ function RPSheet:ActionText(action)
     elseif kind == "DICE" then
         local text = R.DICE_KINDS[action.dice] or "Dice"
         text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
-        if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
+        if (action.flat or 0) ~= 0 then text = text .. (action.flat < 0 and " - " or " + ") .. math.abs(action.flat) end
         if action.perSlot then text = text .. " per slot level" end
         if (action.strain or "") ~= "" then text = text .. ", more with each use" end
         if (action.slotAdd or 0) > 0 then text = text .. (", +%dd%d per slot level above 1st"):format(action.slotAdd, action.sides) end

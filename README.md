@@ -164,7 +164,10 @@ other ten still need that.
 - [x] Student of War (Warrior): the artisan's tools are chosen in the level dialog
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
-- [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
+- [x] The companion's own checks and saves; its strike rolls the charge die, names
+      prone or grapple, and uses the family's mastery when it is one of your picks
+- [ ] The companion's Armor Class and speed on the sheet; its second strike at level
+      11 in one click; changing the mastery pick only after a long rest
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
 - [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
@@ -178,7 +181,11 @@ other ten still need that.
       rest as run out. If you shift partway through a rest, switch the form back on
       afterwards. Outside rests the form never runs out by itself: switch it off when
       its hours are up
-- [ ] Other beasts as Wild Shape forms, and a beast form's own senses and Constitution
+- [x] Ninety beasts as Wild Shape forms, grouped by challenge rating, the larger ones
+      for the Circle of the Moon; a form's own Constitution and senses
+- [ ] Beast attacks: damage that depends on the situation (a charge, a bloodied
+      target) is described, not rolled; a swarm still gets Wild Shape's temporary
+      hit points; a beast's own skill bonuses where they beat the character's
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves
@@ -186,8 +193,9 @@ other ten still need that.
 - [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
 - [x] Arcane Recovery, Font of Magic and Magical Cunning change spell slots by the click
 - [x] Slots made with Font of Magic go above the usual number of slots, until a long rest
-- [ ] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
-      chosen from a list
+- [x] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
+      chosen in the level dialog and cast without a slot as the rules allow
+- [ ] Mystic Arcanum: swapping only one spell per level
 - [ ] Multiclassing
 
 **Spells**

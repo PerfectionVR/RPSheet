@@ -82,6 +82,16 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Wild Shape: druids can learn any of 90 beasts, grouped by challenge rating, with the
+  bigger ones for the Circle of the Moon. A beast form also gives the beast's
+  Constitution for checks and saves and its darkvision or blindsight; your hit points
+  stay your own.
+- Beast Masters get a Companion section: the pet's own ability checks and saving
+  throws, and a strike that rolls the charge damage and calls out prone, grapple and
+  the family's weapon mastery when it is one of your mastery picks.
+- Warlocks choose their Mystic Arcanum spells, and Mages their Spell Mastery and
+  Signature Spells, when they level. The chosen spells sit on the spell list and are
+  cast without a spell slot: once per rest, or at will for mastered spells.
 - Font of Magic can make spell slots above your usual number; they last until a long
   rest.
 - Casting Metamorphosis asks which benefit you take and applies it: low force damage
