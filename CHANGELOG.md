@@ -82,6 +82,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Curse of Agony's die grows: after casting, click the spell again each time the
+  target fails its save (no slot is spent), and right-click to end it.
 - A beast form that would run out during a rest ends when you take it: on a short
   rest below level 4, on a long rest below level 18.
 - Arcane Pulse no longer grows with level.

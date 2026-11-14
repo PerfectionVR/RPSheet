@@ -45,6 +45,7 @@ Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\SpellsCore.lua
 Data\SpellGroups.lua
+Data\GrowingSpells.lua
 Data\SpellDetails.lua
 Data\Conditions.lua
 Data\Combat.lua
@@ -105,6 +106,7 @@ Actions\Weapons.lua
 Actions\Abilities.lua
 Actions\Conditions.lua
 Actions\Spells.lua
+Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\DeathSaves.lua

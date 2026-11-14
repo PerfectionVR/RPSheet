@@ -66,7 +66,7 @@ Spell("Divine Shield", 4, nil, nil, "Reaction when you take damage: you are immu
 
 -- Warlock
 Spell("Entropic Embrace", 1, nil, nil, "Reaction when both dice of a roll with advantage or disadvantage show the same number: you are cloaked in Void power for the duration. Once on each of your turns you deal 1d4 more necrotic damage, or heal 1d4 more; one more d4 for each slot level above 1st.")
-Spell("Curse of Agony", 2, "CON", { 1, 4 }, "A curse of growing pain: the target takes the psychic damage whether it passes or fails. A success ends the curse; each failure makes the die one size larger, up to a d12.")
+Spell("Curse of Agony", 2, "CON", { 1, 4 }, "A curse of growing pain: the target takes the psychic damage whether it passes or fails. A success ends the curse; each failure makes the die one size larger, up to a d12. The target saves again at the end of each of its turns: click the spell again for each failed save, right-click to end it.")
 Spell("Hand of Gul'dan", 3, "DEX", { 4, 8 }, "A demonic meteor bursts in a 20-foot sphere: 2d8 fire and 2d8 necrotic damage, rolled together, half on a successful save. A creature that enters the area or ends its turn there later takes 1d8 of each.", CONC)
 Spell("Rain of Fire", 3, "DEX", { 3, 8 }, "Hellfire rains into a 20-foot cylinder that you can move on later turns: fire damage, half on a successful save. Your spell attacks against creatures inside have advantage and deal 1d6 more necrotic damage.", CONC)
 
