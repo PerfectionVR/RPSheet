@@ -138,6 +138,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFeatSkills(sheet)
     ns.ApplyExpertise(sheet)
     ns.ApplySpellPicks(sheet)
+    ns.ApplyPreparedPicks(sheet) -- before the always-prepared spells: a pick makes way for one
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
