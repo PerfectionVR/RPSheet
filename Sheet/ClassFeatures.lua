@@ -65,7 +65,9 @@ local function Apply(sheet, feature, key)
     if type(desc) == "function" then desc = desc(sheet.level, sheet) end -- wording that follows the character
     entry.desc = desc
     -- Rolls the feature gives advantage on (see RPSheet:HasAdvantage).
-    entry.advantage = feature.advantage and CopyTable(feature.advantage) or nil
+    local advantage = feature.advantage
+    if type(advantage) == "function" then advantage = advantage(sheet.level, sheet) end
+    entry.advantage = advantage and CopyTable(advantage) or nil
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     for stat, points in pairs(feature.scores or {}) do

@@ -119,18 +119,19 @@ R.SUBCLASS_FEATURES = {
     -- Hunter (Ranger)
     ---------------------------------------------------------------------------
     ["Beast Master"] = {
-        Passive(3, "Primal Companion", "You summon a primal beast of the land, sea or sky. It acts on your turn, and you command it with a bonus action or by giving up one of your attacks."),
-        Passive(7, "Exceptional Training", "When you command your beast you can also have it Dash, Disengage, Dodge or Help as its bonus action, and its attacks can deal force damage."),
-        Passive(11, "Bestial Fury", "Your beast can strike twice when commanded, and deals extra damage to the creature under your Hunter's Mark once per turn."),
+        Passive(3, "Primal Companion", "You summon a primal beast of the land, sea or sky. It acts on your turn: it Dodges unless you spend a bonus action, or give up one of your attacks, to command it. If it dies you can bring it back with a spell slot."),
+        Passive(7, "Exceptional Training", "When you command your beast with a bonus action it can also Dash, Disengage, Dodge or Help as its own bonus action, and its attacks can deal force damage."),
+        Passive(11, "Bestial Fury", "Your beast can strike twice when commanded. The first time each turn it hits the creature under your Hunter's Mark, it deals that spell's extra damage too."),
         Passive(15, "Share Spells", "A spell you cast on yourself can also affect your beast if it is within 30 feet."),
     },
     ["Hunter"] = {
         Passive(3, "Hunter's Lore", "You know the immunities, resistances and vulnerabilities of the creature marked by your Hunter's Mark."),
-        Ability(3, "Colossus Slayer", "Hunter's Prey option. Once per turn, extra damage when you hit a creature that is missing hit points. The other option, Horde Breaker, gives an extra attack on a second nearby creature instead.",
+        Passive(3, "Hunter's Prey", "Choose Colossus Slayer or Horde Breaker; you can swap after a short or long rest. Horde Breaker: once per turn, after attacking a creature, make another attack with the same weapon against a different creature within 5 feet of it."),
+        Ability(3, "Colossus Slayer", "Hunter's Prey option. Once per turn, extra damage when your weapon hits a creature that is missing hit points.",
             { Dice(1, 8) }),
-        Passive(7, "Defensive Tactics", "Choose one: opportunity attacks have disadvantage against you, or a creature that hits you has disadvantage on its other attacks against you this turn. You can swap after a rest."),
-        Passive(11, "Superior Hunter's Prey", "Once per turn, your Hunter's Mark damage can also hit a second creature within 30 feet of the first."),
-        Passive(15, "Superior Hunter's Defense", "Reaction when you take damage: resistance to that damage type until the end of the turn."),
+        Passive(7, "Defensive Tactics", "Choose one; you can swap after a short or long rest. Escape the Horde: opportunity attacks have disadvantage against you. Multiattack Defense: a creature that hits you has disadvantage on its other attacks against you this turn."),
+        Passive(11, "Superior Hunter's Prey", "Once per turn, when you damage the creature under your Hunter's Mark, the spell's extra damage can also hit a different creature within 30 feet of it."),
+        Passive(15, "Superior Hunter's Defense", "Reaction when you take damage: resistance to that damage, and any other of the same type, until the end of the turn."),
     },
 
     ---------------------------------------------------------------------------

@@ -11,6 +11,7 @@ local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
 local Passive, Ability, Limited, Spend, Dice = Kit.Passive, Kit.Ability, Kit.Limited, Kit.Spend, Kit.Dice
+-- (Kit.DC and Kit.Mod are used for save DCs in descriptions.)
 
 R.CLASS_OVERRIDES = {
     -- A Paladin whose healing touch and radiant smites become necrotic power.
@@ -31,7 +32,7 @@ R.CLASS_OVERRIDES = {
     DEMONHUNTER = {
         remove = { "Feral Senses" },
         features = {
-            Passive(18, "Improved Spectral Sight", "Truesight out to 30 feet."),
+            Passive(18, "Improved Spectral Sight", "Truesight out to 30 feet. This takes the place of Feral Senses."),
         },
     },
     -- A Barbarian who plants totems.
@@ -78,15 +79,19 @@ do
 end
 
 R.SUBCLASS_FEATURES["Demon Hunter"] = {
-    Passive(3, "Demon Hunter Spells", "You gain extra spells at certain levels, some shared by all demon hunters and some from your specialization. They are always prepared."),
-    Passive(3, "Soul Fragments", "After a long rest you hold soul fragments equal to your Wisdom modifier. They fuel your demon hunter powers."),
-    Ability(3, "Double Jump", "Cast Feather Fall or Jump without a spell slot.", { Spend("Soul Fragments") }),
-    Ability(3, "Soul Cleave", "Once per turn, in place of one attack: creatures within 10 feet make a Dexterity save against the roll.",
-        function(level) return { Spend("Soul Fragments"), Dice(level >= 15 and 2 or 1, 12, "WIS") } end),
-    Passive(3, "Spectral Sight", "Blindsight out to 10 feet."),
-    Passive(7, "Torment", "The creature marked by your Hunter's Mark has disadvantage attacking anyone but you, and once per turn your hits on it add an extra effect."),
-    Ability(11, "Disrupt", "Cast Counterspell as a reaction without a slot.", { Spend("Soul Fragments", 2) }),
-    Ability(11, "Warglaive Mastery", "Bonus action: cast Throw Glaive without a slot.", { Spend("Soul Fragments") }),
-    Passive(11, "Illidari Knowledge", "You learn further ways to spend soul fragments."),
-    Passive(15, "Soul Shatter", "Soul Cleave rolls 2d12, and when you roll initiative with no soul fragments you regain one."),
+        Passive(3, "Demon Hunter Spells", "You always have Throw Glaive prepared, then Sigil of Flame (level 5), Metamorphosis (9), Chaos Nova (13) and Destructive Wave (17), plus the spells of one set you choose. Add them from Customize, Spells: they don't count against your prepared spells."),
+        Passive(3, "Soul Fragments", function(_, sheet)
+            return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one). They fuel your demon hunter powers. Saves against them use DC %d."):format(Kit.DC(sheet, "WIS"))
+        end),
+        Ability(3, "Double Jump", "Cast Feather Fall or Jump without a spell slot.", { Spend("Soul Fragments") }),
+        Ability(3, "Soul Cleave", function(_, sheet)
+            return ("Once per turn, in place of one attack: creatures within 10 feet make a Dexterity save, DC %d, or take the roll as psychic damage. You regain hit points equal to your Wisdom modifier."):format(Kit.DC(sheet, "WIS"))
+        end, function(level) return { Spend("Soul Fragments"), Dice(level >= 15 and 2 or 1, 12, "WIS"), Dice(0, 4, "WIS", "SELFHEAL") } end),
+        Passive(3, "Spectral Sight", "Blindsight out to 10 feet."),
+        Passive(7, "Torment", "The creature marked by your Hunter's Mark has disadvantage attacking anyone but you. Once per turn when you hit it, choose Aura of Pain (it subtracts 1d4 from its next saving throw before the end of your next turn) or Chaos Strike."),
+        Ability(7, "Chaos Strike", "Torment option. Once per turn when you hit the creature under your Hunter's Mark: extra fire damage.", { Dice(1, 8) }),
+        Ability(11, "Disrupt", "Cast Counterspell as a reaction without a slot.", { Spend("Soul Fragments", 2) }),
+        Ability(11, "Warglaive Mastery", "Bonus action: cast Throw Glaive without a slot.", { Spend("Soul Fragments") }),
+        Passive(11, "Illidari Knowledge", "You gain Disrupt and Warglaive Mastery as new ways to spend soul fragments."),
+        Passive(15, "Soul Shatter", "Soul Cleave rolls 2d12. When you roll initiative with no soul fragments you regain one: raise the bar by hand."),
 }

@@ -177,21 +177,27 @@ R.FEATURES = {
     },
 
     Ranger = {
-        Ability(1, "Hunter's Mark", "Bonus action, a free casting of the spell. Mark a creature you can see for up to an hour.",
+        Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on.",
             { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") }),
-        Passive(1, "Hunter's Mark", "Switch on while a creature is marked. Your hits on it deal 1d6 extra force damage, and you have advantage on Perception and Survival checks to find it.", nil, true),
+        Passive(1, "Hunter's Mark", function(level)
+            return ("Switch on while a creature is marked. Your hits on it deal 1d%d extra force damage (use Hunter's Mark: damage), and you have advantage on Perception and Survival checks to find it.%s"):format(
+                level >= 20 and 10 or 6, level >= 17 and " You have advantage on attack rolls against it, which the sheet applies while this is on." or "")
+        end, nil, { startsOff = true, advantage = function(level) return level >= 17 and { "attack" } or nil end }),
+        Ability(1, "Hunter's Mark: damage", "The extra force damage when you hit the marked creature.",
+            function(level) return { Dice(1, level >= 20 and 10 or 6) } end),
         WEAPON_MASTERY,
-        Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in, and two extra languages."),
+        Passive(2, "Deft Explorer", "Expertise in one skill you are proficient in (set it under Customize, Proficiencies), and two more languages of your choice.", nil, { flags = { languages = 2 } }),
         Passive(2, "Fighting Style", FIGHTING_STYLE),
         ExtraAttack(5),
         Passive(6, "Roving", "Your speed increases by 10 feet without heavy armor, and you gain climbing and swimming speeds.", { Bonus("SPEED", 10) }),
-        Passive(9, "Expertise", "Expertise in two more skills you are proficient in."),
-        Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. You have uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
+        Passive(9, "Expertise", "Expertise in two more skills you are proficient in. Set them under Customize, Proficiencies."),
+        Limited(10, "Tireless", "Magic action: gain temporary HP equal to the roll. Uses equal to your Wisdom modifier per long rest. A short rest also reduces your exhaustion by one.",
             { stat = "WIS" }, { Dice(1, 8, "WIS", "TEMPHP") }),
         Passive(13, "Relentless Hunter", "Taking damage can't break your concentration on Hunter's Mark."),
-        Limited(14, "Nature's Veil", "Bonus action: become invisible until the end of your next turn. You have uses equal to your Wisdom modifier per long rest.", { stat = "WIS" }),
-        Passive(17, "Precise Hunter", "Advantage on attack rolls against the creature marked by your Hunter's Mark."),
+        Limited(14, "Nature's Veil", "Bonus action: become invisible until the end of your next turn. Uses equal to your Wisdom modifier per long rest.", { stat = "WIS" }),
+        Passive(17, "Precise Hunter", "Advantage on attack rolls against the creature marked by your Hunter's Mark. Applied while the Hunter's Mark passive is switched on."),
         Passive(18, "Feral Senses", "Blindsight out to 30 feet."),
+        Passive(20, "Foe Slayer", "Your Hunter's Mark deals a d10 of extra damage."),
     },
 
     Rogue = {
