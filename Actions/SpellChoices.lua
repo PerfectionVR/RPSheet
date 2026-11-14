@@ -43,6 +43,7 @@ end
 -- so on a short rest. Returns the names of the spells it restored.
 function RPSheet:RestoreChosenCastings(short)
     local state, sheet = self:State(), self:Sheet()
+    state.spellUsed = state.spellUsed or {} -- a sheet saved before this was kept
     local restored = {}
     for name in pairs(state.spellUsed) do
         local how = ns.SpellChoice(sheet, name)
