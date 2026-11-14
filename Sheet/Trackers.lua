@@ -55,6 +55,7 @@ function RPSheet:GetTrackers()
         ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
         ns.LineagePools(sheet), -- a lineage's once-per-rest spells
         ns.TraitPools(sheet),   -- species traits with uses
+        ns.RenownPools(sheet),  -- a faction's blessings with uses
         ns.PetPools(sheet),     -- a Beast Master's companion
     }
     for _, pools in ipairs(sources) do

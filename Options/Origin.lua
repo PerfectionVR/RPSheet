@@ -29,8 +29,10 @@ end
 -- any that features grant.
 ---------------------------------------------------------------------------
 local function LanguageLimit()
-    -- The usual number, the ones features bring, and any the player added by hand.
+    -- The usual number, the ones features and a faction's trainers bring, and any the
+    -- player added by hand.
     return R.LANGUAGE_PICKS + 1 + Sheet().extraLanguages + (RPSheet:FeatureFlag("languages") or 0)
+        + ns.RenownLanguageCount(Sheet())
 end
 
 local function LanguageInfo()
@@ -69,7 +71,7 @@ end
 
 local function RenownRow(faction, order)
     local function Score() return Sheet().renown[faction] or 0 end
-    return {
+    local row = {
         type = "group", inline = true, order = order,
         name = function()
             local tier = R.RenownTier(Score())
@@ -79,18 +81,26 @@ local function RenownRow(faction, order)
             score = {
                 type = "range", order = 1, width = "double", min = 0, max = 100, softMax = 50, step = 1, name = "Renown",
                 get = Score,
-                set = function(_, value) Sheet().renown[faction] = value; Opt.Changed() end,
+                set = function(_, value)
+                    local before = Score()
+                    Sheet().renown[faction] = value
+                    Opt.RenownChanged(before, value) -- the faction's perks follow the score
+                end,
             },
             remove = {
                 type = "execute", order = 2, name = "Remove",
                 func = function()
+                    local before = Score()
                     Sheet().renown[faction] = nil
                     ns.RebuildOptions()
-                    Opt.Changed()
+                    Opt.RenownChanged(before, 0)
                 end,
             },
         },
     }
+    -- Its trainers' teaching and its perks (Options/RenownPerks.lua).
+    for key, option in pairs(Opt.RenownPerkArgs(faction)) do row.args[key] = option end
+    return row
 end
 
 ---------------------------------------------------------------------------
@@ -160,7 +170,9 @@ local args = {
     renownHeader = { type = "header", order = 20, name = "Renown" },
     renownInfo = {
         type = "description", order = 21,
-        name = "Standing with a faction: Friendly at 3, Honored at 10, Revered at 25, Exalted at 50. Pick a faction and press Add, then set its score.\n",
+        name = "Standing with a faction: Friendly at 3, Honored at 10, Revered at 25, Exalted at 50. Pick a faction and press Add, then set its score. "
+            .. "Each faction has perks of its own; the sheet adds the ones it can work with and takes them off when the score drops.\n"
+            .. "Your DM raises a score. Two rules to remember: a stronghold in a faction's lands adds 1, and the first time another faction of your side reaches a tier, your home faction gains 1, 2, 3 or 5 (Friendly to Exalted).\n",
     },
     addFaction = {
         type = "select", order = 22, name = "Faction",
@@ -177,6 +189,7 @@ local args = {
             adding = ""
             ns.RebuildOptions()
             Opt.Changed()
+            -- Nothing to grant at 0; the perks follow once the score is set.
         end,
     },
 }
