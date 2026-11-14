@@ -183,7 +183,6 @@ still need that.
 - [ ] Resistances, immunities and senses as tracked values
 - [ ] Renown perks by tier
 - [ ] The choices inside a feat (which spell for Magic Initiate, which skills for Skilled)
-- [ ] Tauren lineage abilities with their save DC
 
 **Play**
 

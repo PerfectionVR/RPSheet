@@ -10,6 +10,13 @@ local R = ns.Rules
 
 local SPELLS = " Level 3: %s. Level 5: %s."
 
+-- A Tauren lineage's save DC: 8 + proficiency + the Strength, Constitution or Wisdom
+-- modifier. The rules let the player choose one; the sheet takes the highest.
+local function TaurenDC(sheet)
+    local Kit = ns.FeatureKit
+    return 8 + Kit.Prof(sheet.level) + math.max(Kit.Mod(sheet, "STR"), Kit.Mod(sheet, "CON"), Kit.Mod(sheet, "WIS"))
+end
+
 R.LINEAGES = {
     ELF = {
         trait = "Elven Lineage",
@@ -43,9 +50,15 @@ R.LINEAGES = {
         trait = "Tauren Lineage",
         options = {
             { name = "Mulgore Tauren", renown = "Thunder Bluff",
-              desc = "War stomp: in place of one attack, creatures of your choice within 5 feet make a Constitution save or are stunned until the end of your turn. Not while prone, flying, climbing or swimming." },
+              desc = "War stomp: in place of one attack, creatures of your choice within 5 feet make a Constitution save or are stunned until the end of your turn. Not while prone, flying, climbing or swimming.",
+              detail = function(sheet) return ("Save DC %d."):format(TaurenDC(sheet)) end },
             { name = "Highmountain Tauren",
-              desc = "Bull rush: as an action, move up to your speed through other creatures without provoking opportunity attacks. Medium or smaller creatures in your path make a Strength save or take damage and fall prone." },
+              desc = "Bull rush: as an action, move up to your speed through other creatures without provoking opportunity attacks. Medium or smaller creatures in your path make a Strength save or take damage and fall prone.",
+              detail = function(sheet)
+                  local Kit = ns.FeatureKit
+                  return ("Save DC %d, %d damage (proficiency bonus plus Strength modifier), once per turn for each creature."):format(
+                      TaurenDC(sheet), math.max(0, Kit.Prof(sheet.level) + Kit.Mod(sheet, "STR")))
+              end },
             { name = "Taunka",
               desc = "A shaggy hide: +1 to Armor Class and resistance to cold damage.",
               effects = { { target = "AC", flat = 1, stat = "", times = 1 } } },

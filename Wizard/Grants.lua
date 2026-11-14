@@ -64,6 +64,8 @@ local function ApplyLineage(sheet, species)
     if option then
         passive.name = option.name
         passive.desc = ("%s lineage. %s"):format(species.name, option.desc)
+        -- Numbers that follow the character, such as a save DC.
+        if option.detail then passive.desc = passive.desc .. " " .. option.detail(sheet) end
         passive.effects = CopyTable(option.effects or {})
         AddSkills(sheet, option.skills)
         StartRenown(sheet, option.renown)
