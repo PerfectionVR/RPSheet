@@ -10,6 +10,7 @@
 --   needAllStats  prerequisite: every one of these abilities at 13 or higher
 --   needSpecies   prerequisite: this species
 --   save     true if it also grants saving throw proficiency in the raised ability
+--   advantage  rolls the feat gives advantage on, by their label (see RPSheet:HasAdvantage)
 local _, ns = ...
 local R = ns.Rules
 
@@ -43,7 +44,7 @@ local LIST = {
     General("Crusher", { "STR", "CON" }, "Once per turn a bludgeoning hit can move the target 5 feet. A bludgeoning critical hit gives attacks against that target advantage until your next turn."),
     General("Defensive Duelist", { "DEX" }, "Reaction when hit by a melee attack while holding a finesse weapon: add your proficiency bonus to your AC against melee attacks until your next turn."),
     General("Dual Wielder", BODY, "When you attack with a light weapon you can make the extra bonus-action attack with a different weapon that isn't two-handed, and you can draw or stow two weapons at once."),
-    General("Durable", { "CON" }, "Advantage on death saving throws, and as a bonus action you can spend one Hit Die to heal."),
+    General("Durable", { "CON" }, "Advantage on death saving throws, which the sheet rolls for you, and as a bonus action you can spend one Hit Die to heal.", { advantage = { "death save roll" } }),
     General("Elemental Adept", MIND, "Choose acid, cold, fire, lightning or thunder. Your spells ignore resistance to it, and you treat any 1 on its damage dice as a 2. Can be taken again for another damage type.", { repeatable = true }),
     General("Fey-Touched", MIND, "You learn Misty Step and one 1st-level divination or enchantment spell. Each can be cast once per long rest without a slot, and with your slots."),
     General("Grappler", BODY, "Once per turn an unarmed strike can both damage and grapple. You have advantage on attacks against a creature you grapple, and moving it doesn't slow you."),

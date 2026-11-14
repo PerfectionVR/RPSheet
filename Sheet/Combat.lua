@@ -144,6 +144,11 @@ end
 -- ("initiative", a skill's name, "DEX save", "death save").
 function RPSheet:HasAdvantage(label)
     for _, passive in ipairs(self:Sheet().passives) do
+        -- A feat on the sheet brings the advantage its data names.
+        local feat = passive.enabled and R.FEATS[passive.name]
+        for _, name in ipairs(feat and feat.advantage or {}) do
+            if name == label then return true end
+        end
         if passive.enabled and passive.advantage then
             for _, name in ipairs(passive.advantage) do
                 if name == label then return true end

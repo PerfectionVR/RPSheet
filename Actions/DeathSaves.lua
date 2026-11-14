@@ -26,7 +26,8 @@ function RPSheet:RollDeathSave()
     end
     -- A Champion's Survivor: advantage, and 18 or 19 count as a 20.
     local survivor = self:HasAdvantage("death save")
-    self:RollD20(survivor and "ADV" or nil, function(d20)
+    -- The Durable feat gives the advantage without the rest.
+    self:RollD20((survivor or self:HasAdvantage("death save roll")) and "ADV" or nil, function(d20)
         local outcome
         if d20 == 20 or (survivor and d20 >= 18) then
             state.hp = 1
