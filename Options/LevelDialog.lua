@@ -520,6 +520,7 @@ function ns.OpenLevelDialog(level, reopen)
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
+    for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end
     if kind == "BOON" then draft.record.choice = "FEAT" end
     -- The specialization's suggestions are pre-selected; the player can pick otherwise.
     local guide = R.SpecGuide(sheet.class, sheet.spec)
