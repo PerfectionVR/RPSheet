@@ -88,6 +88,31 @@ local function PicksChosen(key)
     return count
 end
 
+-- The character as this dialog would leave it, for a list whose options depend on
+-- other picks made here (spells that have to be in the spellbook).
+local function Picking()
+    return setmetatable({ picks = draft.picks, level = ChoiceLevel(), subclass = SubclassAfter() }, { __index = Sheet() })
+end
+
+-- Why an option of a list can't be picked right now, or nil.
+local function Blocked(key, name)
+    return ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Picking())
+end
+
+-- A list that follows another (list.follows) loses the picks that list no longer
+-- allows: a mastered spell that was taken out of the spellbook is open again.
+local function DropUnfollowed()
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        local list = R.PICK_LISTS[key]
+        if list.follows and list.blocked and PickLimit(key) > 0 then
+            local like = Picking()
+            for name in pairs(draft.picks[key]) do
+                if not list.items[name] or list.blocked(like, name) then draft.picks[key][name] = nil end
+            end
+        end
+    end
+end
+
 -- How many skills to pick expertise in, and the set to pick from (nil = any).
 local function ExpertiseLimit()
     if not draft then return 0 end
@@ -531,7 +556,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
     -- A long list leaves out what the character can't pick yet.
     local function Hidden(name)
         return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
-            and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet()) ~= nil
+            and Blocked(key, name) ~= nil
     end
     local section
     for index, name in ipairs(list.order) do
@@ -552,7 +577,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
         group.args["pick" .. index] = {
             type = "toggle", order = index, width = 1.5,
             name = function()
-                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet())
+                local blocked = draft and not draft.picks[key][name] and Blocked(key, name)
                 -- A spell shows its level behind the name.
                 local tag = list.items[name].tag
                 local shown = tag and ("%s |cff888888(%s)|r"):format(name, tag) or name
@@ -562,7 +587,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             desc = list.items[name].desc,
             disabled = function()
                 if draft.picks[key][name] then return false end
-                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet()) ~= nil
+                return PicksChosen(key) >= PickLimit(key) or Blocked(key, name) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
             set = function(_, value)
@@ -581,6 +606,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
                         end
                     end
                 end
+                if not value then DropUnfollowed() end
             end,
         }
     end
@@ -644,6 +670,7 @@ function ns.OpenLevelDialog(level, reopen)
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end
+    DropUnfollowed() -- a pick that stopped being valid is asked for again
     if kind == "BOON" then draft.record.choice = "FEAT" end
     -- The specialization's suggestions are pre-selected; the player can pick otherwise.
     local guide = R.SpecGuide(sheet.class, sheet.spec)

@@ -37,6 +37,7 @@ ns.defaults = {
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level
                 freeUsed = {}, -- [ability name] = true: its free first use since a long rest is gone
+                spellUsed = {}, -- [spell name] = true: its one casting without a slot is gone until a rest (Actions/SpellChoices.lua)
                 sheet = {
                     version = 2,
                     level = 1,

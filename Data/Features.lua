@@ -341,8 +341,7 @@ R.FEATURES = {
             return { { type = "GAIN", resource = R.ORDINALS[pact[2]] .. "-level slot", amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
         end),
         Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
-        Limited(11, "Mystic Arcanum", "You learn one 6th-level spell to cast once per long rest without a slot, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once; the bar counts the casts you have left.",
-            { { 11, 1 }, { 13, 2 }, { 15, 3 }, { 17, 4 } }),
+        Passive(11, "Mystic Arcanum", "You choose one 6th-level spell of your class, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once per long rest without a slot: click it on your spell list. They are chosen when you level, and you can swap one each level."),
         Passive(20, "Eldritch Master", "Magical Cunning restores all your pact slots."),
     },
 
@@ -354,8 +353,7 @@ R.FEATURES = {
         Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. It is chosen when you level.", nil,
             { expertise = { steps = { { 2, 1 } }, skills = { "Arcana", "History", "Investigation", "Medicine", "Nature", "Religion" } } }),
         Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
-        Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. Mark them as not counting under Customize, Spells."),
-        Limited(20, "Signature Spell: first", "Two 3rd-level spells from your spellbook are always prepared. This is the free cast of the first, at 3rd level without a slot. It comes back on a short or long rest.", 1, nil, "ALL"),
-        Limited(20, "Signature Spell: second", "The free cast of your second Signature Spell, at 3rd level without a slot. It comes back on a short or long rest.", 1, nil, "ALL"),
+        Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. They are chosen when you level; after a long rest you can swap one."),
+        Passive(20, "Signature Spells", "Choose two 3rd-level spells from your spellbook: they are always prepared, and you can cast each once at 3rd level without a slot. That casting comes back on a short or long rest. They are chosen when you level."),
     },
 }

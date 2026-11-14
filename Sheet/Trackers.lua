@@ -103,6 +103,7 @@ function RPSheet:ClampState(refill)
     if refill then
         -- Rested: first uses are free again, and nothing spent before can be taken back.
         self:State().freeUsed = {}
+        self:RestoreChosenCastings() -- spells cast once without a slot
         self:ForgetRefunds()
     end
 end

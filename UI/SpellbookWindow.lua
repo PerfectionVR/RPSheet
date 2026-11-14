@@ -49,6 +49,10 @@ local function AddSpell(self, body, name)
     if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
     local casting = R.SpellCastingNote(spell)
     if casting then lines[#lines + 1] = casting end
+    -- A spell chosen for a class feature (mastered, signature) says so.
+    local mark, note
+    if prepared then mark, note = self:ChosenSpellNote(prepared) end
+    if note then lines[#lines + 1] = note end
     if prepared then
         lines[#lines + 1] = UI.GREEN .. "Prepared.|r"
     elseif known.ritual then
@@ -61,6 +65,7 @@ local function AddSpell(self, body, name)
     local tags = {}
     if info ~= "" then tags[#tags + 1] = info end
     if known.ritual then tags[#tags + 1] = "ritual" end
+    if mark then tags[#tags + 1] = mark end
     local text
     if prepared then
         text = ("%s  %s%s|r"):format(name, UI.GREY, table.concat(tags, ", "))

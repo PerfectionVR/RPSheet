@@ -56,6 +56,7 @@ Data\Pets.lua
 Data\Picks.lua
 Data\Beasts.lua
 Data\SpellPicks.lua
+Data\SpellChoices.lua
 Data\Tools.lua
 Data\ToolPicks.lua
 Data\Weapons.lua
@@ -102,6 +103,7 @@ Sheet\Expertise.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
+Sheet\SpellChoices.lua
 Sheet\Traits.lua
 Sheet\LevelUp.lua
 
@@ -114,6 +116,7 @@ Actions\Pet.lua
 Actions\Refunds.lua
 Actions\Conditions.lua
 Actions\Spells.lua
+Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
