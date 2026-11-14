@@ -230,10 +230,16 @@ R.SUBCLASS_FEATURES = {
     },
     ["Hunter"] = {
         Passive(3, "Hunter's Lore", "You know the immunities, resistances and vulnerabilities of the creature marked by your Hunter's Mark."),
-        Passive(3, "Hunter's Prey", "Choose Colossus Slayer or Horde Breaker; you can swap after a short or long rest. Horde Breaker: once per turn, after attacking a creature, make another attack with the same weapon against a different creature within 5 feet of it."),
-        Ability(3, "Colossus Slayer", "Hunter's Prey option. Once per turn, extra damage when your weapon hits a creature that is missing hit points.",
-            { Dice(1, 8) }),
-        Passive(7, "Defensive Tactics", "Choose one; you can swap after a short or long rest. Escape the Horde: opportunity attacks have disadvantage against you. Multiattack Defense: a creature that hits you has disadvantage on its other attacks against you this turn."),
+        Kit.Choice(3, "Hunter's Prey", "How you bring down your quarry. You can swap after a short or long rest.", {
+            Kit.Option("Colossus Slayer", "Once per turn, extra damage when your weapon hits a creature that is missing hit points. Use the Colossus Slayer ability."),
+            Kit.Option("Horde Breaker", "Once per turn, after attacking a creature, make another attack with the same weapon against a different creature within 5 feet of it."),
+        }),
+        Kit.For("Hunter's Prey", "Colossus Slayer", Ability(3, "Colossus Slayer", "Once per turn, extra damage when your weapon hits a creature that is missing hit points.",
+            { Dice(1, 8) })),
+        Kit.Choice(7, "Defensive Tactics", "How you guard yourself. You can swap after a short or long rest.", {
+            Kit.Option("Escape the Horde", "Opportunity attacks have disadvantage against you."),
+            Kit.Option("Multiattack Defense", "A creature that hits you has disadvantage on its other attacks against you this turn."),
+        }),
         Passive(11, "Superior Hunter's Prey", "Once per turn, when you damage the creature under your Hunter's Mark, the spell's extra damage can also hit a different creature within 30 feet of it."),
         Passive(15, "Superior Hunter's Defense", "Reaction when you take damage: resistance to that damage, and any other of the same type, until the end of the turn."),
     },
