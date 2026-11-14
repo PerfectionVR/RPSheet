@@ -148,8 +148,7 @@ still need that.
 - [ ] An in-game play-through of every class other than the Warrior
 - [ ] Subclasses the rules list that are left out: Path of the Berserker (Shaman) and
       the War Domain (Priest)
-- [ ] Hunter's Prey and Defensive Tactics as stored choices; invocations that can be
-      taken more than once; a Death Knight's undead steed
+- [ ] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
 - [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
@@ -178,7 +177,8 @@ still need that.
 - [ ] Spells that grow in another way with the slot (more targets, more darts, a
       different die)
 - [ ] Spells that make several attacks or hit several targets in one click
-- [ ] Ritual casting and material components
+- [x] Ritual casting: right-click a ritual spell to cast it without a slot
+- [ ] Material components
 
 **Character**
 
@@ -199,8 +199,8 @@ still need that.
 **Play**
 
 - [x] Conditions changing your own rolls and speed by themselves
-- [x] A reminder with the DC for the concentration save when you take damage
-- [ ] The concentration save rolled by itself, and conditions that end by themselves
+- [x] The concentration save rolled when you take damage; a failure ends the spell
+- [ ] Conditions that end by themselves
 - [ ] Initiative order and turn tracking
 - [ ] A view for the DM of the whole party
 

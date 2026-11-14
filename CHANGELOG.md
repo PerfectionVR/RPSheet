@@ -51,6 +51,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   growing with the slot; the +1 minimum of Aura of Protection.
 - The skills of the Skilled and Skill Expert feats are chosen on the Character tab.
 - The Combat section lists your senses and the damage types you resist.
+- Ritual spells can be cast without a slot with a right-click. Taking damage while
+  concentrating rolls the Constitution save and ends the spell on a failure.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

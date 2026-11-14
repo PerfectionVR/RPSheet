@@ -116,4 +116,5 @@ R.TEMPLATES.spell = {
     free = false,              -- doesn't count against cantrips known or spells prepared
     auto = "",                 -- "prepared:<name>" for a spell a subclass put there
     up = 0,                    -- dice added for each slot level above the spell's own
+    ritual = false,            -- can be cast as a ritual: no slot, ten minutes longer
 }

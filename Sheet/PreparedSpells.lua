@@ -34,6 +34,7 @@ function ns.ApplyPreparedSpells(sheet)
     -- Spells added before higher slots added dice learn how many they add.
     for _, spell in ipairs(sheet.spells) do
         local known = R.SPELLS[spell.name]
+        if known and known.ritual and known.level == spell.level then spell.ritual = true end
         if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
             spell.up = known.up
         end

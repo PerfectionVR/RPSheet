@@ -65,13 +65,15 @@ function RPSheet:SpellText(spell)
     return table.concat(parts, ", ")
 end
 
--- `mode` is "ADV" or "DIS" for the spell attack roll.
-function RPSheet:CastSpell(spell, mode)
+-- `mode` is "ADV" or "DIS" for the spell attack roll. `ritual` casts a ritual spell
+-- without a slot.
+function RPSheet:CastSpell(spell, mode, ritual)
     if self.busy or self:IsRolling() then return end
 
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
-    if spell.level > 0 then
+    ritual = ritual and spell.ritual and spell.level > 0
+    if spell.level > 0 and not ritual then
         local level = math.max(spell.level, self.castLevel or 0)
         slot = FindSlot(self, level)
         if not slot then
@@ -99,6 +101,7 @@ function RPSheet:CastSpell(spell, mode)
         end
         local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
+        if ritual then text = text .. " (as a ritual, no slot)" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
         self:Announce(text)

@@ -47,9 +47,31 @@ function RPSheet:DamageTaken(amount)
         local damage = self.concentrationDamage or 0
         self.concentrationDamage, self.concentrationTimer = nil, nil
         if damage > 0 and self:State().conditions.Concentrating then
-            self:Print(("You took %d damage while concentrating: roll a Constitution save, DC %d, to keep the spell. If it was more than one hit, each needs its own save."):format(
-                damage, math.max(10, math.floor(damage / 2))))
+            self:RollConcentration(damage)
         end
+    end)
+end
+
+-- The Constitution save to keep a spell after taking damage: DC 10, or half the damage
+-- if that is higher, 30 at most. A failure ends the concentration.
+function RPSheet:RollConcentration(damage)
+    local dc = math.min(30, math.max(10, math.floor(damage / 2)))
+    if self.busy or self:IsRolling() then
+        self:Print(("You took %d damage while concentrating: roll a Constitution save, DC %d, to keep the spell."):format(damage, dc))
+        return
+    end
+    local mod = self:SaveMod("CON")
+    self.busy = true
+    self:RollD20(self:ResolveMode("CON save", nil), function(d20, note)
+        self.busy = false
+        local kept = d20 + mod >= dc
+        if not kept then
+            self:State().conditions.Concentrating = nil
+            self:QueueBroadcast()
+            self:PopulateSoon()
+        end
+        self:Announce(("took %d damage while concentrating - %s, DC %d: %s"):format(damage,
+            ns.RollText.Check(ns.Mark("CON save"), d20, mod, note), dc, kept and "keeps the spell" or "loses the spell"))
     end)
 end
 

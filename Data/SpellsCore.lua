@@ -413,9 +413,10 @@ for line in DATA:gmatch("[^\n]+") do
     local more = (upSides and upSides == sides) and tonumber(upCount) or 0
     if R.SPELLS[name] then
         local known = R.SPELLS[name]
+        if known.level == level and flags:find("r") then known.ritual = true end
         if known.level == level and known.sides == tonumber(sides) and known.count > 0 then known.up = more end
     else
-        local extra = { concentration = flags:find("c") ~= nil }
+        local extra = { concentration = flags:find("c") ~= nil, ritual = flags:find("r") ~= nil }
         if kind == "heal" or kind == "heal+" then extra.dice, extra.addMod = "HEALING", kind == "heal+" end
         extra.up = more
         R.DefineSpell(name, level, how ~= "" and how or nil, count and { tonumber(count), tonumber(sides) } or nil,
