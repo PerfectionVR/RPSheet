@@ -1,0 +1,91 @@
+-- The sheet's "Take damage" and "Heal" rows: a menu of damage types, then a small box
+-- for the amount. The rules are applied in Actions/Damage.lua.
+local _, ns = ...
+local R = ns.Rules
+local RPSheet = ns.addon
+local UI = ns.UI
+
+local POPUP = "RPSHEET_DAMAGE_AMOUNT"
+
+-- The game has named the box differently over time.
+local function BoxOf(dialog)
+    return (dialog.GetEditBox and dialog:GetEditBox()) or dialog.EditBox or dialog.editBox
+end
+
+-- `request` is { heal = true } or { damageType = "fire" } (no type: an empty table).
+local function Apply(dialog, request)
+    local box = BoxOf(dialog)
+    local amount = tonumber(((box and box:GetText()) or ""):match("%d+")) or 0
+    if type(request) ~= "table" then return end
+    if request.heal then
+        RPSheet:Heal(amount)
+    else
+        RPSheet:TakeDamage(amount, request.damageType)
+    end
+end
+
+StaticPopupDialogs[POPUP] = {
+    text = "%s", button1 = ACCEPT, button2 = CANCEL,
+    hasEditBox = true, maxLetters = 4, timeout = 0, whileDead = true, hideOnEscape = true, preferredIndex = 3,
+    OnShow = function(dialog)
+        local box = BoxOf(dialog)
+        if box then
+            box:SetText("")
+            box:SetFocus()
+        end
+    end,
+    OnAccept = function(dialog, request) Apply(dialog, request) end,
+    EditBoxOnEnterPressed = function(box)
+        local dialog = box:GetParent()
+        Apply(dialog, dialog.data)
+        dialog:Hide()
+    end,
+    EditBoxOnEscapePressed = function(box) box:GetParent():Hide() end,
+}
+
+-- Asks for the amount, then heals or deals the damage.
+function RPSheet:AskAmount(request)
+    local prompt = "How many hit points do you regain?"
+    if not request.heal then
+        prompt = ("How much %sdamage do you take?\nType the amount as rolled: the sheet halves, doubles or ignores it as your resistances say."):format(
+            request.damageType and (request.damageType .. " ") or "")
+    end
+    StaticPopup_Show(POPUP, prompt, nil, request)
+end
+
+-- What the character does with a damage type, for the menu: "immune", "resisted", ...
+local function Standing(defenses, name)
+    if defenses.immune[name] then return "immune" end
+    local parts = {}
+    if defenses.resist[name] then parts[#parts + 1] = "resisted" end
+    if defenses.vulnerable[name] then parts[#parts + 1] = "vulnerable" end
+    return #parts > 0 and table.concat(parts, ", ") or nil
+end
+
+-- A menu at the cursor with the damage types.
+function RPSheet:OpenDamageMenu(owner)
+    if not (MenuUtil and MenuUtil.CreateContextMenu) then
+        self:Print("The damage menu isn't available in this version of the game. Type /sheet damage 14 fire instead.")
+        return
+    end
+    local defenses = self:Defenses()
+    MenuUtil.CreateContextMenu(owner, function(_, root)
+        root:CreateTitle("Take damage of which type?")
+        for _, name in ipairs(R.DAMAGE_TYPES) do
+            local standing = Standing(defenses, name)
+            local label = name:sub(1, 1):upper() .. name:sub(2)
+            if standing then label = ("%s |cff909090(%s)|r"):format(label, standing) end
+            root:CreateButton(label, function() self:AskAmount({ damageType = name }) end)
+        end
+        root:CreateButton("No type", function() self:AskAmount({}) end)
+    end)
+end
+
+-- The two rows under the bars.
+function UI.AddDamageRows(addon, body)
+    local label
+    label = UI.AddLabel(body, 0.5, UI.ACCENT .. "Take damage|r", function() addon:OpenDamageMenu(label.frame) end,
+        "Take damage", "Pick the damage type, then type the amount as it was rolled. Immunity leaves nothing, resistance halves it (rounded down), vulnerability doubles it. Temporary HP is used up first, and a spell you concentrate on gets its saving throw.\n\nOr type /sheet damage 14 fire. To change HP without the rules, click the HP bar.")
+    UI.AddLabel(body, 0.5, UI.ACCENT .. "Heal|r", function() addon:AskAmount({ heal = true }) end,
+        "Heal", "Type the hit points you regain. They stop at your maximum.\n\nOr type /sheet heal 8.")
+end

@@ -28,6 +28,8 @@ end
 --   strike = { sides = 8, damage = "radiant" }  a die added to every melee weapon hit
 --   spec = "Blood"     only for a character of that specialization (abilities too)
 --   limit = "UNARMORED" or "NOHEAVY"  armor that stops its effects (Sheet/Limits.lua)
+--   resist, immune, vulnerable = { "fire" }  damage types, conditionImmune = { "Charmed" },
+--                      whileOn = "Raging" (see Data/DamageTypes.lua)
 --   when = function(sheet)  only while this is true (any kind of feature); the sheet
 --                      may be a stand-in with just class, subclass and level
 function Kit.Passive(level, name, desc, effects, extra)
