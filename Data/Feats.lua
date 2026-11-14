@@ -3,6 +3,7 @@
 --   kind     "GENERAL" (from level 4), "ORIGIN" (also allowed there) or "BOON" (level 19)
 --   stats    abilities the feat can raise by 1; none for origin feats
 --   effects  passive effects the feat has by itself (see Data/Effects.lua)
+--   repeatable  true if it can be taken more than once
 --   save     true if it also grants saving throw proficiency in the raised ability
 local _, ns = ...
 local R = ns.Rules
@@ -17,7 +18,7 @@ local function General(name, stats, desc, extra)
     return feat
 end
 local function Origin(name, desc, effects)
-    return { name = name, kind = "ORIGIN", stats = {}, desc = desc, effects = effects }
+    return { name = name, kind = "ORIGIN", stats = {}, desc = desc, effects = effects, repeatable = name == "Magic Initiate" or name == "Skilled" }
 end
 local function Boon(name, desc, extra)
     local feat = { name = "Boon of " .. name, kind = "BOON", stats = ANY, desc = desc }
@@ -38,7 +39,7 @@ local LIST = {
     General("Defensive Duelist", { "DEX" }, "Reaction when hit by a melee attack while holding a finesse weapon: add your proficiency bonus to your AC against melee attacks until your next turn."),
     General("Dual Wielder", BODY, "When you attack with a light weapon you can make the extra bonus-action attack with a different weapon that isn't two-handed, and you can draw or stow two weapons at once."),
     General("Durable", { "CON" }, "Advantage on death saving throws, and as a bonus action you can spend one Hit Die to heal."),
-    General("Elemental Adept", MIND, "Choose acid, cold, fire, lightning or thunder. Your spells ignore resistance to it, and you treat any 1 on its damage dice as a 2."),
+    General("Elemental Adept", MIND, "Choose acid, cold, fire, lightning or thunder. Your spells ignore resistance to it, and you treat any 1 on its damage dice as a 2. Can be taken again for another damage type.", { repeatable = true }),
     General("Fey Touched", MIND, "You learn Misty Step and one 1st-level divination or enchantment spell. Each can be cast once per long rest without a slot, and with your slots."),
     General("Grappler", BODY, "Once per turn an unarmed strike can both damage and grapple. You have advantage on attacks against a creature you grapple, and moving it doesn't slow you."),
     General("Great Weapon Master", { "STR" }, "A hit with a heavy weapon as part of the Attack action deals extra damage equal to your proficiency bonus. After a critical hit or a kill you can attack as a bonus action."),

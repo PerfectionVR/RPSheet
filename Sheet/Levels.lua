@@ -47,6 +47,16 @@ function Levels.Record(sheet, level)
     return (sheet.levels or NO_RECORDS)[level]
 end
 
+-- True if the character has the feat from somewhere other than `level`: its
+-- background, or another level.
+function Levels.HasFeat(sheet, name, level)
+    local own = "level:" .. level
+    for _, passive in ipairs(sheet.passives) do
+        if passive.name == name and passive.auto ~= own then return true end
+    end
+    return false
+end
+
 -- Why `record` can't be accepted for `level`, or nil when it is complete and allowed.
 function Levels.Problem(sheet, level, record)
     local kind = Levels.Kind(sheet, level)
@@ -59,6 +69,10 @@ function Levels.Problem(sheet, level, record)
     else
         if record.feat == "" then return kind == "BOON" and "Name the Epic Boon you take." or "Name the feat you take." end
         if points > 1 then return "A feat raises one ability by 1 at most." end
+        local known = R.FEATS[record.feat]
+        if not (known and known.repeatable) and Levels.HasFeat(sheet, record.feat, level) then
+            return ("You already have %s. A feat can only be taken once."):format(record.feat)
+        end
     end
     -- Scores stop at 20; an Epic Boon can take one to 30.
     local cap = kind == "BOON" and R.BOON_MAX_SCORE or R.MAX_SCORE

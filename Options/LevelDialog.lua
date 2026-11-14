@@ -92,6 +92,18 @@ local function FeatStats()
     return allowed
 end
 
+-- Listed feats the character can still take here: one it already has from elsewhere
+-- is left out, unless that feat can be taken more than once.
+local function FeatChoices()
+    local names = {}
+    for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do
+        if R.FEATS[name].repeatable or not Levels.HasFeat(Sheet(), name, draft and draft.level or 0) then
+            names[#names + 1] = name
+        end
+    end
+    return names
+end
+
 local function Text(value, length)
     value = value:gsub("[|\r]", "")
     return value:trim():sub(1, length)
@@ -160,12 +172,11 @@ local args = {
         hidden = function() return not IsFeat() end,
         values = function()
             local values = { [""] = "Other (type a name)" }
-            for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do values[name] = name end
+            for _, name in ipairs(FeatChoices()) do values[name] = name end
             return values
         end,
         sorting = function()
-            local order = {}
-            for _, name in ipairs(R.FEAT_NAMES[draft and draft.kind == "BOON" and "BOON" or "GENERAL"]) do order[#order + 1] = name end
+            local order = FeatChoices()
             order[#order + 1] = ""
             return order
         end,
