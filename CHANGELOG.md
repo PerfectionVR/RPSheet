@@ -10,6 +10,15 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   A Champion's wider critical range, advantage on initiative and Athletics, and
   Survivor's death saves are applied by the sheet. Tactical Mind, Indomitable,
   Student of War and the growing Extra Attack are in.
+- The other twelve classes and their subclasses are checked against the rules,
+  feature by feature. Features roll their dice, show their save DC, track their uses
+  per rest and grow with level. Features that offer a choice (Divine Order, Primal
+  Order, Blessed Strikes, Elemental Affinity) are picked in the level dialog, and
+  features that grant advantage, training, skills or a wider critical range apply by
+  themselves.
+- A Warlock picks Eldritch Invocations and an Evoker picks Metamagic in the level
+  dialog, the right number for the level. Invocations respect their level and the
+  pact they build on; Metamagic options spend Sorcery Points when clicked.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

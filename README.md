@@ -134,23 +134,28 @@ What the rules have that the addon doesn't, kept here to track the remaining wor
 
 **Classes**
 
-Warrior is complete: every class, Battle Master and Champion feature, and all 25
-maneuvers. The other twelve classes have their features, with the gaps below.
+All thirteen classes and their subclasses have been checked against the rules, feature
+by feature. Only the Warrior has been played through in game so far; the other twelve
+still need that.
 
+- [x] Warrior, with Battle Master, Champion and all 25 maneuvers
+- [x] Rogue, Monk (with the brews of the Warrior of Mystic Brews), Hunter, Demon Hunter
+- [x] Paladin, Death Knight, Shaman (with totems and the Path of the Elements), Druid, Priest
+- [x] Mage, Warlock (with all Eldritch Invocations, the setting's own included) and
+      Evoker (with Metamagic)
+- [ ] An in-game play-through of every class other than the Warrior
 - [ ] Hunter pets: the companion's stat block, pet families, and the Pet Specialization
       feature a Beast Mastery hunter takes at level 6 in place of Roving
 - [ ] Druid Wild Shape forms (Cat Form, Bear Form and the other beast stat blocks)
-- [ ] Warlock Eldritch Invocations as a list to choose from, including the setting's
-      own (Pact of the Legion, Health Funnel and the rest)
-- [ ] Sorcerer Metamagic options as a list to choose from
-- [ ] Shaman totems as separate abilities, and the Path of the Elements options
-- [ ] Monk brews for the Warrior of Mystic Brews
-- [ ] Always-prepared subclass spells added automatically (only Death Knight and Demon
-      Hunter spells are offered today)
-- [ ] A check of each remaining class against the rules, feature by feature, as was
-      done for the Warrior
-- [ ] Advantage that a feature grants applied by itself for the other classes (done
-      for the Champion)
+- [ ] Always-prepared subclass spells added automatically (the sheet lists them by
+      level; only Death Knight and Demon Hunter spells are added for you)
+- [ ] Expertise picks in the level dialog (Rogue, Mage's Scholar); set under Customize today
+- [ ] Spell slots given back by a feature (Arcane Recovery, Magical Cunning, Font of
+      Magic) restored by the click; changed by hand today
+- [ ] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
+      chosen from a list
+- [ ] Picking Metamagic and invocations in the creation wizard (the Character page
+      points to the level dialog for them)
 - [ ] Multiclassing
 
 **Spells**
