@@ -494,13 +494,13 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
         group.args["pick" .. index] = {
             type = "toggle", order = index, width = 1.5,
             name = function()
-                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key])
+                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter())
                 return blocked and ("|cff888888%s (%s)|r"):format(name, blocked) or name
             end,
             desc = list.items[name].desc,
             disabled = function()
                 if draft.picks[key][name] then return false end
-                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key]) ~= nil
+                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
             set = function(_, value) draft.picks[key][name] = value or nil end,

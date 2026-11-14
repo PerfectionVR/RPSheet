@@ -82,6 +82,7 @@ R.TEMPLATES = {
     action = {
         type = "ROLL",
         kind = "ATTACK", stat = "STR", stat2 = "", proficient = true, -- ROLL
+        rollFlat = 0,                                                  -- ROLL: a bonus of its own
         count = 1, sides = 6, dice = "DAMAGE", flat = 0,               -- DICE (uses stat too)
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
         times = 1,                                                     -- WEAPON

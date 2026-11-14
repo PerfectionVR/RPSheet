@@ -29,7 +29,9 @@ function RPSheet:Score(stat)
     local sheet = self:Sheet()
     -- In a beast form some abilities take the score of another.
     local form = self:Form()
-    if form and form.scores[stat] then stat = form.scores[stat] end
+    local taken = form and form.scores[stat]
+    if type(taken) == "number" then return taken end -- a beast's own score
+    if taken then stat = taken end
     local score = (sheet.base[stat] or R.BASE_MIN) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
     -- A capstone feature can raise a score further, up to 25.
     local raised = sheet.featureScores and sheet.featureScores[stat]
@@ -132,7 +134,12 @@ function RPSheet:AC()
     local sheet, class = self:Sheet(), self:ClassData()
     -- A beast form has an Armor Class of its own; armor and shield don't count.
     local form = self:Form()
-    if form then return form.ac + self:Mod(form.acStat) + self:Bonus("AC") end
+    if form then
+        local ac = form.ac + (form.acStat and self:Mod(form.acStat) or 0)
+        -- A Circle of the Moon druid's beast forms have at least 13 + Wisdom.
+        if form.beast and sheet.subclass == "Circle of the Moon" then ac = math.max(ac, 13 + self:Mod("WIS")) end
+        return ac + self:Bonus("AC")
+    end
     local armor = R.ARMOR[sheet.armor]
     local dex = self:Mod("DEX")
     if armor.dexCap then dex = math.min(dex, armor.dexCap) end

@@ -14,6 +14,7 @@ function RPSheet:ActionText(action)
         if R.STAT_NAMES[action.stat] then parts[#parts + 1] = action.stat end
         if R.STAT_NAMES[action.stat2] then parts[#parts + 1] = action.stat2 end
         if action.proficient then parts[#parts + 1] = "proficiency" end
+        if (action.rollFlat or 0) ~= 0 then parts[#parts + 1] = tostring(action.rollFlat) end
         return ("%s: %s"):format(R.ROLL_KINDS[action.kind] or "Roll", table.concat(parts, " + "))
     elseif kind == "DICE" then
         local text = R.DICE_KINDS[action.dice] or "Dice"
@@ -102,6 +103,7 @@ local function RollStep(self, action)
         end
     end
     if action.proficient then mod = mod + self:ProficiencyBonus() end
+    mod = mod + (action.rollFlat or 0) -- a bonus of its own, such as a beast form's attack
     if action.kind == "ATTACK" then
         mod = mod + self:Bonus("ATTACK")
     elseif action.kind == "SPELL" then
@@ -133,6 +135,12 @@ local function ApplyChanges(self, ability, costs)
                 if passive.name == action.passive then
                     if action.mode == "ON" then
                         passive.enabled = true
+                        -- Taking a form ends any other form.
+                        if R.FORMS[passive.name] then
+                            for _, other in ipairs(self:Sheet().passives) do
+                                if other ~= passive and R.FORMS[other.name] then other.enabled = false end
+                            end
+                        end
                     elseif action.mode == "OFF" then
                         passive.enabled = false
                     else

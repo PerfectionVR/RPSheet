@@ -40,6 +40,10 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 - A Beast Master picks a pet family for its companion. The sheet has a bar for the
   companion's hit points and its strike as an ability, and from level 6 the family's
   specialization (Cunning, Ferocity or Tenacity) in place of Roving.
+- A druid picks the beasts it knows as Wild Shape forms in the level dialog, from
+  fifteen (wolf, panther, elk, bears, tiger, the flying forms and more). Each has a
+  click to take the form, its attacks as abilities, and its numbers on the sheet
+  while the form is on.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

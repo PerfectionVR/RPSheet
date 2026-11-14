@@ -149,7 +149,9 @@ still need that.
 - [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
-- [ ] Ordinary beasts as Wild Shape forms (Elk, Panther and the other beast stat blocks)
+- [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
+      Armor Class, speed, Strength, Dexterity and attacks
+- [ ] Other beasts as Wild Shape forms, and a beast form's own senses and Constitution
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves

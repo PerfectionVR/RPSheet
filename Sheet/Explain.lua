@@ -129,7 +129,10 @@ function RPSheet:ExplainAC()
     local form = self:Form()
     if form then
         local formParts = { { form.name, form.ac } }
-        Add(formParts, R.STAT_NAMES[form.acStat], self:Mod(form.acStat))
+        if form.acStat then Add(formParts, R.STAT_NAMES[form.acStat], self:Mod(form.acStat)) end
+        if form.beast and sheet.subclass == "Circle of the Moon" then
+            Add(formParts, "Circle Forms (at least 13 + Wisdom)", math.max(0, 13 + self:Mod("WIS") - form.ac))
+        end
         AddBonuses(self, formParts, "AC")
         Out(self, ("Armor Class |cffffd100%d|r: %s. Armor and shield don't count in this form."):format(Total(formParts), Join(formParts)))
         return

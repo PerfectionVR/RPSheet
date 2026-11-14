@@ -22,9 +22,11 @@ function ns.PicksKnown(sheet, key)
 end
 
 -- Why an option can't be picked, given the level and the other picks, or nil.
-function ns.PickBlocked(key, name, level, picked)
+-- `subclass` matters for beast forms, which a Circle of the Moon druid learns sooner.
+function ns.PickBlocked(key, name, level, picked, subclass)
     local item = R.PICK_LISTS[key].items[name]
-    if item.level and level < item.level then return ("needs level %d"):format(item.level) end
+    local need = (subclass == "Circle of the Moon" and item.moonLevel) or item.level
+    if need and level < need then return ("needs level %d"):format(need) end
     if item.needs and not picked[item.needs] then return "needs " .. item.needs end
 end
 
@@ -41,7 +43,8 @@ end
 function ns.ApplyPicks(sheet)
     local wanted = {}
     for _, key in ipairs(R.PICK_LIST_ORDER) do
-        if ns.PickLimit(key, sheet.class, sheet.level) > 0 then
+        -- A list marked custom has its own way onto the sheet (beast forms).
+        if not R.PICK_LISTS[key].custom and ns.PickLimit(key, sheet.class, sheet.level) > 0 then
             for name in pairs(sheet.picks[key] or {}) do
                 local auto = ("pick:%s:%s"):format(key, name)
                 if R.PICK_LISTS[key].items[name] and not sheet.dismissed[auto] then
