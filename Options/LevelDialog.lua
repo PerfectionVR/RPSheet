@@ -288,7 +288,10 @@ local args = {
             return (select(2, Opt.ListMap(class and class.subclasses, true)))
         end,
         get = function() return draft.subclass end,
-        set = function(_, value) draft.subclass = value end,
+        set = function(_, value)
+            draft.subclass = value
+            DropUnfollowed() -- its always-prepared spells can't be picked as well
+        end,
     },
 
     style = {

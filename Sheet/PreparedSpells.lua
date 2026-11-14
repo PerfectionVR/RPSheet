@@ -28,6 +28,14 @@ local function Wanted(sheet)
     return wanted
 end
 
+-- { [spell name] = true } for the same spells. `sheet` may be a stand-in with another
+-- level or subclass (the level dialog's).
+function ns.AlwaysPrepared(sheet)
+    local names = {}
+    for _, name in pairs(Wanted(sheet)) do names[name] = true end
+    return names
+end
+
 -- Adds the spells reached, and takes off those of another subclass or a level the
 -- character no longer has. A spell the player added by hand is left as it is.
 function ns.ApplyPreparedSpells(sheet)

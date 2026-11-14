@@ -61,6 +61,7 @@ Data\BeastsCR1.lua
 Data\BeastsCRMoon.lua
 Data\BeastPicks.lua
 Data\SpellPicks.lua
+Data\PreparedPicks.lua
 Data\SpellChoices.lua
 Data\Tools.lua
 Data\ToolPicks.lua
@@ -106,6 +107,7 @@ Sheet\SpellPicks.lua
 Sheet\BeastForms.lua
 Sheet\Expertise.lua
 Sheet\LineageSpells.lua
+Sheet\PreparedPicks.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\SpellChoices.lua
