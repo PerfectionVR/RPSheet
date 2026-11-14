@@ -43,6 +43,7 @@ Data\Effects.lua
 Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
+Data\SpellsCore.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
@@ -78,6 +79,7 @@ Sheet\Maneuvers.lua
 Sheet\Picks.lua
 Sheet\Expertise.lua
 Sheet\LineageSpells.lua
+Sheet\PreparedSpells.lua
 Sheet\Traits.lua
 Sheet\LevelUp.lua
 

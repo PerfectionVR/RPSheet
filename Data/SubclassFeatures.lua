@@ -43,8 +43,8 @@ local function AlwaysPrepared(what, byLevel)
             if level >= step[1] then known[#known + 1] = step[2] end
         end
         return "Always prepared, and not counted against the number you can prepare: " .. table.concat(known, ", ")
-            .. ". Add them under Customize, Spells, ticked as not counting."
-    end)
+            .. ". They are on your spell list already."
+    end, nil, { prepared = byLevel })
 end
 
 R.SUBCLASS_FEATURES = {

@@ -86,8 +86,13 @@ local function Available()
     local class = RPSheet:ClassData()
     local have, names = {}, {}
     for _, spell in ipairs(Opt.Sheet().spells) do have[spell.name] = true end
+    -- Only spells of a level the character has slots for.
+    local highest = 0
+    for level, count in pairs(RPSheet:SpellSlots()) do
+        if count > 0 then highest = math.max(highest, level) end
+    end
     for _, name in ipairs(class and R.SPELL_LISTS[class.base] or {}) do
-        if not have[name] then names[#names + 1] = name end
+        if not have[name] and R.SPELLS[name].level <= highest then names[#names + 1] = name end
     end
     -- Spells the class's own subclass gives are always prepared: they only need the slots.
     for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
@@ -105,7 +110,7 @@ local function Extra(args)
     args.limits = { type = "description", order = 0.4, fontSize = "medium", name = Limits }
     args.known = {
         type = "select", order = 0.5, name = "Spells for your class", width = "double",
-        desc = "Your class's own spells and the common cantrips and 1st-level spells, with their dice and saves filled in. Any other spell can be added by hand. The counts above turn red when you go past what your class allows.",
+        desc = "The spells of your class up to the highest level you have slots for, with their dice and saves filled in. Any other spell can be added by hand. The counts above turn red when you go past what your class allows.",
         hidden = function() return #Available() == 0 and picked == "" end,
         values = function()
             local values = {}

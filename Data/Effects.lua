@@ -110,4 +110,5 @@ R.TEMPLATES.spell = {
     concentration = false,
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
     free = false,              -- doesn't count against cantrips known or spells prepared
+    auto = "",                 -- "prepared:<name>" for a spell a subclass put there
 }
