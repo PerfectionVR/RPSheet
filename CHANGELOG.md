@@ -82,6 +82,20 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Inventory: track your coins (add, spend, get change), carry and buy gear with
+  prices and weights, see your load against your carrying capacity, and equip and
+  attune magic items (three at most) whose bonuses are applied. Weapons can have a
+  magic bonus, and the creation wizard asks for starting gold.
+- "Take damage" and "Heal" under the HP bar (and `/sheet damage 14 fire`,
+  `/sheet heal 8`): the sheet halves damage you resist, doubles damage you are
+  vulnerable to, ignores damage you are immune to, uses temporary hit points first,
+  rolls your concentration save and handles dropping to 0. The Combat section lists
+  immunities, vulnerabilities and conditions you can't be put under.
+- Each faction shows its own renown perks next to the general ones, and the sheet
+  adds the ones it can use while your renown is high enough.
+- An Armoury: save any weapon to keep it for all your characters, add a copy to
+  another character, and rename, delete or share stored weapons as a text string.
+- Importing a sheet no longer turns a Blowgun's 1 damage into 1d2.
 - A Beast Master of level 11 can roll both of the companion's strikes in one click. A
   swarm form no longer gets Wild Shape's temporary hit points.
 - Feats ask for their own choices and apply them: Magic Initiate's list, ability and

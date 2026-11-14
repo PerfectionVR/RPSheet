@@ -222,23 +222,38 @@ other ten still need that.
 - [ ] How often prepared spells may be swapped (any after a long rest, one per long
       rest, or one per level, by class)
 - [ ] Copying spells into the book for gold and time; preparing only after a long rest
-- [ ] Tracking the gold and the components themselves
+- [x] Gold tracked on the sheet (see the inventory below)
+- [ ] Spell components with a price checked against, and taken from, the inventory
 
 **Character**
 
 - [x] Tool proficiencies: granted by class and background or ticked by hand, with a
       check to click for each
 - [ ] The professions and crafting rules
-- [ ] An armoury for weapons of your own, kept between characters
+- [x] An armoury for weapons of your own, kept between characters: save, add a copy,
+      rename, delete, and share one as a text string
 - [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
       Strength for it
-- [ ] Equipment, currency and magic items
+- [x] Coins with change, an inventory of gear with prices and weights against your
+      carrying capacity, and magic items: equipped and attuned (three at most), with
+      bonuses the sheet applies; a magic bonus on weapons; starting gold in the wizard
+- [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
+      situation; armor and weapons in the inventory linked to Defense and Weapons;
+      being over the carrying limit slowing you; starting gear packages
 - [ ] Mounts, vehicles and companion creatures
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on
-- [ ] Immunities and vulnerabilities, and resistances halving damage by themselves
+- [x] Immunities, vulnerabilities and conditions you can't be put under, next to the
+      resistances; "Take damage" and "Heal" apply them, temporary hit points and the
+      rules for dropping to 0
+- [ ] Protection from spells that are running (the sheet doesn't track those): add
+      it as a passive of your own. Resistances with a choice or a condition of their
+      own (Heavenly Spirit, Boon of the Night Spirit) are not counted
 - [x] The perks every faction gives at each renown tier, shown with the score
-- [ ] Each faction's own renown perks
+- [x] Each faction's own renown perks, shown per tier; the sheet applies what it can
+      (a language, tool or skill from the faction's trainers, and blessings)
+- [ ] Renown gained by rule (a stronghold, another subfaction of your side reaching
+      a tier); renown with only one of the Explorers' League and the Reliquary
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
 - [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
       list, ability and spells, the skill of Keen Mind and Observant, Elemental
