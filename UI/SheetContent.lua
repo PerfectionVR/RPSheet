@@ -372,16 +372,11 @@ local function OriginSection(self, body)
         local score = self:Sheet().renown[faction] or 0
         if score > 0 then
             local tier = R.RenownTier(score)
-            -- The perks of every tier reached, lowest first.
-            local perks = {}
-            for index = #R.RENOWN_TIERS, 1, -1 do
-                local step = R.RENOWN_TIERS[index]
-                if score >= step[1] then perks[#perks + 1] = ("%s%s|r: %s"):format(UI.ACCENT, step[2], R.RENOWN_PERKS[step[2]]) end
-            end
+            -- The perks of every tier reached and the next one (Sheet/RenownSummary.lua).
             renown[#renown + 1] = {
                 text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),
-                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50."
-                    .. (#perks > 0 and ("\n\n" .. table.concat(perks, "\n")) or "") .. "\n\nThe faction's own perks come on top of these.",
+                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.\n\n"
+                    .. ns.RenownSummary(self:Sheet(), faction, UI.ACCENT),
             }
         end
     end

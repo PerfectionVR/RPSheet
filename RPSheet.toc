@@ -78,6 +78,9 @@ Data\ClassOverrides.lua
 Data\Metamorphosis.lua
 Data\Lineages.lua
 Data\Factions.lua
+Data\FactionPerks.lua
+Data\FactionPerksHorde.lua
+Data\FactionPerksOrders.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -119,6 +122,9 @@ Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
+Sheet\RenownTraining.lua
+Sheet\RenownPerks.lua
+Sheet\RenownSummary.lua
 Sheet\LevelUp.lua
 
 # Things the character does
@@ -165,6 +171,7 @@ Options\General.lua
 Options\Character.lua
 Options\FeatChoices.lua
 Options\LevelDialog.lua
+Options\RenownPerks.lua
 Options\Origin.lua
 Options\Scores.lua
 Options\Proficiencies.lua

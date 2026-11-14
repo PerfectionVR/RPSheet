@@ -50,6 +50,8 @@ ns.defaults = {
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
                     renown = {},    -- [faction] = score
+                    renownTraining = {}, -- [faction] = language, tool or skill its trainers taught (Sheet/RenownTraining.lua)
+                    renownGranted = {},  -- [faction] = the language or skill that pick added
                     extraLanguages = 0, -- languages granted by features, on top of the usual three
                     asi = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 }, -- points from level-ups
                     background = "", alignment = "",

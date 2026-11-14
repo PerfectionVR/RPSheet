@@ -121,6 +121,14 @@ local function CleanSheet(source)
             if score > 0 then sheet.renown[faction] = math.min(100, score) end
         end
     end
+    -- What a faction's trainers taught, and what that added to the sheet.
+    for _, field in ipairs({ "renownTraining", "renownGranted" }) do
+        sheet[field] = {}
+        for _, faction in ipairs(R.ALL_FACTIONS) do
+            local pick = type(source[field]) == "table" and source[field][faction]
+            if type(pick) == "string" then sheet[field][faction] = Text(pick, 60) end
+        end
+    end
     if not R.ALLEGIANCES[sheet.allegiance] then sheet.allegiance = "" end
     sheet.maneuvers, sheet.featureSkills, sheet.featureSkillGranted = {}, {}, {}
     if type(source.maneuvers) == "table" then

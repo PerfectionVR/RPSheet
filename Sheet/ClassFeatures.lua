@@ -144,6 +144,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
     ns.ApplyFeatSpells(sheet)   -- last: a spell the class prepares isn't listed twice
+    ns.ApplyRenownPerks(sheet)  -- here, so a blessing's score points follow the reset above
 end
 
 -- The features of the character that offer a choice between options, in level order.
