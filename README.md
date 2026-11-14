@@ -151,7 +151,14 @@ still need that.
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
       Arts that stop in the armor the rules name
-- [ ] Curse of Agony's die growing by itself (the tooltip says how it grows)
+- [ ] Curse of Agony (Warlock): the die should grow after each failed save; the sheet
+      always rolls the starting d4
+- [ ] Metamorphosis (Demon Hunter): the three benefits to choose from are described,
+      none is applied
+- [ ] Psychic Whispers and Homing Strikes (Rogue), Tactical Mind (Warrior): a die or
+      use that should not be spent is put back by hand
+- [ ] Student of War (Warrior): the artisan's tools are ticked by hand, not chosen in
+      the level dialog
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
 - [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
