@@ -5,10 +5,11 @@ local RPSheet = ns.addon
 local Opt = ns.Opt
 local With = Opt.With
 
-local function EffectOptions(passive, index, effect)
+-- The editor for one effect of `owner`: a passive, or an item (Options/Inventory.lua).
+local function EffectOptions(owner, index, effect, base)
     local function this() return effect end
     return {
-        type = "group", inline = true, order = 20 + index,
+        type = "group", inline = true, order = base + 20 + index,
         name = function() return Opt.GREEN .. RPSheet:EffectText(effect) .. "|r" end,
         args = {
             target = With({
@@ -32,13 +33,32 @@ local function EffectOptions(passive, index, effect)
             remove = {
                 type = "execute", order = 5, name = "Remove effect",
                 func = function()
-                    table.remove(passive.effects, index)
+                    table.remove(owner.effects, index)
                     ns.RebuildOptions()
                     Opt.Changed()
                 end,
             },
         },
     }
+end
+
+-- Adds the "Effects" block to a page: a heading, `help`, one editor per effect of
+-- `owner` and an Add button. `base` moves the block down the page (default 0).
+function Opt.AddEffectArgs(args, owner, help, base)
+    base = base or 0
+    args.effectsHeader = { type = "header", order = base + 10, name = "Effects" }
+    args.effectsHelp = { type = "description", order = base + 11, name = help }
+    args.addEffect = {
+        type = "execute", order = base + 1000, name = "Add effect",
+        func = function()
+            table.insert(owner.effects, CopyTable(R.TEMPLATES.effect))
+            ns.RebuildOptions()
+            Opt.Changed()
+        end,
+    }
+    for index, effect in ipairs(owner.effects) do
+        args["effect" .. index] = EffectOptions(owner, index, effect, base)
+    end
 end
 
 local function Build(passive)
@@ -52,23 +72,8 @@ local function Build(passive)
         desc = With({
             type = "input", order = 3, width = "full", multiline = 3, name = "Description",
         }, self, "desc", true),
-        effectsHeader = { type = "header", order = 10, name = "Effects" },
-        effectsHelp = {
-            type = "description", order = 11,
-            name = "Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing. A passive can have as many effects as you like, and effects from different passives add up.",
-        },
-        addEffect = {
-            type = "execute", order = 1000, name = "Add effect",
-            func = function()
-                table.insert(passive.effects, CopyTable(R.TEMPLATES.effect))
-                ns.RebuildOptions()
-                Opt.Changed()
-            end,
-        },
     }
-    for index, effect in ipairs(passive.effects) do
-        args["effect" .. index] = EffectOptions(passive, index, effect)
-    end
+    Opt.AddEffectArgs(args, passive, "Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing. A passive can have as many effects as you like, and effects from different passives add up.")
     return args
 end
 

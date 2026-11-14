@@ -399,7 +399,9 @@ end
 local SECTIONS = {
     HeaderSection, TrackerSection, ConditionSection, CombatSection, CheckSection, SaveSection,
     UI.PetSection, -- a Beast Master's companion (UI/PetSection.lua)
-    AbilitySection, SpellSection, PassiveSection, SkillSection, ToolSection, OriginSection,
+    AbilitySection, SpellSection, PassiveSection, SkillSection, ToolSection,
+    UI.InventorySection, -- coins, attuned items and what is carried (UI/InventorySection.lua)
+    OriginSection,
 }
 
 ---------------------------------------------------------------------------

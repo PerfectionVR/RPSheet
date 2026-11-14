@@ -292,6 +292,7 @@ function RPSheet:UseAbility(ability, mode)
             local target = weapon.heal and "HEALING" or "DAMAGE"
             local stat = self:WeaponStat(weapon)
             local mod = self:Mod(stat) + (bonusUsed[target] and 0 or (weapon.heal and self:Bonus(target) or self:DamageBonus(stat)))
+            if not weapon.heal then mod = mod + (weapon.magic or 0) end -- a magic weapon's own bonus
             bonusUsed[target] = true
             local doubled = critical and not weapon.heal
             local count, sides = self:WeaponDice(weapon)

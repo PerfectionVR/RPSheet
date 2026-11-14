@@ -67,6 +67,11 @@ Data\SpellChoices.lua
 Data\Tools.lua
 Data\ToolPicks.lua
 Data\Weapons.lua
+Data\Coins.lua
+Data\Items.lua
+Data\Gear.lua
+Data\GearArms.lua
+Data\MagicItems.lua
 Data\FeatChoices.lua
 Data\Example.lua
 Data\Glossary.lua
@@ -94,6 +99,8 @@ Sheet\RollModes.lua
 Sheet\Limits.lua
 Sheet\Senses.lua
 Sheet\Tools.lua
+Sheet\Coins.lua
+Sheet\Inventory.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
@@ -123,6 +130,7 @@ Sheet\LevelUp.lua
 Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
+Actions\Inventory.lua
 Actions\Abilities.lua
 Actions\Pet.lua
 Actions\Refunds.lua
@@ -146,6 +154,7 @@ UI\SlotLabels.lua
 UI\SheetWindow.lua
 UI\SpellbookWindow.lua
 UI\PetSection.lua
+UI\InventorySection.lua
 UI\SheetContent.lua
 UI\Minimap.lua
 
@@ -173,6 +182,9 @@ Options\Abilities.lua
 Options\Spells.lua
 Options\Spellbook.lua
 Options\Passives.lua
+Options\Coins.lua
+Options\InventoryAdd.lua
+Options\Inventory.lua
 Options\Appearance.lua
 Options\Transfer.lua
 Options\Root.lua

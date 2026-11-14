@@ -36,6 +36,7 @@ function W.NewDraft()
         fightingStyle = "",
         armor = "NONE", shield = false,
         weapon = "", -- the basic weapon to start with
+        gold = 0,    -- gold pieces to start with
         -- A new character starts clean. What the player made by hand on the current one
         -- can be carried over, but only if they ask for it.
         keepLists = false, hasContent = hasContent,
@@ -143,7 +144,9 @@ function W.Finish()
     if draft.keepLists then
         sheet.resources, sheet.weapons, sheet.spells = old.resources, old.weapons, old.spells
         sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives)
+        sheet.items, sheet.coins = old.items or {}, old.coins or sheet.coins
     end
+    sheet.coins.gp = (sheet.coins.gp or 0) + (draft.gold or 0)
     if R.WEAPONS[draft.weapon] then
         -- With the ability modifiers the character will have, and its mastery if the
         -- class has Weapon Mastery.

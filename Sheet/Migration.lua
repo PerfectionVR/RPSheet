@@ -136,6 +136,11 @@ function ns.NormalizeState(state)
     Util.NormalizeList(sheet.passives, R.TEMPLATES.passive)
     if type(sheet.spells) ~= "table" then sheet.spells = {} end
     Util.NormalizeList(sheet.spells, R.TEMPLATES.spell)
+    -- Coins and carried items (Sheet/Inventory.lua).
+    if type(sheet.items) ~= "table" then sheet.items = {} end
+    Util.NormalizeList(sheet.items, R.TEMPLATES.item)
+    for _, item in ipairs(sheet.items) do Util.NormalizeList(item.effects, R.TEMPLATES.effect, Any) end
+    ns.NormalizeInventory(sheet)
     for _, ability in ipairs(sheet.abilities) do
         Util.NormalizeList(ability.actions, R.TEMPLATES.action, Any)
         for _, action in ipairs(ability.actions) do

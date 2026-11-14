@@ -18,6 +18,7 @@ ns.defaults = {
     char = {
         name = "",
         shown = true,
+        inventoryOpen = false, -- the sheet's Inventory section lists every item
     },
     -- One entry per Total RP 3 profile ("trp3:<profile id>"), shared by the whole account
     -- like TRP3's own profiles. Without TRP3 the key is "char:<Name-Realm>".
@@ -65,6 +66,8 @@ ns.defaults = {
                     passives = {},
                     spells = {},
                     spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
+                    coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
+                    items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")

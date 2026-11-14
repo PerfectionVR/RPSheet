@@ -16,6 +16,7 @@ local LIMITS = {
     level = { 1, R.MAX_LEVEL }, hpAdjust = { -100, 100 },
     dice = { 1, 20 }, count = { 1, 20 }, sides = { 2, 100 },
     times = { 1, 10 }, amount = { 0, 999 }, flat = { -200, 200 },
+    magic = { 0, 3 }, qty = { 0, 9999 }, cost = { 0, 99999999 },
 }
 
 local function Text(value, maxLength)
@@ -184,6 +185,8 @@ local function CleanSheet(source)
     sheet.abilities = CleanList(source.abilities, R.TEMPLATES.ability, "actions", R.TEMPLATES.action)
     sheet.passives = CleanList(source.passives, R.TEMPLATES.passive, "effects", R.TEMPLATES.effect)
     sheet.spells = CleanList(source.spells, R.TEMPLATES.spell)
+    sheet.items = CleanList(source.items, R.TEMPLATES.item, "effects", R.TEMPLATES.effect)
+    ns.NormalizeInventory(sheet, source) -- coins, and weights that are fractions
     -- A spell's level and dice count may be 0, unlike the character level and other dice.
     for index, spell in ipairs(sheet.spells) do
         local original = source.spells[index]
