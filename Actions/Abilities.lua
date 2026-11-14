@@ -203,7 +203,7 @@ function RPSheet:UseAbility(ability, mode)
             if not weapon then return step() end
             -- The weapon's own damage always counts as an attack's damage.
             local target = weapon.heal and "HEALING" or "DAMAGE"
-            local mod = self:Mod(weapon.stat) + (bonusUsed[target] and 0 or self:Bonus(target))
+            local mod = self:Mod(self:WeaponStat(weapon)) + (bonusUsed[target] and 0 or self:Bonus(target))
             bonusUsed[target] = true
             local doubled = critical and not weapon.heal
             local count, sides = self:WeaponDice(weapon)

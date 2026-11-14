@@ -77,7 +77,13 @@ for index, skill in ipairs(R.SKILLS) do
         type = "toggle", order = index, width = 1.5, name = name, desc = ns.Glossary[name],
         hidden = function() return not Offered() end,
         disabled = function()
-            return not W.draft.classSkills[name] and W.SkillsPicked() >= DraftClass().skillCount
+            if W.draft.classSkills[name] then return false end
+            -- Already given by the background, when one was chosen before coming back here.
+            local background = R.BACKGROUNDS[W.draft.background]
+            for _, skill in ipairs(background and background.skills or {}) do
+                if skill == name then return true end
+            end
+            return W.SkillsPicked() >= DraftClass().skillCount
         end,
         get = function() return W.draft.classSkills[name] or false end,
         set = function(_, value) W.draft.classSkills[name] = value or nil end,

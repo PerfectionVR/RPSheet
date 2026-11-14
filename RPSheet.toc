@@ -69,6 +69,7 @@ Sheet\Armoury.lua
 Sheet\Requirements.lua
 Sheet\Trackers.lua
 Sheet\Summary.lua
+Sheet\Explain.lua
 Sheet\Transfer.lua
 Sheet\ClassFeatures.lua
 Sheet\LineageSpells.lua

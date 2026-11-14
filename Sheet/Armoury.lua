@@ -52,6 +52,30 @@ function ns.WeaponData(weapon)
     return R.WEAPONS[weapon.base]
 end
 
+-- The abilities a basic weapon can attack with, and why.
+--   melee: Strength          ranged: Dexterity          finesse: either
+--   a Monk's Martial Arts: either, for simple melee and light martial melee weapons
+-- No weapon adds two abilities at once; where there is a choice the higher one is used.
+function ns.WeaponAbilities(data, sheet)
+    if data.props.F then return { "STR", "DEX" }, "finesse" end
+    if data.ranged then return { "DEX" }, "ranged" end
+    local monkWeapon = data.category == "SIMPLE" or data.props.L
+    if monkWeapon and sheet and ns.HasFeature(sheet, "Martial Arts") then return { "STR", "DEX" }, "Martial Arts" end
+    return { "STR" }, "melee"
+end
+
+-- The ability a weapon attacks with. A basic weapon uses what its kind allows, the
+-- higher one when there is a choice; the player's own weapons use the one set on them.
+function RPSheet:WeaponStat(weapon)
+    local data = ns.WeaponData(weapon)
+    if not data then return weapon.stat end
+    local best
+    for _, stat in ipairs((ns.WeaponAbilities(data, self:Sheet()))) do
+        if not best or self:Mod(stat) > self:Mod(best) then best = stat end
+    end
+    return best
+end
+
 -- Number and size of a weapon's damage dice. A versatile weapon held in two hands
 -- uses its larger die.
 function RPSheet:WeaponDice(weapon)
@@ -86,6 +110,12 @@ function ns.WeaponPropertyLines(weapon)
     local data, lines = ns.WeaponData(weapon), {}
     if not data then return lines end
     lines[#lines + 1] = ("%s weapon, %s."):format(data.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(data.name))
+    local abilities, why = ns.WeaponAbilities(data, RPSheet:Sheet())
+    if #abilities > 1 then
+        lines[#lines + 1] = ("Attacks with %s, the higher of your Strength and Dexterity (%s)."):format(R.STAT_NAMES[RPSheet:WeaponStat(weapon)], why)
+    else
+        lines[#lines + 1] = ("Attacks with %s (%s weapon)."):format(R.STAT_NAMES[abilities[1]], why)
+    end
     for _, prop in ipairs(R.WEAPON_PROPERTY_ORDER) do
         if data.props[prop] then
             lines[#lines + 1] = ("%s: %s"):format(R.WEAPON_PROPERTIES[prop].name, R.WEAPON_PROPERTIES[prop].desc)

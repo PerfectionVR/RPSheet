@@ -49,11 +49,29 @@ end
 
 -- Advantage ("ADV") or disadvantage ("DIS") from the keys held while clicking a roll:
 -- Shift for advantage, Ctrl for disadvantage. Nil for a normal roll.
+-- Without a key held, the "Next roll" row on the sheet decides (see CycleRollMode).
+-- Unless that row is locked, it goes back to normal once a d20 has been rolled with
+-- it (see RollD20), so an ability that rolls no d20 doesn't use it up.
 function ns.RollMode()
     if IsShiftKeyDown() then return "ADV" end
     if IsControlKeyDown() then return "DIS" end
+    return RPSheet.rollMode
 end
-ns.ROLL_MODE_HELP = "Shift-click: advantage. Ctrl-click: disadvantage."
+ns.ROLL_MODE_HELP = "Shift-click: advantage. Ctrl-click: disadvantage. Or set the Next roll row at the top of the sheet."
+
+-- The "Next roll" row: normal -> advantage -> disadvantage -> normal.
+-- `lock` keeps the chosen mode for every roll until it is changed.
+function RPSheet:CycleRollMode(lock)
+    if lock then
+        -- Locking a normal roll makes no sense: start from advantage.
+        if not self.rollMode then self.rollMode = "ADV" end
+        self.rollModeLocked = not self.rollModeLocked
+    else
+        self.rollMode = (self.rollMode == nil and "ADV") or (self.rollMode == "ADV" and "DIS") or nil
+        if not self.rollMode then self.rollModeLocked = false end
+    end
+    self:Refresh()
+end
 
 -- Rolls a d20, or two with advantage or disadvantage, and passes on the die that
 -- counts plus a note such as " [advantage: 14, 6]" for the announcement.
@@ -61,6 +79,11 @@ function RPSheet:RollD20(mode, callback)
     if mode ~= "ADV" and mode ~= "DIS" then
         self:Roll(20, function(d20) callback(d20, "") end)
         return
+    end
+    -- The "Next roll" row is used up by this roll, unless it is locked.
+    if self.rollMode and not self.rollModeLocked then
+        self.rollMode = nil
+        self:Refresh()
     end
     self:RollDice(2, 20, function(rolls)
         local kept = mode == "ADV" and math.max(rolls[1], rolls[2]) or math.min(rolls[1], rolls[2])

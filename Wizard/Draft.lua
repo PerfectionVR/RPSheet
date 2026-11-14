@@ -93,6 +93,12 @@ function W.StepProblem()
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
         if R.LINEAGES[draft.species] and draft.lineage == "" then return "Choose a lineage." end
+        -- A skill the background gives can't also be a class pick: that pick would be wasted.
+        for _, skill in ipairs(R.BACKGROUNDS[draft.background].skills) do
+            if draft.classSkills[skill] then
+                return ("This background already gives %s, which is one of your class skills. Go back to step 1 and pick another class skill, or choose a different background."):format(skill)
+            end
+        end
         for _, trait in ipairs(ns.TraitChoices(draft)) do
             if (draft.traitChoices[trait] or "") == "" then return ("Make your choice for %s."):format(trait) end
         end

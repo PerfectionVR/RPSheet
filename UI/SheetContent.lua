@@ -33,6 +33,9 @@ local function HeaderSection(self, body)
     self.channelLabel = UI.AddLabel(body, 1, "", function() self:CycleChannel() end,
         "Announce to", "Click to switch between Emote, Party, Raid and Self only.\nSelf only rolls privately; the others use a real /roll.")
 
+    self.rollModeLabel = UI.AddLabel(body, 1, "", function(button) self:CycleRollMode(button == "RightButton") end,
+        "Next roll", "How your next d20 is rolled: normally, with advantage (two dice, the higher counts) or with disadvantage (the lower counts).\n\nLeft-click: switch between normal, advantage and disadvantage. It goes back to normal after one roll.\nRight-click: keep it for every roll until you change it, for a condition that lasts.\n\nHolding Shift or Ctrl while clicking a roll still works, and takes priority.")
+
     UI.AddLabel(body, 0.5, UI.ACCENT .. "Short rest|r", function() self:ShortRest() end,
         "Short rest", "Gives back what recharges on a short rest. To heal, click the Hit Dice bar.")
     UI.AddLabel(body, 0.5, UI.ACCENT .. "Long rest|r", function() self:LongRest() end,
@@ -138,21 +141,24 @@ local function CombatSection(self, body)
     local sheet = self:Sheet()
     UI.AddHeading(body, "Combat")
 
-    local function Number(label, value, onClick, tip)
-        UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(label, UI.ACCENT, value), onClick, tip and label, tip)
+    local function Number(label, value, onClick, tip, explain)
+        UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(label, UI.ACCENT, value), onClick, tip and label, tip, explain)
     end
-    Number("AC", self:AC(), nil, R.ARMOR[sheet.armor].name .. (sheet.shield and ", shield" or ""))
+    Number("AC", self:AC(), nil, R.ARMOR[sheet.armor].name .. (sheet.shield and ", shield" or ""),
+        function() self:ExplainAC() end)
     Number("Initiative", Signed(self:Initiative()),
         function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,
-        "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP)
-    Number("Speed", self:Speed() .. " ft")
+        "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainInitiative() end)
+    Number("Speed", self:Speed() .. " ft", nil, "How far you can move on your turn.", function() self:ExplainSpeed() end)
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
-    Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.")
+    Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
+        function() self:ExplainPassivePerception() end)
     if self:CastStat() then
-        Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.")
+        Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.",
+            function() self:ExplainSpellDC() end)
         Number("Spell attack", Signed(self:SpellAttack()),
             function() self:RollCheck("spell attack", self:SpellAttack(), ns.RollMode()) end,
-            "Click to roll a spell attack.\n" .. ns.ROLL_MODE_HELP)
+            "Click to roll a spell attack.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainSpellAttack() end)
     end
 
     self.attackLabel = nil
@@ -170,7 +176,10 @@ local function CombatSection(self, body)
             else
                 self:Attack(ns.RollMode())
             end
-        end, "Attack", help)
+        end, "Attack", help, function()
+            local current = self:GetWeapon()
+            if current then self:ExplainWeapon(current) end
+        end)
     end
 end
 
@@ -180,7 +189,8 @@ local function CheckSection(self, body)
         local mod = self:CheckMod(stat)
         UI.AddLabel(body, 0.33, ("%s %d %s(%s)|r"):format(stat, self:Score(stat), UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " check", mod, ns.RollMode()) end,
-            R.STAT_NAMES[stat], ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP))
+            R.STAT_NAMES[stat], ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP),
+            function() self:ExplainCheck(stat) end)
     end
 end
 
@@ -193,7 +203,8 @@ local function SaveSection(self, body)
         UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat] .. " saving throw",
-            ("%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP))
+            ("%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP),
+            function() self:ExplainSave(stat) end)
     end
 end
 
@@ -231,7 +242,8 @@ local function SpellSection(self, body)
             or ("Uses your lowest free slot of %s level or higher."):format(R.ORDINALS[spell.level])
         if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
         UI.AddLabel(body, 1, ("%s  %s%s%s|r"):format(spell.name, UI.GREY, level, info ~= "" and (", " .. info) or ""),
-            function() self:CastSpell(spell, ns.RollMode()) end, spell.name, table.concat(lines, "\n"))
+            function() self:CastSpell(spell, ns.RollMode()) end, spell.name, table.concat(lines, "\n"),
+            function() self:ExplainSpell(spell) end)
     end
 end
 
@@ -265,7 +277,8 @@ local function SkillSection(self, body)
         UI.AddLabel(body, 0.5, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
             function() self:RollCheck(skill.name, mod, ns.RollMode()) end,
             skill.name, ("%s\n\n%s (%s), %s\n\n%s"):format(
-                ns.Glossary[skill.name], R.STAT_NAMES[skill.stat], Signed(mod), R.PROFICIENCY_NAMES[rank]:lower(), ns.ROLL_MODE_HELP))
+                ns.Glossary[skill.name], R.STAT_NAMES[skill.stat], Signed(mod), R.PROFICIENCY_NAMES[rank]:lower(), ns.ROLL_MODE_HELP),
+            function() self:ExplainSkill(skill) end)
     end
 end
 
@@ -321,10 +334,16 @@ function RPSheet:Refresh()
     local state = self:State()
     self.window:SetTitle(self:GetCharacterName())
     self.channelLabel:SetText(("Announce to: %s%s|r"):format(UI.ACCENT, ns.CHANNEL_LABEL[self.db.profile.channel]))
+    if self.rollModeLabel then
+        local mode = self.rollMode
+        local text = (mode == "ADV" and "|cff80ff80Advantage|r") or (mode == "DIS" and "|cffff5555Disadvantage|r") or (UI.ACCENT .. "Normal|r")
+        if mode and self.rollModeLocked then text = text .. " (every roll)" end
+        self.rollModeLabel:SetText(("Next roll: %s"):format(text))
+    end
 
     local weapon = self:GetWeapon()
     if weapon and self.attackLabel then
-        self.attackLabel:SetText(("%s  %s%s|r"):format(weapon.name, UI.GREY, self:WeaponText(weapon)))
+        UI.SetText(self.attackLabel, ("%s  %s%s|r"):format(weapon.name, UI.GREY, self:WeaponText(weapon)))
     end
 
     for _, row in ipairs(self.trackerRows) do

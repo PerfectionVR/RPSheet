@@ -5,6 +5,10 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- A "Next roll" row switches between normal, advantage and disadvantage, for one
+  roll or for every roll.
+- A small [?] in front of the numbers on the sheet shows, to you alone, how each is
+  worked out: weapon, Armor Class, checks, saves, skills, initiative, spells.
 - All 38 basic weapons with their damage, properties and mastery. The creation
   wizard offers the ones your class is proficient with as your main weapon; any can
   be added under Customize, next to weapons of your own. Versatile weapons can be

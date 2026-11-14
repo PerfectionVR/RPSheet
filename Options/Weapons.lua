@@ -24,7 +24,8 @@ local function Build(weapon)
         name = With({ type = "input", order = 1, name = "Name" }, self, "name", true),
         stat = With({
             type = "select", order = 2, name = "Ability",
-            desc = "Strength for most melee weapons, Dexterity for ranged and finesse weapons.",
+            desc = "Strength for most melee weapons, Dexterity for ranged and finesse weapons. A basic weapon works this out by itself.",
+            hidden = function() return IsBasic(weapon) end,
             values = Opt.STAT_VALUES, sorting = R.STATS,
         }, self, "stat"),
         dice = With({
@@ -49,6 +50,7 @@ local function Build(weapon)
             hidden = function() return not IsBasic(weapon) end,
             func = function()
                 local _, sides = RPSheet:WeaponDice(weapon)
+                weapon.stat = RPSheet:WeaponStat(weapon) -- the ability it was using
                 weapon.sides, weapon.base, weapon.twoHands = sides, "", false
                 Opt.Changed()
             end,

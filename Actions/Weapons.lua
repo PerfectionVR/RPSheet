@@ -18,7 +18,7 @@ end
 
 -- Text for the weapon row on the sheet, e.g. "+5 to hit, 1d8 +3 damage".
 function RPSheet:WeaponText(weapon)
-    local mod = self:Mod(weapon.stat)
+    local mod = self:Mod(self:WeaponStat(weapon))
     if weapon.heal then
         return ("%dd%d %s healing"):format(weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("HEALING")))
     end
@@ -36,7 +36,7 @@ end
 function RPSheet:Attack(mode)
     local weapon = self:GetWeapon()
     if not weapon then return end
-    local mod = self:Mod(weapon.stat)
+    local mod = self:Mod(self:WeaponStat(weapon))
     if weapon.heal then
         self:RollDice(weapon.dice, weapon.sides, function(rolls)
             self:Announce(("uses %s - %s"):format(weapon.name, RollText.Dice("healing", rolls, weapon.sides, mod + self:Bonus("HEALING"))))

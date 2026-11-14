@@ -38,18 +38,44 @@ local function AttachTooltip(widget, title, body)
     widget:SetCallback("OnLeave", GameTooltip_Hide)
 end
 
+-- The small "[?]" in front of a row that can explain its number. Clicking it shows
+-- the maths; clicking the rest of the row does what the row normally does.
+local EXPLAIN_MARK = "|cff8f8f8f[?]|r "
+local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the [?] in front to see how this number is worked out.|r"
+
+-- True if the mouse is over the mark at the start of the row.
+local function OverMark(label)
+    local left = label.frame:GetLeft()
+    if not left then return false end
+    local x = GetCursorPosition() / label.frame:GetEffectiveScale()
+    return x - left <= Theme().fontSize * 1.7
+end
+
+-- Sets a row's text, keeping the mark in front if it has one.
+function UI.SetText(label, text)
+    label:SetText(label:GetUserData("explains") and (EXPLAIN_MARK .. text) or text)
+end
+
 -- A row of text taking `relWidth` of the window's width (1 = full, 0.5 = half).
 -- With `onClick(mouseButton)` it highlights under the mouse and can be clicked.
-function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody)
+-- With `explain()` it gets a "[?]" in front that calls it.
+function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain)
     local label = AceGUI:Create("InteractiveLabel")
     StyleLabel(label, Theme().text)
     label:SetRelativeWidth(relWidth)
-    label:SetText(text)
-    if onClick then
+    label:SetUserData("explains", explain ~= nil)
+    UI.SetText(label, text)
+    if onClick or explain then
         label.highlight:SetColorTexture(unpack(Theme().highlight))
-        label:SetCallback("OnClick", function(_, _, button) onClick(button) end)
+        label:SetCallback("OnClick", function(_, _, button)
+            if explain and (OverMark(label) or IsAltKeyDown()) then
+                explain()
+            elseif onClick then
+                onClick(button)
+            end
+        end)
     end
-    if tipTitle then AttachTooltip(label, tipTitle, tipBody) end
+    if tipTitle then AttachTooltip(label, tipTitle, (tipBody or "") .. (explain and EXPLAIN_TIP or "")) end
     parent:AddChild(label)
     return label
 end

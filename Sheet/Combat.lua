@@ -21,6 +21,11 @@ local function FeaturePassive(sheet, feature)
     end
 end
 
+-- True if the character has a class or subclass feature of that name.
+function ns.HasFeature(sheet, feature)
+    return FeaturePassive(sheet, feature) ~= nil
+end
+
 -- True if the character can pick its first (slot 1) or second (slot 2) Fighting Style.
 function ns.HasStyleSlot(sheet, slot)
     return FeaturePassive(sheet, STYLE_FEATURES[slot]) ~= nil
@@ -121,7 +126,7 @@ end
 function RPSheet:MasteryNote(weapon)
     local name, mastery = self:WeaponMastery(weapon)
     if not name then return end
-    local mod = self:Mod(weapon.stat)
+    local mod = self:Mod(self:WeaponStat(weapon))
     local number = name == "Topple" and (8 + mod + self:ProficiencyBonus()) or math.max(0, mod)
     return ("%s (%s)"):format(mastery.note:format(number), name)
 end
