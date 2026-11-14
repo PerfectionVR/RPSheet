@@ -71,9 +71,10 @@ function RPSheet:MasteryLimit()
     return ns.FeatureKit.AtLevel(self:Level(), R.MASTERY_LIMITS[class.base] or {}) or 0
 end
 
--- How many weapons have a mastery set.
+-- How many weapons have a mastery set. A companion's family picked for its strike
+-- takes one of the picks too (Sheet/Pet.lua).
 function RPSheet:MasteriesUsed()
-    local used = 0
+    local used = self:PetMastery() and 1 or 0
     for _, weapon in ipairs(self:Sheet().weapons) do
         if R.MASTERIES[weapon.mastery] and not weapon.heal then used = used + 1 end
     end
@@ -82,7 +83,7 @@ end
 
 -- Weapons whose mastery counts: the first ones in the list, up to the limit.
 function RPSheet:MasteredWeapons()
-    local counted, left = {}, self:MasteryLimit()
+    local counted, left = {}, self:MasteryLimit() - (self:PetMastery() and 1 or 0)
     for _, weapon in ipairs(self:Sheet().weapons) do
         if R.MASTERIES[weapon.mastery] and not weapon.heal and left > 0 then
             counted[weapon], left = true, left - 1

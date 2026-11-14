@@ -7,14 +7,25 @@ local R = ns.Rules
 R.PET_FEATURE = "Primal Companion"
 
 -- hp: hit points at level 0 and for each level. die/flat: Beast's Strike damage,
--- before the Wisdom modifier.
+-- before the Wisdom modifier. scores: the beast's own ability scores. charge: the die
+-- a strike adds after a 20-foot run, which also knocks prone. grapple: a hit grapples.
 R.PET_BLOCKS = {
     Land = { name = "beast of the land", hp = 5, die = 8, flat = 2, speed = "40 feet, also climbing", size = "Medium",
+        scores = { STR = 14, DEX = 14, CON = 15, INT = 8, WIS = 14, CHA = 11 }, charge = 6,
         strike = "After moving 20 feet straight at the target it deals 1d6 more and knocks a Large or smaller target prone." },
     Sea = { name = "beast of the sea", hp = 5, die = 6, flat = 2, speed = "swimming 60 feet, 5 feet on land", size = "Medium",
+        scores = { STR = 14, DEX = 14, CON = 15, INT = 8, WIS = 14, CHA = 11 }, grapple = true,
         strike = "The target is grappled; it escapes against your spell save DC. The beast breathes air and water." },
     Sky = { name = "beast of the sky", hp = 4, die = 4, flat = 3, speed = "flying 60 feet, 10 feet on the ground", size = "Small",
+        scores = { STR = 6, DEX = 16, CON = 13, INT = 8, WIS = 14, CHA = 11 },
         strike = "It doesn't provoke opportunity attacks when it flies out of reach." },
+}
+
+-- What is said about a strike's mastery where the weapon wording (Rules.MASTERIES)
+-- doesn't fit a beast.
+R.PET_MASTERY_NOTES = {
+    Push = "On a hit: can push a Large or smaller target 10 feet away",
+    Vex = "On a hit: the companion has advantage on its next attack against it",
 }
 
 R.PET_SPECS = { C = "Cunning", F = "Ferocity", T = "Tenacity" }

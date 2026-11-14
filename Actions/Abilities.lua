@@ -173,6 +173,8 @@ end
 function RPSheet:UseAbility(ability, mode)
     -- One thing at a time: a roll that is still waiting for its result would be dropped.
     if self.busy or self:IsRolling() then return end
+    -- A companion's strike rolls with its own numbers and riders (Actions/Pet.lua).
+    if ns.PetAbility(self, ability, mode) then return end
 
     local costs, costTexts = CollectCosts(self, ability)
     if not costs then return end
