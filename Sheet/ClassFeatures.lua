@@ -137,6 +137,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFeatSkills(sheet)
     ns.ApplyExpertise(sheet)
     ns.ApplyPreparedSpells(sheet)
+    ns.ApplySpellbook(sheet)
 end
 
 -- The features of the character that offer a choice between options, in level order.

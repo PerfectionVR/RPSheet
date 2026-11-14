@@ -66,6 +66,10 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   the First Ones more than once. Unticking a pick also drops what builds on it.
 - Overchannel keeps count of its uses and rolls the growing damage for the slot level.
 - A Death Knight's undead steed has its Ghostly Stride.
+- A Mage has a spellbook. Spells are written in and removed under Customize,
+  Spellbook. "Open spellbook" on the sheet shows the whole book: left-click casts,
+  right-click prepares a spell or puts it away, up to the number the level allows. A
+  ritual can be cast straight from the book without being prepared.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

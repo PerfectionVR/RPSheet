@@ -91,6 +91,7 @@ Sheet\BeastForms.lua
 Sheet\Expertise.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedSpells.lua
+Sheet\Spellbook.lua
 Sheet\Traits.lua
 Sheet\LevelUp.lua
 
@@ -113,6 +114,7 @@ UI\Slider.lua
 UI\DialogBacking.lua
 UI\Rows.lua
 UI\SheetWindow.lua
+UI\SpellbookWindow.lua
 UI\SheetContent.lua
 UI\Minimap.lua
 
@@ -137,6 +139,7 @@ Options\Resources.lua
 Options\Weapons.lua
 Options\Abilities.lua
 Options\Spells.lua
+Options\Spellbook.lua
 Options\Passives.lua
 Options\Appearance.lua
 Options\Transfer.lua

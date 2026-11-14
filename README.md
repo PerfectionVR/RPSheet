@@ -190,6 +190,11 @@ still need that.
       Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
 - [x] Casting times, and components with a price, shown on each spell
+- [x] A Mage's spellbook: a page under Customize to write spells in and take them
+      out, and a spellbook window on the sheet to cast from and to prepare spells
+- [ ] The two spellbook spells a Mage gains each level, chosen in the level dialog,
+      and the six chosen in the creation wizard
+- [ ] Copying spells into the book for gold and time; preparing only after a long rest
 - [ ] Tracking the gold and the components themselves
 
 **Character**

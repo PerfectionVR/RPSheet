@@ -131,6 +131,12 @@ local function CleanSheet(source)
             end
         end
     end
+    sheet.spellbook = {}
+    if type(source.spellbook) == "table" then
+        for name in pairs(source.spellbook) do
+            if type(name) == "string" and R.SPELLS[name] and source.spellbook[name] == true then sheet.spellbook[name] = true end
+        end
+    end
     sheet.tools = {}
     if type(source.tools) == "table" then
         for _, name in ipairs(R.TOOL_ORDER) do

@@ -134,6 +134,8 @@ local function Extra(args)
                 if name == picked then spell.free = true end -- always prepared
             end
             spells[#spells + 1] = spell
+            -- A Mage prepares from the book, so the spell is written into it as well.
+            if ns.HasSpellbook(Opt.Sheet()) and spell.level > 0 and not spell.free then ns.Spellbook(Opt.Sheet())[picked] = true end
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()

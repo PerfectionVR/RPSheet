@@ -62,6 +62,7 @@ ns.defaults = {
                     abilities = {},
                     passives = {},
                     spells = {},
+                    spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")

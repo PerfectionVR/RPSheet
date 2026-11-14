@@ -251,13 +251,18 @@ end
 -- The spell list, cantrips first, then by level.
 local function SpellSection(self, body)
     local spells = Util.Named(self:Sheet().spells)
-    if #spells == 0 then return end
+    local book = ns.HasSpellbook(self:Sheet())
+    if #spells == 0 and not book then return end
     table.sort(spells, function(a, b)
         if a.level ~= b.level then return a.level < b.level end
         return a.name < b.name
     end)
 
     UI.AddHeading(body, "Spells")
+    if book then
+        UI.AddLabel(body, 1, UI.ACCENT .. "Open spellbook|r", function() self:ToggleSpellbook() end, "Spellbook",
+            "Every spell in your book. Cast from it, and choose which spells are prepared. The spells listed below are the prepared ones and your cantrips.")
+    end
     for _, spell in ipairs(spells) do
         local level = spell.level == 0 and "cantrip" or R.ORDINALS[spell.level]
         local info = self:SpellText(spell)
@@ -381,6 +386,7 @@ function RPSheet:Populate()
     self:Refresh()
     body:ResumeLayout()
     body:DoLayout()
+    self:PopulateSpellbook() -- the open spellbook follows the sheet
 end
 
 function RPSheet:Refresh()
