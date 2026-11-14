@@ -72,6 +72,8 @@ ns.defaults = {
                     tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
                     featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
+                    featChoices = {},      -- [feat instance] = the picks made for a feat's own choices (Sheet/FeatChoices.lua)
+                    featGranted = {},      -- [skill] = ranks those picks added (Sheet/FeatGrants.lua)
                     expertise = {},        -- [skill] = true: expertise picked for a class feature
                     expertiseGranted = {}, -- [skill] = true where that pick raised the skill
                     picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations, a feature's tools (Data/Picks.lua)

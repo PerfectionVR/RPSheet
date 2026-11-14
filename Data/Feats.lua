@@ -12,6 +12,8 @@
 --   save     true if it also grants saving throw proficiency in the raised ability
 --   skillPicks, expertisePicks  skills to choose for proficiency and for expertise
 --   advantage  rolls the feat gives advantage on, by their label (see RPSheet:HasAdvantage)
+--   choices, spells, castStat, allSkills, named  what the feat asks and gives besides:
+--              added in Data/FeatChoices.lua
 local _, ns = ...
 local R = ns.Rules
 
@@ -70,9 +72,9 @@ local LIST = {
     General("Clearcasting", { "INT" }, "After a critical hit with a spell attack you can cast a cantrip as a reaction, and you treat any 1 on force damage dice as a 2."),
     General("Elusive Brawler", { "DEX", "WIS" }, "Reaction when you take damage: take the Dodge action."),
     General("Enveloping Mist", { "DEX", "WIS" }, "When you heal a creature, a mist wraps it: note one of the healing dice. As a reaction you can reduce the next hit on it by that much; otherwise it becomes temporary HP at the start of its turn."),
-    General("Fingers of Frost", { "INT" }, "Your spells ignore resistance to cold damage, and cold damage to a restrained creature adds a d4 per point of your proficiency bonus."),
+    General("Fingers of Frost", { "INT" }, "Cold damage from your spells ignores the target's resistance, and cold damage to a restrained creature adds a d4 per point of your proficiency bonus."),
     General("Fists of Fury", { "DEX", "WIS" }, "Treat any 1 on unarmed or light-weapon damage dice as a 2, and each earlier melee hit on a creature this turn adds 1 to your unarmed damage against it."),
-    General("Hot Streak", { "INT" }, "Your spells ignore resistance to fire damage, and creatures you burn keep burning, harder each time you add fire damage."),
+    General("Hot Streak", { "INT" }, "Fire damage from your spells ignores the target's resistance, and creatures you burn keep burning, harder each time you add fire damage."),
     General("Inscription Adept", MIND, "You always have Illusory Script prepared and can cast it once per long rest without a slot, using herbs in place of its material component."),
     General("Stagger and Sway", { "DEX", "WIS" }, "When you take damage, reduce it by your Dexterity modifier and add a d6 to a delayed pool, which you roll and take as force damage at the end of your turn. A bonus action removes dice equal to your Wisdom modifier."),
     General("Sentinel", BODY, "You can make an opportunity attack when a nearby creature disengages or attacks someone else. A creature you hit with one has its speed reduced to 0."),

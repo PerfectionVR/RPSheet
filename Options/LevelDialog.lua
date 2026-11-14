@@ -131,6 +131,21 @@ local function FeatSkillsPicked()
     return count
 end
 
+-- The feats whose own choices are asked for here (a damage type, spells, tools):
+-- those on the sheet, with this level's feat as it is being decided. Returns what
+-- ns.FeatChoiceProgress and Opt.FeatChoiceGroup need.
+local function FeatChoiceContext()
+    if not draft then return end
+    local sheet, override = Sheet(), nil
+    if draft.kind then
+        override = { id = "level:" .. draft.level, name = draft.record.choice == "FEAT" and draft.record.feat or "" }
+    end
+    local instances = ns.FeatInstances(sheet, override)
+    -- Picks for a feat that was swapped out here, or that no longer fit, are dropped.
+    ns.NormalizeFeatChoices(draft.featChoices, instances, ChoiceLevel())
+    return sheet, draft.featChoices, instances, ChoiceLevel()
+end
+
 local function ExpertisePicked()
     local count = 0
     for _ in pairs(draft.expertise) do count = count + 1 end
@@ -164,7 +179,11 @@ local function Problem()
     end
     if AsksSubclass() and draft.taking and draft.subclass == "" then return "Choose a subclass: it is part of this level." end
     if StyleSlot() and draft.style == "" then return "Choose a Fighting Style: it is part of this level." end
-    return draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
+    local problem = draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
+    if problem then return problem end
+    -- Last: the feat has to be settled before its own choices are.
+    local _, store, instances, level = FeatChoiceContext()
+    return (select(3, ns.FeatChoiceProgress(store, instances, level)))
 end
 
 -- Closes the dialog, then opens the dialog for `nextLevel` or goes back to the settings.
@@ -447,6 +466,7 @@ local args = {
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             if ExpertiseLimit() > 0 then sheet.expertise = CopyTable(draft.expertise) end
             if FeatSkillLimit() > 0 then sheet.featSkills = CopyTable(draft.featSkills) end
+            sheet.featChoices = CopyTable(draft.featChoices) -- kept per feat; the upkeep drops what no feat asks for
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
                 RPSheet:SetLevel(level)
@@ -525,6 +545,9 @@ for index, skill in ipairs(R.SKILLS) do
         set = function(_, value) draft.featSkills[name] = value or nil end,
     }
 end
+
+-- The choices inside feats, right under the feat this level takes.
+args.featChoices = Opt.FeatChoiceGroup(43, FeatChoiceContext)
 
 -- Expertise: one checkbox per skill the character is proficient in.
 args.expertise = {
@@ -670,6 +693,7 @@ function ns.OpenLevelDialog(level, reopen)
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
+        featChoices = CopyTable(sheet.featChoices or {}),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end

@@ -6,12 +6,13 @@ local R = ns.Rules
 local RPSheet = ns.addon
 
 -- Where the proficiency with a tool comes from: "class", "background", "feature" (picked
--- in the level dialog), "chosen" (ticked by hand), or nil.
+-- in the level dialog), "feat" (picked for a feat there), "chosen" (ticked by hand), or nil.
 function RPSheet:ToolSource(name)
     local sheet = self:Sheet()
     local granted = ns.ToolGranted(sheet, name)
     if granted then return granted end
     if ns.ToolPicked(sheet, name) then return "feature" end
+    if ns.FeatTool(sheet, name) then return "feat" end
     if sheet.tools[name] then return "chosen" end
 end
 

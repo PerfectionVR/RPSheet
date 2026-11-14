@@ -136,12 +136,14 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyToolPicks(sheet)
     ns.ApplyFeatureSkills(sheet)
     ns.ApplyFeatSkills(sheet)
+    ns.ApplyFeatChoices(sheet) -- before expertise: a feat's skill can be picked for it
     ns.ApplyExpertise(sheet)
     ns.ApplySpellPicks(sheet)
     ns.ApplyPreparedPicks(sheet) -- before the always-prepared spells: a pick makes way for one
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
+    ns.ApplyFeatSpells(sheet)   -- last: a spell the class prepares isn't listed twice
 end
 
 -- The features of the character that offer a choice between options, in level order.

@@ -82,6 +82,18 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Feats ask for their own choices and apply them: Magic Initiate's list, ability and
+  spells (the 1st-level spell is always prepared with one free casting per long
+  rest), the skill of Keen Mind and Observant, Elemental Adept's damage type,
+  Crafter's tools, Musician's instruments, the spells of Fey-Touched, Shadow-Touched
+  and Ritual Caster, and the picks of the Boons of Skill and Energy Resistance.
+- Priests, Druids, Evokers, Paladins, Hunters, Warlocks, Death Knights and Demon
+  Hunters choose their prepared spells in the level dialog when they are made and
+  each time they level. Spells you had already added by hand count as your picks.
+- Casting with a higher spell slot covers everything it can change: extra targets,
+  longer durations, bigger areas and fixed amounts are stated in the announcement
+  and tooltip, and second dice parts (such as Ice Knife's burst) and fixed bonuses
+  (False Life, Magic Missile, Disintegrate) are rolled.
 - Psychic Veil and Rend Mind spend Psionic Energy Dice by themselves once their free
   use is gone. The Companion section shows the pet's Armor Class, speed and darkvision.
 - Wild Shape: druids can learn any of 90 beasts, grouped by challenge rating, with the

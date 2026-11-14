@@ -51,7 +51,7 @@ function RPSheet:GrowingSpellClick(spell, rightButton)
     step = math.min(step + 1, #steps)
     local sides = steps[step]
     local word, bonus = ns.DiceWord(spell.dice)
-    local mod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
+    local mod = (spell.addMod and self:Mod(self:CastStat(spell)) or 0) + (bonus and self:Bonus(bonus) or 0)
     self.busy = true
     self:RollDice(spell.count, sides, function(rolls)
         running[spell.name] = step
@@ -59,7 +59,7 @@ function RPSheet:GrowingSpellClick(spell, rightButton)
         local text = ("%s grows after a failed save - %s%s"):format(ns.Mark(spell.name),
             RollText.Dice(word, rolls, sides, mod), note and (" (" .. note .. ")") or "")
         if spell.kind == "SAVE" then
-            text = text .. (", %s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
+            text = text .. (", %s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC(spell) or 8)
         end
         self.busy = false
         self:Announce(text)

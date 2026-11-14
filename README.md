@@ -206,8 +206,10 @@ other ten still need that.
 - [ ] Hand-written summaries for the core spells above 1st level (theirs are put
       together from the spell's facts)
 - [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
-- [ ] Spells that grow in another way with the slot (more targets, more darts, a
-      different die)
+- [x] Spells that grow in another way with the slot: more targets, longer durations
+      and fixed amounts are stated, second dice parts and fixed bonuses are rolled
+- [ ] The starting number of targets of the twenty plain "one more target per slot
+      level" spells read against the rules once more
 - [x] Spells that make several attacks roll them all in one click (Scorching Ray,
       Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
@@ -216,8 +218,10 @@ other ten still need that.
       out, and a spellbook window on the sheet to cast from and to prepare spells
 - [x] Spells chosen when a character is made and when it levels: the cantrips of
       every spellcasting class, and a Mage's spellbook spells (six, and two per level)
-- [ ] The prepared spells of the other classes chosen the same way (they are added on
-      the Spells page)
+- [x] The prepared spells of the other classes chosen the same way, exactly as many
+      as the class prepares; spells added by hand before count as picks
+- [ ] How often prepared spells may be swapped (any after a long rest, one per long
+      rest, or one per level, by class)
 - [ ] Copying spells into the book for gold and time; preparing only after a long rest
 - [ ] Tracking the gold and the components themselves
 
@@ -237,8 +241,13 @@ other ten still need that.
 - [x] The perks every faction gives at each renown tier, shown with the score
 - [ ] Each faction's own renown perks
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
-- [ ] The other choices inside a feat (which spell for Magic Initiate, Keen Mind's and
-      Observant's skill, Elemental Adept's damage type)
+- [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
+      list, ability and spells, the skill of Keen Mind and Observant, Elemental
+      Adept's damage type, Crafter's tools, Musician's instruments, the spells of
+      Fey-Touched, Shadow-Touched and Ritual Caster, the Boons of Skill and Energy
+      Resistance
+- [ ] Skilled's tools in place of skills; Weapon Master unlocking a mastery;
+      Inscription Adept's higher spells
 
 **Play**
 

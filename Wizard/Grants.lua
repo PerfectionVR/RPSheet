@@ -126,4 +126,7 @@ function ns.ApplyGrants(sheet)
     ns.ApplyClassFeatures(sheet)
     ns.ApplyLineageSpells(sheet)
     ns.ApplyTraits(sheet)
+    -- Once more for a feat a trait just put on the sheet.
+    ns.ApplyFeatChoices(sheet)
+    ns.ApplyFeatSpells(sheet)
 end
