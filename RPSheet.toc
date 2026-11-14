@@ -45,6 +45,7 @@ Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\Conditions.lua
 Data\Combat.lua
+Data\Weapons.lua
 Data\Example.lua
 Data\Glossary.lua
 Data\FeatureKit.lua
@@ -64,6 +65,7 @@ Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
 Sheet\Combat.lua
+Sheet\Armoury.lua
 Sheet\Requirements.lua
 Sheet\Trackers.lua
 Sheet\Summary.lua

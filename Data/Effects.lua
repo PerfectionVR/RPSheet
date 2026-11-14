@@ -67,7 +67,10 @@ R.TOGGLE_MODES = { ON = "Switch on", OFF = "Switch off", TOGGLE = "Flip" }
 -- Blank entries for the lists a player can add to. There is no limit on how many.
 R.TEMPLATES = {
     -- style: the character's Fighting Style applies to it; mastery: see Rules.MASTERIES
-    weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "" },
+    -- base: the basic weapon it is (see Data/Weapons.lua), empty for the player's own;
+    -- twoHands: a versatile weapon held in two hands
+    weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
+               base = "", twoHands = false },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },

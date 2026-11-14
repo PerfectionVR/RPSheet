@@ -35,7 +35,7 @@ function W.NewDraft()
         alignment = "",
         fightingStyle = "",
         armor = "NONE", shield = false,
-        weaponName = "Weapon", weaponStat = "STR", weaponSides = 8,
+        weapon = "", -- the basic weapon to start with
         -- A new character starts clean. What the player made by hand on the current one
         -- can be carried over, but only if they ask for it.
         keepLists = false, hasContent = hasContent,
@@ -98,6 +98,8 @@ function W.StepProblem()
         end
     elseif draft.step == 4 then
         if draft.allegiance == "" then return "Choose an allegiance." end
+    elseif draft.step == 5 then
+        if not R.WEAPONS[draft.weapon] then return "Choose a main weapon." end
     elseif draft.step == 3 then
         if draft.scoreMethod == "POINTBUY" and W.PointsSpent() > R.POINTS then
             return ("You have spent %d of %d points."):format(W.PointsSpent(), R.POINTS)
@@ -135,11 +137,13 @@ function W.Finish()
         sheet.resources, sheet.weapons, sheet.spells = old.resources, old.weapons, old.spells
         sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives)
     end
-    if #sheet.weapons == 0 and draft.weaponName ~= "" then
-        sheet.weapons[1] = {
-            name = draft.weaponName, stat = draft.weaponStat, dice = 1, sides = draft.weaponSides,
-            proficient = true, heal = false,
-        }
+    if R.WEAPONS[draft.weapon] then
+        -- With the ability modifiers the character will have, and its mastery if the
+        -- class has Weapon Mastery.
+        local function Modifier(stat)
+            return math.floor(((draft.base[stat] or 10) + (draft.bonus[stat] or 0) - 10) / 2)
+        end
+        table.insert(sheet.weapons, 1, ns.NewBasicWeapon(draft.weapon, Modifier, true, R.MASTERY_LIMITS[class.base] ~= nil))
     end
     ns.ApplyGrants(sheet)
     RPSheet:ReplaceSheet(sheet, draft.keepLists)

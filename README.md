@@ -158,7 +158,8 @@ What the rules have that the addon doesn't, kept here to track the remaining wor
 **Character**
 
 - [ ] Tool proficiencies and the professions and crafting rules
-- [ ] Weapon and armor lists to pick from, with weapon proficiency by class
+- [ ] An armoury for weapons of your own, kept between characters
+- [ ] Armor's disadvantage on Stealth and the Heavy property applied to rolls
 - [ ] Equipment, currency and magic items
 - [ ] Mounts, vehicles and companion creatures
 - [ ] Resistances, immunities and senses as tracked values

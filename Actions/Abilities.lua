@@ -206,8 +206,9 @@ function RPSheet:UseAbility(ability, mode)
             local mod = self:Mod(weapon.stat) + (bonusUsed[target] and 0 or self:Bonus(target))
             bonusUsed[target] = true
             local doubled = critical and not weapon.heal
-            self:RollDice(weapon.dice * action.times * (doubled and 2 or 1), weapon.sides, function(rolls)
-                parts[#parts + 1] = RollText.Dice(weapon.heal and "healing" or (doubled and "critical damage" or "damage"), rolls, weapon.sides, mod)
+            local count, sides = self:WeaponDice(weapon)
+            self:RollDice(count * action.times * (doubled and 2 or 1), sides, function(rolls)
+                parts[#parts + 1] = RollText.Dice(weapon.heal and "healing" or (doubled and "critical damage" or "damage"), rolls, sides, mod)
                 step()
             end)
         else

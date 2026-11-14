@@ -7,16 +7,18 @@ local R = ns.Rules
 --   attack / damage  added to those weapons' attack and damage rolls
 --   minDie           their damage dice never count as less than this
 --   armoredAC        added to Armor Class while wearing armor
+--   fit              which basic weapons the numbers apply to: RANGED, ONEHAND,
+--                    TWOHAND or THROWN (see ns.FitsStyle in Sheet/Armoury.lua)
 --   base / class     only for this Player's Handbook class, or this World of Warcraft class
 R.FIGHTING_STYLES = {
-    ["Archery"] = { attack = 2, desc = "+2 to attack rolls with ranged weapons." },
+    ["Archery"] = { attack = 2, fit = "RANGED", desc = "+2 to attack rolls with ranged weapons." },
     ["Blind Fighting"] = { desc = "Blindsight out to 10 feet." },
     ["Defense"] = { armoredAC = 1, desc = "+1 to Armor Class while you wear armor." },
-    ["Dueling"] = { damage = 2, desc = "+2 damage with a melee weapon held in one hand while you hold no other weapon." },
-    ["Great Weapon Fighting"] = { minDie = 3, desc = "With a melee weapon held in two hands, a 1 or 2 on a damage die counts as a 3." },
+    ["Dueling"] = { damage = 2, fit = "ONEHAND", desc = "+2 damage with a melee weapon held in one hand while you hold no other weapon." },
+    ["Great Weapon Fighting"] = { minDie = 3, fit = "TWOHAND", desc = "With a melee weapon held in two hands, a 1 or 2 on a damage die counts as a 3." },
     ["Interception"] = { desc = "Reaction when a creature within 5 feet of you is hit: reduce the damage by 1d10 + your proficiency bonus. You need a shield or a weapon in hand." },
     ["Protection"] = { desc = "Reaction with a shield when a creature within 5 feet of you is attacked: the attack, and others against it until your next turn, have disadvantage." },
-    ["Thrown Weapon Fighting"] = { damage = 2, desc = "+2 damage when you hit with a thrown weapon." },
+    ["Thrown Weapon Fighting"] = { damage = 2, fit = "THROWN", desc = "+2 damage when you hit with a thrown weapon." },
     ["Two-Weapon Fighting"] = { desc = "You add your ability modifier to the damage of the extra attack made with a second light weapon." },
     ["Blessed Warrior"] = { base = "Paladin", desc = "You learn two Cleric cantrips, which count as Paladin spells and use Charisma." },
     ["Druidic Warrior"] = { base = "Ranger", desc = "You learn two Druid cantrips, which count as Ranger spells and use Wisdom." },

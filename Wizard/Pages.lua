@@ -430,15 +430,31 @@ local detailsPage = Page(5, {
         disabled = function() return not W.draft.shield and not ns.ArmorTraining(W.draft.class).shield end,
     }, "shield"),
     weaponHeader = { type = "header", order = 10, name = "Main weapon" },
-    weaponName = Field({ type = "input", order = 11, name = "Name" }, "weaponName"),
-    weaponStat = Field({
-        type = "select", order = 12, name = "Ability",
-        desc = "Strength for most melee weapons, Dexterity for ranged and finesse weapons.",
-        values = Opt.STAT_VALUES, sorting = R.STATS,
-    }, "weaponStat"),
-    weaponSides = Field({
-        type = "select", order = 13, name = "Damage die", values = Opt.DIE_VALUES, sorting = Opt.DIE_ORDER,
-    }, "weaponSides"),
+    weapon = Field({
+        type = "select", order = 11, name = "Weapon", width = "double",
+        desc = "The basic weapons your class is proficient with. More weapons, and ones of your own, can be added under Customize afterwards.",
+        values = function()
+            local values = {}
+            for _, name in ipairs(ns.ProficientWeapons(W.draft.class)) do
+                values[name] = ("%s - %s"):format(name, R.WeaponSummary(name))
+            end
+            return values
+        end,
+        sorting = function() return ns.ProficientWeapons(W.draft.class) end,
+    }, "weapon"),
+    weaponInfo = {
+        type = "description", order = 12, fontSize = "medium",
+        hidden = function() return not (W.draft and R.WEAPONS[W.draft.weapon]) end,
+        name = function()
+            local data = W.draft and R.WEAPONS[W.draft.weapon]
+            if not data then return "" end
+            local lines = { ("%s%s|r: %s weapon, %s."):format(GOLD, data.name, data.category == "SIMPLE" and "simple" or "martial", R.WeaponSummary(data.name)) }
+            if R.MASTERY_LIMITS[DraftClass().base] then
+                lines[#lines + 1] = ("Mastery: %s. %s"):format(data.mastery, R.MASTERIES[data.mastery].desc)
+            end
+            return table.concat(lines, "\n") .. "\n"
+        end,
+    },
     keepLists = Field({
         type = "toggle", order = 20, width = "full",
         name = "Carry over the weapons, spells, resources, abilities and passives I made myself",

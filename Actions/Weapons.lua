@@ -24,8 +24,9 @@ function RPSheet:WeaponText(weapon)
     end
     local styleAttack, styleDamage = self:WeaponStyle(weapon)
     local toHit = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
-    local text = ("%s to hit, %dd%d %s damage"):format(
-        Util.Signed(toHit), weapon.dice, weapon.sides, Util.Signed(mod + self:Bonus("DAMAGE") + styleDamage))
+    local count, sides = self:WeaponDice(weapon)
+    local text = ("%s to hit, %dd%d %s %s"):format(
+        Util.Signed(toHit), count, sides, Util.Signed(mod + self:Bonus("DAMAGE") + styleDamage), ns.DamageWord(weapon))
     local mastery = self:WeaponMastery(weapon)
     return mastery and (text .. ", " .. mastery) or text
 end
@@ -46,14 +47,16 @@ function RPSheet:Attack(mode)
     local attackMod = mod + (weapon.proficient and self:ProficiencyBonus() or 0) + self:Bonus("ATTACK") + styleAttack
     local damageMod = mod + self:Bonus("DAMAGE") + styleDamage
     local mastery = self:MasteryNote(weapon)
+    local count, sides = self:WeaponDice(weapon)
+    local word = ns.DamageWord(weapon)
     self:RollD20(mode, function(d20, note)
         local crit = d20 == 20
-        self:RollDice(weapon.dice * (crit and 2 or 1), weapon.sides, function(rolls)
+        self:RollDice(count * (crit and 2 or 1), sides, function(rolls)
             -- Great Weapon Fighting: low damage dice count as higher.
             for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end
             local text = ("attacks with %s - %s, %s"):format(
                 weapon.name, RollText.Check("to hit", d20, attackMod, note),
-                RollText.Dice(crit and "critical damage" or "damage", rolls, weapon.sides, damageMod))
+                RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod))
             if mastery then text = text .. ". " .. mastery end
             self:Announce(text)
         end)

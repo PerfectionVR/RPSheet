@@ -5,6 +5,11 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- All 38 basic weapons with their damage, properties and mastery. The creation
+  wizard offers the ones your class is proficient with as your main weapon; any can
+  be added under Customize, next to weapons of your own. Versatile weapons can be
+  held in two hands, damage is announced with its type, and Fighting Styles apply
+  to the weapons they fit by themselves.
 - Specialization suggestions: the creation wizard and the level dialog show what
   your specialization suggests at each level (subclass, Fighting Style, weapons,
   spells) and pre-select the single picks.

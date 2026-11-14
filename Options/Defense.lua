@@ -25,6 +25,9 @@ local function Summary()
     if armor.minStr and RPSheet:Score("STR") < armor.minStr then
         lines[#lines + 1] = ("%s%s needs Strength %d, or your speed drops by 10 feet.|r"):format(Opt.RED, armor.name, armor.minStr)
     end
+    if armor.stealth then
+        lines[#lines + 1] = ("%s gives disadvantage on Stealth checks."):format(armor.name)
+    end
     if sheet.armor == "NONE" and class and class.unarmored then
         lines[#lines + 1] = ("Unarmored Defense: without armor your AC also adds your %s modifier."):format(R.STAT_NAMES[class.unarmored])
     end

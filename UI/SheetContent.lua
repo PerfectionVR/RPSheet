@@ -159,6 +159,8 @@ local function CombatSection(self, body)
     local weapon = self:GetWeapon()
     if weapon then
         local help = "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP
+        local properties = ns.WeaponPropertyLines(weapon)
+        if #properties > 0 then help = help .. "\n\n" .. table.concat(properties, "\n") end
         local name, mastery = self:WeaponMastery(weapon)
         if name then help = help .. ("\n\n%s%s|r: %s"):format(UI.ACCENT, name, mastery.desc) end
         self.attackLabel = UI.AddLabel(body, 1, "", function(button)

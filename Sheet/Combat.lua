@@ -57,10 +57,12 @@ end
 -- lowest a damage die can count as.
 function RPSheet:WeaponStyle(weapon)
     local attack, damage, minDie = 0, 0, 1
-    if weapon.style and not weapon.heal then
+    if not weapon.heal then
         for _, style in ipairs(self:FightingStyles()) do
-            attack, damage = attack + (style.attack or 0), damage + (style.damage or 0)
-            minDie = math.max(minDie, style.minDie or 1)
+            if ns.FitsStyle(weapon, style) then
+                attack, damage = attack + (style.attack or 0), damage + (style.damage or 0)
+                minDie = math.max(minDie, style.minDie or 1)
+            end
         end
     end
     return attack, damage, minDie

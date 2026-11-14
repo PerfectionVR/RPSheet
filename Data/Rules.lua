@@ -78,18 +78,18 @@ R.PROFICIENCY_NAMES = { [0] = "Not proficient", [1] = "Proficient", [2] = "Exper
 ---------------------------------------------------------------------------
 R.ARMOR = {
     NONE      = { name = "No armor", ac = 10 },
-    PADDED    = { name = "Padded (light)", ac = 11 },
+    PADDED    = { name = "Padded (light)", ac = 11, stealth = true },
     LEATHER   = { name = "Leather (light)", ac = 11 },
     STUDDED   = { name = "Studded leather (light)", ac = 12 },
     HIDE      = { name = "Hide (medium)", ac = 12, dexCap = 2 },
     CHAINSHIRT = { name = "Chain shirt (medium)", ac = 13, dexCap = 2 },
-    SCALE     = { name = "Scale mail (medium)", ac = 14, dexCap = 2 },
+    SCALE     = { name = "Scale mail (medium)", ac = 14, dexCap = 2, stealth = true },
     BREASTPLATE = { name = "Breastplate (medium)", ac = 14, dexCap = 2 },
-    HALFPLATE = { name = "Half plate (medium)", ac = 15, dexCap = 2 },
-    RINGMAIL  = { name = "Ring mail (heavy)", ac = 14, dexCap = 0 },
-    CHAINMAIL = { name = "Chain mail (heavy)", ac = 16, dexCap = 0, minStr = 13 },
-    SPLINT    = { name = "Splint (heavy)", ac = 17, dexCap = 0, minStr = 15 },
-    PLATE     = { name = "Plate (heavy)", ac = 18, dexCap = 0, minStr = 15 },
+    HALFPLATE = { name = "Half plate (medium)", ac = 15, dexCap = 2, stealth = true },
+    RINGMAIL  = { name = "Ring mail (heavy)", ac = 14, dexCap = 0, stealth = true },
+    CHAINMAIL = { name = "Chain mail (heavy)", ac = 16, dexCap = 0, minStr = 13, stealth = true },
+    SPLINT    = { name = "Splint (heavy)", ac = 17, dexCap = 0, minStr = 15, stealth = true },
+    PLATE     = { name = "Plate (heavy)", ac = 18, dexCap = 0, minStr = 15, stealth = true },
 }
 R.ARMOR_ORDER = {
     "NONE", "PADDED", "LEATHER", "STUDDED", "HIDE", "CHAINSHIRT", "SCALE", "BREASTPLATE",
