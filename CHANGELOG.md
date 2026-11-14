@@ -19,6 +19,10 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 - A Warlock picks Eldritch Invocations and an Evoker picks Metamagic in the level
   dialog, the right number for the level. Invocations respect their level and the
   pact they build on; Metamagic options spend Sorcery Points when clicked.
+- A Rogue, Hunter and Mage pick the skills for their expertise in the level dialog.
+- The core rules' spells of every level can be added from the class spell list, up to
+  the highest level you have slots for. The spells a subclass always has prepared are
+  put on the spell list by themselves.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

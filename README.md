@@ -147,20 +147,21 @@ still need that.
 - [ ] Hunter pets: the companion's stat block, pet families, and the Pet Specialization
       feature a Beast Mastery hunter takes at level 6 in place of Roving
 - [ ] Druid Wild Shape forms (Cat Form, Bear Form and the other beast stat blocks)
-- [ ] Always-prepared subclass spells added automatically (the sheet lists them by
-      level; only Death Knight and Demon Hunter spells are added for you)
-- [ ] Expertise picks in the level dialog (Rogue, Mage's Scholar); set under Customize today
-- [ ] Spell slots given back by a feature (Arcane Recovery, Magical Cunning, Font of
-      Magic) restored by the click; changed by hand today
+- [x] Always-prepared subclass spells added to the spell list by themselves
+- [ ] A Death Knight's and Demon Hunter's own spells added by themselves (they are
+      offered in the spell list today)
+- [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
+- [ ] Arcane Recovery and Font of Magic changing spell slots by the click (Magical
+      Cunning does); changed by hand today
 - [ ] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
       chosen from a list
-- [ ] Picking Metamagic and invocations in the creation wizard (the Character page
-      points to the level dialog for them)
 - [ ] Multiclassing
 
 **Spells**
 
-- [ ] Core-rule spells above 1st level (the setting's own spells are in at every level)
+- [x] Core-rule spells of every level, with level, save or attack, dice and concentration
+- [ ] Hand-written summaries for the core spells above 1st level (theirs are put
+      together from the spell's facts)
 - [ ] Extra dice when a spell is cast with a higher slot
 - [ ] Spells that make several attacks or hit several targets in one click
 - [ ] Ritual casting and material components
