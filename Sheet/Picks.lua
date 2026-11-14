@@ -6,10 +6,12 @@ local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
 
--- How many options of a list a character of this class and level knows.
-function ns.PickLimit(key, classKey, level)
+-- How many options of a list a character of this class and level knows. A list that
+-- belongs to a subclass (list.subclass) also needs `subclass` to be that one.
+function ns.PickLimit(key, classKey, level, subclass)
     local list, class = R.PICK_LISTS[key], R.CLASSES[classKey]
     if not list or not class or class.base ~= list.base then return 0 end
+    if list.subclass and list.subclass ~= subclass then return 0 end
     return Kit.AtLevel(level, list.known) or 0
 end
 
@@ -23,8 +25,13 @@ end
 
 -- Why an option can't be picked, given the level and the other picks, or nil.
 -- `subclass` matters for beast forms, which a Circle of the Moon druid learns sooner.
-function ns.PickBlocked(key, name, level, picked, subclass)
-    local item = R.PICK_LISTS[key].items[name]
+-- `sheet` is for a list with a check of its own (list.blocked), such as tools the
+-- character is already proficient with.
+function ns.PickBlocked(key, name, level, picked, subclass, sheet)
+    local list = R.PICK_LISTS[key]
+    local item = list.items[name]
+    local why = list.blocked and sheet and list.blocked(sheet, name)
+    if why then return why end
     local need = (subclass == "Circle of the Moon" and item.moonLevel) or item.level
     if need and level < need then return ("needs level %d"):format(need) end
     if item.needs and not picked[item.needs] then return "needs " .. item.needs end
@@ -33,7 +40,7 @@ end
 -- True if the character picks from any list at all.
 function ns.HasPickList(sheet)
     for _, key in ipairs(R.PICK_LIST_ORDER) do
-        if ns.PickLimit(key, sheet.class, sheet.level) > 0 then return true end
+        if ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then return true end
     end
     return false
 end
@@ -41,7 +48,7 @@ end
 -- True if any list has the wrong number of picks.
 function ns.OpenPicks(sheet)
     for _, key in ipairs(R.PICK_LIST_ORDER) do
-        local limit = ns.PickLimit(key, sheet.class, sheet.level)
+        local limit = ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass)
         if limit > 0 and ns.PicksKnown(sheet, key) ~= limit then return true end
     end
     return false
@@ -52,7 +59,7 @@ function ns.ApplyPicks(sheet)
     local wanted = {}
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         -- A list marked custom has its own way onto the sheet (beast forms).
-        if not R.PICK_LISTS[key].custom and ns.PickLimit(key, sheet.class, sheet.level) > 0 then
+        if not R.PICK_LISTS[key].custom and ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then
             for name in pairs(sheet.picks[key] or {}) do
                 local auto = ("pick:%s:%s"):format(key, name)
                 if R.PICK_LISTS[key].items[name] and not sheet.dismissed[auto] then

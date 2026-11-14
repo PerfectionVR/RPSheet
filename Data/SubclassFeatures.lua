@@ -142,7 +142,7 @@ R.SUBCLASS_FEATURES = {
             return ("You know %d maneuvers, each an ability on the sheet that spends a Superiority Die. The die is a d%d. All dice come back on a short or long rest. Only one maneuver can be used per attack. Maneuvers are chosen when you level, or under Customize."):format(
                 AtLevel(level, R.MANEUVERS_KNOWN), AtLevel(level, R.SUPERIORITY_DIE))
         end),
-        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list. The skill is chosen when you level; tick the tools under Customize.", nil, { skillChoice = "CLASS" }),
+        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list. Both are chosen when you level.", nil, { skillChoice = "CLASS" }),
         Limited(7, "Know Your Enemy", "Bonus action: learn the immunities, resistances and vulnerabilities of a creature you can see within 30 feet. Once per long rest; Know Your Enemy: restore gives the use back for a Superiority Die.", 1),
         Ability(7, "Know Your Enemy: restore", "No action needed: spend a Superiority Die to use Know Your Enemy again before a long rest.",
             { Spend("Superiority Dice"), { type = "GAIN", resource = "Know Your Enemy", amount = 1 } }),
