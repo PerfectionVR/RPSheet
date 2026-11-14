@@ -75,7 +75,10 @@ local function TrackerSection(self, body)
         if tracker.kind == "hp" and wasDown ~= self:IsDown() then
             -- Dropping to 0 shows the death save row; getting back up removes it.
             self:ClearDeathSaves()
-            if self:IsDown() then self:EndConcentration("at 0 hit points") end
+            if self:IsDown() then
+                self:EndConcentration("at 0 hit points")
+                self:LeaveForms("at 0 hit points")
+            end
             PopulateSoon(self)
         end
         self:Refresh()
@@ -157,7 +160,11 @@ local function CombatSection(self, body)
     local function Number(label, value, onClick, tip, explain)
         UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(label, UI.ACCENT, value), onClick, tip and label, tip, explain)
     end
-    Number("AC", self:AC(), nil, R.ARMOR[sheet.armor].name .. (sheet.shield and ", shield" or ""),
+    -- In a form the Armor Class is the form's own.
+    local form = self:Form()
+    local acTip = form and ("%s: the form's own Armor Class. Your armor and shield don't count while you are in it."):format(form.beast and (form.name .. " form") or form.name)
+        or (R.ARMOR[sheet.armor].name .. (sheet.shield and ", shield" or ""))
+    Number(form and "AC (form)" or "AC", self:AC(), nil, acTip,
         function() self:ExplainAC() end)
     Number("Initiative", Signed(self:Initiative()),
         function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,

@@ -11,6 +11,39 @@ function RPSheet:Form()
     end
 end
 
+-- Why a spell can't be cast in the form the character is in, or nil when it can.
+-- No spells in a form, except a Circle of the Moon druid's own circle spells, and from
+-- level 18 (Beast Spells) any spell without a priced or consumed component.
+function RPSheet:FormBlocksSpell(spell)
+    local form = self:Form()
+    if not form then return end
+    local sheet = self:Sheet()
+    if sheet.subclass == "Circle of the Moon" and (spell.auto or ""):find("^prepared:") then return end
+    if ns.HasFeature(sheet, "Beast Spells") then
+        if (spell.material or 0) > 0 or spell.consumed then
+            return ("%s needs a component with a price, which can't be used in %s."):format(spell.name, form.beast and "a beast form" or form.name)
+        end
+        return
+    end
+    return ("You can't cast spells in %s. Leave the form first."):format(form.beast and "a beast form" or form.name)
+end
+
+-- Ends any form the character is in. Returns true if there was one.
+function RPSheet:LeaveForms(reason)
+    local left = false
+    for _, passive in ipairs(self:Sheet().passives) do
+        if passive.enabled and R.FORMS[passive.name] then
+            passive.enabled = false
+            left = true
+        end
+    end
+    if left then
+        self:Announce(("returns to their own shape: %s."):format(reason))
+        self:ClampState()
+    end
+    return left
+end
+
 -- True if the form the character is in is proficient in the skill.
 function RPSheet:FormSkill(name)
     local form = self:Form()

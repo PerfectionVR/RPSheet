@@ -82,6 +82,12 @@ end
 -- without a slot.
 function RPSheet:CastSpell(spell, mode, ritual)
     if self.busy or self:IsRolling() then return end
+    -- A beast form can't cast (see Sheet/Forms.lua).
+    local blocked = self:FormBlocksSpell(spell)
+    if blocked then
+        self:Print(blocked)
+        return
+    end
 
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot

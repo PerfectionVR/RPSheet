@@ -40,7 +40,10 @@ function RPSheet:ToggleCondition(name)
     conditions[name] = not conditions[name] or nil
     local term = ns.Mark(name)
     self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
-    if conditions[name] and INCAPACITATES[name] then self:EndConcentration(name:lower()) end
+    if conditions[name] and INCAPACITATES[name] then
+        self:EndConcentration(name:lower())
+        self:LeaveForms(name:lower()) -- a Wild Shape form ends too
+    end
     self:QueueBroadcast()
     self:PopulateSoon()
 end

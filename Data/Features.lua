@@ -145,7 +145,7 @@ R.FEATURES = {
         Kit.For("Elemental Fury", "Primal Strike", Ability(7, "Primal Strike", "Once per turn when you hit with a weapon or a beast form's attack: extra cold, fire, lightning or thunder damage.",
             function(level) return { Dice(level >= 15 and 2 or 1, 8) } end)),
         Passive(15, "Improved Elemental Fury", "Your Elemental Fury option grows stronger, as its description says."),
-        Passive(18, "Beast Spells", "You can cast spells while in a Wild Shape form, except ones with a costly or consumed material component."),
+        Passive(18, "Beast Spells", "You can cast spells while in a Wild Shape form, except ones with a costly or consumed material component. The sheet allows it from here on."),
         Passive(20, "Archdruid", "When you roll initiative with no Wild Shape uses left you regain one. You age far more slowly."),
         Limited(20, "Nature Magician", "Turn Wild Shape uses into one spell slot, two slot levels per use. Once per long rest. Change the bars by hand.", 1),
     },
