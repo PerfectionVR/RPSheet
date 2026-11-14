@@ -5,7 +5,7 @@ local RPSheet = ns.addon
 local Opt = ns.Opt
 local With = Opt.With
 
--- True for a basic weapon from the armoury, whose dice and properties are fixed.
+-- True for a basic weapon from the rules' list, whose dice and properties are fixed.
 local function IsBasic(weapon)
     return ns.WeaponData(weapon) ~= nil
 end
@@ -92,16 +92,18 @@ local function Build(weapon)
             end,
             sorting = R.MASTERY_ORDER,
         }, self, "mastery"),
+        store = Opt.StoreWeaponButton(weapon),
     }
 end
 
 ---------------------------------------------------------------------------
--- Adding a basic weapon from the armoury (Data/Weapons.lua)
+-- Adding a basic weapon from the rules' list (Data/Weapons.lua). The player's own
+-- armoury is added below it by Options/WeaponStore.lua.
 ---------------------------------------------------------------------------
 local picked = "" -- the weapon chosen in the dropdown
 
 local function Extra(args)
-    args.armoury = {
+    args.basicList = {
         type = "select", order = 0.5, name = "Basic weapons", width = "double",
         desc = "Every simple and martial weapon with its damage, properties and mastery. Ones your class isn't proficient with are marked.",
         values = function()
@@ -130,10 +132,11 @@ local function Extra(args)
         end,
     }
     args.breakBasic = { type = "description", order = 0.7, name = "" }
+    Opt.StoredWeaponPicker(args)
 end
 
 Opt.lists.weapons = {
     extra = Extra,
     order = 1, title = "Weapons", noun = "weapon", template = R.TEMPLATES.weapon, build = Build,
-    help = "Pick a basic weapon from the list, or add an empty one and set it up yourself. Attack = d20 + ability modifier + proficiency bonus, then damage dice + ability modifier. A natural 20 doubles the dice. Right-click the weapon row on the sheet to swap weapons.\n",
+    help = "Pick a basic weapon from the list, take one from your armoury, or add an empty one and set it up yourself. Attack = d20 + ability modifier + proficiency bonus, then damage dice + ability modifier. A natural 20 doubles the dice. Right-click the weapon row on the sheet to swap weapons.\n",
 }
