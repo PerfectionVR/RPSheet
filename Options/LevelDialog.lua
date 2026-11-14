@@ -79,7 +79,7 @@ end
 -- How many options of a pick list (Metamagic, Invocations) the character should know.
 local function PickLimit(key)
     if not draft then return 0 end
-    return ns.PickLimit(key, Sheet().class, ChoiceLevel())
+    return ns.PickLimit(key, Sheet().class, ChoiceLevel(), SubclassAfter())
 end
 
 local function PicksChosen(key)
@@ -531,7 +531,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
     -- A long list leaves out what the character can't pick yet.
     local function Hidden(name)
         return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
-            and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
+            and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet()) ~= nil
     end
     local section
     for index, name in ipairs(list.order) do
@@ -552,7 +552,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
         group.args["pick" .. index] = {
             type = "toggle", order = index, width = 1.5,
             name = function()
-                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter())
+                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet())
                 -- A spell shows its level behind the name.
                 local tag = list.items[name].tag
                 local shown = tag and ("%s |cff888888(%s)|r"):format(name, tag) or name
@@ -562,7 +562,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             desc = list.items[name].desc,
             disabled = function()
                 if draft.picks[key][name] then return false end
-                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
+                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Sheet()) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
             set = function(_, value)

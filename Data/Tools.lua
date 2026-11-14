@@ -1,7 +1,8 @@
 -- Tools: the kits, artisan's tools, instruments and gaming sets a character can be
 -- proficient with, and the ability a check with each normally uses.
 -- A class or background that names its tool grants it; one that lets the player choose
--- ("any artisan's tool") is ticked by hand under Customize, Proficiencies.
+-- ("any artisan's tool") is ticked by hand under Customize, Proficiencies. A feature's
+-- choice is made in the level dialog (Data/ToolPicks.lua).
 local _, ns = ...
 local R = ns.Rules
 

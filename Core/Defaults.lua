@@ -71,7 +71,7 @@ ns.defaults = {
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
                     expertise = {},        -- [skill] = true: expertise picked for a class feature
                     expertiseGranted = {}, -- [skill] = true where that pick raised the skill
-                    picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations (Data/Picks.lua)
+                    picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations, a feature's tools (Data/Picks.lua)
                     maneuvers = {},     -- [maneuver name] = true, for a Battle Master
                     featureSkills = {}, -- [feature name] = skill picked for it (Student of War)
                     featureSkillGranted = {}, -- [feature name] = skill it made proficient
