@@ -89,8 +89,15 @@ local function TrackerSection(self, body)
 
     self.deathLabel = nil
     if self:IsDown() then
-        self.deathLabel = UI.AddLabel(body, 1, "", function() self:RollDeathSave() end,
-            "Death saving throw", "You are at 0 HP. Roll a d20 at the start of each turn: 10 or higher passes. Three passes and you are stable; three failures and you die. A natural 20 puts you back on 1 HP; a natural 1 counts as two failures.")
+        self.deathLabel = UI.AddLabel(body, 1, "", function(button)
+            if button == "RightButton" then
+                -- Stable but hurt again: the count starts over.
+                self:ClearDeathSaves()
+                self:Refresh()
+            else
+                self:RollDeathSave()
+            end
+        end, "Death saving throw", "You are at 0 HP. Roll a d20 at the start of each turn: 10 or higher passes. Three passes and you are stable: still at 0 HP and unconscious, but no longer rolling. Three failures and you die. A natural 20 puts you back on 1 HP; a natural 1 counts as two failures.\n\nRight-click to start the count over, for when a stable character takes damage.")
     end
 
     local hasSlots = false
@@ -305,7 +312,13 @@ function RPSheet:Refresh()
     self.tempLabel:SetText(("Temp HP %s%d|r"):format(UI.ACCENT, state.tempHP))
     self.inspirationLabel:SetText(("Inspiration %s%s|r"):format(UI.ACCENT, state.inspiration and "yes" or "no"))
     if self.deathLabel then
-        self.deathLabel:SetText(("%sDeath saves: %d passed, %d failed - click to roll|r"):format(
-            "|cffff5555", state.deathPass, state.deathFail))
+        local status = "click to roll"
+        if state.deathFail >= 3 then
+            status = "dead"
+        elseif state.deathPass >= 3 then
+            status = "stable at 0 HP"
+        end
+        self.deathLabel:SetText(("%sDeath saves: %d passed, %d failed - %s|r"):format(
+            "|cffff5555", state.deathPass, state.deathFail, status))
     end
 end

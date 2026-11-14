@@ -16,6 +16,14 @@ end
 function RPSheet:RollDeathSave()
     local state = self:State()
     if not self:IsDown() then return end
+    -- The saves end once they are decided, one way or the other.
+    if state.deathFail >= 3 then
+        self:Print("Your character is dead: no more death saves.")
+        return
+    elseif state.deathPass >= 3 then
+        self:Print("Your character is stable at 0 HP: no more death saves. Healing brings them back up. If they take damage, right-click the death save row to start the count over.")
+        return
+    end
     self:RollD20(nil, function(d20)
         local outcome
         if d20 == 20 then
