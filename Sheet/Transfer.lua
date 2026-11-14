@@ -123,7 +123,8 @@ local function CleanSheet(source)
             if source.maneuvers[name] == true then sheet.maneuvers[name] = true end
         end
     end
-    for _, field in ipairs({ "featureSkills", "featureSkillGranted" }) do
+    sheet.featureOptions = {}
+    for _, field in ipairs({ "featureSkills", "featureSkillGranted", "featureOptions" }) do
         if type(source[field]) == "table" then
             for name, skill in pairs(source[field]) do
                 if type(name) == "string" and type(skill) == "string" and #name <= 60 then

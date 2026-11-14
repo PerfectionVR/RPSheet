@@ -85,13 +85,38 @@ R.FEATURES = {
 
     Druid = {
         Passive(1, "Druidic", "You know the secret language of druids and always have Speak with Animals prepared."),
-        Passive(1, "Primal Order", "Magician: an extra cantrip and a bonus to Arcana or Nature checks. Warden: medium armor and martial weapons."),
-        Ability(2, "Wild Shape", "Bonus action. Take the form of a beast you know for a number of hours equal to half your level. You gain temporary HP equal to your level.",
+        Kit.Choice(1, "Primal Order", "The sacred role you dedicated yourself to.", {
+            Kit.Option("Magician", "You know one more Druid cantrip, and add your Wisdom modifier (at least +1) to Arcana and Nature checks.",
+                { effects = function(_, sheet)
+                    local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
+                    return { Bonus("SKILL:Arcana", bonus), Bonus("SKILL:Nature", bonus) }
+                end }),
+            Kit.Option("Warden", "You are proficient with martial weapons and trained with medium armor.", { training = { "medium" } }),
+        }),
+        Ability(2, "Wild Shape", function(level)
+            return ("Bonus action. Take a beast form you know (%d known, up to challenge rating %s%s) for %d hours, keeping your hit points and gaining temporary hit points equal to your level. One use comes back on a short rest."):format(
+                AtLevel(level, { { 2, 4 }, { 4, 6 }, { 8, 8 } }), AtLevel(level, { { 2, "1/4" }, { 4, "1/2" }, { 8, "1" } }),
+                level >= 8 and ", flying allowed" or ", no flying", math.floor(level / 2))
+        end, { Spend("Wild Shape"), Dice(0, 4, "LEVEL", "TEMPHP") }),
+        Ability(2, "Wild Companion", "Magic action. Cast Find Familiar without components by spending a Wild Shape use (this), or a spell slot. The familiar is fey and leaves after a long rest.",
             { Spend("Wild Shape") }),
-        Passive(2, "Wild Companion", "You can spend a spell slot or a Wild Shape use to cast Find Familiar without components."),
-        Passive(5, "Wild Resurgence", "Once per turn, with no Wild Shape uses left, you can spend a spell slot to gain one. Once per long rest you can spend a Wild Shape use for a 1st-level slot."),
-        Passive(7, "Elemental Fury", "Potent Spellcasting: add your Wisdom modifier to cantrip damage. Or Primal Strike: once per turn add 1d8 elemental damage to a weapon or beast-form hit."),
-        Passive(18, "Beast Spells", "You can cast spells while in a Wild Shape form."),
+        Passive(5, "Wild Resurgence", "Once per turn, with no Wild Shape uses left, you can spend a spell slot to gain one: change the bars by hand."),
+        Limited(5, "Wild Resurgence: slot", "Spend a Wild Shape use to gain a 1st-level spell slot. Once per long rest.", 1,
+            { Spend("Wild Shape"), { type = "GAIN", resource = "1st-level slot", amount = 1 } }),
+        Kit.Choice(7, "Elemental Fury", "How the elements flow through you.", {
+            Kit.Option("Potent Spellcasting", function(level)
+                return "Add your Wisdom modifier to the damage of your Druid cantrips: tick \"Add spellcasting modifier\" on them." .. (level >= 15 and " Cantrips with a range of 10 feet or more reach 300 feet farther." or "")
+            end),
+            Kit.Option("Primal Strike", function(level)
+                return ("Once per turn when you hit with a weapon or a beast form's attack: %s extra cold, fire, lightning or thunder damage. Use the Primal Strike ability."):format(level >= 15 and "2d8" or "1d8")
+            end),
+        }),
+        Kit.For("Elemental Fury", "Primal Strike", Ability(7, "Primal Strike", "Once per turn when you hit with a weapon or a beast form's attack: extra cold, fire, lightning or thunder damage.",
+            function(level) return { Dice(level >= 15 and 2 or 1, 8) } end)),
+        Passive(15, "Improved Elemental Fury", "Your Elemental Fury option grows stronger, as its description says."),
+        Passive(18, "Beast Spells", "You can cast spells while in a Wild Shape form, except ones with a costly or consumed material component."),
+        Passive(20, "Archdruid", "When you roll initiative with no Wild Shape uses left you regain one. You age far more slowly."),
+        Limited(20, "Nature Magician", "Turn Wild Shape uses into one spell slot, two slot levels per use. Once per long rest. Change the bars by hand.", 1),
     },
 
     Fighter = {

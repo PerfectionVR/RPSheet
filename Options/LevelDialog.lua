@@ -67,7 +67,19 @@ local function SkillFeatures()
     return ns.SkillChoiceFeatures({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel() })
 end
 
+-- Features with options to pick in this dialog: the ones still open when taking a
+-- level, all of them when looking at the choices again.
+local function OptionFeatures()
+    if not draft then return {} end
+    local sheet = Sheet()
+    local like = setmetatable({ subclass = SubclassAfter(), level = ChoiceLevel() }, { __index = sheet })
+    return draft.taking and ns.OpenOptionFeatures(like) or ns.OptionFeatures(like)
+end
+
 local function Problem()
+    for _, feature in ipairs(OptionFeatures()) do
+        if (draft.options[feature.name] or "") == "" then return ("Choose an option for %s."):format(feature.name) end
+    end
     local limit = ManeuverLimit()
     if limit > 0 and ManeuversPicked() ~= limit then
         return ("Choose %d maneuvers (%d chosen)."):format(limit, ManeuversPicked())
@@ -350,6 +362,7 @@ local args = {
             local slot = StyleSlot()
             if slot and draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = draft.style end
             if draft.kind then Levels.Set(sheet, level, draft.record) end
+            for _, feature in ipairs(OptionFeatures()) do sheet.featureOptions[feature.name] = draft.options[feature.name] end
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
@@ -408,6 +421,30 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
     }
 end
 
+-- A dropdown for each feature that offers options (four at most at one level).
+for index = 1, 4 do
+    local function Feature() return OptionFeatures()[index] end
+    args["option" .. index] = {
+        type = "select", order = 11 + index / 10, width = "double",
+        name = function() return Feature() and Feature().name or "" end,
+        desc = function()
+            local feature, lines = Feature(), {}
+            for _, option in ipairs(feature and feature.options or {}) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, option.desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function() return Feature() == nil end,
+        values = function()
+            local values = {}
+            for _, option in ipairs(Feature() and Feature().options or {}) do values[option.name] = option.name end
+            return values
+        end,
+        get = function() return Feature() and draft.options[Feature().name] end,
+        set = function(_, value) draft.options[Feature().name] = value end,
+    }
+end
+
 ns.SnapSliders({ args = args })
 
 LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
@@ -429,6 +466,7 @@ function ns.OpenLevelDialog(level, reopen)
     draft = {
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
+        options = CopyTable(sheet.featureOptions),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     if kind == "BOON" then draft.record.choice = "FEAT" end

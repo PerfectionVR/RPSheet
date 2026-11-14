@@ -31,6 +31,8 @@ function ns.ArmorTraining(classKey, passives)
     training.shield = text:find("shield") ~= nil
     for _, passive in ipairs(passives or {}) do
         for _, kind in ipairs(TRAINING_FEATS[passive.name] or {}) do training[kind] = true end
+        -- A class option can bring training too (a Druid's Warden, a Priest's Protector).
+        for _, kind in ipairs(passive.training or {}) do training[kind] = true end
     end
     return training
 end

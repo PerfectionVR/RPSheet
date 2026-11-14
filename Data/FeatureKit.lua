@@ -131,3 +131,28 @@ end
 function Kit.RageDamage(level)
     return Kit.AtLevel(level, { { 1, 2 }, { 9, 3 }, { 16, 4 } })
 end
+
+-- A feature that offers a choice between named options (Primal Order, Divine Order,
+-- a Circle of the Land's land). The pick is kept in sheet.featureOptions[<name>] and
+-- made in the level dialog or under Customize.
+--   options  { { name = "Warden", desc = "...", effects = {...}, advantage = {...},
+--               flags = {...}, saves = {...}, strike = {...}, training = { "medium" } }, ... }
+-- An option carries the same extras a Passive can; they apply once it is chosen.
+-- Another feature can depend on a pick:  feature.option = { "Elemental Fury", "Primal Strike" }.
+function Kit.Choice(level, name, desc, options)
+    local feature = Kit.Passive(level, name, desc)
+    feature.options = options
+    return feature
+end
+
+function Kit.Option(name, desc, extra)
+    local option = { name = name, desc = desc }
+    for key, value in pairs(extra or {}) do option[key] = value end
+    return option
+end
+
+-- Marks a feature as belonging to one option of a Choice.
+function Kit.For(choice, option, feature)
+    feature.option = { choice, option }
+    return feature
+end

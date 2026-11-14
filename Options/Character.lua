@@ -60,6 +60,33 @@ local function StylePicker(slot, order, name)
     }
 end
 
+-- Dropdown for the index-th class or subclass feature that offers options.
+local function OptionPicker(index)
+    local function Feature() return ns.OptionFeatures(Sheet())[index] end
+    return {
+        type = "select", order = 7.3 + index / 100,
+        name = function() return Feature() and Feature().name or "" end,
+        desc = function()
+            local feature, lines = Feature(), {}
+            for _, option in ipairs(feature and feature.options or {}) do
+                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, option.desc)
+            end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function() return Feature() == nil end,
+        values = function()
+            local values = { [""] = "None" }
+            for _, option in ipairs(Feature() and Feature().options or {}) do values[option.name] = option.name end
+            return values
+        end,
+        get = function() return Feature() and Sheet().featureOptions[Feature().name] or "" end,
+        set = function(_, value)
+            Sheet().featureOptions[Feature().name] = value ~= "" and value or nil
+            Opt.Regrant()
+        end,
+    }
+end
+
 local function Summary()
     local sheet = Sheet()
     local lines = { Opt.GOLD .. (RPSheet:Summary() or "No class chosen yet") .. "|r" }
@@ -154,6 +181,8 @@ Opt.custom.identity = {
                 Opt.Regrant()
             end,
         },
+        option1 = OptionPicker(1), option2 = OptionPicker(2), option3 = OptionPicker(3), option4 = OptionPicker(4),
+        option5 = OptionPicker(5), option6 = OptionPicker(6),
         fightingStyle = StylePicker(1, 7.1, "Fighting Style"),
         fightingStyle2 = StylePicker(2, 7.2, "Second Fighting Style"),
         spec = ClassList({
@@ -246,7 +275,8 @@ Opt.tabs.character = {
             desc = "The choices your class and subclass give you at this level, such as a Battle Master's maneuvers.",
             hidden = function()
                 local sheet = Sheet()
-                return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0)
+                return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
+                    and #ns.OptionFeatures(sheet) == 0)
             end,
             func = function() ns.OpenLevelDialog(Sheet().level) end,
         },

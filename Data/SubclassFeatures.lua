@@ -250,30 +250,48 @@ R.SUBCLASS_FEATURES = {
     -- Druid
     ---------------------------------------------------------------------------
     ["Circle of the Land"] = {
-        Passive(3, "Circle of the Land Spells", "After each long rest choose arid, polar, temperate or tropical land. You have that land's spells prepared for your level."),
-        Ability(3, "Land's Aid", "Magic action, a point within 60 feet. Creatures of your choice in a 10-foot sphere make a Constitution save against necrotic damage, and one creature there is healed.",
+        Kit.Choice(3, "Circle of the Land Spells", "After each long rest you choose a kind of land and have its spells prepared for your level.", {
+            Kit.Option("Arid", "Level 3: Blur, Burning Hands, Fire Bolt. Level 5: Fireball. Level 7: Blight. Level 9: Wall of Stone. Nature's Ward: resistance to fire."),
+            Kit.Option("Polar", "Level 3: Fog Cloud, Hold Person, Ray of Frost. Level 5: Sleet Storm. Level 7: Ice Storm. Level 9: Cone of Cold. Nature's Ward: resistance to cold."),
+            Kit.Option("Temperate", "Level 3: Misty Step, Shocking Grasp, Sleep. Level 5: Lightning Bolt. Level 7: Freedom of Movement. Level 9: Tree Stride. Nature's Ward: resistance to lightning."),
+            Kit.Option("Tropical", "Level 3: Acid Splash, Ray of Sickness, Web. Level 5: Stinking Cloud. Level 7: Polymorph. Level 9: Insect Plague. Nature's Ward: resistance to poison."),
+        }),
+        Ability(3, "Land's Aid", function(_, sheet)
+            return ("Magic action, a point within 60 feet. Creatures you choose in a 10-foot sphere take the first roll as necrotic damage, half on a successful Constitution save, DC %d. One creature you choose there is healed by the second roll."):format(Kit.DC(sheet, "WIS"))
+        end, function(level)
+            local dice = AtLevel(level, { { 3, 2 }, { 10, 3 }, { 14, 4 } })
+            return { Spend("Wild Shape"), Dice(dice, 6), Dice(dice, 6, "", "HEALING") }
+        end),
+        Limited(6, "Natural Recovery", "Once per long rest, cast one of your Circle spells without a slot. Also once per long rest, on a short rest, recover spell slots with a combined level up to half your level (none above 5th); restore those by hand.", 1),
+        Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type of your current land (named on your Circle of the Land Spells)."),
+        Ability(14, "Nature's Sanctuary", "Magic action. Spectral trees fill a 15-foot cube within 120 feet for a minute: you and allies have half cover there, and allies gain your Nature's Ward resistance. A bonus action moves it up to 60 feet.",
             { Spend("Wild Shape") }),
-        Limited(6, "Natural Recovery", "Once per long rest, cast a Circle spell without a slot. Also once per long rest, on a short rest, recover slots with a combined level up to half your level; restore those by hand.", 1),
-        Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type tied to your current land."),
-        Passive(14, "Nature's Sanctuary", "Magic action, spending a Wild Shape use: spectral trees give you and allies half cover and your Nature's Ward resistance for a minute."),
     },
     ["Circle of the Moon"] = {
-        AlwaysPrepared("Circle of the Moon"),
-        Passive(3, "Circle Forms", "Your Wild Shape forms can be tougher: challenge rating up to a third of your level, AC of at least 13 + Wisdom modifier, and temporary HP equal to three times your level."),
-        Passive(6, "Improved Circle Forms", "In Wild Shape your attacks can deal radiant damage and you add your Wisdom modifier to Constitution saves."),
-        Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn. You have uses equal to your Wisdom modifier per long rest, and can spend a slot of 2nd level or higher for another.", { stat = "WIS" }),
-        Passive(14, "Lunar Form", "Once per turn deal 2d10 extra radiant damage in Wild Shape, and Moonlight Step can bring a willing creature along."),
+        AlwaysPrepared("Circle of the Moon", { { 3, "Cure Wounds, Moonbeam, Starry Wisp" }, { 5, "Conjure Animals" }, { 7, "Fount of Moonlight" }, { 9, "Mass Cure Wounds" } }),
+        Ability(3, "Circle Forms", function(level)
+            return ("Your Wild Shape forms are tougher: challenge rating up to %d, an AC of at least 13 + your Wisdom modifier, and temporary hit points equal to three times your level (this, in place of the usual amount). You can cast your Circle spells in beast form."):format(math.max(1, math.floor(level / 3)))
+        end, function(level) return { Dice(0, 4, "", "TEMPHP", 3 * level) } end),
+        Passive(6, "Improved Circle Forms", "In Wild Shape your attacks can deal radiant damage, and you add your Wisdom modifier to Constitution saving throws."),
+        Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn (the sheet sets it). Uses equal to your Wisdom modifier per long rest; a slot of 2nd level or higher restores one.",
+            { stat = "WIS" }, { Kit.NextRoll("ADV") }),
+        Ability(14, "Lunar Form", "Once per turn: extra radiant damage on a target you hit with a Wild Shape form's attack. Moonlight Step can also bring a willing creature within 10 feet along.",
+            { Dice(2, 10) }),
     },
     ["Circle of the Stars"] = {
-        Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: you have uses equal to your Wisdom modifier per long rest.",
+        Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
             { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) }),
-        Ability(3, "Starry Form", "Bonus action. Instead of a beast form you become starry for 10 minutes and choose a constellation: Archer (a bolt each turn), Chalice (extra healing) or Dragon (steadier concentration).",
+        Ability(3, "Starry Form", "Bonus action. For 10 minutes you become starry in place of a beast form, and choose a constellation: Archer, Chalice or Dragon. From level 10 you can change it at the start of each turn.",
             { Spend("Wild Shape") }),
-        Ability(3, "Archer", "Starry Form, Archer constellation. Bonus action: a luminous arrow at a creature within 60 feet.",
+        Ability(3, "Archer", "Starry Form, Archer constellation. When you take the form, and as a bonus action after: a luminous arrow at a creature within 60 feet.",
             function(level) return { Roll("SPELL", "WIS"), Dice(level >= 10 and 2 or 1, 8, "WIS") } end),
         Ability(3, "Chalice", "Starry Form, Chalice constellation. When you heal with a slotted spell, you or a creature within 30 feet also regains this much.",
             function(level) return { Dice(level >= 10 and 2 or 1, 8, "WIS", "HEALING") } end),
-        Limited(6, "Cosmic Omen", "After a long rest roll a die. Even: a reaction that adds a d6 to a creature's roll. Odd: one that subtracts a d6. You have uses equal to your Wisdom modifier per long rest.", { stat = "WIS" }),
+        Passive(3, "Dragon", function(level)
+            return "Starry Form, Dragon constellation. Switch on while it glimmers: on Intelligence and Wisdom checks and concentration saves, a d20 roll of 9 or lower counts as 10." .. (level >= 10 and " You also have a flying speed of 20 feet and can hover." or "")
+        end, nil, true),
+        Limited(6, "Cosmic Omen", "After a long rest roll a die. Even (Weal): as a reaction, add the roll to a d20 test of a creature within 30 feet. Odd (Woe): subtract it. Uses equal to your Wisdom modifier per long rest.",
+            { stat = "WIS" }, { Dice(1, 6, "", "OTHER") }),
         Passive(10, "Twinkling Constellations", "Archer and Chalice use 2d8, the Dragon lets you fly and hover, and you can change constellation at the start of each turn."),
         Passive(14, "Full of Stars", "In Starry Form you resist bludgeoning, piercing and slashing damage."),
     },

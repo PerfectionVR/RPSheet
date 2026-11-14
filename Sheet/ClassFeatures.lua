@@ -43,6 +43,8 @@ local function EachFeature(sheet, visit)
         for _, feature in ipairs(features or {}) do
             local key = Key(prefix, feature)
             local specFits = not feature.spec or feature.spec == sheet.spec -- some belong to one specialization
+            -- ...and some to one option of a choice the character made.
+            if feature.option and (sheet.featureOptions or {})[feature.option[1]] ~= feature.option[2] then specFits = false end
             if sheet.level >= feature.level and specFits and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
                 visit(feature, key)
             end
@@ -50,18 +52,41 @@ local function EachFeature(sheet, visit)
     end
 end
 
+-- The option the character picked for a feature that offers a choice, or nil.
+local function PickedOption(sheet, feature)
+    local picked = (sheet.featureOptions or {})[feature.name]
+    for _, option in ipairs(feature.options or {}) do
+        if option.name == picked then return option end
+    end
+end
+
 -- Adds a feature to the sheet, or refreshes the one already there.
 local function Apply(sheet, feature, key)
+    -- A choice shows what was picked, and takes its effects from the pick.
+    local base = feature
+    if feature.options then
+        local option = PickedOption(sheet, feature)
+        local names = {}
+        for _, each in ipairs(feature.options) do names[#names + 1] = each.name end
+        feature = setmetatable({
+            name = feature.name, level = feature.level, kind = feature.kind,
+            desc = option and option.desc or ((type(feature.desc) == "string" and feature.desc or "")
+                .. " Options: " .. table.concat(names, ", ") .. ". Not chosen yet: pick it on the Character tab or under Customize, Class and origin."),
+            shown = option and (feature.name .. ": " .. option.name) or feature.name,
+        }, { __index = option or {} })
+    end
     local isAbility = feature.kind == "ability"
     local list = isAbility and sheet.abilities or sheet.passives
     local entry = FindAuto(list, key)
     if not entry then
-        entry = { name = feature.name, auto = key }
+        entry = { name = base.name, auto = key }
         if not isAbility then entry.enabled = not feature.startsOff end
         list[#list + 1] = entry
     end
     -- Refreshed every time, so dice and bonuses follow the level.
     -- Some features read differently for each specialization.
+    if feature.shown then entry.name = feature.shown end
+    entry.training = feature.training and CopyTable(feature.training) or nil
     local desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
     if type(desc) == "function" then desc = desc(sheet.level, sheet) end -- wording that follows the character
     entry.desc = desc
@@ -105,6 +130,29 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)
     ns.ApplyFeatureSkills(sheet)
+end
+
+-- The features of the character that offer a choice between options, in level order.
+-- `sheet` may be a stand-in with class, subclass, level and featureOptions.
+function ns.OptionFeatures(sheet)
+    local found = {}
+    EachFeature(setmetatable({ dismissed = {} }, { __index = sheet }), function(feature)
+        if feature.options then found[#found + 1] = feature end
+    end)
+    table.sort(found, function(a, b)
+        if a.level ~= b.level then return a.level < b.level end
+        return a.name < b.name
+    end)
+    return found
+end
+
+-- Those whose choice hasn't been made.
+function ns.OpenOptionFeatures(sheet)
+    local open = {}
+    for _, feature in ipairs(ns.OptionFeatures(sheet)) do
+        if not PickedOption(sheet, feature) then open[#open + 1] = feature end
+    end
+    return open
 end
 
 -- Resources that come with features of their own (see Kit.Limited in Data/FeatureKit.lua),
