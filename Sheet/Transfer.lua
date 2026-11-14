@@ -47,6 +47,11 @@ local function CleanEntry(source, template)
     return clean
 end
 
+-- One weapon from outside, cleaned the same way (a shared weapon, Sheet/WeaponShare.lua).
+function ns.CleanWeapon(source)
+    return CleanEntry(source, R.TEMPLATES.weapon)
+end
+
 -- `nested` names a list inside each entry (effects or actions) and its template.
 local function CleanList(source, template, nested, nestedTemplate)
     local clean = {}

@@ -101,6 +101,8 @@ Sheet\Trackers.lua
 Sheet\Summary.lua
 Sheet\Explain.lua
 Sheet\Transfer.lua
+Sheet\WeaponStore.lua
+Sheet\WeaponShare.lua
 Sheet\ClassFeatures.lua
 Sheet\Maneuvers.lua
 Sheet\Picks.lua
@@ -169,6 +171,8 @@ Options\Proficiencies.lua
 Options\Defense.lua
 Options\Resources.lua
 Options\Weapons.lua
+Options\WeaponStore.lua
+Options\WeaponStorePage.lua
 Options\Abilities.lua
 Options\Spells.lua
 Options\Spellbook.lua

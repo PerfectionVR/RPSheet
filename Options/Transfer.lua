@@ -41,7 +41,7 @@ Opt.tabs.transfer = {
         importHeader = { type = "header", order = 10, name = "Import" },
         importHelp = {
             type = "description", order = 11,
-            name = "Paste an export string and press Accept to check it. Importing replaces the character on this sheet; your settings and theme are not touched.\n",
+            name = "Paste an export string and press Accept to check it. Importing replaces the character on this sheet; your settings, theme and armoury are not touched.\n",
         },
         import = {
             type = "input", order = 12, width = "full", multiline = 4, name = "Import string",

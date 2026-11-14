@@ -23,6 +23,9 @@ ns.defaults = {
     -- like TRP3's own profiles. Without TRP3 the key is "char:<Name-Realm>".
     -- "*" is AceDB's wildcard: any key that doesn't exist yet starts from these values.
     global = {
+        -- The armoury: weapons kept for every character on the account, each shaped like
+        -- an entry of a sheet's `weapons` (Sheet/WeaponStore.lua).
+        weaponStore = {},
         sheets = {
             ["*"] = {
                 created = false, -- set once the creation wizard was finished or skipped
