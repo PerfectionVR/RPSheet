@@ -80,8 +80,14 @@ end
 -- uses its larger die.
 function RPSheet:WeaponDice(weapon)
     local data = ns.WeaponData(weapon)
-    if data and data.versatile and weapon.twoHands then return weapon.dice, data.versatile end
-    return weapon.dice, weapon.sides
+    local count, sides = weapon.dice, weapon.sides
+    if data and data.versatile and weapon.twoHands then sides = data.versatile end
+    -- Martial Arts: a monk weapon rolls the Martial Arts die when that is the larger one.
+    local sheet = self:Sheet()
+    if data and count == 1 and not data.ranged and (data.category == "SIMPLE" or data.props.L) and ns.HasFeature(sheet, "Martial Arts") then
+        sides = math.max(sides, ns.FeatureKit.MartialDie(sheet.level))
+    end
+    return count, sides
 end
 
 -- "slashing damage" for a basic weapon, plain "damage" otherwise.

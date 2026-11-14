@@ -110,6 +110,12 @@ function Kit.PerSlot(dice)
     return dice
 end
 
+-- Dice that gain `more` dice for each level of the spent slot above 1st (a smite).
+function Kit.SlotAdd(dice, more)
+    dice.slotAdd = more
+    return dice
+end
+
 function Kit.SwitchOff(passive)
     return { type = "TOGGLE", passive = passive, mode = "OFF" }
 end

@@ -14,6 +14,13 @@ local R = ns.Rules
 
 local Kit = ns.FeatureKit
 local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
+
+-- Marks a feature as bringing always-prepared spells: { {level, "names"}, ... }
+-- (see Sheet/PreparedSpells.lua).
+local function Prepared(list, feature)
+    feature.prepared = list
+    return feature
+end
 local Spend, SwitchOn, Dice, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Bonus
 
 local WEAPON_MASTERY = Passive(1, "Weapon Mastery", "You can use the mastery property of a few kinds of weapon you are proficient with, and change your choices after a long rest. Set each weapon's mastery under Customize, Weapons: it shows on the weapon row and is called out when you attack.")
@@ -226,15 +233,15 @@ R.FEATURES = {
             { Spend("Lay on Hands", 5), Dice(0, 4, "", "HEALING", 5) }),
         WEAPON_MASTERY,
         Passive(2, "Fighting Style", FIGHTING_STYLE),
-        Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
-        Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. Add 1d8 against fiends and undead, and 1d8 for each slot level above 1st.",
-            { Spend("1st-level slot"), Dice(2, 8) }),
+        Prepared({ { 2, "Divine Smite" } }, Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) })),
+        Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. The sheet adds 1d8 for each slot level above 1st; set a higher slot at \"Cast at\". Add 1d8 more against fiends and undead.",
+            { Spend("1st-level slot"), Kit.SlotAdd(Dice(2, 8), 1) }),
         Ability(3, "Divine Sense", "Bonus action. For 10 minutes you know the location of celestials, fiends and undead within 60 feet.", { Spend("Channel Divinity") }),
         ExtraAttack(5),
-        Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1),
+        Prepared({ { 5, "Find Steed" } }, Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1)),
         Passive(6, "Aura of Protection", function(level)
             return ("You and allies within %d feet add your Charisma modifier to saving throws (at least +1). The sheet adds it to yours."):format(level >= 18 and 30 or 10)
-        end, { Bonus("SAVES", 0, "CHA") }),
+        end, function(_, sheet) return { Bonus("SAVES", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
         Ability(9, "Abjure Foes", function(_, sheet)
             return ("Magic action. Creatures you can see within 60 feet, up to your Charisma modifier, make a Wisdom save (DC %d) or are frightened for 1 minute and can only move, act or take a bonus action on their turns."):format(Kit.DC(sheet, "CHA"))
         end, { Spend("Channel Divinity") }),

@@ -15,7 +15,9 @@ local function PoolMax(self, pool, level)
     if pool.prof then return self:ProficiencyBonus() end
     if pool.stat then
         -- An ability modifier, plus half the level for some.
-        return math.max(pool.min or 0, (pool.flat or 0) + self:Mod(pool.stat) + (pool.halfLevel and math.floor(level / 2) or 0))
+        -- ...or a few more at certain levels (levelBonus).
+        local extra = pool.levelBonus and ns.FeatureKit.AtLevel(level, pool.levelBonus) or 0
+        return math.max(pool.min or 0, (pool.flat or 0) + self:Mod(pool.stat) + (pool.halfLevel and math.floor(level / 2) or 0)) + extra
     end
     local max = 0
     for _, step in ipairs(pool.steps) do

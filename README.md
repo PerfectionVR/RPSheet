@@ -143,7 +143,13 @@ still need that.
 - [x] Paladin, Death Knight, Shaman (with totems and the Path of the Elements), Druid, Priest
 - [x] Mage, Warlock (with all Eldritch Invocations, the setting's own included) and
       Evoker (with Metamagic)
+- [x] A second check of the twelve classes after the Warrior against the rules, by
+      one reviewer per class; what they found is fixed
 - [ ] An in-game play-through of every class other than the Warrior
+- [ ] Subclasses the rules list that are left out: Path of the Berserker (Shaman) and
+      the War Domain (Priest)
+- [ ] Hunter's Prey and Defensive Tactics as stored choices; invocations that can be
+      taken more than once; a Death Knight's undead steed
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
 - [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet

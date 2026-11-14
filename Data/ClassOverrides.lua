@@ -25,9 +25,10 @@ R.CLASS_OVERRIDES = {
                 return ("Bonus action, 60 feet. The target makes a Constitution save, DC %d: necrotic damage equal to the roll, half on a success. An undead target can be healed by the roll instead%s. Each click spends one die; you can spend up to your Charisma modifier at once."):format(
                     Kit.DC(sheet, "CHA"), level >= 14 and ", and then regains your level more" or "")
             end, function(level, sheet)
-                -- Improved Death Coil adds the Charisma modifier, at least 1.
-                return { Spend("Death Coil Dice"), Dice(1, 8, "", "DAMAGE", level >= 14 and math.max(1, Kit.Mod(sheet, "CHA")) or 0) }
+                return { Spend("Death Coil Dice"), Dice(1, 8) }
             end),
+            Ability(14, "Improved Death Coil", "Once for each use of Death Coil, however many dice you spent: this much more damage. When it heals an undead, add your level instead.",
+                function(_, sheet) return { Dice(0, 4, "", "DAMAGE", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
             Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
             Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage. The sheet rolls it with every melee attack.",
                 nil, { strike = { sides = 8, damage = "necrotic" } }),
@@ -55,7 +56,7 @@ R.CLASS_OVERRIDES = {
 
 -- Subclasses that only these classes use, added to the shared subclass tables.
 R.SUBCLASS_POOLS["Demon Hunter"] = {
-    { name = "Soul Fragments", from = 3, flat = 0, stat = "WIS", min = 1 },
+    { name = "Soul Fragments", from = 3, flat = 0, stat = "WIS", min = 1, levelBonus = { { 13, 1 }, { 17, 2 } } },
 }
 
 -- A Death Knight's rune is its specialization: Blood, Frost or Unholy. Features marked
@@ -167,7 +168,7 @@ R.SUBCLASS_FEATURES["Demon Hunter"] = {
             return steps
         end }),
         Passive(3, "Soul Fragments", function(_, sheet)
-            return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one). They fuel your demon hunter powers. Saves against them use DC %d."):format(Kit.DC(sheet, "WIS"))
+            return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one), one more from level 13 and two more from level 17. They fuel your demon hunter powers. Reaction when an enemy you can see within 30 feet dies: regain a spent fragment; raise the bar by hand. Saves against your powers use DC %d."):format(Kit.DC(sheet, "WIS"))
         end),
         Ability(3, "Double Jump", "Cast Feather Fall or Jump without a spell slot.", { Spend("Soul Fragments") }),
         Ability(3, "Soul Cleave", function(_, sheet)

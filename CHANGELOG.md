@@ -44,6 +44,11 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   fifteen (wolf, panther, elk, bears, tiger, the flying forms and more). Each has a
   click to take the form, its attacks as abilities, and its numbers on the sheet
   while the form is on.
+- Every class after the Warrior was checked a second time against the rules. Fixed:
+  dice, half damage on a save and riders of some forty of the setting's spells; an
+  Evoker's prepared spells; a Demon Hunter's soul fragments at levels 13 and 17;
+  Improved Death Coil; a Monk's Martial Arts die on monk weapons; Divine Smite
+  growing with the slot; the +1 minimum of Aura of Protection.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

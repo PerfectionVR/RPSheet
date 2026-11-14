@@ -21,6 +21,7 @@ function RPSheet:ActionText(action)
         text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
         if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
         if action.perSlot then text = text .. " per slot level" end
+        if (action.slotAdd or 0) > 0 then text = text .. (", +%dd%d per slot level above 1st"):format(action.slotAdd, action.sides) end
         if R.AMOUNT_SOURCES[action.stat] and action.stat ~= "" then
             text = text .. " + " .. (R.AMOUNT_SHORT[action.stat] or action.stat)
         end
@@ -236,7 +237,8 @@ function RPSheet:UseAbility(ability, mode)
             local times = action.perSlot and (costs.slotLevel or 1) or 1
             local mod = self:Amount((action.flat or 0) * times, action.stat, 1) + PassiveBonus(bonus)
             local doubled = critical and word == "damage"
-            self:RollDice(action.count * times * (doubled and 2 or 1), action.sides, function(rolls)
+            local more = (action.slotAdd or 0) * math.max(0, (costs.slotLevel or 1) - 1)
+            self:RollDice((action.count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
