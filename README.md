@@ -151,8 +151,8 @@ other ten still need that.
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
       Arts that stop in the armor the rules name
-- [ ] Curse of Agony (Warlock): the die should grow after each failed save; the sheet
-      always rolls the starting d4
+- [x] Curse of Agony (Warlock): the die grows after each failed save. Click the spell
+      again for each one; right-click ends it
 - [ ] Metamorphosis (Demon Hunter): the three benefits to choose from are described,
       none is applied
 - [ ] Psychic Whispers and Homing Strikes (Rogue), Tactical Mind (Warrior): a die or

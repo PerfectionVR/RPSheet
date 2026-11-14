@@ -69,7 +69,10 @@ function RPSheet:SpellText(spell)
         parts[#parts + 1] = ("%s save DC %d"):format(spell.save, self:SpellDC() or 8)
     end
     if spell.count > 0 then
-        local dice = ("%dd%d"):format(self:SpellDiceCount(spell), spell.sides)
+        -- A growing spell that is running shows the die its next turn rolls.
+        local grown = self:GrowingSides(spell)
+        local dice = ("%dd%d"):format(self:SpellDiceCount(spell), grown or spell.sides)
+        if grown then dice = "running, next " .. dice end
         if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat())) end
         local word = ns.DiceWord(spell.dice)
         parts[#parts + 1] = dice .. (word ~= "damage" and (" " .. word) or "")
@@ -88,6 +91,8 @@ function RPSheet:CastSpell(spell, mode, ritual)
         self:Print(blocked)
         return
     end
+    -- A spell with a growing die that is already running rolls its next turn instead.
+    if self:GrowingSpellClick(spell, ritual) then return end
 
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
@@ -111,6 +116,10 @@ function RPSheet:CastSpell(spell, mode, ritual)
     local function finish()
         if slot then slot.set(slot.get() - 1) end
         self.castLevel = nil
+        if R.GROWING_SPELLS[spell.name] then
+            self:StartGrowingSpell(spell)
+            self:PopulateSoon() -- the row now shows the next die
+        end
         -- Only one spell can be concentrated on: a new one replaces the old.
         if spell.concentration then
             local conditions = self:State().conditions
