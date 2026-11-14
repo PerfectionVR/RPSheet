@@ -35,6 +35,8 @@ function RPSheet:ActionText(action)
         return ("Empty %s"):format(action.resource)
     elseif kind == "TOGGLE" then
         return ("%s: %s"):format(R.TOGGLE_MODES[action.mode] or "Flip", action.passive)
+    elseif kind == "SLOTS" then
+        return ns.SLOT_ACTION_TEXT[action.mode] or "Spell slots"
     elseif kind == "NEXTROLL" then
         return ("Next roll: %s"):format(action.mode == "DIS" and "disadvantage" or "advantage")
     end
@@ -146,6 +148,15 @@ function RPSheet:UseAbility(ability, mode)
 
     local costs, costTexts = CollectCosts(self, ability)
     if not costs then return end
+    -- Steps that change spell slots are checked before anything is spent.
+    local slotPlans = {}
+    for _, action in ipairs(ability.actions) do
+        if action.type == "SLOTS" then
+            local plan = ns.PlanSlotAction(self, action)
+            if not plan then return end
+            slotPlans[#slotPlans + 1] = plan
+        end
+    end
 
     local parts, index = {}, 0
     self.busy = true
@@ -166,6 +177,10 @@ function RPSheet:UseAbility(ability, mode)
 
     local function finish()
         local switched = ApplyChanges(self, ability, costs)
+        for _, plan in ipairs(slotPlans) do
+            plan.apply()
+            parts[#parts + 1] = plan.text
+        end
         local text = "uses " .. ns.Mark(ability.name)
         if #costTexts > 0 then text = text .. " (" .. table.concat(costTexts, ", ") .. ")" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end

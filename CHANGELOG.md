@@ -27,6 +27,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   slot roll the extra dice. A Warlock's spells grow with the pact slot by themselves.
 - A Death Knight's spells follow the rune and are put on the spell list by themselves,
   as are a Demon Hunter's fixed spells.
+- Arcane Recovery gives spent slots back by the click, and Font of Magic has two
+  abilities that turn a slot into Sorcery Points and points into a slot.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

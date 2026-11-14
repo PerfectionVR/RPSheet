@@ -90,6 +90,7 @@ Actions\Weapons.lua
 Actions\Abilities.lua
 Actions\Conditions.lua
 Actions\Spells.lua
+Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\DeathSaves.lua
 

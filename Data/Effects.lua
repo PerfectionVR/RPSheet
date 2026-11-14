@@ -53,6 +53,7 @@ R.ACTIONS = {
     EMPTY = "Empty a resource",
     TOGGLE = "Switch a passive on or off",
     NEXTROLL = "Set advantage or disadvantage on the next roll",
+    SLOTS = "Change spell slots", -- for class features only; not offered in the editor
 }
 R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE", "NEXTROLL" }
 R.NEXT_ROLL_MODES = { ADV = "Advantage", DIS = "Disadvantage" }

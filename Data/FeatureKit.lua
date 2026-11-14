@@ -102,6 +102,12 @@ function Kit.Dice(count, sides, stat, kind, flat)
     return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE", flat = flat or 0 }
 end
 
+-- A step that changes spell slots: "RECOVER", "TOPOINTS" or "FROMPOINTS"
+-- (see Actions/SlotActions.lua).
+function Kit.Slots(mode)
+    return { type = "SLOTS", mode = mode }
+end
+
 function Kit.Roll(kind, stat, proficient)
     return { type = "ROLL", kind = kind, stat = stat, stat2 = "", proficient = proficient ~= false }
 end

@@ -303,7 +303,11 @@ R.FEATURES = {
             { Spend("Innate Sorcery"), SwitchOn("Innate Sorcery active") }),
         Passive(1, "Innate Sorcery active", "Switch on while Innate Sorcery lasts. Adds 1 to your spell save DC, and the sheet rolls your spell attacks with advantage.",
             { Bonus("SPELLDC", 1) }, { startsOff = true, advantage = { "spell attack" } }),
-        Passive(2, "Font of Magic", "Sorcery Points come back on a long rest. No action: turn a spell slot into points equal to its level. Bonus action: make a slot from points (2 for 1st, 3 for 2nd, 5 for 3rd, 6 for 4th, 7 for 5th); such slots vanish on a long rest. Change the bars by hand."),
+        Passive(2, "Font of Magic", "Sorcery Points come back on a long rest. You can turn a spell slot into points equal to its level, and make a slot from points (2 for 1st, 3 for 2nd, 5 for 3rd, 6 for 4th, 7 for 5th); such slots vanish on a long rest. Two abilities do this."),
+        Ability(2, "Font of Magic: slot to points", "No action. Turns a spell slot into Sorcery Points equal to its level: your lowest free slot, or the level set at \"Cast at\".",
+            { Kit.Slots("TOPOINTS") }),
+        Ability(2, "Font of Magic: points to slot", "Bonus action. Makes a spell slot from Sorcery Points: a 1st-level one, or the level set at \"Cast at\", 5th at most.",
+            { Kit.Slots("FROMPOINTS") }),
         Passive(2, "Metamagic", function(level)
             return ("You know %d Metamagic options, each an ability that spends Sorcery Points. One option per spell, unless it says otherwise. They are chosen when you level."):format(AtLevel(level, R.PICK_LISTS.metamagic.known))
         end),
@@ -336,8 +340,8 @@ R.FEATURES = {
     Wizard = {
         Passive(1, "Ritual Adept", "You can cast any ritual spell in your spellbook as a ritual without preparing it."),
         Ability(1, "Arcane Recovery", function(level)
-            return ("After a short rest, recover spell slots with a combined level of up to %d, none above 5th. Once per long rest. Restore the slots on the sheet by hand."):format(math.ceil(level / 2))
-        end, { Spend("Arcane Recovery") }),
+            return ("After a short rest, recover spell slots with a combined level of up to %d, none above 5th. Once per long rest. The highest spent slots that fit come back; change the bars by hand for another mix."):format(math.ceil(level / 2))
+        end, { Spend("Arcane Recovery"), Kit.Slots("RECOVER") }),
         Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. It is chosen when you level.", nil,
             { expertise = { steps = { { 2, 1 } }, skills = { "Arcana", "History", "Investigation", "Medicine", "Nature", "Religion" } } }),
         Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
