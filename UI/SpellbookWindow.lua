@@ -101,11 +101,16 @@ function RPSheet:PopulateSpellbook()
         if #names == 0 then
             UI.AddLabel(body, 1, UI.GREY .. "The book is empty. Add spells under Customize, Spellbook (the cog above).|r")
         end
-        local level
+        -- The core spells and the spells of Azeroth each under their own heading, by level.
+        local section, level
         for _, name in ipairs(names) do
+            if R.SpellGroup(name) ~= section then
+                section, level = R.SpellGroup(name), nil
+                UI.AddHeading(body, R.SPELL_GROUPS[section])
+            end
             if R.SPELLS[name].level ~= level then
                 level = R.SPELLS[name].level
-                UI.AddHeading(body, R.SPELL_LEVELS[level])
+                UI.AddLabel(body, 1, UI.ACCENT .. R.SPELL_LEVELS[level] .. "|r")
             end
             AddSpell(self, body, name)
         end

@@ -72,6 +72,9 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   ritual can be cast straight from the book without being prepared.
 - Making a character and taking a level now ask for spells: the cantrips of a
   spellcasting class, and for a Mage the spells to write into the spellbook.
+- Wherever spells are listed to choose from, the core spells and the spells of
+  Azeroth are shown apart: in the level dialog, the spellbook and the dropdowns.
+- Arcane Pulse no longer grows with level.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

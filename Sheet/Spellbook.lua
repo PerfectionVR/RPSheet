@@ -52,12 +52,10 @@ function ns.SpellbookRemove(sheet, name)
     picks[name], extra[name] = nil, nil
 end
 
-local function ByLevel(a, b)
-    if R.SPELLS[a].level ~= R.SPELLS[b].level then return R.SPELLS[a].level < R.SPELLS[b].level end
-    return a < b
-end
+local ByLevel = R.SpellBefore -- core spells first, then by level
 
--- Names of the spells in the book, lowest level first.
+-- Names of the spells in the book: the core spells, then those of Azeroth, each lowest
+-- level first.
 function ns.SpellbookNames(sheet)
     local picks, extra = Parts(sheet)
     local seen, names = {}, {}

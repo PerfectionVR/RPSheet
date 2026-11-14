@@ -528,7 +528,27 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
         name = function() return ("%s (%d of %d chosen)"):format(list.title, draft and PicksChosen(key) or 0, PickLimit(key)) end,
         hidden = function() return PickLimit(key) == 0 end,
     }
+    -- A long list leaves out what the character can't pick yet.
+    local function Hidden(name)
+        return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
+            and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
+    end
+    local section
     for index, name in ipairs(list.order) do
+        -- Items that carry a group get a heading where a new group starts.
+        local itemGroup = list.items[name].group
+        if itemGroup and itemGroup ~= section then
+            section = itemGroup
+            group.args["head" .. index] = {
+                type = "header", order = index - 0.5, name = itemGroup,
+                hidden = function()
+                    for _, other in ipairs(list.order) do
+                        if list.items[other].group == itemGroup and not Hidden(other) then return false end
+                    end
+                    return true
+                end,
+            }
+        end
         group.args["pick" .. index] = {
             type = "toggle", order = index, width = 1.5,
             name = function()
@@ -538,11 +558,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
                 local shown = tag and ("%s |cff888888(%s)|r"):format(name, tag) or name
                 return blocked and ("|cff888888%s (%s)|r"):format(name, blocked) or shown
             end,
-            -- A long list leaves out what the character can't pick yet.
-            hidden = function()
-                return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
-                    and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
-            end,
+            hidden = function() return Hidden(name) end,
             desc = list.items[name].desc,
             disabled = function()
                 if draft.picks[key][name] then return false end

@@ -43,7 +43,7 @@ local args = {
         values = function()
             local values = {}
             for _, name in ipairs(Choices()) do
-                values[name] = ("%s (%s)"):format(name, R.SPELL_LEVELS[R.SPELLS[name].level]:lower())
+                values[name] = R.SpellChoiceLabel(name)
             end
             return values
         end,
@@ -62,7 +62,6 @@ local args = {
             Opt.Changed()
         end,
     },
-    listHeader = { type = "header", order = 5, name = "In the book" },
 }
 
 -- One row per spell: a tick box for prepared, and a button to take it out of the book.
@@ -72,8 +71,14 @@ table.insert(Opt.rebuilders, function()
     end
     local sheet = Sheet()
     if not ns.HasSpellbook(sheet) then return end
+    local section
     for index, name in ipairs(ns.SpellbookNames(sheet)) do
         local known = R.SPELLS[name]
+        -- The core spells and the spells of Azeroth each under their own heading.
+        if R.SpellGroup(name) ~= section then
+            section = R.SpellGroup(name)
+            args["bookHead" .. index] = { type = "header", order = 10 + index - 0.25, name = R.SPELL_GROUPS[section] }
+        end
         args["bookPrepared" .. index] = {
             type = "toggle", order = 10 + index, width = 1.6,
             name = ("%s (%s)"):format(name, R.SPELL_LEVELS[known.level]:lower()),

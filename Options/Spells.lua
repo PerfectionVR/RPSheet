@@ -98,10 +98,7 @@ local function Available()
     for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
         if not have[name] then names[#names + 1] = name end
     end
-    table.sort(names, function(a, b)
-        if R.SPELLS[a].level ~= R.SPELLS[b].level then return R.SPELLS[a].level < R.SPELLS[b].level end
-        return a < b
-    end)
+    table.sort(names, R.SpellBefore) -- core spells first, then those of Azeroth
     return names
 end
 
@@ -115,7 +112,7 @@ local function Extra(args)
         values = function()
             local values = {}
             for _, name in ipairs(Available()) do
-                values[name] = ("%s (%s)"):format(name, R.SPELL_LEVELS[R.SPELLS[name].level]:lower())
+                values[name] = R.SpellChoiceLabel(name)
             end
             return values
         end,
