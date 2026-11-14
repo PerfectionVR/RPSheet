@@ -185,7 +185,7 @@ other ten still need that.
 - [x] A Demon Hunter's set of spells, following the specialization
 - [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
 - [x] Arcane Recovery, Font of Magic and Magical Cunning change spell slots by the click
-- [ ] Slots made with Font of Magic going above the usual number of slots
+- [x] Slots made with Font of Magic go above the usual number of slots, until a long rest
 - [ ] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
       chosen from a list
 - [ ] Multiclassing

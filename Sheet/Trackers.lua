@@ -74,8 +74,14 @@ function RPSheet:GetTrackers()
     local pact = class and class.caster == "PACT"
     for spellLevel = 1, 9 do
         if slots[spellLevel] then
-            add("slot", R.ORDINALS[spellLevel] .. "-level slot", slots[spellLevel], slots[spellLevel], state.slots, spellLevel,
+            -- Slots made from Sorcery Points can go above the usual number (see
+            -- Actions/SlotActions.lua). The maximum follows them up, and comes back
+            -- down as they are spent; a long rest resets to the usual number.
+            local usual = slots[spellLevel]
+            local have = type(state.slots[spellLevel]) == "number" and state.slots[spellLevel] or 0
+            add("slot", R.ORDINALS[spellLevel] .. "-level slot", math.max(usual, have), usual, state.slots, spellLevel,
                 pact and "ALL" or nil) -- pact magic slots come back on a short rest
+            list[#list].usual = usual
         end
     end
     return list
