@@ -114,6 +114,7 @@ function ns.NormalizeState(state)
     end
     if type(state.conditions) ~= "table" then state.conditions = {} end
     state.exhaustion = tonumber(state.exhaustion) or 0
+    if type(state.freeUsed) ~= "table" then state.freeUsed = {} end
     local sheet = state.sheet
     sheet.extraLanguages = tonumber(sheet.extraLanguages) or 0
     if type(sheet.asi) ~= "table" then sheet.asi = {} end

@@ -36,6 +36,7 @@ ns.defaults = {
                 res = {},   -- custom resources, by name
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level
+                freeUsed = {}, -- [ability name] = true: its free first use since a long rest is gone
                 sheet = {
                     version = 2,
                     level = 1,

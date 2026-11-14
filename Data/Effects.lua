@@ -90,6 +90,8 @@ R.TEMPLATES = {
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
         times = 1,                                                     -- WEAPON
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
+        refund = "",                                                   -- SPEND: when it can be taken back ("the check still failed")
+        firstFree = false,                                             -- SPEND: waived for the first use after a long rest
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
     },
 }

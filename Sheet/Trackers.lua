@@ -94,4 +94,9 @@ function RPSheet:ClampState(refill)
         if refill or type(value) ~= "number" then value = tracker.reset end
         tracker.set(value)
     end
+    if refill then
+        -- Rested: first uses are free again, and nothing spent before can be taken back.
+        self:State().freeUsed = {}
+        self:ForgetRefunds()
+    end
 end
