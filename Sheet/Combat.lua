@@ -122,11 +122,11 @@ function RPSheet:WeaponMastery(weapon)
     if mastery and not weapon.heal and self:HasWeaponMastery() then return weapon.mastery, mastery end
 end
 
--- What is said about the mastery when attacking, e.g. "On a hit: pushes the target 10 feet (Push)".
+-- What is said about the mastery when attacking, e.g. "On a hit: pushes the target 10 feet [Push]".
 function RPSheet:MasteryNote(weapon)
     local name, mastery = self:WeaponMastery(weapon)
     if not name then return end
     local mod = self:Mod(self:WeaponStat(weapon))
     local number = name == "Topple" and (8 + mod + self:ProficiencyBonus()) or math.max(0, mod)
-    return ("%s (%s)"):format(mastery.note:format(number), name)
+    return ("%s %s"):format(mastery.note:format(number), ns.Mark(name))
 end

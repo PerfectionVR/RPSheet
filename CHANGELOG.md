@@ -5,6 +5,10 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Rule terms in announcements are links for anyone with the addon: hover [Vex],
+  [Poisoned], a weapon, spell or skill to see what it is, and click to see the
+  maths behind it. Clicking another player's term asks their addon. Without the
+  addon the terms are plain text in square brackets.
 - A "Next roll" row switches between normal, advantage and disadvantage, for one
   roll or for every roll.
 - A small [?] in front of the numbers on the sheet shows, to you alone, how each is

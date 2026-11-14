@@ -7,6 +7,16 @@ local R = ns.Rules
 local RPSheet = ns.addon
 local Util = ns.Util
 
+-- Explanations are printed for the player, or collected when another player asked
+-- (see RPSheet:ExplainTerm).
+local function Out(self, text)
+    if self.explainCapture then
+        self.explainCapture[#self.explainCapture + 1] = text
+    else
+        self:Print(text)
+    end
+end
+
 -- A list of { label, value } that add up to a total.
 local function Add(parts, label, value)
     if value and value ~= 0 then parts[#parts + 1] = { label, value } end
@@ -49,7 +59,7 @@ local function Ability(self, parts, stat)
 end
 
 local function Show(self, what, parts, prefix)
-    self:Print(("%s %s%s|r: %s%s."):format(what, "|cffffd100", Util.Signed(Total(parts)), prefix or "", Join(parts)))
+    Out(self, ("%s %s%s|r: %s%s."):format(what, "|cffffd100", Util.Signed(Total(parts)), prefix or "", Join(parts)))
 end
 
 ---------------------------------------------------------------------------
@@ -88,7 +98,7 @@ function RPSheet:ExplainPassivePerception()
     for _, skill in ipairs(R.SKILLS) do
         if skill.name == "Perception" then
             local parts = SkillParts(self, skill)
-            self:Print(("Passive Perception |cffffd100%d|r: 10, %s."):format(10 + Total(parts), Join(parts)))
+            Out(self, ("Passive Perception |cffffd100%d|r: 10, %s."):format(10 + Total(parts), Join(parts)))
         end
     end
 end
@@ -104,7 +114,7 @@ function RPSheet:ExplainSpeed()
     local species = self:SpeciesData()
     local parts = { { species and species.name or "base", species and species.speed or 30 } }
     AddBonuses(self, parts, "SPEED")
-    self:Print(("Speed |cffffd100%d ft|r: %s."):format(Total(parts), Join(parts)))
+    Out(self, ("Speed |cffffd100%d ft|r: %s."):format(Total(parts), Join(parts)))
 end
 
 function RPSheet:ExplainAC()
@@ -123,7 +133,7 @@ function RPSheet:ExplainAC()
     if sheet.shield then Add(parts, "shield", R.SHIELD_AC) end
     AddBonuses(self, parts, "AC")
     Add(parts, "Fighting Style", self:StyleAC())
-    self:Print(("Armor Class |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
+    Out(self, ("Armor Class |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
 end
 
 function RPSheet:ExplainSpellDC()
@@ -132,7 +142,7 @@ function RPSheet:ExplainSpellDC()
     local parts = { { "base", 8 }, { "proficiency", self:ProficiencyBonus() } }
     Ability(self, parts, stat)
     AddBonuses(self, parts, "SPELLDC")
-    self:Print(("Spell save DC |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
+    Out(self, ("Spell save DC |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
 end
 
 local function SpellAttackParts(self)
@@ -162,7 +172,7 @@ function RPSheet:ExplainSpell(spell)
         lines[#lines + 1] = ("%s %dd%d %s: %s"):format(word, self:SpellDiceCount(spell), spell.sides, Util.Signed(Total(parts)), Join(parts))
     end
     if #lines == 0 then lines[1] = "nothing is rolled" end
-    self:Print(("%s: %s."):format(spell.name, table.concat(lines, "; ")))
+    Out(self, ("%s: %s."):format(spell.name, table.concat(lines, "; ")))
 end
 
 function RPSheet:ExplainWeapon(weapon)
@@ -171,7 +181,7 @@ function RPSheet:ExplainWeapon(weapon)
         local parts = {}
         Ability(self, parts, self:WeaponStat(weapon))
         AddBonuses(self, parts, "HEALING")
-        self:Print(("%s, healing %dd%d %s: %s."):format(weapon.name, weapon.dice, weapon.sides, Util.Signed(Total(parts)), Join(parts)))
+        Out(self, ("%s, healing %dd%d %s: %s."):format(weapon.name, weapon.dice, weapon.sides, Util.Signed(Total(parts)), Join(parts)))
         return
     end
     local hit, damage, notes = {}, {}, {}
@@ -197,8 +207,49 @@ function RPSheet:ExplainWeapon(weapon)
     if data and data.versatile then
         notes[#notes + 1] = weapon.twoHands and "held in two hands for the larger die" or "held in one hand"
     end
-    self:Print(("%s, to hit |cffffd100%s|r: %s. %s %dd%d |cffffd100%s|r: %s.%s"):format(
+    Out(self, ("%s, to hit |cffffd100%s|r: %s. %s %dd%d |cffffd100%s|r: %s.%s"):format(
         weapon.name, Util.Signed(Total(hit)), Join(hit),
         ns.DamageWord(weapon):gsub("^%l", string.upper), count, sides, Util.Signed(Total(damage)), Join(damage),
         #notes > 0 and (" " .. table.concat(notes, "; "):gsub("^%l", string.upper) .. ".") or ""))
+end
+
+---------------------------------------------------------------------------
+-- By name, for a term clicked in chat (see Integrations/ChatLinks.lua)
+---------------------------------------------------------------------------
+local function Named(list, name)
+    for _, entry in ipairs(list) do
+        if entry.name == name then return entry end
+    end
+end
+
+-- The explanation for a term as it stands on this character, as plain text, or nil
+-- when there is nothing to work out for it.
+function RPSheet:ExplainTerm(term)
+    local sheet = self:Sheet()
+    self.explainCapture = {}
+    local weapon, spell = Named(sheet.weapons, term), Named(sheet.spells, term)
+    local stat, kind = term:match("^(%u%u%u) (%l+)$")
+    if weapon then
+        self:ExplainWeapon(weapon)
+    elseif spell then
+        self:ExplainSpell(spell)
+    elseif stat and R.STAT_NAMES[stat] and kind == "check" then
+        self:ExplainCheck(stat)
+    elseif stat and R.STAT_NAMES[stat] and kind == "save" then
+        self:ExplainSave(stat)
+    elseif term == "initiative" then
+        self:ExplainInitiative()
+    elseif term == "spell attack" then
+        self:ExplainSpellAttack()
+    else
+        for _, skill in ipairs(R.SKILLS) do
+            if skill.name == term then self:ExplainSkill(skill) end
+        end
+    end
+    local lines = self.explainCapture
+    self.explainCapture = nil
+    if #lines > 0 then return table.concat(lines, " ") end
+    -- An ability or passive of the character's own: what it says on the sheet.
+    local entry = Named(sheet.abilities, term) or Named(sheet.passives, term)
+    if entry and entry.desc ~= "" then return ("%s: %s"):format(term, entry.desc) end
 end

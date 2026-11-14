@@ -39,7 +39,7 @@ function RPSheet:Attack(mode)
     local mod = self:Mod(self:WeaponStat(weapon))
     if weapon.heal then
         self:RollDice(weapon.dice, weapon.sides, function(rolls)
-            self:Announce(("uses %s - %s"):format(weapon.name, RollText.Dice("healing", rolls, weapon.sides, mod + self:Bonus("HEALING"))))
+            self:Announce(("uses %s - %s"):format(ns.Mark(weapon.name), RollText.Dice("healing", rolls, weapon.sides, mod + self:Bonus("HEALING"))))
         end)
         return
     end
@@ -55,7 +55,7 @@ function RPSheet:Attack(mode)
             -- Great Weapon Fighting: low damage dice count as higher.
             for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end
             local text = ("attacks with %s - %s, %s"):format(
-                weapon.name, RollText.Check("to hit", d20, attackMod, note),
+                ns.Mark(weapon.name), RollText.Check("to hit", d20, attackMod, note),
                 RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod))
             if mastery then text = text .. ". " .. mastery end
             self:Announce(text)

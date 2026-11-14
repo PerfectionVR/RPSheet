@@ -23,7 +23,7 @@ function RPSheet:Announce(text)
         if why then
             line = ("%s |cff999999(only you see this: %s)|r"):format(line, why)
         end
-        self:Print(line)
+        self:Print(ns.LinkTerms(line, ns.PlayerFullName()))
         return
     end
     -- Emotes are already prefixed with the character's name by the game.

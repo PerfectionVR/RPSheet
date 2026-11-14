@@ -133,7 +133,7 @@ end
 -- A plain d20 check: ability check, saving throw, skill, initiative, spell attack.
 function RPSheet:RollCheck(label, mod, mode)
     self:RollD20(mode, function(d20, note)
-        self:Announce("rolls " .. ns.RollText.Check(label, d20, mod, note))
+        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label), d20, mod, note))
     end)
 end
 

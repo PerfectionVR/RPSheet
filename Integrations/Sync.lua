@@ -10,7 +10,10 @@ local QUERY_COOLDOWN = 30   -- seconds before asking the same player again
 local REPLY_COOLDOWN = 5    -- seconds before answering the same player again
 local BROADCAST_DELAY = 2   -- groups several quick changes into one message
 
+local EXPLAIN_COOLDOWN = 1  -- seconds before explaining to the same player again
+
 local cache, lastQuery, lastReply = {}, {}, {}
+local lastExplain, asked = {}, {} -- per player: last answer given, and the term we asked about
 local broadcastQueued = false
 
 local function FullName(unit)
@@ -60,6 +63,16 @@ local function QueryUnit(unit)
     if now - (lastQuery[fullName] or -QUERY_COOLDOWN) < QUERY_COOLDOWN then return end
     lastQuery[fullName] = now
     RPSheet:SendCommMessage(PREFIX, ns.Codec.Pack("addon", "Q"), "WHISPER", fullName)
+end
+
+-- Asks another player's addon how one of their numbers is worked out (a term clicked
+-- in chat). Returns false when the question can't be sent.
+function RPSheet:RequestExplanation(fullName, term)
+    if not self.db.profile.share or not CanSend() then return false end
+    asked[fullName] = term
+    self:SendCommMessage(PREFIX, ns.Codec.Pack("addon", "E", term), "WHISPER", fullName)
+    self:Print(("Asking %s's sheet about %s..."):format(fullName:match("^[^-]+"), term))
+    return true
 end
 
 ---------------------------------------------------------------------------
@@ -115,7 +128,7 @@ function RPSheet:OnCommReceived(_, message, distribution, sender)
     end
     if sender == FullName("player") then return end
 
-    local ok, kind, data = ns.Codec.Unpack("addon", message)
+    local ok, kind, data, extra = ns.Codec.Unpack("addon", message)
     if not ok then return end
 
     if kind == "Q" then
@@ -129,6 +142,30 @@ function RPSheet:OnCommReceived(_, message, distribution, sender)
         if clean then
             cache[sender] = clean
             ns.RefreshTRP3Tooltip(sender)
+        end
+    elseif kind == "E" then
+        -- Someone clicked one of our terms in chat and asks how it is worked out.
+        local now = GetTime()
+        local term = Text(data, nil, 60)
+        if term and distribution == "WHISPER" and self.db.profile.share and CanSend()
+            and now - (lastExplain[sender] or -EXPLAIN_COOLDOWN) >= EXPLAIN_COOLDOWN then
+            lastExplain[sender] = now
+            local text = self:ExplainTerm(term) or ""
+            -- Colour codes can't travel; the receiver strips them anyway.
+            text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+            self:SendCommMessage(PREFIX, ns.Codec.Pack("addon", "X", term, text), "WHISPER", sender)
+        end
+    elseif kind == "X" then
+        -- The answer to a question we asked. Anything else is ignored.
+        local term, text = Text(data, nil, 60), Text(extra, "", 500)
+        if term and asked[sender] == term then
+            asked[sender] = nil
+            local name = sender:match("^[^-]+")
+            if text ~= "" then
+                self:Print(("%s - %s"):format(name, text))
+            else
+                self:Print(("%s's sheet has nothing to work out for %s."):format(name, term))
+            end
         end
     end
 end

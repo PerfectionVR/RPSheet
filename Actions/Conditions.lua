@@ -21,7 +21,8 @@ end
 function RPSheet:ToggleCondition(name)
     local conditions = self:State().conditions
     conditions[name] = not conditions[name] or nil
-    self:Announce(conditions[name] and ("is now %s."):format(name) or ("is no longer %s."):format(name))
+    local term = ns.Mark(name)
+    self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
     self:QueueBroadcast()
     self:PopulateSoon()
 end

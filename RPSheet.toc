@@ -99,6 +99,7 @@ UI\Minimap.lua
 
 Integrations\TRP3Tooltip.lua
 Integrations\Sync.lua
+Integrations\ChatLinks.lua
 
 # Settings, character editor and creation wizard
 Options\Common.lua

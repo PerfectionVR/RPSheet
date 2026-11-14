@@ -31,6 +31,7 @@ function RPSheet:OnEnable()
     self:BuildMinimapIcon()
     ns.HookTRP3Tooltip(self)
     self:EnableSync()
+    ns.EnableChatLinks()
 
     -- Follow Total RP 3: when its profile loads or the player switches profile,
     -- switch to that profile's sheet and refresh the name.

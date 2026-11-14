@@ -161,7 +161,7 @@ function RPSheet:UseAbility(ability, mode)
 
     local function finish()
         local switched = ApplyChanges(self, ability, costs)
-        local text = "uses " .. ability.name
+        local text = "uses " .. ns.Mark(ability.name)
         if #costTexts > 0 then text = text .. " (" .. table.concat(costTexts, ", ") .. ")" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false

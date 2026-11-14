@@ -72,7 +72,7 @@ function RPSheet:CastSpell(spell, mode)
             conditions.Concentrating = true
             self:PopulateSoon()
         end
-        local text = "casts " .. spell.name
+        local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
