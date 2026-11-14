@@ -86,7 +86,7 @@ function RPSheet:SetLevel(level)
         lines[#lines + 1] = ("Choices are waiting on the Character tab for level %s."):format(table.concat(pending, ", "))
     end
     if level >= R.SUBCLASS_LEVEL and sheet.subclass == "" and self:ClassData() then
-        lines[#lines + 1] = "You can choose a subclass on the Character tab."
+        lines[#lines + 1] = "You can choose a subclass under Customize, Class and origin."
     end
     self:Print(table.concat(lines, " "))
 end

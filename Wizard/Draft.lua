@@ -10,9 +10,20 @@ ns.Wizard = W
 W.STEPS = { "Choose a class", "Determine origin", "Determine ability scores", "Choose an alignment and allegiance", "Fill in details" }
 W.draft = nil -- set while the wizard is open
 
+-- The entries of a list the player made, leaving out what a class, subclass, species,
+-- background or level put there.
+local function OwnEntries(list)
+    local own = {}
+    for _, entry in ipairs(list) do
+        if (entry.auto or "") == "" then own[#own + 1] = entry end
+    end
+    return own
+end
+
 function W.NewDraft()
     local current = RPSheet:Sheet()
-    local hasContent = #current.abilities + #current.passives + #current.resources > 0
+    local hasContent = #OwnEntries(current.abilities) + #OwnEntries(current.passives)
+        + #current.resources + #current.weapons + #current.spells > 0
     return {
         step = 1,
         class = "", subclass = "", spec = "", level = 1, classSkills = {},
@@ -23,8 +34,9 @@ function W.NewDraft()
         alignment = "",
         armor = "NONE", shield = false,
         weaponName = "Weapon", weaponStat = "STR", weaponSides = 8,
-        -- An existing sheet (for example one converted from an older version) can keep its lists.
-        keepLists = hasContent, hasContent = hasContent,
+        -- A new character starts clean. What the player made by hand on the current one
+        -- can be carried over, but only if they ask for it.
+        keepLists = false, hasContent = hasContent,
     }
 end
 
@@ -90,8 +102,8 @@ function W.Finish()
     end
 
     if draft.keepLists then
-        sheet.resources, sheet.weapons = old.resources, old.weapons
-        sheet.abilities, sheet.passives = old.abilities, old.passives
+        sheet.resources, sheet.weapons, sheet.spells = old.resources, old.weapons, old.spells
+        sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives)
     end
     if #sheet.weapons == 0 and draft.weaponName ~= "" then
         sheet.weapons[1] = {

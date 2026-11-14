@@ -1,16 +1,17 @@
 -- Shared pieces for the settings, the character editor and the creation wizard:
 -- dropdown lists and the helper that binds an option to a field.
 --
--- Each tab file adds its AceConfig group to Opt.tabs; each list file (resources,
--- weapons, abilities, passives) adds a definition to Opt.lists. Options/Root.lua
--- assembles them.
+-- Each file adds its AceConfig group to Opt.tabs (a tab of the settings window) or to
+-- Opt.custom (a page under the Customize tab, for editing the character directly);
+-- each list file (resources, weapons, abilities, spells, passives) adds a definition
+-- to Opt.lists, which also end up under Customize. Options/Root.lua assembles them.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 
 -- Opt.rebuilders holds functions that ns.RebuildOptions runs, for tabs whose rows
 -- depend on the sheet.
-local Opt = { tabs = {}, lists = {}, rebuilders = {} }
+local Opt = { tabs = {}, custom = {}, lists = {}, rebuilders = {} }
 ns.Opt = Opt
 
 Opt.RED, Opt.GOLD, Opt.GREEN = "|cffff5555", "|cffffd100", "|cff80ff80"

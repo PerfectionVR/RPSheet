@@ -1,4 +1,7 @@
--- "Character" tab: class, level, subclass, species, background, alignment.
+-- "Character" tab: an overview with the two wizards (create a character, take or
+-- undo a level) and the choices made at each level.
+-- "Class and origin" page under Customize: class, subclass, species, background,
+-- alignment, changed directly.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -68,7 +71,6 @@ local function Summary()
     if #pending > 0 then
         lines[#lines + 1] = ("%sA choice is waiting for level %s. See Level choices below.|r"):format(Opt.RED, table.concat(pending, ", "))
     end
-    lines[#lines + 1] = "Changing class, species or background adds what they grant. It never removes anything already on the sheet."
     return table.concat(lines, "\n") .. "\n"
 end
 
@@ -89,35 +91,16 @@ local function SizeValues()
     return values
 end
 
-Opt.tabs.character = {
-    type = "group", order = 2, name = "Character",
+Opt.custom.identity = {
+    type = "group", order = 1, name = "Class and origin",
     args = {
-        summary = { type = "description", order = 1, fontSize = "medium", name = Summary, dialogControl = "RPSheetTermLabel" },
+        intro = {
+            type = "description", order = 1,
+            name = "Changing class, species or background adds what they grant. It never removes anything already on the sheet. Level is changed on the Character tab.\n",
+        },
         class = Granting({
             type = "select", order = 2, name = "Class", values = Opt.CLASS_VALUES, sorting = Opt.CLASS_ORDER,
         }, "class"),
-        break0 = { type = "description", order = 3, name = "" },
-        levelUp = {
-            type = "execute", order = 3.1,
-            name = function() return Sheet().level >= R.MAX_LEVEL and "Highest level" or ("Take level " .. (Sheet().level + 1)) end,
-            desc = "Shows what the next level gives and asks for the choices that come with it.",
-            disabled = function() return Sheet().level >= R.MAX_LEVEL end,
-            func = function() ns.OpenLevelDialog() end,
-        },
-        levelDown = {
-            type = "execute", order = 3.2,
-            name = function() return Sheet().level <= 1 and "Level 1" or ("Back to level " .. (Sheet().level - 1)) end,
-            desc = "Goes down one level. What that level gave is taken off the sheet again: its features, hit points, and the choice you made for it.",
-            disabled = function() return Sheet().level <= 1 end,
-            confirm = function()
-                return ("Go back to level %d? Everything level %d gave is removed, including the choice you made for it."):format(Sheet().level - 1, Sheet().level)
-            end,
-            func = function()
-                RPSheet:LevelDown()
-                ns.RebuildOptions()
-                Opt.Changed()
-            end,
-        },
         break1 = { type = "description", order = 4, name = "" },
         subclass = ClassList({
             type = "select", order = 5, name = "Subclass",
@@ -127,7 +110,7 @@ Opt.tabs.character = {
         }, "subclasses"),
         subclassText = {
             type = "input", order = 6, name = "Or type a subclass",
-            desc = "For a subclass that isn't in the list. Its features aren't built in; add them on the Abilities and Passives tabs.",
+            desc = "For a subclass that isn't in the list. Its features aren't built in; add them under Abilities and Passives.",
             get = function() return Sheet().subclass end,
             set = function(_, value)
                 Sheet().subclass = value:trim():gsub("[|\n\r]", "")
@@ -150,18 +133,6 @@ Opt.tabs.character = {
             type = "select", order = 12, name = "Alignment",
             values = Opt.ALIGNMENT_VALUES, sorting = Opt.ALIGNMENT_ORDER,
         }, Sheet, "alignment"),
-        choicesHeader = { type = "header", order = 14, name = "Level choices" },
-        choicesHelp = {
-            type = "description", order = 15,
-            name = function()
-                for level = 1, Sheet().level do
-                    if Levels.Kind(Sheet(), level) then
-                        return "What you chose at the levels that offer an Ability Score Improvement, a feat or an Epic Boon. Click one to change it.\n"
-                    end
-                end
-                return "Some levels offer an Ability Score Improvement, a feat or an Epic Boon. Your choices will be listed here.\n"
-            end,
-        },
         featuresHeader = { type = "header", order = 20, name = "Class features" },
         featuresHelp = {
             type = "description", order = 21,
@@ -179,6 +150,68 @@ Opt.tabs.character = {
                 ns.RebuildOptions()
                 Opt.Changed()
             end,
+        },
+    },
+}
+
+local function NoCharacter() return RPSheet:ClassData() == nil end
+
+Opt.tabs.character = {
+    type = "group", order = 1, name = "Character",
+    args = {
+        summary = { type = "description", order = 1, fontSize = "medium", name = Summary, dialogControl = "RPSheetTermLabel" },
+        create = {
+            type = "execute", order = 2, width = "double", name = "Create character",
+            desc = "Opens the creation wizard: class, origin, ability scores, alignment and details.",
+            hidden = function() return not NoCharacter() end,
+            func = function() ns.OpenWizard() end,
+        },
+        levelUp = {
+            hidden = NoCharacter,
+            type = "execute", order = 3.1,
+            name = function() return Sheet().level >= R.MAX_LEVEL and "Highest level" or ("Take level " .. (Sheet().level + 1)) end,
+            desc = "Shows what the next level gives and asks for the choices that come with it.",
+            disabled = function() return Sheet().level >= R.MAX_LEVEL end,
+            func = function() ns.OpenLevelDialog() end,
+        },
+        levelDown = {
+            hidden = NoCharacter,
+            type = "execute", order = 3.2,
+            name = function() return Sheet().level <= 1 and "Level 1" or ("Back to level " .. (Sheet().level - 1)) end,
+            desc = "Goes down one level. What that level gave is taken off the sheet again: its features, hit points, and the choice you made for it.",
+            disabled = function() return Sheet().level <= 1 end,
+            confirm = function()
+                return ("Go back to level %d? Everything level %d gave is removed, including the choice you made for it."):format(Sheet().level - 1, Sheet().level)
+            end,
+            func = function()
+                RPSheet:LevelDown()
+                ns.RebuildOptions()
+                Opt.Changed()
+            end,
+        },
+        choicesHeader = { type = "header", order = 14, name = "Level choices", hidden = NoCharacter },
+        choicesHelp = {
+            type = "description", order = 15,
+            hidden = NoCharacter,
+            name = function()
+                for level = 1, Sheet().level do
+                    if Levels.Kind(Sheet(), level) then
+                        return "What you chose at the levels that offer an Ability Score Improvement, a feat or an Epic Boon. Click one to change it.\n"
+                    end
+                end
+                return "Some levels offer an Ability Score Improvement, a feat or an Epic Boon. Your choices will be listed here.\n"
+            end,
+        },
+        moreHeader = { type = "header", order = 30, name = "Changing the character" },
+        moreHelp = {
+            type = "description", order = 31,
+            name = "Levels are taken and undone here. To change anything else directly (class, origin, scores, proficiencies, weapons, spells, abilities, passives), use the Customize tab. To begin again, start a new character.\n",
+        },
+        restart = {
+            type = "execute", order = 32, name = "New character",
+            desc = "Opens the creation wizard. Finishing it replaces this character; closing it changes nothing.",
+            hidden = NoCharacter,
+            func = function() ns.OpenWizard() end,
         },
     },
 }

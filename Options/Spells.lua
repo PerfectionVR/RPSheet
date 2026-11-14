@@ -36,7 +36,7 @@ local function Build(spell)
             values = Opt.DIE_VALUES, sorting = Opt.DIE_ORDER,
         }, self, "sides"),
         dice = With({
-            type = "select", order = 8, name = "Counts as", hidden = rollsDice, values = R.DICE_KINDS,
+            type = "select", order = 8, name = "Counts as", hidden = rollsDice, values = R.DICE_KINDS, sorting = R.DICE_KIND_ORDER,
         }, self, "dice"),
         addMod = With({
             type = "toggle", order = 9, name = "Add spellcasting modifier", hidden = rollsDice,

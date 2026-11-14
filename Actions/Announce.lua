@@ -8,14 +8,22 @@ ns.CHANNEL_LABEL = { EMOTE = "Emote", PARTY = "Party", RAID = "Raid", SELF = "Se
 -- `text` reads as a continuation of the character's name: "rolls Stealth: 14 + 5 = 19".
 function RPSheet:Announce(text)
     local channel = self.db.profile.channel
-    if (channel == "PARTY" and not IsInGroup()) or (channel == "RAID" and not IsInRaid()) then
-        channel = "SELF"
+    -- When the chosen channel can't be used the line is shown to the player alone, with
+    -- the reason, so it is never mistaken for an announcement others saw.
+    local why
+    if channel == "PARTY" and not IsInGroup() then
+        why = "you are not in a party"
+    elseif channel == "RAID" and not IsInRaid() then
+        why = "you are not in a raid"
+    elseif channel ~= "SELF" and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then
+        why = "the game blocks addon chat messages right now"
     end
-    if channel ~= "SELF" and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then
-        channel = "SELF"
-    end
-    if channel == "SELF" then
-        self:Print(self:GetCharacterName() .. " " .. text)
+    if why or channel == "SELF" then
+        local line = self:GetCharacterName() .. " " .. text
+        if why then
+            line = ("%s |cff999999(only you see this: %s)|r"):format(line, why)
+        end
+        self:Print(line)
         return
     end
     -- Emotes are already prefixed with the character's name by the game.

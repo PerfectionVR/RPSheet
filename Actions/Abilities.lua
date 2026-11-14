@@ -48,6 +48,15 @@ local function CollectCosts(self, ability)
                 self:Print(("%s needs the resource \"%s\", which this sheet doesn't have."):format(ability.name, action.resource))
                 return
             end
+            -- A spell slot that is used up can be paid with the lowest higher one left.
+            if tracker.kind == "slot" and tracker.get() < action.amount then
+                for _, other in ipairs(self:GetTrackers()) do
+                    if other.kind == "slot" and other.level > tracker.level and other.get() >= action.amount then
+                        tracker = other
+                        break
+                    end
+                end
+            end
             local full = action.freeIfFull ~= "" and self:FindTracker(action.freeIfFull)
             if full and full.get() >= full.max then
                 texts[#texts + 1] = ("free, %s is full"):format(full.label)
@@ -134,6 +143,20 @@ function RPSheet:UseAbility(ability, mode)
     local parts, index = {}, 0
     self.busy = true
 
+    -- An ability with an attack roll is an attack of its own: its damage gets the
+    -- passive damage bonus, and a natural 20 doubles its damage dice. Dice without an
+    -- attack roll (Sneak Attack, a smite) are extra damage on top of a hit that already
+    -- had the bonus. Each bonus is added once per use, however many dice steps there are.
+    local isAttack, critical, bonusUsed = false, false, {}
+    for _, action in ipairs(ability.actions) do
+        if action.type == "ROLL" and (action.kind == "ATTACK" or action.kind == "SPELL") then isAttack = true end
+    end
+    local function PassiveBonus(target)
+        if not target or bonusUsed[target] or (target == "DAMAGE" and not isAttack) then return 0 end
+        bonusUsed[target] = true
+        return self:Bonus(target)
+    end
+
     local function finish()
         local switched = ApplyChanges(self, ability, costs)
         local text = "uses " .. ability.name
@@ -157,22 +180,30 @@ function RPSheet:UseAbility(ability, mode)
         if action.type == "ROLL" then
             local label, mod = RollStep(self, action)
             self:RollD20(mode, function(d20, note)
+                if d20 == 20 and (action.kind == "ATTACK" or action.kind == "SPELL") then critical = true end
                 parts[#parts + 1] = RollText.Check(label, d20, mod, note)
                 step()
             end)
         elseif action.type == "DICE" then
-            local healing = action.dice == "HEALING"
-            local mod = self:Amount(0, action.stat, 1) + self:Bonus(healing and "HEALING" or "DAMAGE")
-            self:RollDice(action.count, action.sides, function(rolls)
-                parts[#parts + 1] = RollText.Dice(healing and "healing" or "damage", rolls, action.sides, mod)
+            local word, bonus = ns.DiceWord(action.dice)
+            local mod = self:Amount(0, action.stat, 1) + PassiveBonus(bonus)
+            local doubled = critical and word == "damage"
+            self:RollDice(action.count * (doubled and 2 or 1), action.sides, function(rolls)
+                local note = self:ApplyDice(action.dice, rolls, mod)
+                parts[#parts + 1] = RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
+                    .. (note and (" (" .. note .. ")") or "")
                 step()
             end)
         elseif action.type == "WEAPON" then
             local weapon = self:GetWeapon()
             if not weapon then return step() end
-            local mod = self:Mod(weapon.stat) + self:Bonus(weapon.heal and "HEALING" or "DAMAGE")
-            self:RollDice(weapon.dice * action.times, weapon.sides, function(rolls)
-                parts[#parts + 1] = RollText.Dice(weapon.heal and "healing" or "damage", rolls, weapon.sides, mod)
+            -- The weapon's own damage always counts as an attack's damage.
+            local target = weapon.heal and "HEALING" or "DAMAGE"
+            local mod = self:Mod(weapon.stat) + (bonusUsed[target] and 0 or self:Bonus(target))
+            bonusUsed[target] = true
+            local doubled = critical and not weapon.heal
+            self:RollDice(weapon.dice * action.times * (doubled and 2 or 1), weapon.sides, function(rolls)
+                parts[#parts + 1] = RollText.Dice(weapon.heal and "healing" or (doubled and "critical damage" or "damage"), rolls, weapon.sides, mod)
                 step()
             end)
         else

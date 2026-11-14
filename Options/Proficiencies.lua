@@ -43,4 +43,4 @@ for i, skill in ipairs(R.SKILLS) do
     }
 end
 
-Opt.tabs.proficiencies = { type = "group", order = 4, name = "Proficiencies", args = args }
+Opt.custom.proficiencies = { type = "group", order = 4, name = "Proficiencies", args = args }

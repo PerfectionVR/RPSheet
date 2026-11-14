@@ -45,7 +45,10 @@ function RPSheet:UpdateSheetKey()
 
     ns.NormalizeState(sheets[key])
     -- Brings class features in line with the current version of the addon.
-    if sheets[key].created then ns.ApplyClassFeatures(sheets[key].sheet) end
+    if sheets[key].created then
+        ns.ApplyClassFeatures(sheets[key].sheet)
+        ns.NormalizeState(sheets[key]) -- features added just now get their full shape
+    end
     self:ClampState()
     ns.RebuildOptions()
     self:Populate()
@@ -73,6 +76,7 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     wipe(state.slots)
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
+    ns.NormalizeState(state)
     self:ClampState(true)
     ns.RebuildOptions()
     self:Populate()

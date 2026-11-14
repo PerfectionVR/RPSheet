@@ -110,9 +110,13 @@ end
 function ns.OpenWizard()
     W.draft = W.NewDraft()
     -- One window at a time: the settings window would sit underneath and show through.
-    AceConfigDialog:Close(ADDON)
-    AceConfigDialog:Open(DIALOG)
-    ns.AddDialogBacking(DIALOG)
+    -- A moment later, for the reason given at Close.
+    C_Timer.After(0, function()
+        if not W.draft then return end
+        AceConfigDialog:Close(ADDON)
+        AceConfigDialog:Open(DIALOG)
+        ns.AddDialogBacking(DIALOG)
+    end)
 end
 
 -- Opens the wizard once per session for a profile that has no character yet.

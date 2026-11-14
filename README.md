@@ -58,8 +58,9 @@ the packager locally.
 | Switch a passive on or off | Click it |
 
 The first time a profile has no character, a creation wizard walks through class, origin,
-ability scores, alignment and details; `/sheet new` reopens it. Everything can be changed
-afterwards in the editor. The General tab also has a "Load example character" button that
+ability scores, alignment and details; `/sheet new` reopens it. Levels are taken, and
+undone, one at a time on the Character tab, each with its own dialog and choices. Anything
+else can be changed directly under the Customize tab. The General tab also has a "Load example character" button that
 fills in a finished sheet to learn from, and `/sheet rest` takes a long rest.
 
 ## Rules implemented

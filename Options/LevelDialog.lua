@@ -101,7 +101,7 @@ local args = {
 
     subclass = {
         type = "select", order = 10, name = "Subclass", width = "double",
-        desc = "Its features are added to the sheet. A subclass that isn't listed can be typed on the Character tab afterwards.",
+        desc = "Its features are added to the sheet. A subclass that isn't listed can be typed under Customize afterwards.",
         hidden = function() return not draft or not AsksSubclass() end,
         values = function()
             local class = RPSheet:ClassData()

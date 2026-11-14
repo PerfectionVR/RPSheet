@@ -113,3 +113,29 @@ function RPSheet:RollCheck(label, mod, mode)
         self:Announce("rolls " .. ns.RollText.Check(label, d20, mod, note))
     end)
 end
+
+-- How dice of a kind (see Rules.DICE_KINDS) are announced, and which passive bonus
+-- applies to them.
+function ns.DiceWord(kind)
+    if kind == "TEMPHP" then return "temporary HP" end
+    if kind == "HEALING" or kind == "SELFHEAL" then return "healing", "HEALING" end
+    return "damage", "DAMAGE"
+end
+
+-- Dice that act on the character itself: healing raises HP, temporary HP replaces a
+-- lower amount. Returns a note for the announcement, or nil for other dice.
+function RPSheet:ApplyDice(kind, rolls, mod)
+    local total = mod
+    for _, roll in ipairs(rolls) do total = total + roll end
+    total = math.max(0, total)
+    local state = self:State()
+    if kind == "SELFHEAL" then
+        local max = self:MaxHP()
+        state.hp = math.min(max, (state.hp or max) + total)
+        if total > 0 then self:ClearDeathSaves() end
+        return ("now %d/%d HP"):format(state.hp, max)
+    elseif kind == "TEMPHP" then
+        state.tempHP = math.max(state.tempHP or 0, total)
+        return ("now %d temporary HP"):format(state.tempHP)
+    end
+end

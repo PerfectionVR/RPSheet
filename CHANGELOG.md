@@ -5,6 +5,10 @@
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
 
+- Settings are simpler: the Character tab is an overview with the creation wizard and
+  levelling, and every page that edits the character directly sits under one
+  Customize tab.
+- Slider handles move in steps, and sliders only reach the values they may take.
 - Levelling is done one level at a time. "Take level" opens a dialog that shows what
   the level gives and asks for its choices: an Ability Score Improvement or a feat,
   an Epic Boon at level 19, a subclass at level 3. "Back to level" undoes exactly

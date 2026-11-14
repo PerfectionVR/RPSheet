@@ -1,4 +1,4 @@
--- "Ability scores" tab: point buy, standard array or manual, plus the background's points.
+-- "Ability scores" page under Customize: point buy, standard array or manual, plus the background's points.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -115,4 +115,4 @@ for i, stat in ipairs(R.STATS) do
     args["break" .. stat] = { type = "description", order = i * 10 + 3, name = "" }
 end
 
-Opt.tabs.scores = { type = "group", order = 3, name = "Ability scores", args = args }
+Opt.custom.scores = { type = "group", order = 3, name = "Ability scores", args = args }

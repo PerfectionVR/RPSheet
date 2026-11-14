@@ -10,7 +10,7 @@ local function LoadExample()
 end
 
 Opt.tabs.general = {
-    type = "group", order = 1, name = "General",
+    type = "group", order = 9, name = "General",
     args = {
         current = {
             type = "description", order = 1, fontSize = "medium",

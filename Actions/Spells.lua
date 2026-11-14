@@ -26,7 +26,8 @@ function RPSheet:SpellText(spell)
     if spell.count > 0 then
         local dice = ("%dd%d"):format(spell.count, spell.sides)
         if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat())) end
-        parts[#parts + 1] = dice .. (spell.dice == "HEALING" and " healing" or "")
+        local word = ns.DiceWord(spell.dice)
+        parts[#parts + 1] = dice .. (word ~= "damage" and (" " .. word) or "")
     end
     if spell.concentration then parts[#parts + 1] = "concentration" end
     return table.concat(parts, ", ")
@@ -46,8 +47,8 @@ function RPSheet:CastSpell(spell, mode)
         end
     end
 
-    local healing = spell.dice == "HEALING"
-    local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + self:Bonus(healing and "HEALING" or "DAMAGE")
+    local word, bonus = ns.DiceWord(spell.dice)
+    local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
     local parts = {}
     self.busy = true
 
@@ -65,8 +66,9 @@ function RPSheet:CastSpell(spell, mode)
     local function rollDice(critical)
         if spell.count <= 0 then return finish() end
         self:RollDice(spell.count * (critical and 2 or 1), spell.sides, function(rolls)
-            local label = healing and "healing" or (critical and "critical damage" or "damage")
-            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod)
+            local label = word == "damage" and critical and "critical damage" or word
+            local note = self:ApplyDice(spell.dice, rolls, diceMod)
+            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (note and (" (" .. note .. ")") or "")
             finish()
         end)
     end

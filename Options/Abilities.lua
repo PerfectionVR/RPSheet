@@ -57,7 +57,7 @@ local function StepOptions(ability, index, action)
                 values = Opt.DIE_VALUES, sorting = Opt.DIE_ORDER,
             }, this, "sides"),
             dice = With({
-                type = "select", order = 8, name = "Counts as", hidden = Only("DICE"), values = R.DICE_KINDS,
+                type = "select", order = 8, name = "Counts as", hidden = Only("DICE"), values = R.DICE_KINDS, sorting = R.DICE_KIND_ORDER,
             }, this, "dice"),
 
             -- Roll the weapon's dice

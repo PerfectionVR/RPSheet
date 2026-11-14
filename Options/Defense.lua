@@ -25,7 +25,7 @@ local function Summary()
     return table.concat(lines, "\n") .. "\n"
 end
 
-Opt.tabs.defense = {
+Opt.custom.defense = {
     type = "group", order = 5, name = "Defense",
     args = {
         summary = { type = "description", order = 1, fontSize = "medium", name = Summary },

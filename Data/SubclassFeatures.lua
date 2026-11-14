@@ -227,7 +227,7 @@ R.SUBCLASS_FEATURES = {
     ["Warrior of the Open Hand"] = {
         Passive(3, "Open Hand Technique", "When a Flurry of Blows strike hits you can also stop the target's opportunity attacks, push it 15 feet, or knock it prone."),
         Limited(6, "Wholeness of Body", "Bonus action: heal yourself by the roll. You have uses equal to your Wisdom modifier per long rest.",
-            { stat = "WIS" }, function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "HEALING") } end),
+            { stat = "WIS" }, function(level) return { Dice(1, Kit.MartialDie(level), "WIS", "SELFHEAL") } end),
         Passive(11, "Fleet Step", "After any other bonus action you can also use Step of the Wind."),
         Passive(17, "Quivering Palm", "When you hit with an unarmed strike, spend 4 Focus Points to set up lethal vibrations. Later you can end them: the target makes a Constitution save against heavy force damage."),
     },

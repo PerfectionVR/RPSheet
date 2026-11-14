@@ -301,8 +301,8 @@ local detailsPage = Page(5, {
     }, "weaponSides"),
     keepLists = Field({
         type = "toggle", order = 20, width = "full",
-        name = "Keep my existing weapons, resources, abilities and passives",
-        desc = "On: only class, origin, scores and gear are replaced. Off: start from a clean sheet.",
+        name = "Carry over the weapons, spells, resources, abilities and passives I made myself",
+        desc = "Off: the new character starts clean. On: entries you added by hand on the current character are kept. What its class, species, background and levels gave is never carried over.",
         hidden = function() return not W.draft.hasContent end,
     }, "keepLists"),
 })

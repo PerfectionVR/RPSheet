@@ -55,7 +55,12 @@ R.ACTIONS = {
 R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE" }
 R.ROLL_KINDS = { ATTACK = "Attack", CHECK = "Check", SAVE = "Saving throw", SPELL = "Spell attack" }
 R.ROLL_KIND_ORDER = { "ATTACK", "SPELL", "CHECK", "SAVE" }
-R.DICE_KINDS = { DAMAGE = "Damage", HEALING = "Healing" }
+-- What rolled dice count as. The last two act on the character itself.
+R.DICE_KINDS = {
+    DAMAGE = "Damage", HEALING = "Healing (someone else)",
+    SELFHEAL = "Healing (heals you)", TEMPHP = "Temporary HP (yours)",
+}
+R.DICE_KIND_ORDER = { "DAMAGE", "HEALING", "SELFHEAL", "TEMPHP" }
 R.TOGGLE_MODES = { ON = "Switch on", OFF = "Switch off", TOGGLE = "Flip" }
 
 -- Blank entries for the lists a player can add to. There is no limit on how many.
@@ -92,7 +97,7 @@ R.TEMPLATES.spell = {
     level = 0,                 -- 0 = cantrip, which needs no slot
     kind = "NONE", save = "DEX", -- how it is resolved, and the save it forces
     count = 0, sides = 8,      -- dice rolled; a count of 0 rolls nothing
-    dice = "DAMAGE",           -- or "HEALING"
+    dice = "DAMAGE",           -- see DICE_KINDS
     addMod = false,            -- add the spellcasting modifier to the dice
     concentration = false,
 }
