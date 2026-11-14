@@ -91,19 +91,19 @@ local function FromPoints(self)
         self:Print(("A slot made from %s can be of 5th level at most, and of a level you have slots for."):format(POINTS))
         return
     end
-    if tracker.get() >= tracker.max then
-        self:Print(("Your %ss are full."):format(tracker.label))
-        return
-    end
     if points.get() < cost then
         self:Print(("A %s costs %d %s (%d left)."):format(tracker.label, cost, POINTS, points.get()))
         return
     end
+    -- A made slot may go above the usual number; it lasts until a long rest.
+    local above = tracker.get() >= tracker.usual
     return {
-        text = ("makes a %s from %d %s"):format(tracker.label, cost, POINTS),
+        text = ("makes a %s from %d %s%s"):format(tracker.label, cost, POINTS,
+            above and (" (%d, above the usual %d until a long rest)"):format(tracker.get() + 1, tracker.usual) or ""),
         apply = function()
             points.set(points.get() - cost)
-            tracker.set(tracker.get() + 1)
+            -- Written straight to the state: the tracker's own limit is what is being passed.
+            self:State().slots[level] = tracker.get() + 1
             self.castLevel = nil
         end,
     }

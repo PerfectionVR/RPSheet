@@ -82,6 +82,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Font of Magic can make spell slots above your usual number; they last until a long
+  rest.
 - Casting Metamorphosis asks which benefit you take and applies it: low force damage
   dice count as 3 (Devourer), 1d6 more fire damage on melee hits (Havoc), or +2 Armor
   Class and 5 hit points (Vengeance). It shows as a passive you switch off when the
