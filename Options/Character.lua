@@ -68,11 +68,17 @@ local function OptionPicker(index)
         name = function() return Feature() and Feature().name or "" end,
         desc = function()
             local feature, lines = Feature(), {}
-            for _, option in ipairs(feature and feature.options or {}) do
-                local desc = option.desc
-                if type(desc) == "function" then desc = desc(Sheet().level, Sheet()) end -- some follow the level
-                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, desc)
+            -- A long list (pet families) shows only the one picked.
+            local options = feature and feature.options or {}
+            local picked = feature and Sheet().featureOptions[feature.name]
+            for _, option in ipairs(options) do
+                if #options <= 8 or option.name == picked then
+                    local desc = option.desc
+                    if type(desc) == "function" then desc = desc(Sheet().level, Sheet()) end -- some follow the level
+                    lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, option.name, desc)
+                end
             end
+            if #lines == 0 then return "Pick one to read what it gives." end
             return table.concat(lines, "\n\n")
         end,
         hidden = function() return Feature() == nil end,
