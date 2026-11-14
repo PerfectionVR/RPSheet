@@ -47,6 +47,7 @@ Data\SpellsCore.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
+Data\Forms.lua
 Data\Picks.lua
 Data\Weapons.lua
 Data\Example.lua
@@ -67,6 +68,7 @@ Sheet\Levels.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
+Sheet\Forms.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua

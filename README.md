@@ -146,7 +146,9 @@ still need that.
 - [ ] An in-game play-through of every class other than the Warrior
 - [ ] Hunter pets: the companion's stat block, pet families, and the Pet Specialization
       feature a Beast Mastery hunter takes at level 6 in place of Roving
-- [ ] Druid Wild Shape forms (Cat Form, Bear Form and the other beast stat blocks)
+- [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
+      Armor Class, speed, Strength and Dexterity while it is on
+- [ ] Ordinary beasts as Wild Shape forms (Elk, Panther and the other beast stat blocks)
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves

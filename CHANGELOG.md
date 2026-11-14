@@ -29,6 +29,9 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   as are a Demon Hunter's fixed spells.
 - Arcane Recovery gives spent slots back by the click, and Font of Magic has two
   abilities that turn a slot into Sorcery Points and points into a slot.
+- A Circle of the Moon druid has Cat Form and Bear Form. While a form is on, the sheet
+  uses its Armor Class, speed, Strength and Dexterity, and the form's attacks are
+  abilities: Pounce, Primal Wrath, Mangle and Frenzied Regeneration.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

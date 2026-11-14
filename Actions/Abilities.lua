@@ -19,6 +19,7 @@ function RPSheet:ActionText(action)
         local text = R.DICE_KINDS[action.dice] or "Dice"
         text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
         if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
+        if action.perSlot then text = text .. " per slot level" end
         if R.AMOUNT_SOURCES[action.stat] and action.stat ~= "" then
             text = text .. " + " .. (R.AMOUNT_SHORT[action.stat] or action.stat)
         end
@@ -54,6 +55,12 @@ local function CollectCosts(self, ability)
                 self:Print(("%s needs the resource \"%s\", which this sheet doesn't have."):format(ability.name, action.resource))
                 return
             end
+            -- The "Cast at" row picks a higher slot to pay with.
+            if tracker.kind == "slot" and self.castLevel and self.castLevel > tracker.level then
+                for _, other in ipairs(self:GetTrackers()) do
+                    if other.kind == "slot" and other.level == self.castLevel then tracker = other end
+                end
+            end
             -- A spell slot that is used up can be paid with the lowest higher one left.
             if tracker.kind == "slot" and tracker.get() < action.amount then
                 for _, other in ipairs(self:GetTrackers()) do
@@ -68,6 +75,7 @@ local function CollectCosts(self, ability)
                 texts[#texts + 1] = ("free, %s is full"):format(full.label)
             else
                 costs[#costs + 1] = { tracker = tracker, amount = action.amount }
+                if tracker.kind == "slot" then costs.slotLevel = tracker.level end
                 texts[#texts + 1] = ("%d %s"):format(action.amount, tracker.label)
             end
         end
@@ -177,6 +185,7 @@ function RPSheet:UseAbility(ability, mode)
 
     local function finish()
         local switched = ApplyChanges(self, ability, costs)
+        if costs.slotLevel then self.castLevel = nil end
         for _, plan in ipairs(slotPlans) do
             plan.apply()
             parts[#parts + 1] = plan.text
@@ -211,9 +220,11 @@ function RPSheet:UseAbility(ability, mode)
             end)
         elseif action.type == "DICE" then
             local word, bonus = ns.DiceWord(action.dice)
-            local mod = self:Amount(action.flat or 0, action.stat, 1) + PassiveBonus(bonus)
+            -- Some dice count once per level of the slot the ability spent.
+            local times = action.perSlot and (costs.slotLevel or 1) or 1
+            local mod = self:Amount((action.flat or 0) * times, action.stat, 1) + PassiveBonus(bonus)
             local doubled = critical and word == "damage"
-            self:RollDice(action.count * (doubled and 2 or 1), action.sides, function(rolls)
+            self:RollDice(action.count * times * (doubled and 2 or 1), action.sides, function(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)

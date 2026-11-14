@@ -102,6 +102,16 @@ function Kit.Dice(count, sides, stat, kind, flat)
     return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE", flat = flat or 0 }
 end
 
+-- Dice that count once for each level of the spell slot the ability spends.
+function Kit.PerSlot(dice)
+    dice.perSlot = true
+    return dice
+end
+
+function Kit.SwitchOff(passive)
+    return { type = "TOGGLE", passive = passive, mode = "OFF" }
+end
+
 -- A step that changes spell slots: "RECOVER", "TOPOINTS" or "FROMPOINTS"
 -- (see Actions/SlotActions.lua).
 function Kit.Slots(mode)

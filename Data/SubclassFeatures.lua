@@ -275,6 +275,33 @@ R.SUBCLASS_FEATURES = {
         Ability(3, "Circle Forms", function(level)
             return ("Your Wild Shape forms are tougher: challenge rating up to %d, an AC of at least 13 + your Wisdom modifier, and temporary hit points equal to three times your level (this, in place of the usual amount). You can cast your Circle spells in beast form."):format(math.max(1, math.floor(level / 3)))
         end, function(level) return { Dice(0, 4, "", "TEMPHP", 3 * level) } end),
+        Ability(3, "Cat Form", function(level)
+            return ("Wild Shape. You become a great cat for %d hours: Armor Class 13 + Wisdom modifier, speed 40 feet, Strength and Dexterity equal to your Wisdom, darkvision, proficiency in Stealth. You gain temporary hit points equal to three times your level. The sheet uses these numbers while the form is on."):format(math.floor(level / 2))
+        end, function(level)
+            return { Spend("Wild Shape"), Dice(0, 4, "", "TEMPHP", 3 * level), Kit.SwitchOff("Bear Form active"), SwitchOn("Cat Form active") }
+        end),
+        Passive(3, "Cat Form active", "Switched on while you are in Cat Form. Each turn you can Pounce once and Prowl: move up to half your speed without provoking opportunity attacks, then hide.",
+            function(level) return level >= 6 and { Bonus("SAVE:CON", 0, "WIS") } or {} end, true),
+        Ability(3, "Pounce", "Cat Form. A melee attack with your spell attack modifier. The damage grows at levels 5, 11 and 17.",
+            function(level) return { Roll("SPELL", "WIS"), Dice(AtLevel(level, { { 1, 1 }, { 5, 2 }, { 11, 3 }, { 17, 4 } }), 10, "WIS") } end),
+        Ability(3, "Pounce: with advantage", "Cat Form. If you had advantage on the Pounce: this much more damage, and a Large or smaller target is knocked prone.",
+            function(level) return { Dice(AtLevel(level, { { 1, 1 }, { 6, 2 }, { 9, 3 }, { 12, 4 }, { 15, 5 }, { 18, 6 } }), 6) } end),
+        Ability(3, "Primal Wrath", function(_, sheet)
+            return ("Cat Form. Spend a spell slot: each creature you choose within 5 feet makes a Dexterity save, DC %d, or takes the damage. The dice count once per level of the slot; set a higher one at \"Cast at\"."):format(Kit.DC(sheet, "WIS"))
+        end, { Spend("1st-level slot"), Kit.PerSlot(Dice(2, 6, "WIS")) }),
+        Ability(3, "Bear Form", function(level)
+            return ("Wild Shape. You become a great bear for %d hours: Armor Class 15 + Wisdom modifier, speed 30 feet, Strength and Dexterity equal to your Wisdom, darkvision. You gain temporary hit points equal to three times your level. The sheet uses these numbers while the form is on."):format(math.floor(level / 2))
+        end, function(level)
+            return { Spend("Wild Shape"), Dice(0, 4, "", "TEMPHP", 3 * level), Kit.SwitchOff("Cat Form active"), SwitchOn("Bear Form active") }
+        end),
+        Passive(3, "Bear Form active", "Switched on while you are in Bear Form. You Mangle twice with the Attack action. Reaction, Growl: when a creature you can see attacks someone else within 5 feet of you, that attack and others against that target have disadvantage until your next turn, while you stay within 5 feet.",
+            function(level) return level >= 6 and { Bonus("SAVE:CON", 0, "WIS") } or {} end, true),
+        Ability(3, "Mangle", "Bear Form. A melee attack with your spell attack modifier; you make two with the Attack action, so click once for each. The damage grows at levels 5, 11 and 17.",
+            function(level) return { Roll("SPELL", "WIS"), Dice(AtLevel(level, { { 1, 1 }, { 5, 2 }, { 11, 3 }, { 17, 4 } }), 8, "WIS") } end),
+        Ability(3, "Frenzied Regeneration", "Bear Form, bonus action. Spend a spell slot to gain temporary hit points equal to five times its level; set a higher one at \"Cast at\".",
+            { Spend("1st-level slot"), Kit.PerSlot(Dice(0, 4, "", "TEMPHP", 5)) }),
+        Ability(3, "Leave form", "Bonus action. You return to your own shape. The form also ends when you are incapacitated.",
+            { Kit.SwitchOff("Cat Form active"), Kit.SwitchOff("Bear Form active") }),
         Passive(6, "Improved Circle Forms", "In Wild Shape your attacks can deal radiant damage, and you add your Wisdom modifier to Constitution saving throws."),
         Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn (the sheet sets it). Uses equal to your Wisdom modifier per long rest; a slot of 2nd level or higher restores one.",
             { stat = "WIS" }, { Kit.NextRoll("ADV") }),

@@ -119,6 +119,14 @@ end
 
 function RPSheet:ExplainAC()
     local sheet, class = self:Sheet(), self:ClassData()
+    local form = self:Form()
+    if form then
+        local formParts = { { form.name, form.ac } }
+        Add(formParts, R.STAT_NAMES[form.acStat], self:Mod(form.acStat))
+        AddBonuses(self, formParts, "AC")
+        Out(self, ("Armor Class |cffffd100%d|r: %s. Armor and shield don't count in this form."):format(Total(formParts), Join(formParts)))
+        return
+    end
     local armor = R.ARMOR[sheet.armor]
     local parts = { { armor.name, armor.ac } }
     local dex = self:Mod("DEX")

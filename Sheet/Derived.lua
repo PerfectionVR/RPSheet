@@ -27,6 +27,9 @@ end
 -- Starting score, plus the background's points, plus points from level-ups.
 function RPSheet:Score(stat)
     local sheet = self:Sheet()
+    -- In a beast form some abilities take the score of another.
+    local form = self:Form()
+    if form and form.scores[stat] then stat = form.scores[stat] end
     local score = (sheet.base[stat] or R.BASE_MIN) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
     -- A capstone feature can raise a score further, up to 25.
     local raised = sheet.featureScores and sheet.featureScores[stat]
@@ -127,6 +130,9 @@ end
 
 function RPSheet:AC()
     local sheet, class = self:Sheet(), self:ClassData()
+    -- A beast form has an Armor Class of its own; armor and shield don't count.
+    local form = self:Form()
+    if form then return form.ac + self:Mod(form.acStat) + self:Bonus("AC") end
     local armor = R.ARMOR[sheet.armor]
     local dex = self:Mod("DEX")
     if armor.dexCap then dex = math.min(dex, armor.dexCap) end
@@ -146,6 +152,8 @@ function RPSheet:Initiative()
 end
 
 function RPSheet:Speed()
+    local form = self:Form()
+    if form then return form.speed + self:Bonus("SPEED") end
     local species = self:SpeciesData()
     return (species and species.speed or 30) + self:Bonus("SPEED")
 end
@@ -166,6 +174,7 @@ end
 -- Ability modifier, proficiency (doubled for expertise) and passive effects.
 function RPSheet:SkillMod(skill)
     local rank = self:Sheet().skills[skill.name] or 0
+    if rank == 0 and self:FormSkill(skill.name) then rank = 1 end
     return self:Mod(skill.stat) + rank * self:ProficiencyBonus()
         + self:Bonus("SKILL:" .. skill.name) + self:Bonus("SKILLS") + self:Bonus("CHECKS")
 end
