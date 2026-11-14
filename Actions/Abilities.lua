@@ -32,6 +32,8 @@ function RPSheet:ActionText(action)
     elseif kind == "SPEND" then
         local text = ("Spend %d %s"):format(action.amount, action.resource)
         if action.freeIfFull ~= "" then text = text .. (" (free when %s is full)"):format(action.freeIfFull) end
+        if action.firstFree then text = text .. " (free the first time after a long rest)" end
+        if (action.refund or "") ~= "" then text = text .. (" (right-click to take it back if %s)"):format(action.refund) end
         return text
     elseif kind == "GAIN" then
         return ("Regain %d %s"):format(action.amount, action.resource)
@@ -76,8 +78,12 @@ local function CollectCosts(self, ability)
             local full = action.freeIfFull ~= "" and self:FindTracker(action.freeIfFull)
             if full and full.get() >= full.max then
                 texts[#texts + 1] = ("free, %s is full"):format(full.label)
+            elseif action.firstFree and self:FreeUseLeft(ability.name) then
+                costs.freeUse = true -- marked as taken once the ability has gone through
+                texts[#texts + 1] = "free, the first use since a long rest"
             else
-                costs[#costs + 1] = { tracker = tracker, amount = action.amount }
+                -- `refund` lets the player take it back afterwards (Actions/Refunds.lua).
+                costs[#costs + 1] = { tracker = tracker, amount = action.amount, refund = action.refund }
                 if tracker.kind == "slot" then costs.slotLevel = tracker.level end
                 texts[#texts + 1] = ("%d %s"):format(action.amount, tracker.label)
             end
@@ -126,6 +132,7 @@ local function ApplyChanges(self, ability, costs)
     for _, cost in ipairs(costs) do
         cost.tracker.set(cost.tracker.get() - cost.amount)
     end
+    if costs.freeUse then self:TakeFreeUse(ability.name) end
     for _, action in ipairs(ability.actions) do
         if action.type == "GAIN" or action.type == "EMPTY" then
             local tracker = self:FindTracker(action.resource)
@@ -209,6 +216,7 @@ function RPSheet:UseAbility(ability, mode)
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
         self:Announce(text)
+        self:OfferRefund(ability, costs)
         if switched then
             self:ClampState()
             self:Populate()

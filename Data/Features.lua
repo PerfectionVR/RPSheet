@@ -156,8 +156,8 @@ R.FEATURES = {
             { Spend("Second Wind"), Dice(1, 10, "LEVEL", "SELFHEAL") }),
         WEAPON_MASTERY,
         Ability(2, "Action Surge", "Take one additional action this turn, other than the Magic action. Once per turn.", { Spend("Action Surge") }),
-        Ability(2, "Tactical Mind", "When you fail an ability check: spend a Second Wind use and add the roll to the check. If it still fails the use isn't spent: left-click the Second Wind bar to take it back.",
-            { Spend("Second Wind"), Dice(1, 10, "", "OTHER") }),
+        Ability(2, "Tactical Mind", "When you fail an ability check: spend a Second Wind use and add the roll to the check. If it still fails the use isn't spent: right-click this ability, or click the link the sheet shows you after the roll, and you keep it.",
+            { Kit.Refundable(Spend("Second Wind"), "the check still failed"), Dice(1, 10, "", "OTHER") }),
         Passive(5, "Extra Attack", function(level)
             local attacks = (level >= 20 and "four times") or (level >= 11 and "three times") or "twice"
             return ("You attack %s, instead of once, when you take the Attack action. Click the weapon once per attack."):format(attacks)

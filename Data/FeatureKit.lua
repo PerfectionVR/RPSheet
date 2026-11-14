@@ -96,6 +96,19 @@ function Kit.Spend(resource, amount)
     return { type = "SPEND", resource = resource, amount = amount or 1, freeIfFull = "" }
 end
 
+-- A cost the player can take back once after the click, for a use or die that is only
+-- spent when it turned the roll around. `when` finishes "if ...": "the check still failed".
+function Kit.Refundable(spend, when)
+    spend.refund = when
+    return spend
+end
+
+-- A cost that is waived the first time the ability is used after each long rest.
+function Kit.FirstFree(spend)
+    spend.firstFree = true
+    return spend
+end
+
 function Kit.SwitchOn(passive)
     return { type = "TOGGLE", passive = passive, mode = "ON" }
 end

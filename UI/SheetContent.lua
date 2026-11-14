@@ -251,8 +251,11 @@ local function AbilitySection(self, body)
         for _, action in ipairs(ability.actions) do
             lines[#lines + 1] = UI.GREEN .. self:ActionText(action) .. "|r"
         end
-        UI.AddLabel(body, 1, ability.name, function() self:UseAbility(ability, ns.RollMode()) end,
-            ability.name, table.concat(lines, "\n"))
+        UI.AddLabel(body, 1, ability.name, function(button)
+            -- A right-click takes back a cost that turned out not to be spent, if one is open.
+            if button == "RightButton" and self:TakeBack(ability.name) then return end
+            self:UseAbility(ability, ns.RollMode())
+        end, ability.name, table.concat(lines, "\n"))
     end
 end
 
