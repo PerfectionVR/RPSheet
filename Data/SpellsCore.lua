@@ -407,10 +407,17 @@ end
 for line in DATA:gmatch("[^\n]+") do
     local name, level, school, how, dice, kind, range, flags, up, classes = strsplit("|", line)
     level = tonumber(level)
-    if not R.SPELLS[name] then
-        local count, sides = dice:match("^(%d+)d(%d+)$")
+    local count, sides = dice:match("^(%d+)d(%d+)$")
+    -- Dice a higher slot adds, where they are the same kind of die.
+    local upCount, upSides = up:match("^(%d+)d(%d+)$")
+    local more = (upSides and upSides == sides) and tonumber(upCount) or 0
+    if R.SPELLS[name] then
+        local known = R.SPELLS[name]
+        if known.level == level and known.sides == tonumber(sides) and known.count > 0 then known.up = more end
+    else
         local extra = { concentration = flags:find("c") ~= nil }
         if kind == "heal" or kind == "heal+" then extra.dice, extra.addMod = "HEALING", kind == "heal+" end
+        extra.up = more
         R.DefineSpell(name, level, how ~= "" and how or nil, count and { tonumber(count), tonumber(sides) } or nil,
             Summary(school, how, dice, kind, range, flags, up, level), extra)
     end

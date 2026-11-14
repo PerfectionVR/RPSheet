@@ -78,8 +78,16 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
         end
         return "Always prepared, and not counted against the number you can prepare: " .. table.concat(known, ", ")
             .. (EBON_RUNE[sheet.spec] and "." or ". Choosing a rune (your specialization) adds more.")
-            .. " Add them under Customize, Spells."
-    end),
+            .. " They are on your spell list already."
+    end, nil, { prepared = function(sheet)
+        local steps = {}
+        for index, step in ipairs(EBON_ALL) do
+            local names = step[2]
+            if EBON_RUNE[sheet.spec] then names = names .. ", " .. EBON_RUNE[sheet.spec][index] end
+            steps[index] = { step[1], names }
+        end
+        return steps
+    end }),
     Passive(3, "Runeforging", function(_, sheet)
         local rune = {
             Blood = "Blood: you gain temporary hit points equal to your Charisma modifier plus your level after a long rest, and whenever you reduce an enemy to 0 hit points.",
@@ -129,7 +137,8 @@ for _, feature in ipairs(R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]) do
 end
 
 R.SUBCLASS_FEATURES["Demon Hunter"] = {
-        Passive(3, "Demon Hunter Spells", "You always have Throw Glaive prepared, then Sigil of Flame (level 5), Metamorphosis (9), Chaos Nova (13) and Destructive Wave (17), plus the spells of one set you choose. Add them from Customize, Spells: they don't count against your prepared spells."),
+        Passive(3, "Demon Hunter Spells", "You always have Throw Glaive prepared, then Sigil of Flame (level 5), Metamorphosis (9), Chaos Nova (13) and Destructive Wave (17), plus the spells of one set you choose. The first are on your spell list already; add the set from Customize, Spells, where they don't count against your prepared spells.", nil,
+            { prepared = { { 3, "Throw Glaive" }, { 5, "Sigil of Flame" }, { 9, "Metamorphosis" }, { 13, "Chaos Nova" }, { 17, "Destructive Wave" } } }),
         Passive(3, "Soul Fragments", function(_, sheet)
             return ("After a long rest you hold soul fragments equal to your Wisdom modifier (at least one). They fuel your demon hunter powers. Saves against them use DC %d."):format(Kit.DC(sheet, "WIS"))
         end),

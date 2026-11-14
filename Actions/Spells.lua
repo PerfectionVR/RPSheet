@@ -15,6 +15,27 @@ local function FindSlot(self, level)
     end
 end
 
+-- The slot levels the character has, lowest first.
+local function SlotLevels(self)
+    local levels = {}
+    for level, count in pairs(self:SpellSlots()) do
+        if count > 0 then levels[#levels + 1] = level end
+    end
+    table.sort(levels)
+    return levels
+end
+
+-- The "Cast at" row: the lowest slot that fits (nil), or a slot level to cast the next
+-- spell with. It goes back to the lowest after one spell.
+function RPSheet:CycleCastLevel()
+    local levels, nextLevel = SlotLevels(self)
+    for _, level in ipairs(levels) do
+        if level > (self.castLevel or levels[1] or 0) then nextLevel = level break end
+    end
+    self.castLevel = nextLevel
+    self:Refresh()
+end
+
 -- Number of dice a spell rolls: a scaling cantrip rolls one more set at character
 -- levels 5, 11 and 17.
 function RPSheet:SpellDiceCount(spell)
@@ -51,12 +72,15 @@ function RPSheet:CastSpell(spell, mode)
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
     if spell.level > 0 then
-        slot = FindSlot(self, spell.level)
+        local level = math.max(spell.level, self.castLevel or 0)
+        slot = FindSlot(self, level)
         if not slot then
-            self:Print(("No spell slot of %s or higher left for %s."):format(R.SPELL_LEVELS[spell.level]:lower(), spell.name))
+            self:Print(("No spell slot of %s or higher left for %s."):format(R.SPELL_LEVELS[level]:lower(), spell.name))
             return
         end
     end
+    -- A higher slot adds dice to the spells that grow with it.
+    local moreDice = slot and (slot.level - spell.level) * (spell.up or 0) or 0
 
     local word, bonus = ns.DiceWord(spell.dice)
     local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
@@ -65,6 +89,7 @@ function RPSheet:CastSpell(spell, mode)
 
     local function finish()
         if slot then slot.set(slot.get() - 1) end
+        self.castLevel = nil
         -- Only one spell can be concentrated on: a new one replaces the old.
         if spell.concentration then
             local conditions = self:State().conditions
@@ -83,7 +108,7 @@ function RPSheet:CastSpell(spell, mode)
     -- A natural 20 on the spell attack doubles the dice.
     local function rollDice(critical)
         if spell.count <= 0 then return finish() end
-        self:RollDice(self:SpellDiceCount(spell) * (critical and 2 or 1), spell.sides, function(rolls)
+        self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (note and (" (" .. note .. ")") or "")

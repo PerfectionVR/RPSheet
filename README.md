@@ -148,8 +148,9 @@ still need that.
       feature a Beast Mastery hunter takes at level 6 in place of Roving
 - [ ] Druid Wild Shape forms (Cat Form, Bear Form and the other beast stat blocks)
 - [x] Always-prepared subclass spells added to the spell list by themselves
-- [ ] A Death Knight's and Demon Hunter's own spells added by themselves (they are
-      offered in the spell list today)
+- [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
+      added by themselves
+- [ ] The set of spells a Demon Hunter chooses (offered in the spell list today)
 - [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
 - [ ] Arcane Recovery and Font of Magic changing spell slots by the click (Magical
       Cunning does); changed by hand today
@@ -162,7 +163,9 @@ still need that.
 - [x] Core-rule spells of every level, with level, save or attack, dice and concentration
 - [ ] Hand-written summaries for the core spells above 1st level (theirs are put
       together from the spell's facts)
-- [ ] Extra dice when a spell is cast with a higher slot
+- [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
+- [ ] Spells that grow in another way with the slot (more targets, more darts, a
+      different die)
 - [ ] Spells that make several attacks or hit several targets in one click
 - [ ] Ritual casting and material components
 

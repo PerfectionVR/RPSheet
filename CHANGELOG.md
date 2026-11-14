@@ -23,6 +23,10 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 - The core rules' spells of every level can be added from the class spell list, up to
   the highest level you have slots for. The spells a subclass always has prepared are
   put on the spell list by themselves.
+- A "Cast at" row picks a higher slot for the next spell; spells that grow with the
+  slot roll the extra dice. A Warlock's spells grow with the pact slot by themselves.
+- A Death Knight's spells follow the rune and are put on the spell list by themselves,
+  as are a Demon Hunter's fixed spells.
 - Rule terms in announcements are links for anyone with the addon: hover [Vex],
   [Poisoned], a weapon, spell or skill to see what it is, and click to see the
   maths behind it. Clicking another player's term asks their addon. Without the

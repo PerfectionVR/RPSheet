@@ -111,4 +111,5 @@ R.TEMPLATES.spell = {
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
     free = false,              -- doesn't count against cantrips known or spells prepared
     auto = "",                 -- "prepared:<name>" for a spell a subclass put there
+    up = 0,                    -- dice added for each slot level above the spell's own
 }

@@ -36,6 +36,17 @@ local function HeaderSection(self, body)
     self.rollModeLabel = UI.AddLabel(body, 1, "", function(button) self:CycleRollMode(button == "RightButton") end,
         "Next roll", "How your next d20 is rolled: normally, with advantage (two dice, the higher counts) or with disadvantage (the lower counts).\n\nLeft-click: switch between normal, advantage and disadvantage. It goes back to normal after one roll.\nRight-click: keep it for every roll until you change it, for a condition that lasts.\n\nHolding Shift or Ctrl while clicking a roll still works, and takes priority.")
 
+    -- Only for a character with spell slots of more than one level.
+    self.castLevelLabel = nil
+    local slotLevels = 0
+    for _, count in pairs(self:SpellSlots()) do
+        if count > 0 then slotLevels = slotLevels + 1 end
+    end
+    if slotLevels > 1 then
+        self.castLevelLabel = UI.AddLabel(body, 1, "", function() self:CycleCastLevel() end,
+            "Cast at", "The slot your next spell uses. Normally the lowest free slot that fits. Click to pick a higher level: spells that grow with the slot roll more dice. It goes back to the lowest after one spell.")
+    end
+
     UI.AddLabel(body, 0.5, UI.ACCENT .. "Short rest|r", function() self:ShortRest() end,
         "Short rest", "Gives back what recharges on a short rest. To heal, click the Hit Dice bar.")
     UI.AddLabel(body, 0.5, UI.ACCENT .. "Long rest|r", function() self:LongRest() end,
@@ -239,7 +250,8 @@ local function SpellSection(self, body)
         local lines = {}
         if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
         lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
-            or ("Uses your lowest free slot of %s level or higher."):format(R.ORDINALS[spell.level])
+            or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\".%s"):format(R.ORDINALS[spell.level],
+                (spell.up or 0) > 0 and (" Each slot level above adds %dd%d."):format(spell.up, spell.sides) or "")
         if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
         UI.AddLabel(body, 1, ("%s  %s%s%s|r"):format(spell.name, UI.GREY, level, info ~= "" and (", " .. info) or ""),
             function() self:CastSpell(spell, ns.RollMode()) end, spell.name, table.concat(lines, "\n"),
@@ -339,6 +351,10 @@ function RPSheet:Refresh()
         local text = (mode == "ADV" and "|cff80ff80Advantage|r") or (mode == "DIS" and "|cffff5555Disadvantage|r") or (UI.ACCENT .. "Normal|r")
         if mode and self.rollModeLocked then text = text .. " (every roll)" end
         self.rollModeLabel:SetText(("Next roll: %s"):format(text))
+    end
+
+    if self.castLevelLabel then
+        self.castLevelLabel:SetText(("Cast at: %s%s|r"):format(UI.ACCENT, self.castLevel and (R.ORDINALS[self.castLevel] .. " level") or "lowest slot"))
     end
 
     local weapon = self:GetWeapon()
