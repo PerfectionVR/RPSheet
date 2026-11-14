@@ -155,7 +155,7 @@ Give("Elemental Adept", {
 })
 Give("Boon of Energy Resistance", {
     choices = { {
-        key = "resist", title = "Resistance", count = 2, text = "Resistance to %s damage",
+        key = "resist", kind = "resist", title = "Resistance", count = 2, text = "Resistance to %s damage",
         from = { "Acid", "Cold", "Fire", "Lightning", "Necrotic", "Poison", "Psychic", "Radiant", "Thunder" },
         desc = "A damage type you resist. Both can be changed after a long rest.",
     } },

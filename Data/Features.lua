@@ -49,9 +49,9 @@ R.FEATURES = {
         Ability(1, "Rage", "Bonus action, not in heavy armor. Until the end of your next turn, extended each turn you attack, force a save or spend a bonus action (up to 10 minutes): resistance to bludgeoning, piercing and slashing damage, bonus damage on Strength attacks, and advantage on Strength checks and saves. You can't cast spells or concentrate. One use comes back on a short rest. Switches Raging on.",
             { Spend("Rage"), SwitchOn("Raging") }),
         Passive(1, "Raging", function(level)
-            return ("Switch on while you rage. Adds %d to the damage of your Strength attacks and gives advantage on Strength checks, Strength saves and Athletics, which the sheet rolls for you."):format(Kit.RageDamage(level))
+            return ("Switch on while you rage. Adds %d to the damage of your Strength attacks and gives advantage on Strength checks, Strength saves and Athletics, which the sheet rolls for you. You resist bludgeoning, piercing and slashing damage, which Take damage works out."):format(Kit.RageDamage(level))
         end, function(level) return { Bonus("STRDAMAGE", Kit.RageDamage(level)) } end,
-            { startsOff = true, advantage = { "STR check", "STR save", "Athletics" } }),
+            { startsOff = true, advantage = { "STR check", "STR save", "Athletics" }, resist = R.WEAPON_DAMAGE }),
         WEAPON_MASTERY,
         Passive(2, "Danger Sense", "Advantage on Dexterity saving throws unless you are incapacitated. The sheet rolls them this way.", nil, { advantage = { "DEX save" } }),
         Ability(2, "Reckless Attack", "On your first attack of a turn: advantage on Strength attacks until your next turn, but attacks against you have advantage too. Switches Reckless on; switch it off at the start of your next turn.",
@@ -224,8 +224,10 @@ R.FEATURES = {
         Passive(14, "Disciplined Survivor", "You are proficient in all saving throws.", nil, { saves = { "STR", "DEX", "CON", "INT", "WIS", "CHA" } }),
         Ability(14, "Disciplined Survivor: reroll", "When you fail a saving throw: reroll it. You must use the new roll.", { Spend("Focus Points") }),
         Passive(15, "Perfect Focus", "When you roll initiative without using Uncanny Metabolism and have 3 or fewer Focus Points, you go up to 4. Raise the bar by hand."),
-        Ability(18, "Superior Defense", "At the start of your turn: for 1 minute, or until you are incapacitated, you resist all damage except force.",
-            { Spend("Focus Points", 3) }),
+        Ability(18, "Superior Defense", "At the start of your turn: for 1 minute, or until you are incapacitated, you resist all damage except force. Switches Superior Defense active on.",
+            { Spend("Focus Points", 3), SwitchOn("Superior Defense active") }),
+        Passive(18, "Superior Defense active", "Switch on while Superior Defense lasts (1 minute, or until you are incapacitated): you resist all damage except force.",
+            nil, { startsOff = true, resist = R.AllDamage("force") }),
         Passive(20, "Body and Mind", "Your Dexterity and Wisdom each increase by 4, to a maximum of 25. The sheet applies this.", nil, { scores = { DEX = 4, WIS = 4 } }),
     },
 
@@ -246,7 +248,7 @@ R.FEATURES = {
         Ability(9, "Abjure Foes", function(_, sheet)
             return ("Magic action. Creatures you can see within 60 feet, up to your Charisma modifier, make a Wisdom save (DC %d) or are frightened for 1 minute and can only move, act or take a bonus action on their turns."):format(Kit.DC(sheet, "CHA"))
         end, { Spend("Channel Divinity") }),
-        Passive(10, "Aura of Courage", "You and allies in your aura can't be frightened."),
+        Passive(10, "Aura of Courage", "You and allies in your aura can't be frightened.", nil, { conditionImmune = { "Frightened" } }),
         Passive(11, "Radiant Strikes", "Your melee weapon and unarmed hits deal 1d8 extra radiant damage. The sheet rolls it with every melee attack.",
             nil, { strike = { sides = 8, damage = "radiant" } }),
         Passive(14, "Restoring Touch", "When you use Lay on Hands you can spend 5 points per condition to end blinded, charmed, deafened, frightened, paralyzed or stunned."),

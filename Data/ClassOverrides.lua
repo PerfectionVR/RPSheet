@@ -119,7 +119,7 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
         if sheet.spec == "Unholy" then steps[2] = Dice(1, 6, "", "OTHER") end
         return steps
     end),
-    Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage."),
+    Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage.", nil, { resist = { "cold", "necrotic", "psychic" } }),
     Limited(15, "Runic Mastery", function(_, sheet)
         local rune = {
             Blood = "Reaction when a creature within 10 feet of you is hit: reduce the damage by the amount shown (your level). You then lose that many hit points.",

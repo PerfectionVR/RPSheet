@@ -106,6 +106,8 @@ local function TrackerSection(self, body)
         self:Refresh()
     end, "Heroic Inspiration", ns.Glossary["Heroic Inspiration"] .. "\n\nClick to gain or spend it.")
 
+    UI.AddDamageRows(self, body) -- damage by amount and type, with the rules applied
+
     self.deathLabel = nil
     if self:IsDown() then
         self.deathLabel = UI.AddLabel(body, 1, "", function(button)
@@ -173,17 +175,14 @@ local function CombatSection(self, body)
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
     Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)
-    -- Senses and resistances get a row each, after the numbers.
-    local senses, resistances = self:Senses(), self:Resistances()
+    -- Senses and what the character shrugs off get rows of their own, after the numbers.
+    local senses = self:Senses()
     local function After()
         if #senses > 0 then
             UI.AddLabel(body, 1, ("Senses %s%s|r"):format(UI.ACCENT, table.concat(senses, ", ")), nil, "Senses",
                 "Darkvision comes from your species or beast form. The others are read from the passives that are switched on.")
         end
-        if #resistances > 0 then
-            UI.AddLabel(body, 1, ("Resists %s%s|r"):format(UI.ACCENT, table.concat(resistances, ", ")), nil, "Resistances",
-                "You take half damage of these types. Read from the passives that are switched on: switch one off, or write \"resistance to fire damage\" in a passive of your own, and the row follows.")
-        end
+        UI.AddDefenseRows(self, body)
     end
     if self:CastStat() then
         Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.",

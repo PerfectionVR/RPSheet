@@ -13,7 +13,7 @@ R.CONDITIONS = {
     { name = "Incapacitated", desc = "You can't take actions, bonus actions or reactions, can't speak, and lose concentration. Disadvantage on initiative." },
     { name = "Invisible", desc = "You can't be seen. Advantage on initiative and on your attacks; attacks against you have disadvantage." },
     { name = "Paralyzed", desc = "Incapacitated, speed 0. You fail Strength and Dexterity saves. Attacks against you have advantage, and hits from within 5 feet are critical." },
-    { name = "Petrified", desc = "Turned to stone: incapacitated, speed 0, unaware. You fail Strength and Dexterity saves, resist all damage, and attacks against you have advantage." },
+    { name = "Petrified", resist = R.AllDamage(), desc = "Turned to stone: incapacitated, speed 0, unaware. You fail Strength and Dexterity saves, resist all damage, and attacks against you have advantage." },
     { name = "Poisoned", desc = "Disadvantage on attack rolls and ability checks." },
     { name = "Prone", desc = "You can only crawl. Disadvantage on your attacks. Attacks from within 5 feet have advantage against you; others have disadvantage." },
     { name = "Restrained", desc = "Speed 0. Disadvantage on your attacks and Dexterity saves; attacks against you have advantage." },

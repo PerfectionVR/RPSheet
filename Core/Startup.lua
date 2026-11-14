@@ -53,8 +53,11 @@ end
 -- /sheet new        creation wizard
 -- /sheet lock       lock or unlock the window
 -- /sheet rest       long rest
+-- /sheet damage 14 fire   take damage of a type (the type can be left out)
+-- /sheet heal 8     regain hit points
 function RPSheet:SlashCommand(input)
     local command = input:trim():lower()
+    local verb, rest = command:match("^(%a+)%s*(.*)$")
     if command == "config" then
         AceConfigDialog:Open(ADDON)
     elseif command == "lock" then
@@ -63,6 +66,8 @@ function RPSheet:SlashCommand(input)
         ns.OpenWizard()
     elseif command == "rest" then
         self:LongRest()
+    elseif verb == "damage" or verb == "heal" then
+        self:DamageCommand(verb, rest)
     else
         self:ToggleWindow()
     end

@@ -1,6 +1,6 @@
 -- What the choices made for feats (Sheet/FeatChoices.lua) do to the sheet: skills
 -- become proficient or expert, tools proficient, and the feat's text says what was
--- picked (a resistance picked there is read from that text, see Sheet/Senses.lua).
+-- picked (a resistance picked there is read from the picks, see Sheet/Defenses.lua).
 -- Its spells are in Sheet/FeatSpells.lua.
 --   sheet.featGranted[<skill>] = ranks (1 or 2) these choices added to the skill
 local _, ns = ...
