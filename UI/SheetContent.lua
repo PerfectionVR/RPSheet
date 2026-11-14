@@ -259,12 +259,18 @@ local function SpellSection(self, body)
     end)
 
     UI.AddHeading(body, "Spells")
+    self.sheetSlotLabels = {}
     if book then
         UI.AddLabel(body, 1, UI.ACCENT .. "Open spellbook|r", function() self:ToggleSpellbook() end, "Spellbook",
             "Every spell in your book. Cast from it, and choose which spells are prepared. The spells listed below are the prepared ones and your cantrips.")
     end
+    local shown -- the spell level whose line was added last
     for _, spell in ipairs(spells) do
-        local level = spell.level == 0 and "cantrip" or R.ORDINALS[spell.level]
+        -- A line per spell level, with the slots left of that level.
+        if spell.level ~= shown then
+            shown = spell.level
+            self:AddLevelLabel(body, shown, self.sheetSlotLabels)
+        end
         local info = self:SpellText(spell)
         local lines = {}
         if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
@@ -275,7 +281,7 @@ local function SpellSection(self, body)
         if casting then lines[#lines + 1] = casting end
         if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
         if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
-        UI.AddLabel(body, 1, ("%s  %s%s%s|r"):format(spell.name, UI.GREY, level, info ~= "" and (", " .. info) or ""),
+        UI.AddLabel(body, 1, ("%s  %s%s|r"):format(spell.name, UI.GREY, info),
             function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name, table.concat(lines, "\n"),
             function() self:ExplainSpell(spell) end)
     end
@@ -378,6 +384,7 @@ function RPSheet:Populate()
 
     body:PauseLayout()
     body:ReleaseChildren()
+    self.sheetSlotLabels = {} -- the old lines are gone with the rows
     for _, section in ipairs(SECTIONS) do
         section(self, body)
     end
@@ -391,6 +398,7 @@ end
 
 function RPSheet:Refresh()
     if not self.window or not self.channelLabel then return end
+    self:RefreshSlotLabels()
     self:QueueBroadcast()
     local state = self:State()
     self.window:SetTitle(self:GetCharacterName())

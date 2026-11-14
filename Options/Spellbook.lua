@@ -74,14 +74,15 @@ table.insert(Opt.rebuilders, function()
     local section
     for index, name in ipairs(ns.SpellbookNames(sheet)) do
         local known = R.SPELLS[name]
-        -- The core spells and the spells of Azeroth each under their own heading.
-        if R.SpellGroup(name) ~= section then
-            section = R.SpellGroup(name)
-            args["bookHead" .. index] = { type = "header", order = 10 + index - 0.25, name = R.SPELL_GROUPS[section] }
+        -- A heading per spell level, the core spells apart from the spells of Azeroth.
+        local heading = ("%s: %s"):format(R.SPELL_GROUPS[R.SpellGroup(name)], R.SPELL_LEVELS[known.level]:lower())
+        if heading ~= section then
+            section = heading
+            args["bookHead" .. index] = { type = "header", order = 10 + index - 0.25, name = heading }
         end
         args["bookPrepared" .. index] = {
             type = "toggle", order = 10 + index, width = 1.6,
-            name = ("%s (%s)"):format(name, R.SPELL_LEVELS[known.level]:lower()),
+            name = name,
             desc = known.desc .. "\n\nTicked: prepared.",
             get = function() return RPSheet:PreparedSpell(name) ~= nil end,
             set = function(_, value)

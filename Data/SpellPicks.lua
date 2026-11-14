@@ -3,7 +3,7 @@
 --   cantrips<Class>  the cantrips a spellcasting class knows
 --   spellbook        the spells a Mage writes into the spellbook: six, and two per level
 -- An item's `group` puts it under a heading of that name: the core spells first, then
--- the spells of Azeroth.
+-- the spells of Azeroth, and the spellbook's spells by spell level within each.
 -- Both are `custom`: Sheet/SpellPicks.lua and Sheet/Spellbook.lua put them on the sheet.
 local _, ns = ...
 local R = ns.Rules
@@ -35,7 +35,7 @@ local items, order, known = {}, {}, {}
 for _, name in ipairs(R.SPELL_LISTS[BOOK_CLASS] or {}) do
     local spell = R.SPELLS[name]
     if spell and spell.level > 0 and not items[name] then
-        items[name] = { desc = spell.desc, level = 2 * spell.level - 1, tag = R.ORDINALS[spell.level], group = R.SPELL_GROUPS[R.SpellGroup(name)] }
+        items[name] = { desc = spell.desc, level = 2 * spell.level - 1, group = ("%s: %s"):format(R.SPELL_GROUPS[R.SpellGroup(name)], R.SPELL_LEVELS[spell.level]:lower()) }
         order[#order + 1] = name
     end
 end

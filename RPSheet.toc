@@ -116,6 +116,7 @@ UI\TermLabel.lua
 UI\Slider.lua
 UI\DialogBacking.lua
 UI\Rows.lua
+UI\SlotLabels.lua
 UI\SheetWindow.lua
 UI\SpellbookWindow.lua
 UI\SheetContent.lua

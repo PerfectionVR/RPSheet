@@ -90,6 +90,7 @@ function RPSheet:PopulateSpellbook()
 
     body:PauseLayout()
     body:ReleaseChildren()
+    self.bookSlotLabels = {}
     if not ns.HasSpellbook(sheet) then
         UI.AddLabel(body, 1, "This character keeps no spellbook.")
     else
@@ -110,7 +111,7 @@ function RPSheet:PopulateSpellbook()
             end
             if R.SPELLS[name].level ~= level then
                 level = R.SPELLS[name].level
-                UI.AddLabel(body, 1, UI.ACCENT .. R.SPELL_LEVELS[level] .. "|r")
+                self:AddLevelLabel(body, level, self.bookSlotLabels)
             end
             AddSpell(self, body, name)
         end
