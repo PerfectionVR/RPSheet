@@ -43,6 +43,11 @@ function ns.ApplyPreparedSpells(sheet)
         if known and known.level == spell.level and (known.hits > 1 or known.hitsUp > 0 or known.hitsScale) then
             spell.hits, spell.hitsUp, spell.hitsScale, spell.desc = known.hits, known.hitsUp, known.hitsScale, known.desc
         end
+        -- Spells the sheet now rolls more of take the listed dice and summary.
+        local growth = R.SLOT_GROWTH[spell.name]
+        if known and known.level == spell.level and growth and growth.refresh then
+            spell.count, spell.sides, spell.dice, spell.desc = known.count, known.sides, known.dice, known.desc
+        end
         if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
             spell.up = known.up
         end

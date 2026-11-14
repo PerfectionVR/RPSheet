@@ -45,6 +45,7 @@ Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\SpellsCore.lua
 Data\SpellGroups.lua
+Data\SlotGrowth.lua
 Data\GrowingSpells.lua
 Data\SpellDetails.lua
 Data\SpellDamage.lua
@@ -121,6 +122,7 @@ Actions\Pet.lua
 Actions\Refunds.lua
 Actions\Conditions.lua
 Actions\Spells.lua
+Actions\SlotGrowth.lua
 Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
 Actions\SlotActions.lua
