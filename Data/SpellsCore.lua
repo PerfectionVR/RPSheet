@@ -444,6 +444,8 @@ local function Set(name, fields)
 end
 Set("Eldritch Blast", { hitsScale = true, desc = "A beam of force at a creature within 120 feet. You fire two beams at level 5, three at 11 and four at 17, each with its own attack roll; the sheet rolls them all." })
 Set("Scorching Ray", { hits = 3, hitsUp = 1, desc = "Evocation. Range 120 feet. Three rays of fire, each a spell attack for 2d6 fire damage, at one target or several; one more ray for each slot level above 2nd. The sheet rolls them all." })
-Set("Flurry", { hits = 3, count = 3, desc = "Three shards of ice at one target or several, each with its own spell attack; the sheet rolls them all. A critical hit restrains the target." })
+Set("Flurry", { hits = 3, count = 3, desc = "Three shards of ice at one target or several, each with its own spell attack; one more shard for each slot level above 3rd. The sheet rolls them all. A critical hit restrains the target." })
 Set("Azure Strike", { hits = 2, desc = "Rays of force at up to two targets, each with its own spell attack; the sheet rolls both. A hit also slows the target by 10 feet." })
-Set("Magic Missile", { up = 1, desc = "Three darts that always hit, each dealing 1d4 + 1 force damage to a creature within 120 feet: add 1 per dart to the total rolled. One more dart for each slot level above 1st, which the sheet adds." })
+Set("Magic Missile", { up = 1, desc = "Three darts that always hit, each dealing 1d4 + 1 force damage to a creature within 120 feet. One more dart for each slot level above 1st. The sheet rolls every dart and adds the 1 for each." })
+-- Spells with a fixed number on top of their dice (the number is in Data/SlotGrowth.lua).
+Set("False Life", { count = 2, sides = 4, dice = "TEMPHP", desc = "Necromancy. Range Self. You gain 2d4 + 4 temporary hit points, and 5 more for each slot level above 1st; the sheet rolls and sets them." })

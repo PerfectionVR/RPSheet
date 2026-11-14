@@ -34,6 +34,7 @@ function RPSheet:CycleCastLevel()
     end
     self.castLevel = nextLevel
     self:Refresh()
+    self:PopulateSoon() -- the spell tooltips say what that slot level does
 end
 
 -- Number of dice a spell rolls: a scaling cantrip rolls one more set at character
@@ -73,7 +74,9 @@ function RPSheet:SpellText(spell)
         local grown = self:GrowingSides(spell)
         local dice = ("%dd%d"):format(self:SpellDiceCount(spell), grown or spell.sides)
         if grown then dice = "running, next " .. dice end
-        if spell.addMod then dice = dice .. " " .. Util.Signed(self:Mod(self:CastStat())) end
+        -- Some spells add a fixed number as well (see Data/SlotGrowth.lua).
+        local flat = self:SlotGrowth(spell).flat
+        if spell.addMod or flat ~= 0 then dice = dice .. " " .. Util.Signed((spell.addMod and self:Mod(self:CastStat()) or 0) + flat) end
         local word = ns.DiceWord(spell.dice)
         parts[#parts + 1] = dice .. (word ~= "damage" and (" " .. word) or "")
     end
@@ -113,8 +116,10 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
             return
         end
     end
-    -- A higher slot adds dice to the spells that grow with it.
-    local moreDice = slot and (slot.level - spell.level) * (spell.up or 0) or 0
+    -- What the slot used changes: more dice, a number added, a second roll, and what
+    -- is only stated, such as more targets (see Actions/SlotGrowth.lua).
+    local growth = self:SlotGrowth(spell, slot and slot.level)
+    local moreDice = growth.dice
 
     -- Nothing is spent until the benefit is picked: the menu casts the spell again with it.
     local benefits = not benefit and self:SpellBenefits(spell)
@@ -123,20 +128,23 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     end
 
     local word, bonus = ns.DiceWord(spell.dice)
-    local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0)
+    local diceMod = (spell.addMod and self:Mod(self:CastStat()) or 0) + (bonus and self:Bonus(bonus) or 0) + growth.flat
     local parts = {}
     self.busy = true
 
     local function finish()
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
+        if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level
         self.castLevel = nil
         if R.GROWING_SPELLS[spell.name] then
             self:StartGrowingSpell(spell)
             self:PopulateSoon() -- the row now shows the next die
         end
-        -- Only one spell can be concentrated on: a new one replaces the old.
-        if spell.concentration then
+        for _, note in ipairs(growth.notes) do parts[#parts + 1] = note end
+        -- Only one spell can be concentrated on: a new one replaces the old. A few
+        -- spells need no concentration with a high enough slot.
+        if spell.concentration and not growth.noConcentration then
             local conditions = self:State().conditions
             parts[#parts + 1] = conditions.Concentrating and "concentrating on it now, the earlier spell ends" or "concentrating"
             conditions.Concentrating = true
@@ -171,6 +179,20 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         end)
     end
 
+    -- A second part with dice of its own (a burst, healing alongside the damage) is
+    -- rolled once, last, and is not doubled by a critical hit.
+    local function finishWithSecondRoll()
+        local also = growth.also
+        if not also then return finish() end
+        local _, alsoBonus = ns.DiceWord(also.kind)
+        local alsoMod = alsoBonus == "HEALING" and self:Bonus(alsoBonus) or 0
+        self:RollDice(also.count, also.sides, function(rolls)
+            local note = self:ApplyDice(also.kind, rolls, alsoMod)
+            parts[#parts + 1] = RollText.Dice(also.word, rolls, also.sides, alsoMod) .. (note and (" (" .. note .. ")") or "")
+            finish()
+        end)
+    end
+
     if spell.kind == "ATTACK" then
         -- A feature that gives advantage on spell attacks (Innate Sorcery) applies by itself.
         mode = self:ResolveMode("spell attack", mode) -- conditions count too
@@ -181,7 +203,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
                 local label = hits > 1 and ("attack %d"):format(index) or "spell attack"
                 parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack() or 0, note)
                 rollDice(d20 == 20, function()
-                    if index < hits then attack(index + 1) else finish() end
+                    if index < hits then attack(index + 1) else finishWithSecondRoll() end
                 end)
             end)
         end
@@ -190,6 +212,6 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if spell.kind == "SAVE" then
             parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
         end
-        rollDice(false, finish)
+        rollDice(false, finishWithSecondRoll)
     end
 end

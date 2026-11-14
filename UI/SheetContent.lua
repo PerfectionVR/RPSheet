@@ -293,9 +293,10 @@ local function SpellSection(self, body)
         end
         if not noSlots then
             lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
-                or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\".%s"):format(R.ORDINALS[spell.level],
-                    (spell.up or 0) > 0 and (" Each slot level above adds %dd%d."):format(spell.up, spell.sides) or "")
+                or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\"."):format(R.ORDINALS[spell.level])
         end
+        -- What a higher slot does for it (see Actions/SlotGrowth.lua).
+        for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
         local casting = R.SpellCastingNote(spell)
         if casting then lines[#lines + 1] = casting end
         if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
