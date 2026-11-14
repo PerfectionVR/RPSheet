@@ -160,14 +160,16 @@ other ten still need that.
 - [x] Tactical Mind (Warrior), Psi-Bolstered Knack and Homing Strikes (Rogue): one
       click takes the use or die back when the roll still failed; Psychic Whispers is
       free the first time after a long rest
-- [ ] Rend Mind and Psychic Veil (Rogue): the dice they cost are spent by hand
+- [x] Rend Mind and Psychic Veil (Rogue): once the free use is gone, the sheet spends
+      the dice a further use costs
 - [x] Student of War (Warrior): the artisan's tools are chosen in the level dialog
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
 - [x] The companion's own checks and saves; its strike rolls the charge die, names
       prone or grapple, and uses the family's mastery when it is one of your picks
-- [ ] The companion's Armor Class and speed on the sheet; its second strike at level
-      11 in one click; changing the mastery pick only after a long rest
+- [x] The companion's Armor Class, speed and darkvision on the sheet
+- [ ] The companion's second strike at level 11 in one click; changing its mastery
+      pick only after a long rest
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
 - [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their

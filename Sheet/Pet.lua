@@ -34,6 +34,11 @@ function RPSheet:PetStrikeMods()
     return self:SpellAttack() or (self:ProficiencyBonus() + wisdom), R.PetBlock(self:Sheet()).flat + wisdom
 end
 
+-- The companion's Armor Class follows its master's Wisdom.
+function RPSheet:PetAC()
+    return 13 + self:Mod("WIS")
+end
+
 -- The save DC a creature grappled by the strike escapes against.
 function RPSheet:PetGrappleDC()
     return self:SpellDC() or (8 + self:ProficiencyBonus() + self:Mod("WIS"))

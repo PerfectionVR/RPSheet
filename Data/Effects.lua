@@ -91,6 +91,7 @@ R.TEMPLATES = {
         times = 1,                                                     -- WEAPON
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
         refund = "",                                                   -- SPEND: when it can be taken back ("the check still failed")
+        otherwise = "", otherwiseAmount = 0,                           -- SPEND: another resource that pays once this one is used up
         firstFree = false,                                             -- SPEND: waived for the first use after a long rest
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
     },
