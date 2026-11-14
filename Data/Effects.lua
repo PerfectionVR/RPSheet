@@ -116,6 +116,9 @@ R.TEMPLATES.spell = {
     free = false,              -- doesn't count against cantrips known or spells prepared
     auto = "",                 -- "prepared:<name>" for a spell a subclass put there
     up = 0,                    -- dice added for each slot level above the spell's own
+    time = "ACTION",           -- what casting takes: ACTION, BONUS, REACTION or LONG
+    material = 0,              -- price in gold of a component it needs; consumed = used up
+    consumed = false,
     hits = 1,                  -- separate attacks one casting makes (rays, beams, shards)
     hitsUp = 0,                -- more of them for each slot level above the spell's own
     hitsScale = false,         -- a cantrip that makes more of them at character levels 5, 11 and 17

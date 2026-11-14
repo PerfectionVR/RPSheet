@@ -44,6 +44,7 @@ Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\SpellsCore.lua
+Data\SpellDetails.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua

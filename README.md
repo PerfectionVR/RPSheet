@@ -178,7 +178,8 @@ still need that.
 - [x] Spells that make several attacks roll them all in one click (Scorching Ray,
       Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
-- [ ] Material components
+- [x] Casting times, and components with a price, shown on each spell
+- [ ] Tracking the gold and the components themselves
 
 **Character**
 
