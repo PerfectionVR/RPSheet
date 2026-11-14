@@ -82,6 +82,8 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- A Beast Master of level 11 can roll both of the companion's strikes in one click. A
+  swarm form no longer gets Wild Shape's temporary hit points.
 - Feats ask for their own choices and apply them: Magic Initiate's list, ability and
   spells (the 1st-level spell is always prepared with one free casting per long
   rest), the skill of Keen Mind and Observant, Elemental Adept's damage type,
