@@ -1,0 +1,16 @@
+# What some feats let the player choose, from data/feats.json (skill, tool and resistance
+# lists) and data/spells/spells-xphb.json + spells-wow.json (the 1st-level spells of the
+# schools Fey-Touched and Shadow-Touched offer, and the 1st-level rituals for Ritual Caster).
+featchoice|Fey-Touched|Animal Friendship;Bane;Bless;Charm Person;Command;Compelled Duel;Comprehend Languages;Detect Evil and Good;Detect Magic;Detect Poison and Disease;Dissonant Whispers;Heroism;Hex;Hunter's Mark;Identify;Sleep;Speak with Animals;Tasha's Hideous Laughter
+featchoice|Shadow-Touched|Color Spray;Consume Soul;Disguise Self;Entropic Embrace;False Life;Illusory Script;Inflict Wounds;Ray of Sickness;Scourge Strike;Shadow Word: Pain;Silent Image;Vampiric Blood;Wrathful Smite
+featchoice|Ritual Caster|Alarm;Comprehend Languages;Detect Magic;Detect Poison and Disease;Find Familiar;Identify;Illusory Script;Purify Food and Drink;Speak with Animals;Tenser's Floating Disk;Unseen Servant
+featchoice|Boon of Energy Resistance|Acid;Cold;Fire;Lightning;Necrotic;Poison;Psychic;Radiant;Thunder
+featchoice|Crafter|Carpenter's Tools;Leatherworker's Tools;Mason's Tools;Potter's Tools;Smith's Tools;Tinker's Tools;Weaver's Tools;Woodcarver's Tools
+featchoice|Keen Mind|Arcana;History;Investigation;Nature;Religion
+featchoice|Observant|Insight;Investigation;Perception
+featchoice|Magic Initiate|Cleric;Druid;Wizard
+featspell|Fey-Touched|Misty Step
+featspell|Shadow-Touched|Invisibility
+featspell|Telekinetic|Mage Hand
+featspell|Telepathic|Detect Thoughts
+featspell|Inscription Adept|Illusory Script;Glyph of Warding@5;Symbol@13

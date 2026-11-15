@@ -1,0 +1,46 @@
+# Beasts, part 2 of 2 (form: see beasts-1.txt). The Swarm of Insects has, besides walking,
+# a climb or a fly speed of 20, whichever the DM chooses ("choose 1").
+beast|Giant Wolf Spider|XMM|cr=1/4|sz=M|ac=13|hp=11|spd=walk 40,climb 40|abil=12,16,13,3,12,4|sk=perception+3,stealth+7|sn=blindsight 10,darkvision 60|tr=Spider Climb|atk=Bite:m+5:1d4+3 piercing:r5:2d4 poison
+beast|Goat|XMM|cr=0|sz=M|ac=10|hp=4|spd=walk 40,climb 30|abil=11,10,11,2,10,5|sk=perception+2|sv=str+2|sn=darkvision 60|atk=Ram:m+2:1 bludgeoning:r5:1d4 bludgeoning
+beast|Hawk|XMM|cr=0|sz=T|ac=13|hp=1|spd=walk 10,fly 60|abil=5,16,8,2,14,6|sk=perception+6|atk=Talons:m+5:1 slashing:r5
+beast|Hippopotamus|XMM|cr=4|sz=L|ac=14|hp=82|spd=walk 30,swim 30|abil=21,7,15,2,12,4|sk=perception+3|sv=str+7|tr=Hold Breath|multi=two Bite attacks.|atk=Bite:m+7:2d10+5 piercing:r5
+beast|Hunter Shark|XMM|cr=2|sz=L|ac=12|hp=45|spd=walk 5,swim 40|abil=18,14,15,1,10,4|sk=perception+2|sn=blindsight 60|tr=Water Breathing|atk=Bite:m+6:3d6+4 piercing:r5
+beast|Hyena|XMM|cr=0|sz=M|ac=11|hp=5|spd=walk 50|abil=11,13,12,2,12,5|sk=perception+3|sn=darkvision 60|tr=Pack Tactics|atk=Bite:m+2:1d6 piercing:r5
+beast|Jackal|XMM|cr=0|sz=S|ac=12|hp=3|spd=walk 40|abil=8,15,11,3,12,6|sk=perception+5,stealth+4|sn=darkvision 90|atk=Bite:m+1:1d4-1 piercing:r5
+beast|Killer Whale|XMM|cr=3|sz=H|ac=12|hp=90|spd=walk 5,swim 60|abil=19,14,13,3,12,7|sk=perception+3,stealth+4|sn=blindsight 120|tr=Hold Breath|atk=Bite:m+6:5d6+4 piercing:r5
+beast|Lion|XMM|cr=1|sz=L|ac=12|hp=22|spd=walk 50|abil=17,15,11,3,12,8|sk=perception+3,stealth+4|sn=darkvision 60|tr=Pack Tactics,Running Leap|multi=two Rend attacks. It can replace one attack with a use of Roar.|atk=Rend:m+5:1d8+3 slashing:r5;Roar:save wis 11
+beast|Lizard|XMM|cr=0|sz=T|ac=10|hp=2|spd=walk 20,climb 20|abil=2,11,10,1,8,3|sn=darkvision 30|tr=Spider Climb|atk=Bite:m+2:1 piercing:r5
+beast|Mammoth|XMM|cr=6|sz=H|ac=13|hp=126|spd=walk 50|abil=24,9,21,3,11,6|sv=str+10,con+8|multi=two Gore attacks.|atk=Gore:m+10:2d10+7 piercing:r10|ba=Trample:save dex 18:4d10+7:bludgeoning
+beast|Mastiff|XMM|cr=1/8|sz=M|ac=12|hp=5|spd=walk 40|abil=13,14,12,3,12,7|sk=perception+5|sn=darkvision 60|atk=Bite:m+3:1d6+1 piercing:r5
+beast|Mule|XMM|cr=1/8|sz=M|ac=10|hp=11|spd=walk 40|abil=14,10,13,2,10,5|sv=str+4|tr=Beast of Burden|atk=Hooves:m+4:1d4+2 bludgeoning:r5
+beast|Octopus|XMM|cr=0|sz=S|ac=12|hp=3|spd=walk 5,swim 30|abil=4,15,11,3,10,4|sk=perception+2,stealth+6|sn=darkvision 30|tr=Compression,Water Breathing|atk=Tentacles:m+4:1 bludgeoning:r5|re=Ink Cloud (1/Day)
+beast|Owl|XMM|cr=0|sz=T|ac=11|hp=1|spd=walk 5,fly 60|abil=3,13,8,2,12,7|sk=perception+5,stealth+5|sn=darkvision 120|tr=Flyby|atk=Talons:m+3:1 slashing:r5
+beast|Panther|XMM|cr=1/4|sz=M|ac=13|hp=13|spd=walk 50,climb 40|abil=14,16,10,3,14,7|sk=perception+4,stealth+7|sn=darkvision 60|atk=Rend:m+5:1d6+3 slashing:r5|ba=Nimble Escape:-
+beast|Piranha|XMM|cr=0|sz=T|ac=13|hp=1|spd=walk 5,swim 40|abil=2,16,9,1,7,2|sn=darkvision 60|tr=Water Breathing|atk=Bite:m+5:1 piercing:r5
+beast|Plesiosaurus|XMM|cr=2|sz=L|ac=13|hp=68|spd=walk 20,swim 40|abil=18,15,16,2,12,5|sk=perception+3,stealth+4|tr=Hold Breath|atk=Bite:m+6:2d6+4 piercing:r10
+beast|Polar Bear|XMM|cr=2|sz=L|ac=12|hp=42|spd=walk 40,swim 40|abil=20,14,16,2,13,7|sk=perception+5,stealth+4|sn=darkvision 60|multi=two Rend attacks.|atk=Rend:m+7:1d8+5 slashing:r5
+beast|Pony|XMM|cr=1/8|sz=M|ac=10|hp=11|spd=walk 40|abil=15,10,13,2,11,7|sv=str+4|atk=Hooves:m+4:1d4+2 bludgeoning:r5
+beast|Pteranodon|XMM|cr=1/4|sz=M|ac=13|hp=13|spd=walk 10,fly 60|abil=12,15,10,2,9,5|sk=perception+1|tr=Flyby|atk=Bite:m+4:1d8+2 piercing:r5
+beast|Rat|XMM|cr=0|sz=T|ac=10|hp=1|spd=walk 20,climb 20|abil=2,11,9,2,10,4|sk=perception+2|sn=darkvision 30|tr=Agile|atk=Bite:m+2:1 piercing:r5
+beast|Raven|XMM|cr=0|sz=T|ac=12|hp=2|spd=walk 10,fly 50|abil=2,14,10,5,13,6|sk=perception+3|tr=Mimicry|atk=Beak:m+4:1 piercing:r5
+beast|Reef Shark|XMM|cr=1/2|sz=M|ac=12|hp=22|spd=walk 5,swim 30|abil=14,15,13,1,10,4|sk=perception+2|sn=blindsight 30|tr=Pack Tactics,Water Breathing|atk=Bite:m+4:2d4+2 piercing:r5
+beast|Rhinoceros|XMM|cr=2|sz=L|ac=13|hp=45|spd=walk 40|abil=21,8,15,2,12,6|atk=Gore:m+7:2d8+5 piercing:r5:2d8 piercing
+beast|Riding Horse|XMM|cr=1/4|sz=L|ac=11|hp=13|spd=walk 60|abil=16,13,12,2,11,7|atk=Hooves:m+5:1d8+3 bludgeoning:r5
+beast|Saber-Toothed Tiger|XMM|cr=2|sz=L|ac=13|hp=52|spd=walk 40|abil=18,17,15,3,12,8|sk=perception+5,stealth+7|sv=str+6,dex+5|sn=darkvision 60|tr=Running Leap|multi=two Rend attacks.|atk=Rend:m+6:2d6+4 slashing:r5|ba=Nimble Escape:-
+beast|Scorpion|XMM|cr=0|sz=T|ac=11|hp=1|spd=walk 10|abil=2,11,8,1,8,2|sn=blindsight 10|atk=Sting:m+2:1 piercing:r5:1d6 poison
+beast|Seahorse|XMM|cr=0|sz=T|ac=12|hp=1|spd=walk 5,swim 20|abil=1,12,8,1,10,2|sk=perception+2,stealth+5|tr=Water Breathing|atk=Bubble Dash:-
+beast|Spider|XMM|cr=0|sz=T|ac=12|hp=1|spd=walk 20,climb 20|abil=2,14,8,1,10,2|sk=stealth+4|sn=darkvision 30|tr=Spider Climb,Web Walker|atk=Bite:m+4:1 piercing:r5:1d4 poison
+beast|Swarm of Bats|XMM|cr=1/4|sz=L|ac=12|hp=11|spd=walk 5,fly 30|abil=5,15,10,2,12,4|sn=blindsight 60|tr=Swarm|atk=Bites:m+4:2d4 piercing:r5:1d4 piercing
+beast|Swarm of Insects|XMM|cr=1/2|sz=M|ac=11|hp=19|spd=walk 20,choose 1|abil=3,13,14,1,7,1|sn=blindsight 30|tr=Spider Climb,Swarm|atk=Bites:m+3:2d4+1 poison:r5:1d4+1 poison
+beast|Swarm of Piranhas|XMM|cr=1|sz=M|ac=13|hp=28|spd=walk 5,swim 40|abil=13,16,9,1,7,2|sn=darkvision 60|tr=Swarm,Water Breathing|atk=Bites:m+5:2d4+3 piercing:r5:1d4+3 piercing
+beast|Swarm of Rats|XMM|cr=1/4|sz=M|ac=10|hp=14|spd=walk 30,climb 30|abil=9,11,9,2,10,3|sn=darkvision 30|tr=Swarm|atk=Bites:m+2:2d4 piercing:r5:1d4 piercing
+beast|Swarm of Ravens|XMM|cr=1/4|sz=M|ac=12|hp=11|spd=walk 10,fly 50|abil=6,14,12,5,12,6|sk=perception+5|tr=Swarm|atk=Beaks:m+4:1d6+2 piercing:r5:1d4 piercing;Cacophony (R6):save wis 10
+beast|Swarm of Venomous Snakes|XMM|cr=2|sz=M|ac=14|hp=36|spd=walk 30,swim 30|abil=8,18,11,1,10,3|sn=blindsight 10|tr=Swarm|atk=Bites:m+6:1d8+4 piercing:r5:1d4+4 piercing & 3d6 poison
+beast|Tiger|XMM|cr=1|sz=L|ac=13|hp=30|spd=walk 40|abil=17,16,14,3,12,8|sk=perception+3,stealth+7|sn=darkvision 60|atk=Rend:m+5:2d6+3 slashing:r5|ba=Nimble Escape:-
+beast|Triceratops|XMM|cr=5|sz=H|ac=14|hp=114|spd=walk 50|abil=22,9,17,2,11,5|multi=two Gore attacks.|atk=Gore:m+9:2d12+6 piercing:r5:2d8 piercing
+beast|Venomous Snake|XMM|cr=1/8|sz=T|ac=12|hp=5|spd=walk 30,swim 30|abil=2,15,11,1,10,3|sn=blindsight 10|atk=Bite:m+4:1d4+2 piercing:r5:1d6 poison
+beast|Vulture|XMM|cr=0|sz=M|ac=10|hp=5|spd=walk 10,fly 50|abil=7,10,13,2,12,4|sk=perception+3|tr=Pack Tactics|atk=Beak:m+2:1d4 piercing:r5
+beast|Warhorse|XMM|cr=1/2|sz=L|ac=11|hp=19|spd=walk 60|abil=18,12,13,2,12,7|sv=wis+3|atk=Hooves:m+6:2d4+4 bludgeoning:r5:2d4 bludgeoning
+beast|Weasel|XMM|cr=0|sz=T|ac=13|hp=1|spd=walk 30,climb 30|abil=3,16,8,2,12,3|sk=acrobatics+5,perception+3,stealth+5|sn=darkvision 60|atk=Bite:m+5:1 piercing:r5
+beast|Wolf|XMM|cr=1/4|sz=M|ac=12|hp=11|spd=walk 40|abil=14,15,12,3,12,6|sk=perception+5,stealth+4|sn=darkvision 60|tr=Pack Tactics|atk=Bite:m+4:1d6+2 piercing:r5
+beast|Pandarian Dragon Turtle|WoW|cr=1/2|sz=L|ac=17|hp=30|spd=walk 30,swim 60|abil=16,12,15,2,12,9|sn=darkvision 60|tr=Amphibious|atk=Bite:m+5:1d8+3 piercing:r5

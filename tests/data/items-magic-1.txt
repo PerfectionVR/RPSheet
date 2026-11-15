@@ -1,0 +1,164 @@
+# Magic items (XDMG, WoW), reduced from data/items.json: name|source|rarity|attunement|type|pounds|base item.
+# Rarity: C common, U uncommon, R rare, V very rare, L legendary, A artifact, ? unknown.
+# Attunement: empty = none, a = needs it, a:<who> = by that kind of creature.
+# (The multiplication sign in the carpets' names is written "x".) Part 1 of 3.
++1 Rod of the Pact Keeper|XDMG|U|a:a warlock|RD|2
++1 Wand of the War Mage|XDMG|U|a:a spellcaster|WD|1
++1 Wraps of Unarmed Power|XDMG|U
++2 Rod of the Pact Keeper|XDMG|R|a:a warlock|RD|2
++2 Wand of the War Mage|XDMG|R|a:a spellcaster|WD|1
++2 Wraps of Unarmed Power|XDMG|R
++3 Rod of the Pact Keeper|XDMG|V|a:a warlock|RD|2
++3 Wand of the War Mage|XDMG|V|a:a spellcaster|WD|1
++3 Wraps of Unarmed Power|XDMG|V
+Alchemy Jug|XDMG|U|||12
+Amulet of Health|XDMG|R|a||1
+Amulet of Proof against Detection and Location|XDMG|U|a||1
+Amulet of the Planes|XDMG|V|a||1
+Animated Shield|XDMG|V|a|S|6|shield
+Apparatus of Kwalish|XDMG|L|||500
+Armor of Invulnerability|XDMG|L|a|HA|65|plate armor
+Arrow-Catching Shield|XDMG|R|a|S|6|shield
+Ashbringer|WoW|A|a:a Paladin|M|6|greatsword
+Ashbringer (True State)|WoW|A|a:a Paladin|M|6|greatsword
+Aviana's Feather|WoW|L|a
+Axe of the Dwarvish Lords|XDMG|A|a|M|4|battleaxe
+Baba Yaga's Dancing Broom|XDMG|U|a
+Bag of Beans|XDMG|R
+Bag of Devouring|XDMG|V
+Bag of Holding|XDMG|U|||5
+Bag of Tricks, Gray|XDMG|U
+Bag of Tricks, Rust|XDMG|U
+Bag of Tricks, Tan|XDMG|U
+Bead of Force|XDMG|R|||0.5
+Bead of Nourishment|XDMG|C
+Bead of Refreshment|XDMG|C
+Belt of Cloud Giant Strength|XDMG|L|a
+Belt of Dwarvenkind|XDMG|R|a
+Belt of Fire Giant Strength|XDMG|V|a
+Belt of Frost Giant Strength|XDMG|V|a
+Belt of Hill Giant Strength|XDMG|R|a
+Belt of Stone Giant Strength|XDMG|V|a
+Belt of Storm Giant Strength|XDMG|L|a
+Black Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Blackrazor|XDMG|A|a|M|6|greatsword
+Blue Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Book of Exalted Deeds|XDMG|A|a||5
+Book of Vile Darkness|XDMG|A|a||5
+Boots of Elvenkind|XDMG|U
+Boots of False Tracks|XDMG|C|a
+Boots of Levitation|XDMG|R|a
+Boots of Speed|XDMG|R|a
+Boots of Striding and Springing|XDMG|U|a
+Boots of the Winterlands|XDMG|U|a
+Bowl of Commanding Water Elementals|XDMG|R
+Bracers of Archery|XDMG|U|a
+Bracers of Defense|XDMG|R|a
+Brass Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Brazier of Commanding Fire Elementals|XDMG|R
+Bronze Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Brooch of Shielding|XDMG|U|a
+Broom of Flying|XDMG|U|a
+Candle of Invocation|XDMG|V|a
+Candle of the Deep|XDMG|C
+Cap of Water Breathing|XDMG|U
+Cape of the Mountebank|XDMG|R
+Carpet of Flying, 3 ft. x 5 ft.|XDMG|V
+Carpet of Flying, 4 ft. x 6 ft.|XDMG|V
+Carpet of Flying, 5 ft. x 7 ft.|XDMG|V
+Carpet of Flying, 6 ft. x 9 ft.|XDMG|V
+Cauldron of Rebirth|XDMG|V|a:a druid or warlock
+Censer of Controlling Air Elementals|XDMG|R
+Charlatan's Die|XDMG|C|a
+Chime of Opening|XDMG|R|||1
+Circlet of Blasting|XDMG|U
+Cloak of Arachnida|XDMG|V|a
+Cloak of Billowing|XDMG|C
+Cloak of Displacement|XDMG|R|a
+Cloak of Elvenkind|XDMG|U|a
+Cloak of Invisibility|XDMG|L|a
+Cloak of Many Fashions|XDMG|C
+Cloak of Protection|XDMG|U|a
+Cloak of the Bat|XDMG|R|a
+Cloak of the Manta Ray|XDMG|U|a
+Clockwork Amulet|XDMG|C
+Clothes of Mending|XDMG|C
+Copper Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Corrupted Ashbringer|WoW|A|a:a Paladin|M|6|greatsword
+Crown of the Ogre King|WoW|V|a
+Crystal Ball|XDMG|V|a||3
+Crystal Ball of Mind Reading|XDMG|L|a||3
+Crystal Ball of Telepathy|XDMG|L|a||3
+Crystal Ball of True Seeing|XDMG|L|a||3
+Cube of Force|XDMG|R|a
+Cube of Summoning|XDMG|R
+Cubic Gate|XDMG|L
+Daern's Instant Fortress|XDMG|R|a
+Dagger of Venom|XDMG|R||M|1|dagger
+Dark Shard Amulet|XDMG|C|a:a warlock|SCF|1
+Decanter of Endless Water|XDMG|U|||2
+Deck of Illusions|XDMG|U
+Deck of Many Things|XDMG|L
+Defias Leather|WoW|R||LA|10|leather armor
+Demonomicon of Iggwilv|XDMG|A|a
+Dimensional Shackles|XDMG|R
+Doomhammer|WoW|A|a:a Barbarian|M|5|warhammer
+Dread Helm|XDMG|C
+Driftglobe|XDMG|U|||1
+Dust of Disappearance|XDMG|U
+Dust of Dryness|XDMG|U
+Dust of Sneezing and Choking|XDMG|U
+Dwarven Thrower|XDMG|V|a:a Dwarf or a creature attuned to a Belt of Dwarvenkind|M|5|warhammer
+Ear Horn of Hearing|XDMG|C
+Efreeti Bottle|XDMG|V
+Elemental Gem, Blue Sapphire|XDMG|U
+Elemental Gem, Emerald|XDMG|U
+Elemental Gem, Red Corundum|XDMG|U
+Elemental Gem, Yellow Diamond|XDMG|U
+Elixir of Health|XDMG|R||P|0.5
+Enduring Spellbook|XDMG|C
+Enspelled Staff (Cantrip)|XDMG|U|a:a Spellcaster|M|4
+Enspelled Staff (Level 1)|XDMG|U|a:a Spellcaster|M|4
+Enspelled Staff (Level 2)|XDMG|R|a:a Spellcaster|M|4
+Enspelled Staff (Level 3)|XDMG|R|a:a Spellcaster|M|4
+Enspelled Staff (Level 4)|XDMG|V|a:a Spellcaster|M|4
+Enspelled Staff (Level 5)|XDMG|V|a:a Spellcaster|M|4
+Enspelled Staff (Level 6)|XDMG|L|a:a Spellcaster|M|4
+Enspelled Staff (Level 7)|XDMG|L|a:a Spellcaster|M|4
+Enspelled Staff (Level 8)|XDMG|L|a:a Spellcaster|M|4
+Ersatz Eye|XDMG|C
+Eversmoking Bottle|XDMG|U
+Experimental Goblin Jetpack|WoW|R|a
+Eye of Vecna|XDMG|A|a
+Eyes of Charming|XDMG|U|a
+Eyes of Minute Seeing|XDMG|U
+Eyes of the Eagle|XDMG|U
+Figurine of Wondrous Power (Jeweled Panther)|WoW|R
+Figurine of Wondrous Power, Bronze Griffon|XDMG|R
+Figurine of Wondrous Power, Ebony Fly|XDMG|R
+Figurine of Wondrous Power, Golden Lions|XDMG|R
+Figurine of Wondrous Power, Ivory Goats|XDMG|R
+Figurine of Wondrous Power, Marble Elephant|XDMG|R
+Figurine of Wondrous Power, Obsidian Steed|XDMG|V
+Figurine of Wondrous Power, Onyx Dog|XDMG|R
+Figurine of Wondrous Power, Serpentine Owl|XDMG|R
+Figurine of Wondrous Power, Silver Raven|XDMG|U
+Flask of the Titans|WoW|V||P
+Folding Boat|XDMG|R|||4
+Frostmourne|WoW|A|a|M|6|greatsword
+Gauntlets of Ogre Power|XDMG|U|a
+Gem of Brightness|XDMG|U
+Gem of Seeing|XDMG|R|a
+Glamoured Studded Leather|XDMG|R||LA|13|studded leather armor
+Gloves of Missile Snaring|XDMG|U|a
+Gloves of Swimming and Climbing|XDMG|U|a
+Gloves of Thievery|XDMG|U
+Gnomeregan Engineering Device|WoW|R
+Goblin Jumper Cables|WoW|U
+Goggles of Night|XDMG|U
+Gold Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Green Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Hag Eye|XDMG|U
+Hand of Vecna|XDMG|A|a
+Hat of Disguise|XDMG|U|a
+Hat of Many Spells|XDMG|V|a:a wizard|SCF

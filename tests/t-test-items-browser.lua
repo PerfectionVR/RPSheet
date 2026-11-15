@@ -163,7 +163,8 @@ if Check(SHEET ~= nil, "the inventory's source") then
             local price = R.ITEMS[each.name].cost
             local _, _, _, list = Card(SHEET, each, false, "inventory " .. tab.name)
             Check(#list == 3 and list[1].text == "Add" and list[3].text == "Remove", each.name .. ": buttons are Add, Buy, Remove")
-            Eq(list[2].text, "Buy  " .. ns.CoinText(price), each.name .. ": Buy label")
+            -- An artifact has no price: its button reads so and is off (checked above).
+            Eq(list[2].text, price > 0 and ("Buy  " .. ns.CoinText(price)) or "No price", each.name .. ": Buy label")
             Eq(list[2].enabled, price > 0 and price <= 5000, each.name .. ": Buy enabled")
         end
     end

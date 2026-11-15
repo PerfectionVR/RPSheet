@@ -1,0 +1,157 @@
+# Magic items, part 3 of 3 (form: see items-magic-1.txt).
+Ring of Free Action|XDMG|R|a|RG
+Ring of Invisibility|XDMG|L|a|RG
+Ring of Jumping|XDMG|U|a|RG
+Ring of Lightning Resistance|XDMG|R||RG
+Ring of Mind Shielding|XDMG|U|a|RG
+Ring of Necrotic Resistance|XDMG|R||RG
+Ring of Poison Resistance|XDMG|R||RG
+Ring of Protection|XDMG|R|a|RG
+Ring of Psychic Resistance|XDMG|R||RG
+Ring of Radiant Resistance|XDMG|R||RG
+Ring of Regeneration|XDMG|V|a|RG
+Ring of Shooting Stars|XDMG|V|a|RG
+Ring of Spell Storing|XDMG|R|a|RG
+Ring of Spell Turning|XDMG|L|a|RG
+Ring of Swimming|XDMG|U||RG
+Ring of Telekinesis|XDMG|V|a|RG
+Ring of the Ram|XDMG|R|a|RG
+Ring of Three Wishes|XDMG|L||RG
+Ring of Thunder Resistance|XDMG|R||RG
+Ring of Warmth|XDMG|U|a|RG
+Ring of Water Walking|XDMG|U||RG
+Ring of X-ray Vision|XDMG|R|a|RG
+Rival Coin|XDMG|C
+Robe of Eyes|XDMG|R|a
+Robe of Scintillating Colors|XDMG|V|a
+Robe of Stars|XDMG|V|a
+Robe of the Archmagi|XDMG|L|a:a sorcerer, warlock, or wizard
+Robe of Useful Items|XDMG|U
+Rod of Absorption|XDMG|V|a|RD|2
+Rod of Alertness|XDMG|V|a|RD|2
+Rod of Lordly Might|XDMG|L|a|RD|2
+Rod of Resurrection|XDMG|L|a|RD|2
+Rod of Rulership|XDMG|R|a|RD|2
+Rod of Security|XDMG|V||RD|2
+Rod of the Sleepwalker|WoW|V||RD
+Rope of Climbing|XDMG|U
+Rope of Entanglement|XDMG|R
+Rope of Mending|XDMG|C
+Ruby of the War Mage|XDMG|C|a:a spellcaster|SCF
+Saddle of the Cavalier|XDMG|U
+Scarab of Protection|XDMG|L|a||1
+Scimitar of Speed|XDMG|V|a|M|3|scimitar
+Scroll of Protection (Aberrations)|XDMG|R||SC
+Scroll of Protection (Beasts)|XDMG|R||SC
+Scroll of Protection (Celestials)|XDMG|R||SC
+Scroll of Protection (Constructs)|XDMG|R||SC
+Scroll of Protection (Dragons)|XDMG|R||SC
+Scroll of Protection (Elementals)|XDMG|R||SC
+Scroll of Protection (Fey)|XDMG|R||SC
+Scroll of Protection (Fiends)|XDMG|R||SC
+Scroll of Protection (Giants)|XDMG|R||SC
+Scroll of Protection (Humanoids)|XDMG|R||SC
+Scroll of Protection (Monstrosities)|XDMG|R||SC
+Scroll of Protection (Oozes)|XDMG|R||SC
+Scroll of Protection (Plants)|XDMG|R||SC
+Scroll of Protection (Undead)|XDMG|R||SC
+Scroll of Titan Summoning (Animal Lord)|XDMG|L||SC
+Scroll of Titan Summoning (Blob of Annihilation)|XDMG|L||SC
+Scroll of Titan Summoning (Colossus)|XDMG|L||SC
+Scroll of Titan Summoning (Elemental Cataclysm)|XDMG|L||SC
+Scroll of Titan Summoning (Empyrean)|XDMG|L||SC
+Scroll of Titan Summoning (Kraken)|XDMG|L||SC
+Scroll of Titan Summoning (Tarrasque)|XDMG|L||SC
+Sending Stones|XDMG|U
+Sentinel Shield|XDMG|U||S|6|shield
+Shadowfang|WoW|R||M|3|longsword
+Shalamayne|WoW|A|a|M|6|greatsword
+Shalamayne (Ellemayne)|WoW|A||M|3|longsword
+Shalamayne (Shalla'tor)|WoW|A||M|3|longsword
+Shield of Expression|XDMG|C||S|6|shield
+Shield of Missile Attraction|XDMG|R|a|S|6|shield
+Shield of the Cavalier|XDMG|V|a|S|6|shield
+Silver Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Slippers of Spider Climbing|XDMG|U|a
+Sovereign Glue|XDMG|L
+Spell Scroll (Cantrip)|XDMG|C||SC
+Spell Scroll (Level 1)|XDMG|C||SC
+Spell Scroll (Level 2)|XDMG|U||SC
+Spell Scroll (Level 3)|XDMG|U||SC
+Spell Scroll (Level 4)|XDMG|R||SC
+Spell Scroll (Level 5)|XDMG|R||SC
+Spell Scroll (Level 6)|XDMG|V||SC
+Spell Scroll (Level 7)|XDMG|V||SC
+Spell Scroll (Level 8)|XDMG|V||SC
+Spell Scroll (Level 9)|XDMG|L||SC
+Spellguard Shield|XDMG|V|a|S|6|shield
+Sphere of Annihilation|XDMG|L
+Spirit Board|XDMG|V
+Staff of Adornment|XDMG|C||M|4
+Staff of Birdcalls|XDMG|C||M|4
+Staff of Charming|XDMG|R|a:a bard, cleric, druid, sorcerer, warlock, or wizard|M|4
+Staff of Fire|XDMG|V|a:a druid, sorcerer, warlock, or wizard|M|4
+Staff of Flowers|XDMG|C||M|4
+Staff of Frost|XDMG|V|a:a druid, sorcerer, warlock, or wizard|M|4
+Staff of Healing|XDMG|R|a:a bard, cleric, or druid|M|4
+Staff of Light and Shadow|WoW|L|a:a Cleric|M|4
+Staff of Light and Shadow (Anathema)|WoW|L|a:a Cleric|M|4
+Staff of Light and Shadow (Benediction)|WoW|L|a:a Cleric|M|4
+Staff of Power|XDMG|V|a:a sorcerer, warlock, or wizard|M|4
+Staff of Striking|XDMG|V|a|M|4
+Staff of Swarming Insects|XDMG|R|a:a bard, cleric, druid, sorcerer, warlock, or wizard|M|4
+Staff of the Adder|XDMG|U|a|M|4
+Staff of the Magi|XDMG|L|a:a sorcerer, warlock, or wizard|M|4
+Staff of the Python|XDMG|U|a|M|4
+Staff of the Woodlands|XDMG|R|a:a druid|M|4
+Staff of Thunder and Lightning|XDMG|V|a|M|4
+Staff of Withering|XDMG|R|a:a cleric, druid, or warlock|M|4
+Steamwheedle Apparatus|WoW|L|||500
+Stone of Controlling Earth Elementals|XDMG|R
+Stone of Good Luck|XDMG|U|a
+Sulfuras, Hand of Ragnaros|WoW|A|a|M|10|maul
+Sun Blade|XDMG|R|a|M|3|longsword
+Sword of Answering|XDMG|L|a|M|3|longsword
+Sword of Kas|XDMG|A|a|M|3|longsword
+Talisman of Pure Good|XDMG|L|a:a cleric or paladin||1
+Talisman of the Sphere|XDMG|L|a||1
+Talisman of Ultimate Evil|XDMG|L|a||1
+Talking Doll|XDMG|C|a
+Tankard of Sobriety|XDMG|C
+Tentacle Rod|XDMG|R|a|RD|2
+Thunderous Greatclub|XDMG|V|a|M|10|greatclub
+Tome of Clear Thought|XDMG|V|||5
+Tome of Leadership and Influence|XDMG|V|||5
+Tome of the Stilled Tongue|XDMG|L|a:a wizard|SCF|5
+Tome of Understanding|XDMG|V|||5
+Trident of Fish Command|XDMG|U|a|M|4|trident
+Troll's Blood Elixir|WoW|U||P
+Troll's Blood Elixir (Greater)|WoW|R||P
+Troll's Blood Elixir (Superior)|WoW|V||P
+Troll's Blood Elixir (Supreme)|WoW|L||P
+Twin Blades of Azzinoth|WoW|A|a|M|3|scimitar
+Universal Solvent|XDMG|L
+Veteran's Cane|XDMG|C
+Vithrak, Gaze of the Deadman|WoW|V||RG
+Wand of Binding|XDMG|R|a|WD|1
+Wand of Conducting|XDMG|C||WD|1
+Wand of Enemy Detection|XDMG|R|a|WD|1
+Wand of Fear|XDMG|R|a|WD|1
+Wand of Fireballs|XDMG|R|a:a spellcaster|WD|1
+Wand of Lightning Bolts|XDMG|R|a:a spellcaster|WD|1
+Wand of Magic Detection|XDMG|U||WD|1
+Wand of Magic Missiles|XDMG|U||WD|1
+Wand of Orcus|XDMG|A|a|WD|4|mace
+Wand of Paralysis|XDMG|R|a:a spellcaster|WD|1
+Wand of Polymorph|XDMG|V|a:a spellcaster|WD|1
+Wand of Pyrotechnics|XDMG|C||WD|1
+Wand of Secrets|XDMG|U||WD|1
+Wand of Web|XDMG|U|a:a spellcaster|WD|1
+Wand of Wonder|XDMG|R|a|WD|1
+Wave|XDMG|A|a|M|4|trident
+Well of Many Worlds|XDMG|L
+Whelm|XDMG|A|a:a dwarf or a creature attuned to a belt of dwarvenkind|M|5|warhammer
+White Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Wind Fan|XDMG|U
+Winged Boots|XDMG|U|a
+Wings of Flying|XDMG|R|a
