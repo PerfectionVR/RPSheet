@@ -1,16 +1,14 @@
--- The dialog skin's controls: what the theme changes on each kind of part the options
--- library puts in a window. Kinds that are not listed here are left as they are.
---
--- Text that stands on the window's background takes the theme's colours. Text inside
--- a box of the game's own dark art (the value in a dropdown) only takes the font, so
--- it stays readable in a light theme; what is typed in an edit box or beside a slider
--- is not touched at all.
+-- The dialog skin's texts and boxes: labels, headings, the colour picker's name and
+-- the titled boxes around groups of controls. The controls themselves are in
+-- DialogSkinCheck.lua, DialogSkinSlider.lua, DialogSkinDropdown.lua and
+-- DialogSkinEdit.lua; tabs and the tree in DialogSkinTabs.lua and DialogSkinTree.lua.
+-- Kinds of part that no file lists are left as they are.
 local _, ns = ...
 local Skin = ns.DialogSkin
 local styles = Skin.styles
 
 -- A control's name: accent like a heading, muted while the control is switched off.
-local function NameColor(widget, theme)
+function Skin.NameColor(widget, theme)
     return widget.disabled and theme.muted or theme.accent
 end
 
@@ -33,45 +31,28 @@ styles.Heading = function(widget, theme)
     Skin.Tint(widget, widget.right, theme.accent)
 end
 
--- The box and its tick keep the game's look, which reads on any background.
-styles.CheckBox = function(widget, theme)
+-- The swatch shows the picked colour and stays as it is.
+styles.ColorPicker = function(widget, theme)
     Skin.Font(widget, widget.text, widget.disabled and theme.muted or theme.text, theme)
-    Skin.Font(widget, widget.desc, theme.muted, theme)
 end
 
-local function Slider(widget, theme)
-    local ends = widget.disabled and theme.muted or theme.text
-    Skin.Font(widget, widget.label, NameColor(widget, theme), theme)
-    Skin.Font(widget, widget.lowtext, ends, theme)
-    Skin.Font(widget, widget.hightext, ends, theme)
-end
-styles.Slider = Slider
-styles.RPSheetSlider = Slider
-
-styles.Dropdown = function(widget, theme)
-    Skin.Font(widget, widget.label, NameColor(widget, theme), theme)
-    Skin.Font(widget, widget.text, nil, theme)
-end
-
--- One line of typing, with its small confirm button.
-styles.EditBox = function(widget, theme)
-    Skin.Font(widget, widget.label, NameColor(widget, theme), theme)
-    Skin.Button(widget, widget.button, theme)
-end
-
--- Several lines of typing, with the Accept button under them.
-styles.MultiLineEditBox = function(widget, theme)
-    Skin.Font(widget, widget.label, NameColor(widget, theme), theme)
-    Skin.Button(widget, widget.button, theme)
+-- The edge and inside of a group's box, which keeps its rounded shape.
+function Skin.Pane(widget, panel, theme, wash)
+    Skin.Backdrop(widget, panel, Skin.Wash(theme, wash), theme.border)
 end
 
 -- A titled box around a group of controls. The box is the frame around the group's
 -- contents, which the part does not name.
 styles.InlineGroup = function(widget, theme)
-    local accent = theme.accent
-    Skin.Font(widget, widget.titletext, accent, theme)
+    Skin.Font(widget, widget.titletext, theme.accent, theme)
     local box = widget.content and widget.content.GetParent and widget.content:GetParent()
-    if box and box ~= widget.frame then
-        Skin.Backdrop(widget, box, { accent[1], accent[2], accent[3], 0.06 }, theme.border)
-    end
+    if box and box ~= widget.frame then Skin.Pane(widget, box, theme) end
+end
+
+-- A group whose pages are picked from a dropdown above it. That dropdown is a part
+-- the group keeps for itself, so it is styled, and undone, as a piece of the group.
+styles.DropdownGroup = function(widget, theme)
+    Skin.Font(widget, widget.titletext, theme.accent, theme)
+    Skin.Pane(widget, widget.border, theme, 0)
+    if type(widget.dropdown) == "table" then Skin.Dropdown(widget, widget.dropdown, theme) end
 end

@@ -33,6 +33,10 @@ local source     -- what the window is showing
 local open       -- the open tab: source.first or one of source.kinds
 local search = ""
 
+-- The kinds of part the dialog skin (UI/DialogSkin.lua) styles in this window. The
+-- texts and tabs are themed where they are made.
+local THEMED = { ScrollFrame = true, InlineGroup = true, Button = true, EditBox = true }
+
 local function Build(self)
     local profile = self.db.profile
     profile.itemWindow = profile.itemWindow or { width = 560, height = 520 }
@@ -105,7 +109,8 @@ local function AddCard(self, body, entry, first)
     card:SetLayout("Flow")
     card:SetRelativeWidth(0.5)
     local marks = source.marks(self, entry)
-    card:SetTitle(#marks > 0 and ("%s  |cffffffff(%s)|r"):format(entry.name, table.concat(marks, ", ")) or entry.name)
+    local plain = ns.Util.HexCode(self.db.profile.theme.text) -- the title itself is in the accent colour
+    card:SetTitle(#marks > 0 and ("%s  %s(%s)|r"):format(entry.name, plain, table.concat(marks, ", ")) or entry.name)
     local lines = source.lines and source.lines(self, entry) or UI.ItemLines(self, entry.name, entry.item, source.class(self))
     for _, line in ipairs(source.notes and source.notes(self, entry) or {}) do lines[#lines + 1] = line end
     UI.AddLabel(card, 1, table.concat(lines, "\n"))
@@ -191,5 +196,7 @@ function RPSheet:PopulateItemBrowser()
         UI.AddLabel(body, 1, UI.GREY .. (search ~= "" and "Nothing here matches your search." or source.empty) .. "|r")
     end
     body:ResumeLayout()
+    -- The blocks, buttons and search box in the theme's look, like the dialogs.
+    ns.DialogSkin.ApplyTo(body, self.db.profile.theme, THEMED)
     body:DoLayout()
 end

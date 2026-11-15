@@ -60,16 +60,13 @@ end
 function Skin.Button(widget, button, theme)
     if not (button and button.GetRegions and button.CreateTexture) then return end
     -- The game's button art, its glow included, makes way for ours.
-    for _, region in ipairs({ button:GetRegions() }) do
-        if region.IsObjectType and region:IsObjectType("Texture") and not Skin.IsOurs(region) then
-            Skin.Fade(widget, region)
-        end
-    end
+    Skin.FadeArt(widget, button)
     local fill = Skin.Box(widget, button, theme.accent, FILL, EDGE, 1)
     local glow = Skin.Texture(widget, button, "glow", "HIGHLIGHT")
     glow:SetAllPoints(fill)
     glow:SetColorTexture(unpack(theme.highlight))
     ThemeText(widget, button, theme)
+    Skin.Recolor(widget, button.GetFontString and button:GetFontString(), theme)
 end
 
 Skin.styles.Button = function(widget, theme)
