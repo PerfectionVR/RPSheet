@@ -128,6 +128,11 @@ function RPSheet:ExplainSpeed()
     if form then parts = { { form.name, form.speed } } end
     AddBonuses(self, parts, "SPEED")
     Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty())
+    if not form and self:Overloaded() then
+        Out(self, ("Speed |cffffd100%d ft|r: you carry %.1f lb., more than the %d lb. you can, which holds your speed to %d feet. Without the load: %s."):format(
+            self:Speed(), self:CarriedWeight(), self:CarryCapacity(), R.OVERLOADED_SPEED, Join(parts)))
+        return
+    end
     Out(self, ("Speed |cffffd100%d ft|r: %s."):format(Total(parts), Join(parts)))
 end
 

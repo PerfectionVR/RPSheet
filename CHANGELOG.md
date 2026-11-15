@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Carrying more than your capacity holds your speed to 5 feet; the Speed row and
+  its explanation show it.
+- A found spell can be copied into the spellbook for 50 gp per spell level, paid
+  from your coins (Customize > Spellbook). Spells gained by levelling stay free.
+- The companion's Weapon Mastery pick can be changed once per long rest.
+
 ## 0.6.0
 
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the

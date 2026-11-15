@@ -22,6 +22,7 @@ R.ATTUNE_LIMIT = 3 -- magic items one character can be attuned to at a time
 
 -- Pounds carried per point of Strength, by size.
 R.CARRY_PER_STRENGTH = { S = 15, M = 15, L = 30 }
+R.OVERLOADED_SPEED = 5 -- feet, at most, while carrying more than that
 
 R.RARITY_ORDER = { "", "Common", "Uncommon", "Rare", "Very rare", "Legendary", "Artifact" }
 R.RARITIES = { [""] = "Not set" }

@@ -173,7 +173,10 @@ function RPSheet:Speed()
     local form = self:Form()
     if form then return math.max(0, form.speed + self:Bonus("SPEED")) end
     local species = self:SpeciesData()
-    return math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") - self:ArmorSpeedPenalty())
+    local speed = math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") - self:ArmorSpeedPenalty())
+    -- Hauling more than you can carry.
+    if self:Overloaded() then speed = math.min(speed, R.OVERLOADED_SPEED) end
+    return speed
 end
 
 ---------------------------------------------------------------------------

@@ -175,7 +175,7 @@ other ten still need that.
       prone or grapple, and uses the family's mastery when it is one of your picks
 - [x] The companion's Armor Class, speed and darkvision on the sheet
 - [x] The companion's two strikes at level 11 in one click
-- [ ] Changing the companion's mastery pick only after a long rest
+- [x] The companion's mastery pick changed once per long rest
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
 - [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
@@ -227,7 +227,8 @@ other ten still need that.
       as the class prepares; spells added by hand before count as picks
 - [ ] How often prepared spells may be swapped (any after a long rest, one per long
       rest, or one per level, by class)
-- [ ] Copying spells into the book for gold and time; preparing only after a long rest
+- [x] Copying a found spell into the book for 50 gp a level, taken from your coins
+- [ ] Preparing spells only after a long rest
 - [x] Gold tracked on the sheet (see the inventory below)
 - [ ] Spell components with a price checked against, and taken from, the inventory
 
@@ -249,8 +250,9 @@ other ten still need that.
       equipping one puts it on or readies it, putting it away undoes that
 - [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
       situation; magic armor and weapons, and weapons of your own, equipped from the
-      inventory; being over the carrying limit slowing you; the fixed starting gear
+      inventory; the fixed starting gear
       packages of each class and background (the closet has no budget)
+- [x] Carrying more than you can holds your speed to 5 feet
 - [ ] Mounts, vehicles and companion creatures
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on

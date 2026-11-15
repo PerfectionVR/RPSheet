@@ -63,6 +63,11 @@ function RPSheet:CarryCapacity()
     return self:Score("STR", true) * (R.CARRY_PER_STRENGTH[sheet.size] or R.CARRY_PER_STRENGTH.M)
 end
 
+-- True while the character carries more than it can.
+function RPSheet:Overloaded()
+    return self:CarriedWeight() > self:CarryCapacity()
+end
+
 ---------------------------------------------------------------------------
 -- Adding and buying
 ---------------------------------------------------------------------------

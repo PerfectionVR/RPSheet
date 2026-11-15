@@ -29,6 +29,7 @@ function RPSheet:LongRest()
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
     state.conditions.Concentrating = nil
+    state.petMasteryChanged = nil -- Weapon Mastery picks can be changed again
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).
