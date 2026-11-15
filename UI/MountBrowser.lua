@@ -13,13 +13,13 @@ function ns.OpenMountOptions()
     AceConfigDialog:SelectGroup(ADDON, "customize", "mounts")
 end
 
--- After a button changed the list: on the next frame, because the button is part of
--- what gets rebuilt. Rebuilding the sheet rebuilds the stable too.
+-- After a button changed the list. The sheet is rebuilt on the next frame, because
+-- the button is part of what gets rebuilt, and the stable with it; what the button did
+-- may have asked for that already (paying), and it happens once.
 local function Changed(self)
-    C_Timer.After(0, function()
-        ns.RebuildOptions() -- an entry's page under Customize may have come or gone
-        self:SheetChanged()
-    end)
+    ns.RebuildOptions() -- an entry's page under Customize may have come or gone
+    self:ClampState()
+    self:PopulateSoon()
 end
 
 local STABLE = {

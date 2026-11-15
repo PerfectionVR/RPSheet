@@ -17,13 +17,13 @@ function ns.OpenProfessionOptions()
     AceConfigDialog:SelectGroup(ADDON, "customize", "professions")
 end
 
--- After a button changed the character: on the next frame, because the button is part
--- of what gets rebuilt. Rebuilding the sheet rebuilds the browser too.
+-- After a button changed the character. The sheet is rebuilt on the next frame,
+-- because the button is part of what gets rebuilt, and the browser with it; what the
+-- button did may have asked for that already (paying), and it happens once.
 local function Changed(self)
-    C_Timer.After(0, function()
-        ns.RebuildOptions() -- an item's page under Customize may have come
-        self:SheetChanged()
-    end)
+    ns.RebuildOptions() -- an item's page under Customize may have come
+    self:ClampState()
+    self:PopulateSoon()
 end
 
 local CRAFT = {

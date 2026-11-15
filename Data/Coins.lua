@@ -61,12 +61,15 @@ function ns.ParseCoins(text)
     text = (text or ""):lower():gsub(",", "")
     local bare = tonumber(text:match("^%s*(%d+)%s*$"))
     if bare then return bare * R.COINS.gp.value end
-    local total, found = 0, false
-    for amount, word in text:gmatch("(%d+)%s*(%a+)") do
+    local total, found, unknown = 0, false, false
+    local rest = text:gsub("%f[%a]and%f[%A]", " "):gsub("(%d+)%s*(%a+)", function(amount, word)
         local key = WORDS[word]
-        if not key then return nil end
+        if not key then unknown = true return end
         total, found = total + tonumber(amount) * R.COINS[key].value, true
-    end
+        return ""
+    end)
+    -- Anything left over ("1.5 gp", "5 gp 3") would be dropped without a word: refuse it.
+    if unknown or rest:find("%S") then return nil end
     return found and total or nil
 end
 

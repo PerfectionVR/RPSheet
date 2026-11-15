@@ -12,13 +12,13 @@ function ns.OpenInventoryOptions()
     AceConfigDialog:SelectGroup(ADDON, "customize", "items")
 end
 
--- After a button changed the inventory: on the next frame, because the button is part
--- of what gets rebuilt. Rebuilding the sheet rebuilds the browser too.
+-- After a button changed the inventory. The sheet is rebuilt on the next frame,
+-- because the button is part of what gets rebuilt, and the browser with it; what the
+-- button did may have asked for that already (paying, attuning), and it happens once.
 local function Changed(self)
-    C_Timer.After(0, function()
-        ns.RebuildOptions() -- an item's page under Customize may have come or gone
-        self:SheetChanged()
-    end)
+    ns.RebuildOptions() -- an item's page under Customize may have come or gone
+    self:ClampState()
+    self:PopulateSoon()
 end
 
 local SHEET = {

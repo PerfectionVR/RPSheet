@@ -62,10 +62,29 @@ local function PutBack(half)
     W.draft.gear[half] = nil
 end
 
+-- Puts back a set that is no longer the one on offer, because another class,
+-- background or set was chosen since: its gear is not this character's, and that half
+-- then gives its gold in place of gear. True when something went back.
+function W.DropStaleGear()
+    local draft, dropped = W.draft, false
+    for half in pairs(HALVES) do
+        if draft.gear and draft.gear[half] and not Taken(half) then
+            PutBack(half)
+            dropped = true
+        end
+    end
+    if dropped then
+        draft.gearNote = "The starting gear you took earlier went back with the choice it belonged to. " .. GoldLine()
+        W.ClosetChanged()
+    end
+    return dropped
+end
+
 -- Takes the set a half offers: its items into the closet, armor and shield put on.
 function W.TakeGear(half)
     local draft = W.draft
     draft.gear = draft.gear or {}
+    W.DropStaleGear() -- or the other half's old set would stay next to its full gold
     local set, key = Offered(half)
     if not set then return end
     PutBack(half)
@@ -132,7 +151,10 @@ function W.AddGearArgs(args)
             return values
         end,
         get = function() return W.draft.gearSet or 1 end,
-        set = function(_, value) W.draft.gearSet = value end,
+        set = function(_, value)
+            W.draft.gearSet = value
+            W.DropStaleGear() -- the other set, if it was taken, goes back
+        end,
     }
     args.takeClassGear = Button("class", 2.13)
     args.takeBackgroundGear = Button("background", 2.14)
