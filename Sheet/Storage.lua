@@ -4,6 +4,10 @@ local _, ns = ...
 local RPSheet = ns.addon
 local Util = ns.Util
 
+local function CharacterKey()
+    return ("char:%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
+end
+
 local function CurrentSheetKey()
     local getID = TRP3_API and TRP3_API.profile and TRP3_API.profile.getPlayerCurrentProfileID
     if getID then
@@ -12,7 +16,20 @@ local function CurrentSheetKey()
             return "trp3:" .. id
         end
     end
-    return ("char:%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
+    return CharacterKey()
+end
+
+-- A saved sheet that holds a character (the wizard was finished or skipped, or a class
+-- was chosen by hand), as opposed to the blank one every new key starts with.
+local function Made(state)
+    return type(state) == "table" and (state.created or (type(state.sheet) == "table" and (state.sheet.class or "") ~= "")) and true or false
+end
+
+local function AnyProfileMade(sheets)
+    for key, state in pairs(sheets) do
+        if type(key) == "string" and key:find("^trp3:") and Made(state) then return true end
+    end
+    return false
 end
 
 -- Name of the linked Total RP 3 profile, or nil when the sheet is tied to the WoW character.
@@ -41,6 +58,15 @@ function RPSheet:UpdateSheetKey()
         -- Total RP 3 became available: the character's own sheet becomes the profile's sheet.
         sheets[key] = Util.FillDefaults(rawget(sheets, previous), blank)
         sheets[previous] = nil
+    elseif not previous and key:find("^trp3:") and not Made(rawget(sheets, key)) and Made(rawget(sheets, CharacterKey()))
+        and not AnyProfileMade(sheets) then
+        -- The same at a login: Total RP 3 was installed after the character was made, and
+        -- has its profile ready before this addon starts. Only while no profile has a
+        -- character yet, so a sheet made on a day without Total RP 3 isn't handed to
+        -- whichever profile is made next.
+        local own = CharacterKey()
+        sheets[key] = Util.FillDefaults(rawget(sheets, own), blank)
+        sheets[own] = nil
     end
 
     ns.NormalizeState(sheets[key])

@@ -33,10 +33,12 @@ function ns.HookTRP3Tooltip(addon)
         else
             data = addon:GetCachedStats(tooltip.target)
         end
-        if not data then return end
+        -- No summary means no character was made (Sheet/Summary.lua): nothing to show.
+        if not data or data.summary == "" then return end
         local colors = tooltipAPI.getTooltipTextColors()
+        local lines = addon:GetStatLines(data) -- before the title: if this fails, no title is left behind
         builder:AddLine("Stats", colors.MAIN, tooltipAPI.getSubLineFontSize())
-        for _, line in ipairs(addon:GetStatLines(data)) do
+        for _, line in ipairs(lines) do
             builder:AddLine(line, colors.SECONDARY, tooltipAPI.getSmallLineFontSize(), true)
         end
     end
