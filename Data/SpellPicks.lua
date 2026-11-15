@@ -8,6 +8,16 @@
 local _, ns = ...
 local R = ns.Rules
 
+-- When a class may exchange one of its cantrips for another:
+--   LEVEL     one when it gains a level
+--   REST_ONE  one when it finishes a long rest, so none while levelling
+-- The level dialog holds to it through the list's `swaps`.
+R.CANTRIP_RULES = {
+    Bard = "LEVEL", Cleric = "LEVEL", Druid = "LEVEL", Sorcerer = "LEVEL", Warlock = "LEVEL",
+    Wizard = "REST_ONE",
+}
+local CANTRIP_SWAPS = { LEVEL = 1, REST_ONE = 0 }
+
 -- Cantrips, one list per Player's Handbook class that knows any.
 R.CANTRIP_LISTS = {} -- [class] = key of its pick list
 for _, base in ipairs({ "Cleric", "Druid", "Sorcerer", "Warlock", "Wizard" }) do
@@ -22,7 +32,15 @@ for _, base in ipairs({ "Cleric", "Druid", "Sorcerer", "Warlock", "Wizard" }) do
     table.sort(order, R.SpellBefore)
     if R.CANTRIPS_KNOWN[base] and #order > 0 then
         local key = "cantrips" .. base
-        R.PICK_LISTS[key] = { title = "Cantrips", base = base, custom = true, known = R.CANTRIPS_KNOWN[base], items = items, order = order }
+        R.PICK_LISTS[key] = {
+            title = "Cantrips", base = base, custom = true, known = R.CANTRIPS_KNOWN[base], items = items, order = order,
+            -- One earlier cantrip may be exchanged when a level of the class is gained, or
+            -- none (Sheet/PickSwaps.lua).
+            swapGroup = key, swaps = CANTRIP_SWAPS[R.CANTRIP_RULES[base]],
+        }
+        if R.CANTRIP_RULES[base] == "REST_ONE" then
+            R.PICK_LISTS[key].stayNote = "; earlier cantrips stay, you change one after a long rest"
+        end
         R.CANTRIP_LISTS[base] = key
         R.PICK_LIST_ORDER[#R.PICK_LIST_ORDER + 1] = key
     end

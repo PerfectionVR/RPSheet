@@ -36,7 +36,8 @@ end
 -- it doesn't have yet, which is then added (Sheet/Classes.lua). Losing the last level
 -- of a later class removes that class; the first class always keeps one level.
 -- `with` may carry what the level dialog picked for a class's first level:
--- { subclass =, skill = }.
+-- { subclass =, skill =, style =, styleSlot = } (the last two: a Fighting Style and
+-- the slot it goes in, Sheet/FightingStyles.lua).
 function RPSheet:SetLevel(level, classKey, with)
     local sheet, state = self:Sheet(), self:State()
     local old = sheet.level
@@ -67,6 +68,7 @@ function RPSheet:SetLevel(level, classKey, with)
         local entry = ns.ClassEntry(sheet, key)
         if entry and with and with.subclass then entry.subclass = with.subclass end
         if entry and with and (with.skill or "") ~= "" then entry.skill = with.skill end
+        if entry and with and (with.style or "") ~= "" then ns.SetClassStyle(sheet, key, with.styleSlot, with.style) end
     end
     sheet.level = level
     -- Remembered for going back a level; only a character of several classes needs it.

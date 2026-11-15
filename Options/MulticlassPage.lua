@@ -43,6 +43,13 @@ local function EntryPicker(key, field, order, name, desc, list)
     }
 end
 
+local STYLE_HELP = "The Fighting Style this class gives. Each class with the feature picks its own; a style picked twice only counts once."
+
+-- The styles to offer for a slot of a later class: none before it has the feature.
+local function Styles(key, slot)
+    return ns.HasStyleSlot(Sheet(), slot, key) and R.FIGHTING_STYLE_ORDER or {}
+end
+
 -- The controls of one class taken after the first.
 local function ClassGroup(key, order)
     local class = R.CLASSES[key]
@@ -65,6 +72,10 @@ local function ClassGroup(key, order)
                     local entry = ns.ClassEntry(Sheet(), key)
                     return ns.MulticlassSkills(Sheet(), key, entry and entry.skill or "")
                 end),
+            -- The class's own Fighting Styles, once it has the feature. Every style is
+            -- offered here; the level dialog only offers the ones the class may take.
+            style = EntryPicker(key, "fightingStyle", 4.1, "Fighting Style", STYLE_HELP, function() return Styles(key, 1) end),
+            style2 = EntryPicker(key, "fightingStyle2", 4.2, "Second Fighting Style", STYLE_HELP, function() return Styles(key, 2) end),
             remove = {
                 type = "execute", order = 5, name = "Remove this class",
                 desc = "Takes every level of this class off the character, with the features and choices they gave.",

@@ -61,6 +61,9 @@ function ns.MulticlassWarnings(sheet)
             warnings[#warnings + 1] = ("%s: by the rules a subclass is chosen at level %d of the class."):format(class.name, R.SUBCLASS_LEVEL)
         end
     end
+    for _, name in ipairs(ns.RepeatedStyles(sheet)) do
+        warnings[#warnings + 1] = ("%s is picked as a Fighting Style more than once: a style can be taken only once, and it counts once."):format(name)
+    end
     if sheet.level < R.HERO_START_LEVEL then
         for _, key in ipairs(extras) do
             if R.CLASSES[key].hero then

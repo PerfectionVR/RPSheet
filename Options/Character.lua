@@ -126,9 +126,11 @@ local function Summary()
     for _, trait in ipairs(ns.OpenTraitChoices(sheet)) do
         lines[#lines + 1] = ("%s%s has a choice to make, under Customize, Lineage, languages, renown.|r"):format(Opt.RED, trait)
     end
-    for slot, field in ipairs(ns.STYLE_FIELDS) do
-        if ns.HasStyleSlot(sheet, slot) and not R.FIGHTING_STYLES[sheet[field]] then
-            lines[#lines + 1] = ("%sYou have a Fighting Style to choose, under Customize, Class and origin.|r"):format(Opt.RED)
+    -- Each class with the feature picks its own.
+    for _, slot in ipairs(ns.StyleSlots(sheet)) do
+        if not R.FIGHTING_STYLES[slot.name] then
+            lines[#lines + 1] = ("%sYou have a Fighting Style to choose, under Customize, %s.|r"):format(Opt.RED,
+                slot.class == sheet.class and "Class and origin" or "More classes")
         end
     end
     -- Each class picks its subclass at its own level 3.
