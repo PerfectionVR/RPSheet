@@ -401,6 +401,7 @@ local TABS = {
     { name = "Skills", tip = "Skills and tools.", SkillSection, ToolSection },
     { name = "Traits", tip = "Passives and traits, languages and renown.", PassiveSection, OriginSection },
     { name = "Items", tip = "Your coins and what you carry.", UI.InventorySection },
+    { name = "Trade", tip = "Your professions: what you can make, gathering, and the materials you have.", UI.ProfessionSection },
 }
 
 ---------------------------------------------------------------------------

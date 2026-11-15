@@ -200,6 +200,7 @@ local function CleanSheet(source)
     sheet.spells = CleanList(source.spells, R.TEMPLATES.spell)
     sheet.items = CleanList(source.items, R.TEMPLATES.item, "effects", R.TEMPLATES.effect)
     ns.NormalizeInventory(sheet, source) -- coins, and weights that are fractions
+    ns.NormalizeProfessions(sheet, source) -- gathered materials, fragments, learned recipes
     -- A spell's level and dice count may be 0, unlike the character level and other dice.
     for index, spell in ipairs(sheet.spells) do
         local original = source.spells[index]

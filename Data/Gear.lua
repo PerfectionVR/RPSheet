@@ -8,7 +8,7 @@ R.AddGear("Adventuring gear",
     .. "Barrel|200|70;Basic Poison|10000|0;Basket|40|2;Bedroll|100|7;Bell|100|0;Blanket|50|3;"
     .. "Block and Tackle|100|5;Book|2500|5;Bucket|5|2;Bullseye Lantern|1000|2;Caltrops|100|2;"
     .. "Candle|1|0;Chain|500|10;Chest|500|25;Climber's Kit|2500|12;Component Pouch|2500|2;"
-    .. "Costume|500|4;Crossbow Bolt Case|100|1;Crowbar|200|5;Fine Clothes|1500|6;Flask|2|1;"
+    .. "Costume|500|4;Crossbow Bolt Case|100|1;Crowbar|200|5;Fine Clothes|1500|6;Flask|2|1;Fuel|100|10;"
     .. "Glass Bottle|200|2;Grappling Hook|200|4;Healer's Kit|500|3;Holy Water|2500|1;"
     .. "Hooded Lantern|500|2;Hunting Trap|500|25;Ink|1000|0;Ink Pen|2|0;Iron Pot|200|10;"
     .. "Iron Spikes|100|5;Jug|2|4;Ladder|10|25;Lamp|50|1;Lock|1000|1;Magnifying Glass|10000|0;"

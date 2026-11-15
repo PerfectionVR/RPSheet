@@ -88,6 +88,8 @@ Data\Factions.lua
 Data\FactionPerks.lua
 Data\FactionPerksHorde.lua
 Data\FactionPerksOrders.lua
+Data\Professions.lua
+Data\Recipes.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -108,6 +110,8 @@ Sheet\Defenses.lua
 Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
+Sheet\Professions.lua
+Sheet\Crafting.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
@@ -156,6 +160,9 @@ Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua
+Actions\Gathering.lua
+Actions\Archaeology.lua
+Actions\Trade.lua
 
 # The sheet window
 UI\WindowMinimize.lua
@@ -176,6 +183,8 @@ UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemBrowser.lua
 UI\ItemBrowserSheet.lua
+UI\CraftBrowser.lua
+UI\ProfessionSection.lua
 UI\SheetTabs.lua
 UI\SheetContent.lua
 UI\Minimap.lua
@@ -200,6 +209,7 @@ Options\RenownPerks.lua
 Options\Origin.lua
 Options\Scores.lua
 Options\Proficiencies.lua
+Options\Professions.lua
 Options\Defense.lua
 Options\Resources.lua
 Options\Weapons.lua
