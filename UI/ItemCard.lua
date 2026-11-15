@@ -19,21 +19,23 @@ local function ArmorLine(data, kind)
 end
 
 -- Lines for the item called `name`. `item` is the carried entry when there is one;
--- its own note, rarity and effects go before the catalogue's.
-function UI.ItemLines(self, name, item)
+-- its own note, rarity and effects go before the catalogue's. `classKey` judges the
+-- training by a class alone (the wizard's draft) and not by the active character.
+function UI.ItemLines(self, name, item, classKey)
+    local training = classKey and ns.ArmorTraining(classKey) or self:ArmorTraining()
     local known, lines = R.ITEMS[name], {}
     local weapon, armor = R.WEAPONS[name], R.ARMOR_ITEMS[name]
     if weapon then
         lines[#lines + 1] = ("%s weapon: %s. Mastery: %s."):format(
             weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(name), weapon.mastery)
-        if not ns.WeaponProficient(self:Sheet().class, name) then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
+        if not ns.WeaponProficient(classKey or self:Sheet().class, name) then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
     elseif armor then
         local kind = ns.ArmorKind(armor)
         lines[#lines + 1] = ArmorLine(R.ARMOR[armor], kind)
-        if not self:ArmorTraining()[kind] then lines[#lines + 1] = RED .. "You have no training with it.|r" end
+        if not training[kind] then lines[#lines + 1] = RED .. "You have no training with it.|r" end
     elseif name == R.SHIELD_ITEM then
         lines[#lines + 1] = ("+%d to Armor Class while equipped."):format(R.SHIELD_AC)
-        if not self:ArmorTraining().shield then lines[#lines + 1] = RED .. "You have no training with shields.|r" end
+        if not training.shield then lines[#lines + 1] = RED .. "You have no training with shields.|r" end
     end
 
     local rarity = item and item.rarity ~= "" and item.rarity or (known and known.rarity)

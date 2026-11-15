@@ -34,7 +34,7 @@ function W.NewDraft()
         bonus = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 },
         alignment = "",
         fightingStyle = "",
-        closet = {}, -- starting gear taken: item name -> true (Wizard/Closet.lua)
+        closet = {}, -- starting gear taken: item name -> how many (Wizard/Closet.lua)
         worn = {},   -- the taken armor, shield and weapons that are equipped
         gold = 0,    -- gold pieces to start with
         -- A new character starts clean. What the player made by hand on the current one
