@@ -69,6 +69,13 @@ local CASES = {
     }, check = function()
         if RPSheet:IsDown() then return "the case didn't heal the character" end
     end },
+    -- The Quantity slider under Customize went down to 0: an entry of nothing.
+    { name = "quantity slider at its lowest", steps = {
+        { a = "make", seed = 182609659, p = { class = "ROGUE", level = 4, extras = 0, classGear = true, backgroundGear = false } },
+        { a = "customize", seed = 1325103450, p = { how = "low", option = "options.customize.items.item1.qty" } },
+    }, check = function()
+        if #RPSheet:Sheet().items == 0 then return "the case's character carries nothing" end
+    end },
 }
 
 local played, problems = 0, 0

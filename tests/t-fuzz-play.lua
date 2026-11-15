@@ -5,6 +5,7 @@
 --   run.sh t-fuzz-play.lua 5000 400           a soak: 5000 characters x 400 actions
 --   run.sh t-fuzz-play.lua 5000 400 77        the same from seed 77 on (several at once: give each its own)
 --   run.sh t-fuzz-play.lua seed 1234 400      one character again, from the seed a PROBLEM printed
+--   run.sh t-fuzz-play.lua scenario file.lua  the steps a PROBLEM printed ({ ... }), saved to a file
 --
 -- A problem prints PROBLEM with the seed, the character and the last 15 actions, then
 -- the shortest list of actions found that still ends in it, as a scenario that can be
@@ -12,6 +13,21 @@
 dofile(ARG3 .. "/t-fuzz-lib.lua")
 local Z = FUZZ
 local function Arg(index) return rawget(_G, "ARG" .. index) end
+
+-- A scenario as a PROBLEM printed it, saved to a file: played again with every
+-- invariant asked after every step.
+if Arg(4) == "scenario" then
+    local file = assert(io.open(Arg(5), "r"))
+    local steps = assert(loadstring("return " .. file:read("*a")))()
+    file:close()
+    local problem, at = Z.Replay(steps, nil, true)
+    if problem then
+        print(("PROBLEM at step %d (%s): %s: %s"):format(at, steps[at].a, problem.kind, problem.text))
+        print("  character: " .. (Z.pcall(Z.Describe) and Z.Describe() or "no character"))
+    end
+    print(("fuzz play: a scenario of %d steps; %d problems"):format(#steps, problem and 1 or 0))
+    return
+end
 
 local characters, actions, first = tonumber(Arg(4)) or 36, tonumber(Arg(5)) or 60, tonumber(Arg(6)) or 1
 local one = Arg(4) == "seed"

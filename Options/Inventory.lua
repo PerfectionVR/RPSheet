@@ -20,7 +20,7 @@ local function Build(item)
     local args = {
         status = { type = "description", order = 0.5, fontSize = "medium", name = function() return Status(item) end },
         name = With({ type = "input", order = 1, name = "Name" }, self, "name", true),
-        qty = With({ type = "range", order = 2, min = 0, max = 9999, softMax = 50, step = 1, name = "Quantity" }, self, "qty"),
+        qty = With({ type = "range", order = 2, min = 1, max = 9999, softMax = 50, step = 1, name = "Quantity" }, self, "qty"),
         weight = {
             type = "input", order = 3, width = 0.6, name = "Weight (lb.)", desc = "Pounds for one of them.",
             get = function() return tostring(item.weight) end,
