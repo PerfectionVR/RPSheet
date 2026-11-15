@@ -134,7 +134,8 @@ local function FollowSpec(row, spec)
     local guide = R.SpecGuide(row.class, spec)
     if not guide then return end
     if guide.subclass and not R.CLASSES[row.class].hero then row.subclass = guide.subclass end
-    if guide.style then row.fightingStyle = guide.style end
+    -- (not a style another of the character's classes has: it can be taken once)
+    if guide.style and W.StyleOpen(row.class, 1, guide.style) then row.fightingStyle = guide.style end
 end
 
 -- What the specialization suggests for the levels the row has, or "".

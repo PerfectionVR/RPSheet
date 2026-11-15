@@ -49,6 +49,8 @@ function RPSheet:UpdateSheetKey()
         ns.ApplyClassFeatures(sheets[key].sheet)
         ns.ApplyLineageSpells(sheets[key].sheet)
         ns.ApplyTraits(sheets[key].sheet)
+        ns.ApplyFeatChoices(sheets[key].sheet) -- once more for a trait's feat (see ns.ApplyGrants)
+        ns.ApplyFeatSpells(sheets[key].sheet)
         ns.NormalizeState(sheets[key]) -- features added just now get their full shape
     end
     self:ClampState()
@@ -71,7 +73,7 @@ end
 -- of the player's own resources alone, for when the resource list was carried over.
 function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     local state = self:State()
-    state.sheet = sheet
+    state.sheet = sheet -- (one that names only part of the fields, like the example, is made whole by ns.NormalizeState)
     state.created, state.weapon, state.hp = true, 1, nil
     if not keepResourceValues then wipe(state.res) end
     wipe(state.pool)
@@ -88,6 +90,10 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
     ns.ApplyLineageSpells(sheet)
     ns.ApplyTraits(sheet)
+    -- Once more for a feat a trait put on the sheet, as in ns.ApplyGrants: its text
+    -- says what was chosen for it.
+    ns.ApplyFeatChoices(sheet)
+    ns.ApplyFeatSpells(sheet)
     ns.NormalizeState(state)
     self:ClampState(true)
     ns.RebuildOptions()

@@ -117,6 +117,9 @@ function ns.NormalizeState(state)
     if type(state.freeUsed) ~= "table" then state.freeUsed = {} end
     if type(state.spellUsed) ~= "table" then state.spellUsed = {} end
     local sheet = state.sheet
+    -- Every field a new sheet has: one that names only part of them (the example
+    -- character, a sheet that didn't come through the saved-variables library).
+    Util.FillDefaults(sheet, ns.defaults.global.sheets["*"].sheet)
     sheet.extraLanguages = tonumber(sheet.extraLanguages) or 0
     if type(sheet.stronghold) ~= "string" then sheet.stronghold = "" end
     if type(sheet.asi) ~= "table" then sheet.asi = {} end
@@ -146,6 +149,12 @@ function ns.NormalizeState(state)
     Util.NormalizeList(sheet.items, R.TEMPLATES.item)
     for _, item in ipairs(sheet.items) do Util.NormalizeList(item.effects, R.TEMPLATES.effect, Any) end
     ns.NormalizeInventory(sheet)
+    -- Materials, recipes and fragments (Sheet/Professions.lua): whole from the start,
+    -- so that a sheet reads the same before and after its first trade or export.
+    if type(sheet.materials) ~= "table" or type(sheet.recipes) ~= "table" or type(sheet.fragments) ~= "table"
+        or not sheet.fragments.plain or not sheet.fragments.magic or sheet.materials[R.MATERIAL_ORDER[1]] == nil then
+        ns.NormalizeProfessions(sheet)
+    end
     -- Mounts, vehicles and companion creatures (Sheet/Mounts.lua).
     if type(sheet.mounts) ~= "table" then sheet.mounts = {} end
     Util.NormalizeList(sheet.mounts, R.TEMPLATES.mount)

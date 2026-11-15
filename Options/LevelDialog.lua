@@ -27,6 +27,12 @@ AceConfigDialog:SetDefaultSize(DIALOG, 620, 560)
 -- classes, or a class it doesn't have yet.
 function ns.OpenLevelDialog(level, reopen, classKey)
     local sheet = L.Sheet()
+    -- The sheet's upkeep first: a spell deleted under Customize since the last one
+    -- gives up its place only then, and the dialog starts from what is picked.
+    if R.CLASSES[sheet.class] then
+        ns.ApplyClassFeatures(sheet)
+        ns.NormalizeState(ns.addon:State())
+    end
     local taking = not (level and ns.HasSlot(sheet, level))
     local own, classLevel
     if taking then
@@ -69,6 +75,9 @@ function ns.OpenLevelDialog(level, reopen, classKey)
             end
         end
     end
+    -- The subclass that is now selected brings spells that are always prepared: they
+    -- can't stay picked as well.
+    if L.draft.subclass ~= "" then L.DropUnfollowed() end
     -- One window at a time: the settings window would sit underneath and show through.
     -- A moment later, for the reason given at L.Finish (LevelDialogApply.lua).
     C_Timer.After(0, function()

@@ -129,7 +129,8 @@ local classPage = Page(1, {
             local guide = R.SpecGuide(draft.class, value)
             if guide then
                 if guide.subclass then draft.subclass = guide.subclass end
-                if guide.style then draft.fightingStyle = guide.style end
+                -- (not a style another of the character's classes has: it can be taken once)
+                if guide.style and W.StyleOpen(draft.class, 1, guide.style) then draft.fightingStyle = guide.style end
             end
         end
         return option
@@ -349,7 +350,8 @@ for i, stat in ipairs(R.STATS) do
         if not W.draft then return 3, R.MAX_SCORE end
         -- Point buy: 8 up to what the remaining points can pay for.
         if W.draft.scoreMethod == "POINTBUY" then return R.BASE_MIN, Opt.PointBuyMax(W.draft.base, stat) end
-        return 3, R.MAX_SCORE
+        -- With the background's points on top a score stops at the highest allowed.
+        return 3, R.MAX_SCORE - (W.draft.bonus[stat] or 0)
     end)
     scoreArgs["array" .. stat] = {
         type = "select", order = i * 10, name = R.STAT_NAMES[stat], desc = ns.Glossary[stat],
@@ -374,7 +376,8 @@ for i, stat in ipairs(R.STATS) do
         if not W.draft then return 0, R.BONUS_MAX end
         -- Only the abilities the background names, and only the points that are left.
         if not Opt.BackgroundAllows(W.draft.background, stat) then return 0, 0 end
-        return 0, Opt.BonusMax(W.draft.bonus, stat)
+        -- ...and no further than the highest score allowed (a score set by hand can be 20).
+        return 0, math.max(0, math.min(Opt.BonusMax(W.draft.bonus, stat), R.MAX_SCORE - (W.draft.base[stat] or 0)))
     end)
     scoreArgs["break" .. stat] = { type = "description", order = i * 10 + 2, name = "" }
 end

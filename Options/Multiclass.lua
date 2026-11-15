@@ -9,10 +9,12 @@ local Opt = ns.Opt
 local Sheet = Opt.Sheet
 
 local chosen = "" -- the class key picked for the next level; "" is the first class
+local chosenFor   -- the character it was picked for: another one starts with its first class
 
 -- The class the next level is taken in.
 local function NextClass()
     local sheet = Sheet()
+    if chosenFor ~= sheet then chosen = "" end
     return (R.CLASSES[chosen] and R.CLASSES[sheet.class]) and chosen or sheet.class
 end
 
@@ -57,7 +59,7 @@ tab.levelClass = {
         return order
     end,
     get = function() return NextClass() end,
-    set = function(_, value) chosen = value == Sheet().class and "" or value end,
+    set = function(_, value) chosen, chosenFor = value == Sheet().class and "" or value, Sheet() end,
 }
 
 tab.levelUp.name = function()

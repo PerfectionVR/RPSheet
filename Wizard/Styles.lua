@@ -47,13 +47,31 @@ end
 -- The styles a class can take in a slot: its own, without those picked elsewhere.
 function W.StyleChoices(key, slot)
     local taken, names = {}, {}
+    -- Where two hold the same style (a level raised after both were picked), the
+    -- first keeps it and only the later one is asked again.
+    local mine, passed
     for _, other in ipairs(W.StyleSlots()) do
-        if other.class ~= key or other.slot ~= slot then taken[other.name] = true end
+        if other.class == key and other.slot == slot then mine = other.name end
+    end
+    for _, other in ipairs(W.StyleSlots()) do
+        if other.class == key and other.slot == slot then
+            passed = true
+        elseif not (passed and other.name == mine) then
+            taken[other.name] = true
+        end
     end
     for _, name in ipairs(ns.StyleChoices({ class = key, passives = {} }, slot)) do
         if not taken[name] then names[#names + 1] = name end
     end
     return names
+end
+
+-- True if a class could take that style in a slot.
+function W.StyleOpen(key, slot, name)
+    for _, each in ipairs(W.StyleChoices(key, slot)) do
+        if each == name then return true end
+    end
+    return false
 end
 
 -- What is still to be chosen, or nil.

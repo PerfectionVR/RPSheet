@@ -25,7 +25,8 @@ for index, stat in ipairs(R.STATS) do
         for _, other in ipairs(R.STATS) do placed = placed + (L.draft.record.asi[other] or 0) end
         local saved = Levels.Record(sheet, L.draft.level)
         local counted = saved and ns.HasSlot(sheet, L.draft.level) and saved.asi[stat] or 0
-        local room = R.MAX_SCORE - (RPSheet:NaturalScore(stat, true) - counted) -- your own score: an item that sets it higher leaves the room as it is
+        -- Your own score (an item that sets it higher leaves the room as it is), without what an Epic Boon added.
+        local room = R.MAX_SCORE - (RPSheet:NaturalScore(stat, true) - counted - Levels.BoonPoints(sheet, stat, L.draft.level))
         return 0, math.max(0, math.min(R.ASI_POINTS, mine + R.ASI_POINTS - placed, room))
     end)
 end

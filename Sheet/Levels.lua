@@ -103,6 +103,17 @@ function Levels.FeatBlock(sheet, level, name)
     end
 end
 
+-- The points Epic Boons (at other levels than `level`) added to an ability score.
+function Levels.BoonPoints(sheet, stat, level)
+    local points = 0
+    for slot, record in pairs(sheet.levels or NO_RECORDS) do
+        if slot ~= level and ns.HasSlot(sheet, slot) and Levels.Kind(sheet, slot) == "BOON" then
+            points = points + (record.asi[stat] or 0)
+        end
+    end
+    return points
+end
+
 -- Why `record` can't be accepted for `level`, or nil when it is complete and allowed.
 function Levels.Problem(sheet, level, record)
     local kind = Levels.Kind(sheet, level)
@@ -131,7 +142,8 @@ function Levels.Problem(sheet, level, record)
             end
         end
     end
-    -- Scores stop at 20; an Epic Boon can take one to 30.
+    -- Scores stop at 20; an Epic Boon can take one to 30. What a boon added on top
+    -- doesn't count against an earlier level's points.
     local cap = kind == "BOON" and R.BOON_MAX_SCORE or R.MAX_SCORE
     local previous = Levels.Record(sheet, level)
     local counted = previous and ns.HasSlot(sheet, level)
@@ -139,7 +151,7 @@ function Levels.Problem(sheet, level, record)
         local add = record.asi[stat] or 0
         if add > 0 then
             local without = (sheet.base[stat] or 0) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0)
-                - (counted and previous.asi[stat] or 0)
+                - (counted and previous.asi[stat] or 0) - (kind == "BOON" and 0 or Levels.BoonPoints(sheet, stat, level))
             if without + add > cap then
                 return ("%s can't go above %d this way."):format(R.STAT_NAMES[stat], cap)
             end
@@ -250,7 +262,8 @@ function Levels.Migrate(sheet)
     sheet.levels = {}
     local left, last = {}, nil
     for _, stat in ipairs(R.STATS) do left[stat] = sheet.asi[stat] or 0 end
-    for level = 1, sheet.level do
+    -- (the levels the character has, class by class: Sheet/ClassSlots.lua)
+    for _, level in ipairs(ns.LevelSlots(sheet)) do
         if Levels.Kind(sheet, level) == "ASI" and Sum(left) > 0 then
             local record, room = Levels.NewRecord("ASI"), R.ASI_POINTS
             for _, stat in ipairs(R.STATS) do
