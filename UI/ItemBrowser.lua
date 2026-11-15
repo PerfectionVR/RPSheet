@@ -24,15 +24,20 @@
 --   names(kind)            optional: the names of a tab, when they are not items
 --   lines(self, entry)     optional: what a block says, when it is not an item
 --   options()              optional: opens the Customize page behind the cog
+--
+-- Only one page of blocks is built at a time (UI/ItemPages.lua); the search goes over
+-- the whole tab.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 local UI = ns.UI
 local AceGUI = LibStub("AceGUI-3.0")
+local Pages = UI.ItemPages
 
 local source     -- what the window is showing
 local open       -- the open tab: source.first or one of source.kinds
 local search = ""
+local toTop = false -- a page was turned: start reading it at its top
 
 -- The kinds of part the dialog skin (UI/DialogSkin.lua) styles in this window. The
 -- texts and tabs are themed where they are made.
@@ -179,7 +184,7 @@ function RPSheet:PopulateItemBrowser()
     AddTabs(self, body)
     AddSearch(self, body)
 
-    local first, shown = open == source.first, 0
+    local first = open == source.first
     local entries = first and source.own(self) or {}
     if not first and source.list then
         entries = source.list(self, open)
@@ -188,17 +193,31 @@ function RPSheet:PopulateItemBrowser()
             entries[#entries + 1] = { name = name, item = source.find(self, name) }
         end
     end
+    -- The search goes over the whole tab; only the page that is open is built.
+    local matching = {}
     for _, entry in ipairs(entries) do
-        if Matches(entry.name) then
-            AddCard(self, body, entry, first)
-            shown = shown + 1
-        end
+        if Matches(entry.name) then matching[#matching + 1] = entry end
     end
-    if shown == 0 then
+    local from, to = Pages.Range(#matching, source, open, search)
+    local function Turn(step)
+        Pages.Turn(step)
+        toTop = true
+        Later(self)
+    end
+    Pages.AddControls(body, from, to, #matching, Turn)
+    for index = from, to do
+        AddCard(self, body, matching[index], first)
+    end
+    if #matching == 0 then
         UI.AddLabel(body, 1, UI.GREY .. (search ~= "" and "Nothing here matches your search." or source.empty) .. "|r")
     end
+    Pages.AddControls(body, from, to, #matching, Turn)
     body:ResumeLayout()
     -- The blocks, buttons and search box in the theme's look, like the dialogs.
     ns.DialogSkin.ApplyTo(body, self.db.profile.theme, THEMED)
+    if toTop then
+        toTop = false
+        body:SetScroll(0)
+    end
     body:DoLayout()
 end

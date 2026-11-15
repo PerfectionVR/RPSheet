@@ -274,6 +274,7 @@ UI\PreparedWindow.lua
 UI\PetSection.lua
 UI\InventorySection.lua
 UI\ItemCard.lua
+UI\ItemPages.lua
 UI\ItemBrowser.lua
 UI\ShopChoice.lua
 UI\ItemBrowserSheet.lua
