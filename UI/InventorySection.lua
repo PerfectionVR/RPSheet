@@ -1,5 +1,5 @@
 -- The Inventory part of the sheet window: coins, attuned items, the weight carried
--- against what the character can carry, and (when opened) every item as a row.
+-- against what the character can carry, and every item as a row.
 local _, ns = ...
 local R = ns.Rules
 local UI = ns.UI
@@ -73,20 +73,14 @@ function UI.InventorySection(self, body)
             UI.GREY, table.concat(names, ", ")), nil, "Attunement", ATTUNE_HELP)
     end
 
-    local open = self.db.char.inventoryOpen
     local weight, capacity = self:CarriedWeight(), self:CarryCapacity()
     local over = weight > capacity
-    UI.AddLabel(body, 1, ("Carried %s%s/%d lb.|r%s  %s%d %s, click to %s|r"):format(
+    UI.AddLabel(body, 1, ("Carried %s%s/%d lb.|r%s  %s%d %s|r"):format(
             over and RED or UI.ACCENT, Pounds(weight), capacity, over and (RED .. " over the limit|r") or "",
-            UI.GREY, #items, #items == 1 and "item" or "items", open and "hide" or "show"),
-        function()
-            self.db.char.inventoryOpen = not open
-            self:PopulateSoon()
-        end, "Carrying capacity",
-        ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nClick to %s the list of items. Items are added and bought under Customize > Inventory."):format(
+            UI.GREY, #items, #items == 1 and "item" or "items"),
+        nil, "Carrying capacity",
+        ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought under Customize > Inventory."):format(
             R.CARRY_PER_STRENGTH[self:Sheet().size] or R.CARRY_PER_STRENGTH.M, capacity,
-            over and ("\n\n" .. RED .. "You are carrying more than that. Hauling a load over your limit slows you to a speed of 5 feet.|r") or "",
-            open and "hide" or "show"))
-    if not open then return end
+            over and ("\n\n" .. RED .. "You are carrying more than that. Hauling a load over your limit slows you to a speed of 5 feet.|r") or ""))
     for _, item in ipairs(items) do ItemRow(self, body, item) end
 end

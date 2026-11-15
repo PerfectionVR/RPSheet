@@ -8,6 +8,9 @@ Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
 
 ## Features
 
+- **Tabs on the sheet**: hit points, rests, conditions, combat numbers and your weapon
+  stay on top; abilities and spells, checks and saves, skills and tools, traits, and
+  items each have a tab below.
 - **Character sheet window** with HP, class resource and counter bars, AC, stats, skills,
   weapons, abilities and passives.
 - **Click to roll.** Rolls use the game's real `/roll`, so everyone nearby or in your group

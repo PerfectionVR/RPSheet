@@ -1,5 +1,5 @@
--- What the sheet window shows. Populate rebuilds every row from the saved sheet, one
--- section at a time; Refresh only updates the text that changes during play.
+-- What the sheet window shows. Populate rebuilds every row from the saved sheet: the
+-- top part, the tab row, and the sections of the open tab; Refresh only updates the text that changes during play.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -390,12 +390,17 @@ local function OriginSection(self, body)
     end
 end
 
-local SECTIONS = {
-    HeaderSection, TrackerSection, ConditionSection, CombatSection, CheckSection, SaveSection,
-    UI.PetSection, -- a Beast Master's companion (UI/PetSection.lua)
-    AbilitySection, SpellSection, PassiveSection, SkillSection, ToolSection,
-    UI.InventorySection, -- coins, attuned items and what is carried (UI/InventorySection.lua)
-    OriginSection,
+-- Always shown, above the tabs.
+local TOP = { HeaderSection, TrackerSection, ConditionSection, CombatSection }
+
+-- The rest, one tab at a time (UI/SheetTabs.lua).
+local TABS = {
+    { name = "Actions", tip = "Your abilities and spells, and your companion if you have one.",
+      UI.PetSection, AbilitySection, SpellSection },
+    { name = "Checks", tip = "Ability checks and saving throws.", CheckSection, SaveSection },
+    { name = "Skills", tip = "Skills and tools.", SkillSection, ToolSection },
+    { name = "Traits", tip = "Passives and traits, languages and renown.", PassiveSection, OriginSection },
+    { name = "Items", tip = "Your coins and what you carry.", UI.InventorySection },
 }
 
 ---------------------------------------------------------------------------
@@ -408,8 +413,16 @@ function RPSheet:Populate()
     body:PauseLayout()
     body:ReleaseChildren()
     self.sheetSlotLabels = {} -- the old lines are gone with the rows
-    for _, section in ipairs(SECTIONS) do
+    for _, section in ipairs(TOP) do
         section(self, body)
+    end
+    local tab = UI.AddTabBar(self, body, TABS)
+    local before = #body.children
+    for _, section in ipairs(tab) do
+        section(self, body)
+    end
+    if #body.children == before then
+        UI.AddLabel(body, 1, ("\n%sNothing here yet.|r"):format(UI.GREY))
     end
     -- Fill in the rows whose text comes from Refresh before laying out: a row that is
     -- still empty has no height, and the rows below it would be placed on top of it.
