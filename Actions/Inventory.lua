@@ -30,11 +30,17 @@ function RPSheet:ToggleAttuned(item)
 end
 
 -- Uses one up: a potion drunk, a torch burnt, a ration eaten. The last one takes the
--- entry off the list.
+-- entry off the list. A spell scroll is read instead, which casts its spell and says
+-- so itself (Actions/Scrolls.lua); it is kept when the casting can't go ahead.
 function RPSheet:UseItem(item)
     if item.qty <= 0 then return end
-    item.qty = item.qty - 1
-    self:Announce(("uses %s"):format(ns.Mark(item.name)))
+    if ns.ScrollSpell(item) then
+        if not self:ReadScroll(item) then return end
+        item.qty = item.qty - 1
+    else
+        item.qty = item.qty - 1
+        self:Announce(("uses %s"):format(ns.Mark(item.name)))
+    end
     if item.qty == 0 then
         if item.equipped then self:SetEquipped(item, false) end
         local items = self:Sheet().items

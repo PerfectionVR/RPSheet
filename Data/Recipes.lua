@@ -33,17 +33,25 @@ for bonus = 1, 3 do
 end
 
 R.RECIPES = {}
--- Adds the listed names (";" between them) that the item lists hold.
+-- The recipes that have to be learned, by item name, for the saved list.
+R.LEARNED_RECIPES = {}
+-- Adds the listed names (";" between them) that the item lists hold. "Name@5" asks
+-- for that skill where it is not the one the item's rarity gives. Also used by
+-- Data/RecipesMagic.lua, which adds the rest of the magic items.
 local function Add(key, names, basic)
     local list = R.RECIPES[key] or {}
     R.RECIPES[key] = list
-    for name in names:gmatch("[^;]+") do
+    for entry in names:gmatch("[^;]+") do
+        local name, level = entry:match("^(.-)@(%d)$")
+        name = name or entry
         local item = R.ITEMS[name]
         if item then
-            list[#list + 1] = { name = name, level = item.rarity and R.RARITY_LEVEL[item.rarity] or 2, basic = basic }
+            list[#list + 1] = { name = name, level = tonumber(level) or (item.rarity and R.RARITY_LEVEL[item.rarity]) or 2, basic = basic }
+            if not basic then R.LEARNED_RECIPES[name] = true end
         end
     end
 end
+R.AddRecipes = Add
 
 -- Weapons and armor by what they are, so the lists follow the data.
 local function Weapons(wanted, except)
@@ -96,11 +104,3 @@ Add("leatherworking", ARMS3 .. ";+2 Armor;+3 Armor")
 
 Add("tailoring", "Padded Armor;Basket;Bedroll;Blanket;Fine Clothes;Net;Robe;Rope;Sack;String;Tent;Traveler's Clothes;+1 Armor", true)
 Add("tailoring", "+2 Armor;+3 Armor;Cloak of Protection;Robe of Stars;Robe of the Archmagi")
-
--- The recipes that have to be learned, by item name, for the saved list.
-R.LEARNED_RECIPES = {}
-for _, list in pairs(R.RECIPES) do
-    for _, recipe in ipairs(list) do
-        if not recipe.basic then R.LEARNED_RECIPES[recipe.name] = true end
-    end
-end

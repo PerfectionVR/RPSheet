@@ -105,6 +105,11 @@ function RPSheet:CookFeast()
         self:Print(("A great feast takes a cook of %s skill."):format(R.PROFESSION_LEVELS[R.FEAST_LEVEL].name:lower()))
         return
     end
+    local missing = self:MissingTool(COOKING) -- the tool in hand (Sheet/CraftTools.lua)
+    if missing then
+        self:Print(("You can't cook a great feast: %s."):format(missing))
+        return
+    end
     if not self:PayWithMaterials(COOKING, R.FEAST_COST, "a great feast") then return end
     self:Announce(("spends an hour cooking a great feast, which works as %s."):format(ns.Mark("Heroes' Feast")))
 end

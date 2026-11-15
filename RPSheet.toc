@@ -111,6 +111,18 @@ Data\RenownRules.lua
 Data\SpellWards.lua
 Data\Professions.lua
 Data\Recipes.lua
+Data\MagicItemsPotions.lua
+Data\MagicItemsTrinkets.lua
+Data\MagicItemsWands.lua
+Data\MagicItemsStaffs.lua
+Data\MagicItemsJewels.lua
+Data\MagicItemsStones.lua
+Data\MagicItemsGadgets.lua
+Data\MagicItemsForge.lua
+Data\MagicItemsCloth.lua
+Data\RecipesMagic.lua
+Data\RecipesVehicles.lua
+Data\Scrolls.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -147,6 +159,7 @@ Sheet\Mounts.lua
 Sheet\MountStore.lua
 Sheet\Companions.lua
 Sheet\Professions.lua
+Sheet\CraftTools.lua
 Sheet\Crafting.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
@@ -175,6 +188,7 @@ Sheet\PreparedPicks.lua
 Sheet\PrepareRules.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
+Sheet\Scribing.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
 Sheet\RenownRules.lua
@@ -188,6 +202,7 @@ Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
 Actions\Inventory.lua
+Actions\Scrolls.lua
 Actions\Mounts.lua
 Actions\Abilities.lua
 Actions\Pet.lua
@@ -233,6 +248,7 @@ UI\ItemBrowserSheet.lua
 UI\MountCard.lua
 UI\MountSection.lua
 UI\MountBrowser.lua
+UI\ScribeTab.lua
 UI\CraftBrowser.lua
 UI\ProfessionSection.lua
 UI\SheetTabs.lua

@@ -33,9 +33,11 @@ end
 local function MakingRows(self, body, level)
     local made = self:Professions("make")
     for _, profession in ipairs(made) do
-        local lines = { profession.desc, ("You use: %s."):format(self:ProfessionTool(profession)), MakesText(profession, level) }
+        local lines = { profession.desc, ("You use: %s."):format(self:CraftTool(profession) or self:ProfessionTool(profession)), MakesText(profession, level) }
+        local missing = self:MissingTool(profession)
+        if missing then lines[#lines + 1] = ("|cffff5555Not now: %s.|r"):format(missing) end
         if self:ProfessionHaste(profession) then lines[#lines + 1] = UI.GREEN .. "A faction's favor halves the time it takes you.|r" end
-        lines[#lines + 1] = ("\nGathered %s pay for materials before your coins do. Click to see what you can make."):format(
+        lines[#lines + 1] = ("\nGathered %s pay for materials before your coins do, unless you choose coins only. Click to see what you can make."):format(
             table.concat(ns.MaterialNames(profession.uses), " and "))
         UI.AddLabel(body, 0.5, UI.ACCENT .. profession.name .. "|r", function() self:ShowCrafting(profession) end,
             profession.name, table.concat(lines, "\n"))
@@ -97,7 +99,7 @@ function UI.ProfessionSection(self, body)
     UI.AddHeading(body, "Professions")
     SkillRow(body, level)
     UI.AddLabel(body, 1, UI.ACCENT .. "Make something|r", function() self:ShowCrafting() end, "Crafting",
-        "Opens a window with everything your professions can make: what it costs in materials, how long it takes, and a button to make it.")
+        "Opens a window with everything your professions can make, and the spell scrolls you can scribe: what it costs in materials, how long it takes, and a button to make it.")
     if MakingRows(self, body, level) == 0 then
         UI.AddLabel(body, 1, UI.GREY .. "You make things once you are proficient with a kind of artisan's tools.|r", nil, "Making professions", ns.ProfessionNeeds("make"))
     end
