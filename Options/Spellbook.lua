@@ -62,6 +62,29 @@ local args = {
             Opt.Changed()
         end,
     },
+    copy = {
+        type = "execute", order = 3, width = 1.4,
+        name = function()
+            local known = R.SPELLS[picked]
+            return known and ("Copy it in for %d gp"):format(known.level * R.COPY_SPELL_GOLD) or "Copy it in for gold"
+        end,
+        desc = ("For a spell you found, on a scroll or in another book. Copying takes %d hours and %d gp for each level of the spell, for the inks and what you use up trying it out. The gold is taken from your coins. \"Write it in the book\" is for the spells a level gives you, which cost nothing."):format(
+            R.COPY_SPELL_HOURS, R.COPY_SPELL_GOLD),
+        hidden = function() return #Choices() == 0 and picked == "" end,
+        disabled = function()
+            local known = R.SPELLS[picked]
+            return not known or not RPSheet:CanAfford(known.level * R.COPY_SPELL_GOLD * R.COINS.gp.value)
+        end,
+        func = function()
+            local known = R.SPELLS[picked]
+            if not RPSheet:SpendCoins(known.level * R.COPY_SPELL_GOLD * R.COINS.gp.value, "copying " .. picked) then return end
+            ns.SpellbookAdd(Sheet(), picked)
+            RPSheet:Print(("%s is in your spellbook. Copying it takes %d hours."):format(picked, known.level * R.COPY_SPELL_HOURS))
+            picked = ""
+            ns.RebuildOptions()
+            Opt.Changed()
+        end,
+    },
 }
 
 -- One row per spell: a tick box for prepared, and a button to take it out of the book.

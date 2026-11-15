@@ -68,11 +68,18 @@ function RPSheet:PetMasteryNote()
 end
 
 -- Makes the family one of the Weapon Mastery picks, or takes it off again. A pick is
--- only given when one is free. Returns true when something changed.
+-- only given when one is free, and like the picks on weapons it is changed when a long
+-- rest is finished: once it was changed, it stays until the next one. Returns true
+-- when something changed.
 function RPSheet:TogglePetMastery()
-    local sheet = self:Sheet()
+    local sheet, state = self:Sheet(), self:State()
+    if state.petMasteryChanged then
+        self:Print("You already changed this Weapon Mastery pick since your last long rest. Picks are changed when you finish a long rest.")
+        return false
+    end
     if sheet.petMastery then
         sheet.petMastery = false
+        state.petMasteryChanged = true
         return true
     end
     if not R.Pet(sheet) then
@@ -89,6 +96,7 @@ function RPSheet:TogglePetMastery()
         return false
     end
     sheet.petMastery = true
+    state.petMasteryChanged = true
     return true
 end
 

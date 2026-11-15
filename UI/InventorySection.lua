@@ -83,6 +83,6 @@ function UI.InventorySection(self, body)
         nil, "Carrying capacity",
         ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought in the item browser (Browse items, above)."):format(
             R.CARRY_PER_STRENGTH[self:Sheet().size] or R.CARRY_PER_STRENGTH.M, capacity,
-            over and ("\n\n" .. RED .. "You are carrying more than that. Hauling a load over your limit slows you to a speed of 5 feet.|r") or ""))
+            over and ("\n\n" .. RED .. "You are carrying more than that, which holds your speed to 5 feet. The Speed row shows it.|r") or ""))
     for _, item in ipairs(items) do ItemRow(self, body, item) end
 end

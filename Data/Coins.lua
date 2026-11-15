@@ -69,3 +69,6 @@ function ns.ParseCoins(text)
     end
     return found and total or nil
 end
+
+-- Copying a found spell into a spellbook, per level of the spell.
+R.COPY_SPELL_GOLD, R.COPY_SPELL_HOURS = 50, 2
