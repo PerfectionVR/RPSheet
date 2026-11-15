@@ -64,11 +64,13 @@ end
 ---------------------------------------------------------------------------
 -- Weapon mastery
 ---------------------------------------------------------------------------
--- How many weapons the character can use the mastery of.
+-- How many weapons the character can use the mastery of: what the class's feature
+-- allows, and one for each feat that unlocks a kind of weapon (Weapon Master).
 function RPSheet:MasteryLimit()
     local class = self:ClassData()
-    if not class or not self:HasWeaponMastery() then return 0 end
-    return ns.FeatureKit.AtLevel(self:Level(), R.MASTERY_LIMITS[class.base] or {}) or 0
+    local _, fromFeats = ns.FeatMasteryWeapons(self:Sheet())
+    if not class or not self:HasWeaponMastery() then return fromFeats end
+    return (ns.FeatureKit.AtLevel(self:Level(), R.MASTERY_LIMITS[class.base] or {}) or 0) + fromFeats
 end
 
 -- How many weapons have a mastery set. A companion's family picked for its strike

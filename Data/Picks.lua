@@ -8,6 +8,9 @@
 --     known   { {level, how many}, ... }
 --     items   { [name] = { desc, level = minimum level, needs = another pick it requires,
 --                          cost = Sorcery Points it spends, dice = { count, sides, stat } } }
+--     swapGroup, swaps   how many picks made at earlier levels may be exchanged when a
+--                        level is gained, counted over the lists of one group; no
+--                        `swaps` means any number (Sheet/PickSwaps.lua)
 -- }
 -- A pick with a cost or dice becomes a clickable ability; the others are passives.
 local _, ns = ...

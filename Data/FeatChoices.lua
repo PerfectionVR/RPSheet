@@ -9,8 +9,9 @@
 --     from      the options: a list, or a function of the picks made so far for this
 --               feat ({ [key] = { [slot] = value } }), for a choice that follows another
 --     kind      what a pick does: "skill" (proficiency, or expertise if already
---               proficient), "tool" (proficiency), "spell" (always prepared); without
---               it the pick is only shown in the feat's text
+--               proficient), "tool" (proficiency), "spell" (always prepared), "mastery"
+--               (a weapon kind whose mastery property can be used); without it the
+--               pick is only shown in the feat's text
 --     once      a "spell" that is also cast once per long rest without a slot
 --     distinct  true when the feat taken again must pick something else here
 --     text      wording for the feat's text, with %s for the picks
@@ -18,7 +19,8 @@
 -- }, ... }
 -- Other fields a feat gets here:
 --   named      the choice a name in brackets settles: "Magic Initiate (Cleric)"
---   spells     spells it always gives: { { name =, once = }, ... }
+--   spells     spells it always gives: { { name =, once =, level = }, ... }; one with
+--              a level comes at that character level
 --   castStat   the ability its spells use: "raised" (the one the feat raises) or the
 --              key of the choice that names it
 --   allSkills  true if it makes every skill proficient
@@ -111,7 +113,16 @@ Give("Ritual Caster", {
 })
 Give("Telekinetic", { castStat = "raised", spells = { { name = "Mage Hand" } } })
 Give("Telepathic", { castStat = "raised", spells = { { name = "Detect Thoughts", once = true } } })
-Give("Inscription Adept", { castStat = "raised", spells = { { name = "Illusory Script", once = true } } })
+-- Its higher spells come with skill in the craft, which follows the proficiency
+-- bonus: +3 from level 5, +5 from level 13.
+Give("Inscription Adept", {
+    castStat = "raised",
+    spells = {
+        { name = "Illusory Script", once = true },
+        { name = "Glyph of Warding", once = true, level = 5 },
+        { name = "Symbol", once = true, level = 13 },
+    },
+})
 
 ---------------------------------------------------------------------------
 -- Skills and tools
@@ -166,6 +177,6 @@ for _, name in ipairs(R.WEAPON_ORDER) do
     if R.WEAPONS[name].mastery then MASTERY_WEAPONS[#MASTERY_WEAPONS + 1] = name end
 end
 Give("Weapon Master", {
-    choices = { { key = "weapon", title = "Weapon kind", from = MASTERY_WEAPONS,
-        desc = "The kind of weapon whose mastery property you can use. It has to be one you are proficient with, and can be changed after a long rest." } },
+    choices = { { key = "weapon", title = "Weapon kind", kind = "mastery", from = MASTERY_WEAPONS,
+        desc = "The kind of weapon whose mastery property you can use, on top of any your class gives. Only kinds you are proficient with are offered. It can be changed after a long rest. Set the mastery on the weapon itself under Customize, Weapons." } },
 })

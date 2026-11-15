@@ -86,6 +86,7 @@ R.TEMPLATES = {
         kind = "ATTACK", stat = "STR", stat2 = "", proficient = true, -- ROLL
         rollFlat = 0,                                                  -- ROLL: a bonus of its own
         count = 1, sides = 6, dice = "DAMAGE", flat = 0,               -- DICE (uses stat too)
+        damage = "",                                                   -- DICE: the damage type, for features that treat one differently (see Rules.DAMAGE_TYPES)
         slotAdd = 0,                                                   -- DICE: dice added per level of the slot spent above 1st
         strain = "",                                                   -- DICE: a resource; one more die for each use of it since a long rest, none on the first
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
@@ -116,6 +117,7 @@ R.TEMPLATES.spell = {
     kind = "NONE", save = "DEX", -- how it is resolved, and the save it forces
     count = 0, sides = 8,      -- dice rolled; a count of 0 rolls nothing
     dice = "DAMAGE",           -- see DICE_KINDS
+    damage = "",               -- its damage type; empty = the listed spell's own (Data/SpellDamage.lua)
     addMod = false,            -- add the spellcasting modifier to the dice
     concentration = false,
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17

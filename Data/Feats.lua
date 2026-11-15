@@ -11,6 +11,7 @@
 --   needSpecies   prerequisite: this species
 --   save     true if it also grants saving throw proficiency in the raised ability
 --   skillPicks, expertisePicks  skills to choose for proficiency and for expertise
+--   toolPicks   how many of the skillPicks may be tools instead (Sheet/FeatTools.lua)
 --   advantage  rolls the feat gives advantage on, by their label (see RPSheet:HasAdvantage)
 --   choices, spells, castStat, allSkills, named  what the feat asks and gives besides:
 --              added in Data/FeatChoices.lua
@@ -75,7 +76,7 @@ local LIST = {
     General("Fingers of Frost", { "INT" }, "Cold damage from your spells ignores the target's resistance, and cold damage to a restrained creature adds a d4 per point of your proficiency bonus."),
     General("Fists of Fury", { "DEX", "WIS" }, "Treat any 1 on unarmed or light-weapon damage dice as a 2, and each earlier melee hit on a creature this turn adds 1 to your unarmed damage against it."),
     General("Hot Streak", { "INT" }, "Fire damage from your spells ignores the target's resistance, and creatures you burn keep burning, harder each time you add fire damage."),
-    General("Inscription Adept", MIND, "You always have Illusory Script prepared and can cast it once per long rest without a slot, using herbs in place of its material component."),
+    General("Inscription Adept", MIND, "You always have Illusory Script prepared and can cast it once per long rest without a slot, using herbs in place of its material component. From level 5 the same goes for Glyph of Warding, and from level 13 for Symbol."),
     General("Stagger and Sway", { "DEX", "WIS" }, "When you take damage, reduce it by your Dexterity modifier and add a d6 to a delayed pool, which you roll and take as force damage at the end of your turn. A bonus action removes dice equal to your Wisdom modifier."),
     General("Sentinel", BODY, "You can make an opportunity attack when a nearby creature disengages or attacks someone else. A creature you hit with one has its speed reduced to 0."),
     General("Shadow-Touched", MIND, "You learn Invisibility and one 1st-level illusion or necromancy spell. Each can be cast once per long rest without a slot, and with your slots."),
@@ -97,7 +98,7 @@ local LIST = {
     Origin("Magic Initiate", "Two cantrips and one 1st-level spell from the Cleric, Druid or Wizard list. The spell can be cast once per long rest without a slot."),
     Origin("Musician", "Proficiency with three instruments. After a rest your song gives Heroic Inspiration to as many allies as your proficiency bonus."),
     Origin("Savage Attacker", "Once per turn, roll a weapon's damage dice twice and use either result."),
-    Origin("Skilled", "Proficiency in any three skills or tools. The skills are chosen on the Character tab."),
+    Origin("Skilled", "Proficiency in any three skills or tools. They are chosen on the Character tab."),
     Origin("Tavern Brawler", "Your unarmed strikes deal 1d4 + Strength, you reroll 1s on them, and once per turn a hit can push the target 5 feet. Improvised weapons count as proficient."),
     Origin("Arathi Heritage", "Advantage on saves against being charmed, and once in a while you can turn a failed save against falling unconscious into a success. Humans only."),
     Origin("Child of the Sea", "You can hold your breath for 2 + your Constitution modifier minutes, and you have a swimming speed equal to your speed. Humans only."),
@@ -145,7 +146,7 @@ end
 R.FEATS = {}           -- by name
 R.FEAT_NAMES = { GENERAL = {}, BOON = {} } -- names for the dropdowns, in alphabetical order
 for _, feat in ipairs(LIST) do
-    if feat.name == "Skilled" then feat.skillPicks = 3 end
+    if feat.name == "Skilled" then feat.skillPicks, feat.toolPicks = 3, 3 end
     R.FEATS[feat.name] = feat
     table.insert(R.FEAT_NAMES[feat.kind == "BOON" and "BOON" or "GENERAL"], feat.name)
 end

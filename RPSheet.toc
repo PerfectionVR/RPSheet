@@ -121,15 +121,18 @@ Sheet\WeaponShare.lua
 Sheet\ClassFeatures.lua
 Sheet\Maneuvers.lua
 Sheet\Picks.lua
+Sheet\PickSwaps.lua
 Sheet\ToolPicks.lua
 Sheet\SpellPicks.lua
 Sheet\BeastForms.lua
 Sheet\Expertise.lua
 Sheet\FeatChoices.lua
 Sheet\FeatGrants.lua
+Sheet\FeatTools.lua
 Sheet\FeatSpells.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedPicks.lua
+Sheet\PrepareRules.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\SpellChoices.lua
@@ -171,6 +174,7 @@ UI\DamageMenu.lua
 UI\SlotLabels.lua
 UI\SheetWindow.lua
 UI\SpellbookWindow.lua
+UI\PreparedWindow.lua
 UI\PetSection.lua
 UI\InventorySection.lua
 UI\ItemCard.lua

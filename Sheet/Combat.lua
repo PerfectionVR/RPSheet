@@ -120,8 +120,11 @@ end
 -- The mastery a weapon can use right now, or nil.
 function RPSheet:WeaponMastery(weapon)
     local mastery = R.MASTERIES[weapon.mastery]
+    if not mastery or weapon.heal then return end
     -- The number a class allows is shown, not enforced: see Options/Weapons.lua.
-    if mastery and not weapon.heal and self:HasWeaponMastery() then return weapon.mastery, mastery end
+    if self:HasWeaponMastery() then return weapon.mastery, mastery end
+    -- Without the class feature, a feat unlocks the one kind of weapon picked for it.
+    if ns.FeatMasteryWeapons(self:Sheet())[weapon.base or ""] then return weapon.mastery, mastery end
 end
 
 -- What is said about the mastery when attacking, e.g. "On a hit: pushes the target 10 feet [Push]".

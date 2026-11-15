@@ -81,6 +81,7 @@ ns.defaults = {
                     tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
                     featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
+                    featTools = {},        -- [tool] = true: a tool picked in place of one of those skills (Sheet/FeatTools.lua)
                     featChoices = {},      -- [feat instance] = the picks made for a feat's own choices (Sheet/FeatChoices.lua)
                     featGranted = {},      -- [skill] = ranks those picks added (Sheet/FeatGrants.lua)
                     expertise = {},        -- [skill] = true: expertise picked for a class feature

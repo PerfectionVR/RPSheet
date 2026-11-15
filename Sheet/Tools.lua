@@ -13,7 +13,7 @@ function RPSheet:ToolSource(name)
     local granted = ns.ToolGranted(sheet, name)
     if granted then return granted end
     if ns.ToolPicked(sheet, name) then return "feature" end
-    if ns.FeatTool(sheet, name) then return "feat" end
+    if ns.FeatTool(sheet, name) or ns.FeatToolPicked(sheet, name) then return "feat" end
     if ns.RenownTool(sheet, name) then return "renown" end
     if sheet.tools[name] then return "chosen" end
 end

@@ -40,7 +40,10 @@ function ns.FeatSpells(sheet, instances)
                 found[name] = { feat = instance.name, level = spell.level, once = once == true, stat = stat }
             end
         end
-        for _, given in ipairs(instance.feat.spells or {}) do Add(given.name, given.once) end
+        for _, given in ipairs(instance.feat.spells or {}) do
+            -- Some come at a higher character level.
+            if (sheet.level or 1) >= (given.level or 1) then Add(given.name, given.once) end
+        end
         ns.EachFeatPick(sheet.featChoices, instance, "spell", function(value, choice) Add(value, choice.once) end)
     end
     return found

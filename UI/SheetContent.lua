@@ -262,7 +262,8 @@ end
 local function SpellSection(self, body)
     local spells = Util.Named(self:Sheet().spells)
     local book = ns.HasSpellbook(self:Sheet())
-    if #spells == 0 and not book then return end
+    local atRest = ns.ChangesPreparedAtRest(self:Sheet())
+    if #spells == 0 and not book and not atRest then return end
     table.sort(spells, function(a, b)
         if a.level ~= b.level then return a.level < b.level end
         return a.name < b.name
@@ -273,6 +274,10 @@ local function SpellSection(self, body)
     if book then
         UI.AddLabel(body, 1, UI.ACCENT .. "Open spellbook|r", function() self:ToggleSpellbook() end, "Spellbook",
             "Every spell in your book. Cast from it, and choose which spells are prepared. The spells listed below are the prepared ones and your cantrips.")
+    end
+    if atRest then
+        UI.AddLabel(body, 1, UI.ACCENT .. "Change prepared spells|r", function() self:TogglePreparedWindow() end, "Prepared spells",
+            "The spells of your class you could have prepared. After a long rest you change which ones are, until you cast your first spell.")
     end
     local shown -- the spell level whose line was added last
     for _, spell in ipairs(spells) do
@@ -430,6 +435,7 @@ function RPSheet:Populate()
     body:ResumeLayout()
     body:DoLayout()
     self:PopulateSpellbook() -- the open spellbook follows the sheet
+    self:PopulatePrepared()  -- and the open list of spells to prepare
     self:PopulateItemBrowser() -- and so does the open item browser
 end
 

@@ -29,9 +29,10 @@ function ns.FeatSkillsKnown(sheet)
     return count
 end
 
+-- Tools picked in place of skills count as well (Sheet/FeatTools.lua).
 function ns.OpenFeatSkills(sheet)
     local limit = ns.FeatSkillLimit(sheet)
-    return limit > 0 and ns.FeatSkillsKnown(sheet) ~= limit
+    return limit > 0 and ns.FeatSkillsKnown(sheet) + ns.FeatToolsKnown(sheet) ~= limit
 end
 
 -- Makes the skills picked for feats proficient, and gives back those no longer picked.

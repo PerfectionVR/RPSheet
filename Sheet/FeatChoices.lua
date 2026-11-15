@@ -169,7 +169,10 @@ local function Blocked(sheet, store, instances, slot, value)
         end
     end
     if choice.kind == "tool" then
-        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value)
+        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value)
+    elseif choice.kind == "mastery" then
+        -- Only a kind of weapon the character is proficient with.
+        return not ns.WeaponProficient(sheet.class, value)
     elseif choice.kind == "skill" then
         -- Already expertise without this feat's help.
         return (sheet.skills[value] or 0) - ((sheet.featGranted or NONE)[value] or 0) >= 2
