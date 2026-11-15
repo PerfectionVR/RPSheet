@@ -115,7 +115,7 @@ R.FEATURES = {
     },
 
     Druid = {
-        Passive(1, "Druidic", "You know the secret language of druids and always have Speak with Animals prepared."),
+        Prepared({ { 1, "Speak with Animals" } }, Passive(1, "Druidic", "You know the secret language of druids and always have Speak with Animals prepared.")),
         Kit.Choice(1, "Primal Order", "The sacred role you dedicated yourself to.", {
             Kit.Option("Magician", "You know one more Druid cantrip, and add your Wisdom modifier (at least +1) to Arcana and Nature checks.",
                 { effects = function(_, sheet)
@@ -256,8 +256,9 @@ R.FEATURES = {
     },
 
     Ranger = {
-        Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on.",
-            { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") }),
+        -- (always prepared as well: the spell on the spell list is the casting with a slot)
+        Prepared({ { 1, "Hunter's Mark" } }, Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on. The spell is always prepared too, for casting it with a slot.",
+            { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") })),
         Passive(1, "Hunter's Mark", function(level)
             return ("Switch on while a creature is marked. Your hits on it deal 1d%d extra force damage (use Hunter's Mark: damage), and you have advantage on Perception and Survival checks to find it.%s"):format(
                 level >= 20 and 10 or 6, level >= 17 and " You have advantage on attack rolls against it, which the sheet applies while this is on." or "")
@@ -345,7 +346,7 @@ R.FEATURES = {
             local bar = beside and ("Pact slot (%s level)"):format(R.ORDINALS[pact[2]]) or (R.ORDINALS[pact[2]] .. "-level slot")
             return { { type = "GAIN", resource = bar, amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
         end),
-        Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
+        Prepared({ { 9, "Contact Other Plane" } }, Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1)),
         Passive(11, "Mystic Arcanum", "You choose one 6th-level spell of your class, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once per long rest without a slot: click it on your spell list. They are chosen when you level, and you can swap one each level."),
         Passive(20, "Eldritch Master", "Magical Cunning restores all your pact slots."),
     },
