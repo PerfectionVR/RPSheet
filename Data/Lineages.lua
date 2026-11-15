@@ -4,6 +4,7 @@
 --   skills      skill proficiencies the lineage grants
 --   darkvision  replaces the species' darkvision range
 --   effects     passive effects (see Data/Effects.lua)
+--   resist      damage types the lineage resists (see Data/DamageTypes.lua)
 --   renown      subfaction the lineage starts with renown in (see Data/Factions.lua)
 local _, ns = ...
 local R = ns.Rules
@@ -37,12 +38,16 @@ R.LINEAGES = {
         trait = "Eredar Lineage",
         options = {
             { name = "Draenei", renown = "Exodar",
+              resist = { "necrotic" },
               desc = "Resistance to necrotic damage, and you know the Spare the Dying cantrip." .. SPELLS:format("Healing Word", "Prayer of Healing"), spells = { "Healing Word", "Prayer of Healing" } },
             { name = "Krokul",
+              resist = { "poison" },
               desc = "Resistance to poison damage, and you know the Poison Spray cantrip." .. SPELLS:format("Ray of Sickness", "Hold Person"), spells = { "Ray of Sickness", "Hold Person" } },
             { name = "Lightforged",
+              resist = { "radiant" },
               desc = "Resistance to radiant damage, and you know the Sacred Flame cantrip." .. SPELLS:format("Guiding Bolt", "Aid"), spells = { "Guiding Bolt", "Aid" } },
             { name = "Man'ari",
+              resist = { "fire" },
               desc = "Resistance to fire damage, and you know the Fire Bolt cantrip." .. SPELLS:format("Hellish Rebuke", "Darkness"), spells = { "Hellish Rebuke", "Darkness" } },
         },
     },
@@ -61,7 +66,7 @@ R.LINEAGES = {
               end },
             { name = "Taunka",
               desc = "A shaggy hide: +1 to Armor Class and resistance to cold damage.",
-              effects = { { target = "AC", flat = 1, stat = "", times = 1 } } },
+              effects = { { target = "AC", flat = 1, stat = "", times = 1 } }, resist = { "cold" } },
         },
     },
     TROLL = {

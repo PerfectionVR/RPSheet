@@ -82,6 +82,82 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   circle spells and, from level 18, spells without a priced component. The form ends
   at 0 hit points and when incapacitated. The Armor Class row says when it shows the
   form's own.
+- Inventory: track your coins (add, spend, get change), carry and buy gear with
+  prices and weights, see your load against your carrying capacity, and equip and
+  attune magic items (three at most) whose bonuses are applied. Weapons can have a
+  magic bonus, and the creation wizard asks for starting gold.
+- An item browser replaces the dropdowns for adding items: a window of its own with
+  a tab for what you carry and one per kind of item, a search box, and every item
+  as a block that says what it is and does, with Add, Buy, Equip and Remove buttons.
+  Open it with "Browse items" on the sheet's Items tab or under Customize > Inventory.
+- The sheet window can be minimized with the new button in its title bar (or under
+  General): it shows only the title bar, opens while the mouse is over it and folds
+  up again when the mouse leaves. It also can't be made narrower than 300 any more,
+  so rows and tabs don't wrap.
+- The sheet is split into a top part and tabs, so it no longer grows past the
+  screen. Hit points, rests, conditions, the combat numbers and your weapon are
+  always shown; Actions (abilities, spells, companion), Checks (ability checks and
+  saving throws), Skills (with tools), Traits (passives, languages, renown) and
+  Items (coins and inventory) are tabs. The open tab is remembered.
+- The creation wizard has a starting closet in place of the single main weapon. It
+  opens as the item browser: every weapon, suit of armor and piece of gear is a
+  block that says what it does, with Take, Put back and Equip buttons. Take as many
+  things as you like, more than one of each too; everything taken goes into the
+  inventory.
+- Equipping armor, a shield or a basic weapon in the inventory now does something:
+  the armor counts for your Armor Class (one suit at a time), the shield is raised,
+  and the weapon joins the ones on the weapon row. Putting it away takes it off the
+  sheet without losing its settings. The Defense page keeps the items in step.
+- "Take damage" and "Heal" under the HP bar (and `/sheet damage 14 fire`,
+  `/sheet heal 8`): the sheet halves damage you resist, doubles damage you are
+  vulnerable to, ignores damage you are immune to, uses temporary hit points first,
+  rolls your concentration save and handles dropping to 0. The Combat section lists
+  immunities, vulnerabilities and conditions you can't be put under.
+- Each faction shows its own renown perks next to the general ones, and the sheet
+  adds the ones it can use while your renown is high enough.
+- An Armoury: save any weapon to keep it for all your characters, add a copy to
+  another character, and rename, delete or share stored weapons as a text string.
+- Importing a sheet no longer turns a Blowgun's 1 damage into 1d2.
+- A Beast Master of level 11 can roll both of the companion's strikes in one click. A
+  swarm form no longer gets Wild Shape's temporary hit points.
+- Feats ask for their own choices and apply them: Magic Initiate's list, ability and
+  spells (the 1st-level spell is always prepared with one free casting per long
+  rest), the skill of Keen Mind and Observant, Elemental Adept's damage type,
+  Crafter's tools, Musician's instruments, the spells of Fey-Touched, Shadow-Touched
+  and Ritual Caster, and the picks of the Boons of Skill and Energy Resistance.
+- Priests, Druids, Evokers, Paladins, Hunters, Warlocks, Death Knights and Demon
+  Hunters choose their prepared spells in the level dialog when they are made and
+  each time they level. Spells you had already added by hand count as your picks.
+- Casting with a higher spell slot covers everything it can change: extra targets,
+  longer durations, bigger areas and fixed amounts are stated in the announcement
+  and tooltip, and second dice parts (such as Ice Knife's burst) and fixed bonuses
+  (False Life, Magic Missile, Disintegrate) are rolled.
+- Psychic Veil and Rend Mind spend Psionic Energy Dice by themselves once their free
+  use is gone. The Companion section shows the pet's Armor Class, speed and darkvision.
+- Wild Shape: druids can learn any of 90 beasts, grouped by challenge rating, with the
+  bigger ones for the Circle of the Moon. A beast form also gives the beast's
+  Constitution for checks and saves and its darkvision or blindsight; your hit points
+  stay your own.
+- Beast Masters get a Companion section: the pet's own ability checks and saving
+  throws, and a strike that rolls the charge damage and calls out prone, grapple and
+  the family's weapon mastery when it is one of your mastery picks.
+- Warlocks choose their Mystic Arcanum spells, and Mages their Spell Mastery and
+  Signature Spells, when they level. The chosen spells sit on the spell list and are
+  cast without a spell slot: once per rest, or at will for mastered spells.
+- Font of Magic can make spell slots above your usual number; they last until a long
+  rest.
+- Casting Metamorphosis asks which benefit you take and applies it: low force damage
+  dice count as 3 (Devourer), 1d6 more fire damage on melee hits (Havoc), or +2 Armor
+  Class and 5 hit points (Vengeance). It shows as a passive you switch off when the
+  spell ends; a rest ends it too.
+- Tactical Mind, Psi-Bolstered Knack and Homing Strikes let you take the use or die
+  back with one click when the roll still fails or misses: a link in chat, or a
+  right-click on the ability. Psychic Whispers is free the first time after each long
+  rest.
+- Battle Masters choose their Student of War artisan's tools in the level dialog; the
+  sheet grants the proficiency.
+- Curse of Agony's die grows: after casting, click the spell again each time the
+  target fails its save (no slot is spent), and right-click to end it.
 - A beast form that would run out during a rest ends when you take it: on a short
   rest below level 4, on a long rest below level 18.
 - Arcane Pulse no longer grows with level.

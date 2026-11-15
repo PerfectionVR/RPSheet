@@ -63,6 +63,8 @@ end
 function RPSheet:WeaponStyle(weapon)
     local attack, damage, minDie = 0, 0, 1
     if not weapon.heal then
+        -- A magic weapon's own bonus goes on both rolls made with it.
+        attack, damage = weapon.magic or 0, weapon.magic or 0
         for _, style in ipairs(self:FightingStyles()) do
             if ns.FitsStyle(weapon, style) then
                 attack, damage = attack + (style.attack or 0), damage + (style.damage or 0)

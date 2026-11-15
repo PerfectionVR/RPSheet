@@ -420,53 +420,36 @@ local alignmentPage = Page(4, {
 ---------------------------------------------------------------------------
 -- 5: Details
 ---------------------------------------------------------------------------
-local detailsPage = Page(5, {
+local detailsArgs = {
     help = {
         type = "description", order = 1, fontSize = "medium",
-        name = "Starting gear. Hit points, Armor Class, proficiency bonus, saving throws, spell slots and class resources are worked out for you. More weapons, abilities and passives can be added in the editor afterwards.\n",
+        name = "Hit points, Armor Class, proficiency bonus, saving throws, spell slots and class resources are worked out for you. Weapons of your own, abilities and passives can be added in the editor afterwards.\n",
     },
-    armor = Field({
-        type = "select", order = 2, name = "Armor",
-        desc = "Only armor your class is trained with is offered.",
-        values = function() return (ns.ArmorChoices(ns.ArmorTraining(W.draft.class), W.draft.armor)) end,
-        sorting = function() return (select(2, ns.ArmorChoices(ns.ArmorTraining(W.draft.class), W.draft.armor))) end,
-    }, "armor"),
-    shield = Field({
-        type = "toggle", order = 3, name = "Shield (+2 AC)",
-        disabled = function() return not W.draft.shield and not ns.ArmorTraining(W.draft.class).shield end,
-    }, "shield"),
-    weaponHeader = { type = "header", order = 10, name = "Main weapon" },
-    weapon = Field({
-        type = "select", order = 11, name = "Weapon", width = "double",
-        desc = "The basic weapons your class is proficient with. More weapons, and ones of your own, can be added under Customize afterwards.",
-        values = function()
-            local values = {}
-            for _, name in ipairs(ns.ProficientWeapons(W.draft.class)) do
-                values[name] = ("%s - %s"):format(name, R.WeaponSummary(name))
-            end
-            return values
+    goldHeader = { type = "header", order = 14, name = "Starting money" },
+    gold = Field({
+        type = "range", order = 15, min = 0, max = 1000, softMax = 250, step = 1, name = "Gold pieces",
+        desc = function()
+            local class = DraftClass()
+            return ("Your class and your background each offer a set of starting gear with a little gold left over, or gold alone to buy your own: %d gp from your class and %d gp from your background. Enter the gold you start with, next to what you took from the closet. More gear is bought under Customize > Inventory afterwards."):format(
+                class and R.START_GOLD[class.base] or 0, R.BACKGROUND_GOLD)
         end,
-        sorting = function() return ns.ProficientWeapons(W.draft.class) end,
-    }, "weapon"),
-    weaponInfo = {
-        type = "description", order = 12, fontSize = "medium",
-        hidden = function() return not (W.draft and R.WEAPONS[W.draft.weapon]) end,
-        name = function()
-            local data = W.draft and R.WEAPONS[W.draft.weapon]
-            if not data then return "" end
-            local lines = { ("%s%s|r: %s weapon, %s."):format(GOLD, data.name, data.category == "SIMPLE" and "simple" or "martial", R.WeaponSummary(data.name)) }
-            if R.MASTERY_LIMITS[DraftClass().base] then
-                lines[#lines + 1] = ("Mastery: %s. %s"):format(data.mastery, R.MASTERIES[data.mastery].desc)
-            end
-            return table.concat(lines, "\n") .. "\n"
+    }, "gold"),
+    goldAll = {
+        type = "execute", order = 16, name = "Full starting gold",
+        desc = "Sets the gold to what your class and background give when you take no starting gear from either. What you take from the closet isn't paid for from it.",
+        func = function()
+            local class = DraftClass()
+            W.draft.gold = (class and R.START_GOLD[class.base] or 0) + R.BACKGROUND_GOLD
         end,
     },
     keepLists = Field({
         type = "toggle", order = 20, width = "full",
-        name = "Carry over the weapons, spells, resources, abilities and passives I made myself",
+        name = "Carry over the weapons, spells, resources, abilities, passives, items and coins I made or gathered myself",
         desc = "Off: the new character starts clean. On: entries you added by hand on the current character are kept. What its class, species, background and levels gave is never carried over.",
         hidden = function() return not W.draft.hasContent end,
     }, "keepLists"),
-})
+}
+W.AddClosetArgs(detailsArgs)
+local detailsPage = Page(5, detailsArgs)
 
 W.pages = { classPage, originPage, scorePage, alignmentPage, detailsPage }

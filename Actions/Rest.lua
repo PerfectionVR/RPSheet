@@ -24,10 +24,12 @@ end
 function RPSheet:LongRest()
     local state = self:State()
     EndFormAfter(self, 8)
-    self:ClampState(true)
+    self:EndBenefits() -- no spell benefit outlasts a rest
+    self:ClampState(true) -- also makes first-use-free abilities free again
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
     state.conditions.Concentrating = nil
+    self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).
     if HasPassive(self:Sheet(), "Resourceful") then state.inspiration = true end
@@ -38,6 +40,11 @@ end
 -- Gives back what recharges on a short rest. HP only comes back by spending hit dice.
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
+    self:ForgetRefunds()
+    if self:EndBenefits() then
+        self:ClampState()
+        self:PopulateSoon()
+    end
     local regained = {}
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.short then
@@ -46,6 +53,10 @@ function RPSheet:ShortRest()
             if tracker.get() > before then regained[#regained + 1] = tracker.label end
         end
     end
+    -- Signature Spells: the casting without a slot is back.
+    local spells = self:RestoreChosenCastings(true)
+    for _, name in ipairs(spells) do regained[#regained + 1] = name .. " without a slot" end
+    if #spells > 0 then self:PopulateSoon() end
     local text = "finishes a short rest"
     if #regained > 0 then text = text .. " (regains " .. table.concat(regained, ", ") .. ")" end
     self:Announce(text .. ".")

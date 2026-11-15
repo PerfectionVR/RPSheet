@@ -22,7 +22,7 @@ local args = {
         name = function()
             local sheet = Sheet()
             local choice = R.BACKGROUND_TOOL_CHOICE[sheet.background]
-            return "The tools your class and background name are ticked for you. Tick any others you are proficient with."
+            return "The tools your class and background name, and a kind picked for a class feature when you level, are ticked for you. Tick any others you are proficient with."
                 .. (choice and (" Your background gives %s of your choice."):format(choice) or "") .. "\n"
         end,
     },
@@ -57,8 +57,8 @@ for i, name in ipairs(R.TOOL_ORDER) do
     args["tool" .. i] = {
         type = "toggle", order = 61 + i / 100, name = name,
         desc = ("%s. A check with it uses %s."):format(R.TOOL_KINDS[R.TOOLS[name].kind], R.STAT_NAMES[R.TOOLS[name].stat]),
-        -- One from the class or background can't be unticked.
-        disabled = function() local source = RPSheet:ToolSource(name) return source == "class" or source == "background" end,
+        -- One from the class, the background or a feature's pick can't be unticked.
+        disabled = function() local source = RPSheet:ToolSource(name) return source ~= nil and source ~= "chosen" end,
         get = function() return RPSheet:ToolSource(name) ~= nil end,
         set = function(_, value) Sheet().tools[name] = value or nil; Opt.Changed() end,
     }

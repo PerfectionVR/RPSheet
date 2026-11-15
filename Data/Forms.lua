@@ -6,7 +6,9 @@
 --     ac      Armor Class before the ability modifier
 --     acStat  ability whose modifier is added to it
 --     speed   walking speed in feet
---     scores  { STR = "WIS", ... }: abilities that take another ability's score
+--     scores  { STR = "WIS", ... }: abilities that take another ability's score,
+--             or { STR = 16, ... }: a beast's own score (hit points never follow it)
+--     darkvision  feet; senses = { Blindsight = 10, ... } for a beast's own senses
 --     skills  skills the form is proficient in
 -- }
 local _, ns = ...

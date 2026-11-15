@@ -14,8 +14,9 @@ local MAX_STEPS = 30    -- effects per passive, steps per ability
 -- Limits for numeric fields, by field name. Anything not listed is kept within -999..999.
 local LIMITS = {
     level = { 1, R.MAX_LEVEL }, hpAdjust = { -100, 100 },
-    dice = { 1, 20 }, count = { 1, 20 }, sides = { 2, 100 },
+    dice = { 1, 20 }, count = { 1, 20 }, sides = { 1, 100 },
     times = { 1, 10 }, amount = { 0, 999 }, flat = { -200, 200 },
+    magic = { 0, 3 }, qty = { 0, 9999 }, cost = { 0, 99999999 },
 }
 
 local function Text(value, maxLength)
@@ -45,6 +46,11 @@ local function CleanEntry(source, template)
         end
     end
     return clean
+end
+
+-- One weapon from outside, cleaned the same way (a shared weapon, Sheet/WeaponShare.lua).
+function ns.CleanWeapon(source)
+    return CleanEntry(source, R.TEMPLATES.weapon)
 end
 
 -- `nested` names a list inside each entry (effects or actions) and its template.
@@ -116,6 +122,14 @@ local function CleanSheet(source)
             if score > 0 then sheet.renown[faction] = math.min(100, score) end
         end
     end
+    -- What a faction's trainers taught, and what that added to the sheet.
+    for _, field in ipairs({ "renownTraining", "renownGranted" }) do
+        sheet[field] = {}
+        for _, faction in ipairs(R.ALL_FACTIONS) do
+            local pick = type(source[field]) == "table" and source[field][faction]
+            if type(pick) == "string" then sheet[field][faction] = Text(pick, 60) end
+        end
+    end
     if not R.ALLEGIANCES[sheet.allegiance] then sheet.allegiance = "" end
     sheet.maneuvers, sheet.featureSkills, sheet.featureSkillGranted = {}, {}, {}
     if type(source.maneuvers) == "table" then
@@ -129,6 +143,13 @@ local function CleanSheet(source)
             for _, skill in ipairs(R.SKILLS) do
                 if source[field][skill.name] == true then sheet[field][skill.name] = true end
             end
+        end
+    end
+    sheet.featChoices, sheet.featGranted = ns.CleanFeatChoices(source.featChoices), {}
+    if type(source.featGranted) == "table" then
+        for _, skill in ipairs(R.SKILLS) do
+            local ranks = tonumber(source.featGranted[skill.name])
+            if ranks == 1 or ranks == 2 then sheet.featGranted[skill.name] = ranks end
         end
     end
     sheet.spellbook = {}
@@ -177,6 +198,8 @@ local function CleanSheet(source)
     sheet.abilities = CleanList(source.abilities, R.TEMPLATES.ability, "actions", R.TEMPLATES.action)
     sheet.passives = CleanList(source.passives, R.TEMPLATES.passive, "effects", R.TEMPLATES.effect)
     sheet.spells = CleanList(source.spells, R.TEMPLATES.spell)
+    sheet.items = CleanList(source.items, R.TEMPLATES.item, "effects", R.TEMPLATES.effect)
+    ns.NormalizeInventory(sheet, source) -- coins, and weights that are fractions
     -- A spell's level and dice count may be 0, unlike the character level and other dice.
     for index, spell in ipairs(sheet.spells) do
         local original = source.spells[index]

@@ -38,6 +38,13 @@ local function AddBonuses(self, parts, target)
             end
         end
     end
+    for _, item in ipairs(self:Sheet().items or {}) do
+        if self:ItemActive(item) then
+            for _, effect in ipairs(item.effects) do
+                if effect.target == target then Add(parts, item.name, self:EffectValue(effect)) end
+            end
+        end
+    end
 end
 
 -- "Dexterity +3, proficiency +2", or "nothing added" for an empty list.
@@ -163,9 +170,9 @@ function RPSheet:ExplainSpellDC()
     Out(self, ("Spell save DC |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))
 end
 
-local function SpellAttackParts(self)
+local function SpellAttackParts(self, spell)
     local parts = { { "proficiency", self:ProficiencyBonus() } }
-    Ability(self, parts, self:CastStat())
+    Ability(self, parts, self:CastStat(spell))
     AddBonuses(self, parts, "SPELLATK")
     return parts
 end
@@ -177,15 +184,15 @@ end
 function RPSheet:ExplainSpell(spell)
     local lines = {}
     if spell.kind == "ATTACK" then
-        local parts = SpellAttackParts(self)
+        local parts = SpellAttackParts(self, spell)
         lines[#lines + 1] = ("spell attack |cffffd100%s|r: %s"):format(Util.Signed(Total(parts)), Join(parts))
     elseif spell.kind == "SAVE" then
-        lines[#lines + 1] = ("%s save against your spell save DC |cffffd100%d|r"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC() or 8)
+        lines[#lines + 1] = ("%s save against your spell save DC |cffffd100%d|r"):format(R.STAT_NAMES[spell.save] or spell.save, self:SpellDC(spell) or 8)
     end
     if spell.count > 0 then
         local word, bonus = ns.DiceWord(spell.dice)
         local parts = {}
-        if spell.addMod then Ability(self, parts, self:CastStat()) end
+        if spell.addMod then Ability(self, parts, self:CastStat(spell)) end
         if bonus then AddBonuses(self, parts, bonus) end
         lines[#lines + 1] = ("%s %dd%d %s: %s"):format(word, self:SpellDiceCount(spell), spell.sides, Util.Signed(Total(parts)), Join(parts))
     end
@@ -206,6 +213,8 @@ function RPSheet:ExplainWeapon(weapon)
     Ability(self, hit, self:WeaponStat(weapon))
     Ability(self, damage, self:WeaponStat(weapon))
     if weapon.proficient then Add(hit, "proficiency", self:ProficiencyBonus()) end
+    Add(hit, "magic weapon", weapon.magic)
+    Add(damage, "magic weapon", weapon.magic)
     AddBonuses(self, hit, "ATTACK")
     AddBonuses(self, damage, "DAMAGE")
     if self:WeaponStat(weapon) == "STR" then AddBonuses(self, damage, "STRDAMAGE") end
@@ -245,6 +254,9 @@ end
 -- when there is nothing to work out for it.
 function RPSheet:ExplainTerm(term)
     local sheet = self:Sheet()
+    -- A companion's roll has its own numbers (Sheet/Pet.lua).
+    local petText = self:ExplainPetTerm(term)
+    if petText then return petText end
     self.explainCapture = {}
     local weapon, spell = Named(sheet.weapons, term), Named(sheet.spells, term)
     local stat, kind = term:match("^(%u%u%u) (%l+)$")

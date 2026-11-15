@@ -10,6 +10,16 @@ local Kit = ns.FeatureKit
 local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Roll, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Roll, Kit.Bonus
 
+-- The damage type a Circle of the Land druid resists, by the land chosen (Nature's Ward).
+local LAND_WARD = { Arid = { "fire" }, Polar = { "cold" }, Temperate = { "lightning" }, Tropical = { "poison" } }
+
+-- A Fiend warlock resists one damage type of their choice, never force.
+local RESILIENCE = {}
+for _, name in ipairs(R.AllDamage("force")) do
+    RESILIENCE[#RESILIENCE + 1] = Kit.Option(name:sub(1, 1):upper() .. name:sub(2),
+        ("You resist %s damage. You can choose another type after each short or long rest."):format(name), { resist = { name } })
+end
+
 -- A Passive's description may be a function of the level. Its `extra` table can carry
 -- advantage = { ... } (rolls it gives advantage on, by their label on the sheet) and
 -- skillChoice (a skill to pick, see Sheet/Maneuvers.lua).
@@ -111,7 +121,8 @@ R.SUBCLASS_FEATURES = {
                 .. (level >= 14 and " Either way, the bolt leaps to a second creature within 30 feet, which saves against the same roll." or "")
         end, function(level) return { Dice(Kit.RageDamage(level), 6) } end),
         Ability(6, "Echo of the Elements", "You know the Elementalism cantrip. Spend a Rage use to cast Daylight, Water Walk or Wind Wall, using Wisdom.", { Spend("Rage") }),
-        Passive(10, "Primordial Bond", "While raging you have resistance to cold, fire and lightning damage."),
+        Passive(10, "Primordial Bond", "While raging you have resistance to cold, fire and lightning damage.", nil,
+            { resist = { "cold", "fire", "lightning" }, whileOn = "Raging" }),
         Passive(14, "Elemental Overload", "Each of your Raging Elements options gains an extra effect, described on the option."),
     },
     ["Path of the Spiritual Guardian"] = {
@@ -142,7 +153,7 @@ R.SUBCLASS_FEATURES = {
             return ("You know %d maneuvers, each an ability on the sheet that spends a Superiority Die. The die is a d%d. All dice come back on a short or long rest. Only one maneuver can be used per attack. Maneuvers are chosen when you level, or under Customize."):format(
                 AtLevel(level, R.MANEUVERS_KNOWN), AtLevel(level, R.SUPERIORITY_DIE))
         end),
-        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list. The skill is chosen when you level; tick the tools under Customize.", nil, { skillChoice = "CLASS" }),
+        Passive(3, "Student of War", "Proficiency with one kind of artisan's tools and in one more skill from the Warrior's list. Both are chosen when you level.", nil, { skillChoice = "CLASS" }),
         Limited(7, "Know Your Enemy", "Bonus action: learn the immunities, resistances and vulnerabilities of a creature you can see within 30 feet. Once per long rest; Know Your Enemy: restore gives the use back for a Superiority Die.", 1),
         Ability(7, "Know Your Enemy: restore", "No action needed: spend a Superiority Die to use Know Your Enemy again before a long rest.",
             { Spend("Superiority Dice"), { type = "GAIN", resource = "Know Your Enemy", amount = 1 } }),
@@ -174,7 +185,7 @@ R.SUBCLASS_FEATURES = {
             { Spend("Channel Divinity"), SwitchOn("Sacred Weapon active") }),
         Passive(3, "Sacred Weapon active", "Switch on while Sacred Weapon lasts. Adds your Charisma modifier, at least +1, to attack rolls; it is meant for the one weapon you imbued.",
             function(_, sheet) return { Bonus("ATTACK", math.max(1, Kit.Mod(sheet, "CHA"))) } end, true),
-        Passive(7, "Aura of Devotion", "You and allies in your Aura of Protection can't be charmed."),
+        Passive(7, "Aura of Devotion", "You and allies in your Aura of Protection can't be charmed.", nil, { conditionImmune = { "Charmed" } }),
         Passive(15, "Smite of Protection", "When you cast Divine Smite, you and allies in your aura have half cover until the start of your next turn."),
         Limited(20, "Holy Nimbus", "Bonus action, for 10 minutes: advantage on saves forced by fiends and undead, enemies that start their turn in your aura take radiant damage equal to your Charisma modifier plus proficiency bonus, and the aura is filled with sunlight. Once per long rest, or again by spending a 5th-level slot.", 1),
     },
@@ -207,7 +218,8 @@ R.SUBCLASS_FEATURES = {
     ["Path of the Berserker"] = {
         Ability(3, "Frenzy", "While raging, if you attacked recklessly: extra damage on the first target you hit this turn with a Strength-based attack, of the same type as the weapon.",
             function(level) return { Dice(Kit.RageDamage(level), 6) } end),
-        Passive(6, "Mindless Rage", "While raging you can't be charmed or frightened, and entering a rage ends those conditions on you."),
+        Passive(6, "Mindless Rage", "While raging you can't be charmed or frightened, and entering a rage ends those conditions on you.", nil,
+            { conditionImmune = { "Charmed", "Frightened" }, whileOn = "Raging" }),
         Passive(10, "Retaliation", "Reaction when a creature within 5 feet damages you: one melee attack against it with a weapon or an unarmed strike."),
         Limited(14, "Intimidating Presence", function(_, sheet)
             return ("Bonus action. Creatures you choose within 30 feet make a Wisdom save, DC %d, or are frightened for a minute; they repeat the save at the end of each of their turns. Once per long rest, or again by spending a Rage use."):format(Kit.DC(sheet, "STR"))
@@ -221,7 +233,7 @@ R.SUBCLASS_FEATURES = {
             { stat = "WIS" }, nil, "ALL"),
         Ability(6, "War God's Blessing", "Cast Shield of Faith or Spiritual Weapon with a Channel Divinity use instead of a slot. It then needs no concentration and lasts a minute.",
             { Spend("Channel Divinity") }),
-        Passive(17, "Avatar of Battle", "You have resistance to bludgeoning, piercing and slashing damage."),
+        Passive(17, "Avatar of Battle", "You have resistance to bludgeoning, piercing and slashing damage.", nil, { resist = R.WEAPON_DAMAGE }),
     },
     ["Beast Master"] = {
         Kit.Choice(3, R.PET_FEATURE, "You summon a primal beast of a pet family you choose; you can summon another after a long rest. It acts on your turn: it Dodges unless you spend a bonus action, or give up one of your attacks, to command it. If it dies you can bring it back with a spell slot.", PetOptions()),
@@ -229,13 +241,13 @@ R.SUBCLASS_FEATURES = {
             local pet, block = R.Pet(sheet), R.PetBlock(sheet)
             return ("Your companion's attack, with your spell attack modifier.%s %s%s"):format(
                 level >= 11 and " It strikes twice when commanded: click once for each." or "", block.strike,
-                pet and (" If the family is one of your Weapon Mastery picks, the strike has %s."):format(pet.mastery) or "")
+                pet and (" If the family is one of your Weapon Mastery picks (set under Companion on the Actions tab of the sheet), the strike has %s and says so when it rolls."):format(pet.mastery) or "")
         end, function(_, sheet)
             local block = R.PetBlock(sheet)
             return { Roll("SPELL", "WIS"), Dice(1, block.die, "WIS", "DAMAGE", block.flat) }
         end),
         When(function(sheet) return R.PetBlock(sheet) == R.PET_BLOCKS.Land end,
-            Ability(3, "Beast's Strike: charge", "A beast of the land that moved 20 feet straight at the target before the hit deals this much more, and knocks a Large or smaller target prone.",
+            Ability(3, "Beast's Strike: charge", "Use this in place of Beast's Strike when a beast of the land moved 20 feet straight at the target: the whole strike is rolled with this much more damage, and a Large or smaller target is knocked prone.",
                 { Dice(1, 6) })),
         Passive(6, "Pet Specialization: Cunning", "While your companion is within 60 feet, your speed and its speeds are 10 feet higher. Switch this off while it is farther away.",
             { Bonus("SPEED", 10) }, { when = PetSpec("C") }),
@@ -288,18 +300,18 @@ R.SUBCLASS_FEATURES = {
             { Roll("ATTACK", "DEX"), Dice(1, 6, "DEX") }),
         Ability(3, "Psychic Blade (bonus action)", "After attacking with a Psychic Blade, a second blade as a bonus action if your other hand is free.",
             { Roll("ATTACK", "DEX"), Dice(1, 4, "DEX") }),
-        Ability(3, "Psi-Bolstered Knack", "When you fail a check with a skill or tool you are proficient in: add the roll. If it still fails the die isn't spent: give it back on the bar.",
-            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Ability(3, "Psychic Whispers", "Magic action: link minds with creatures you can see, up to your proficiency bonus, for as many hours as the roll. The first use after a long rest costs no die: raise the bar by one after that click.",
-            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Ability(9, "Homing Strikes", "When a Psychic Blade attack misses: add the roll to the attack roll. The die is spent only if that makes it hit: raise the bar by one when it still misses.",
-            function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(3, "Psi-Bolstered Knack", "When you fail a check with a skill or tool you are proficient in: add the roll. If it still fails the die isn't spent: right-click this ability, or click the link the sheet shows you after the roll, and you keep it.",
+            function(level) return { Kit.Refundable(Spend("Psionic Energy Dice"), "the check still failed"), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(3, "Psychic Whispers", "Magic action: link minds with creatures you can see, up to your proficiency bonus, for as many hours as the roll. The first use after a long rest costs no die; the sheet keeps track of that.",
+            function(level) return { Kit.FirstFree(Spend("Psionic Energy Dice")), Dice(1, PsionicDie(level), "", "OTHER") } end),
+        Ability(9, "Homing Strikes", "When a Psychic Blade attack misses: add the roll to the attack roll. The die is spent only if that makes it hit: when it still misses, right-click this ability, or click the link the sheet shows you after the roll, and you keep it.",
+            function(level) return { Kit.Refundable(Spend("Psionic Energy Dice"), "the attack still missed"), Dice(1, PsionicDie(level), "", "OTHER") } end),
         Ability(9, "Psychic Teleportation", "Bonus action: throw a blade and teleport to where it lands, up to 10 feet times the roll.",
             function(level) return { Spend("Psionic Energy Dice"), Dice(1, PsionicDie(level), "", "OTHER") } end),
-        Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that it costs a Psionic Energy Die, spent on its bar by hand.", 1),
+        Limited(13, "Psychic Veil", "Magic action: become invisible for an hour or until you deal damage or force a save. Once per long rest; after that each use costs a Psionic Energy Die, which the sheet spends.", 1, nil, nil, { "Psionic Energy Dice", 1 }),
         Limited(17, "Rend Mind", function(_, sheet)
-            return ("When your Psychic Blade deals Sneak Attack damage: the target makes a Wisdom save (DC %d) or is stunned for a minute, repeating the save each turn. Once per long rest; after that it costs three Psionic Energy Dice."):format(Kit.DC(sheet, "DEX"))
-        end, 1),
+            return ("When your Psychic Blade deals Sneak Attack damage: the target makes a Wisdom save (DC %d) or is stunned for a minute, repeating the save each turn. Once per long rest; after that each use costs three Psionic Energy Dice, which the sheet spends."):format(Kit.DC(sheet, "DEX"))
+        end, 1, nil, nil, { "Psionic Energy Dice", 3 }),
     },
     ["Swashbuckler"] = {
         Passive(3, "Fancy Footwork", "A creature you make a melee attack against on your turn can't make opportunity attacks against you for the rest of that turn."),
@@ -346,7 +358,9 @@ R.SUBCLASS_FEATURES = {
         Ability(3, "Shadowform", "Bonus action. For 1 minute you take a shadowy form: Hide as a bonus action in dim light or darkness, and add 1d6 to one damage roll of a slotted spell that deals psychic or necrotic damage. It ends if you deal radiant damage with a spell.",
             { Spend("Channel Divinity") }),
         Ability(3, "Void Empowerment", "In Shadowform: the extra damage for a slotted spell that deals psychic or necrotic damage.", { Dice(1, 6) }),
-        Limited(6, "Dispersion", "Reaction when an attack hits you: until the end of your next turn you resist all damage, fly 40 feet, and can't act. Afterwards you can spend up to half your Hit Dice to heal. Once per short or long rest.", 1, nil, "ALL"),
+        Limited(6, "Dispersion", "Reaction when an attack hits you: until the end of your next turn you resist all damage, fly 40 feet, and can't act. Afterwards you can spend up to half your Hit Dice to heal. Once per short or long rest. Switches Dispersed on.", 1, { SwitchOn("Dispersed") }, "ALL"),
+        Passive(6, "Dispersed", "Switch on after Dispersion, until the end of your next turn: you resist all damage.", nil,
+            { startsOff = true, resist = R.AllDamage() }),
         Passive(17, "Vampiric Embrace", "While in Shadowform, whenever you roll the d6 of extra spell damage, a creature within 30 feet regains that many hit points."),
     },
 
@@ -369,7 +383,10 @@ R.SUBCLASS_FEATURES = {
         Limited(6, "Natural Recovery", "Once per long rest, cast one of your Circle spells without a slot.", 1),
         Limited(6, "Natural Recovery: slots", "Once per long rest, on a short rest: recover spell slots with a combined level up to half your level, rounded up, none above 5th. The highest spent slots that fit come back; change the bars by hand for another mix.", 1,
             { Kit.Slots("RECOVER") }),
-        Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type of your current land (named on your Circle of the Land Spells)."),
+        Passive(10, "Nature's Ward", "You can't be poisoned, and you resist the damage type of your current land (named on your Circle of the Land Spells).", nil, {
+            conditionImmune = { "Poisoned" },
+            resist = function(_, sheet) return LAND_WARD[(sheet.featureOptions or {})["Circle of the Land Spells"]] end,
+        }),
         Ability(14, "Nature's Sanctuary", "Magic action. Spectral trees fill a 15-foot cube within 120 feet for a minute: you and allies have half cover there, and allies gain your Nature's Ward resistance. A bonus action moves it up to 60 feet.",
             { Spend("Wild Shape") }),
     },
@@ -415,7 +432,7 @@ R.SUBCLASS_FEATURES = {
         Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
             { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) }),
         Ability(3, "Starry Form", "Bonus action. For 10 minutes you become starry in place of a beast form, and choose a constellation: Archer, Chalice or Dragon. From level 10 you can change it at the start of each turn.",
-            { Spend("Wild Shape") }),
+            function(level) return level >= 14 and { Spend("Wild Shape"), SwitchOn("Full of Stars") } or { Spend("Wild Shape") } end),
         Ability(3, "Archer", "Starry Form, Archer constellation. When you take the form, and as a bonus action after: a luminous arrow at a creature within 60 feet.",
             function(level) return { Roll("SPELL", "WIS"), Dice(level >= 10 and 2 or 1, 8, "WIS") } end),
         Ability(3, "Chalice", "Starry Form, Chalice constellation. When you heal with a slotted spell, you or a creature within 30 feet also regains this much.",
@@ -426,7 +443,8 @@ R.SUBCLASS_FEATURES = {
         Limited(6, "Cosmic Omen", "After a long rest roll a die. Even (Weal): as a reaction, add the roll to a d20 test of a creature within 30 feet. Odd (Woe): subtract it. Uses equal to your Wisdom modifier per long rest.",
             { stat = "WIS" }, { Dice(1, 6, "", "OTHER") }),
         Passive(10, "Twinkling Constellations", "Archer and Chalice use 2d8, the Dragon lets you fly and hover, and you can change constellation at the start of each turn."),
-        Passive(14, "Full of Stars", "In Starry Form you resist bludgeoning, piercing and slashing damage."),
+        Passive(14, "Full of Stars", "Switch on while you are in Starry Form, which switches it on for you: you resist bludgeoning, piercing and slashing damage.",
+            nil, { startsOff = true, resist = R.WEAPON_DAMAGE }),
     },
 
     ---------------------------------------------------------------------------
@@ -512,11 +530,11 @@ R.SUBCLASS_FEATURES = {
             return steps
         end }),
         Kit.Choice(6, "Elemental Affinity", "The damage type your draconic magic is attuned to. You resist it, and add your Charisma modifier to one damage roll of a spell that deals it.", {
-            Kit.Option("Acid", "You resist acid damage, and add your Charisma modifier to one damage roll of a spell that deals acid damage."),
-            Kit.Option("Cold", "You resist cold damage, and add your Charisma modifier to one damage roll of a spell that deals cold damage."),
-            Kit.Option("Fire", "You resist fire damage, and add your Charisma modifier to one damage roll of a spell that deals fire damage."),
-            Kit.Option("Lightning", "You resist lightning damage, and add your Charisma modifier to one damage roll of a spell that deals lightning damage."),
-            Kit.Option("Poison", "You resist poison damage, and add your Charisma modifier to one damage roll of a spell that deals poison damage."),
+            Kit.Option("Acid", "You resist acid damage, and add your Charisma modifier to one damage roll of a spell that deals acid damage.", { resist = { "acid" } }),
+            Kit.Option("Cold", "You resist cold damage, and add your Charisma modifier to one damage roll of a spell that deals cold damage.", { resist = { "cold" } }),
+            Kit.Option("Fire", "You resist fire damage, and add your Charisma modifier to one damage roll of a spell that deals fire damage.", { resist = { "fire" } }),
+            Kit.Option("Lightning", "You resist lightning damage, and add your Charisma modifier to one damage roll of a spell that deals lightning damage.", { resist = { "lightning" } }),
+            Kit.Option("Poison", "You resist poison damage, and add your Charisma modifier to one damage roll of a spell that deals poison damage.", { resist = { "poison" } }),
         }),
         Limited(14, "Dragon Wings", "Bonus action: wings give you a flying speed of 60 feet for an hour. Once per long rest; after that it costs 3 Sorcery Points, spent on their bar by hand.", 1),
         Limited(18, "Dragon Companion", "You can cast Summon Dragon without its material component and make it last a minute without concentration. Once per long rest you can cast it without a slot.", 1),
@@ -531,7 +549,7 @@ R.SUBCLASS_FEATURES = {
             function(level) return { Dice(0, 4, "CHA", "TEMPHP", level) } end),
         Limited(6, "Dark One's Own Luck", "Add the roll to an ability check or saving throw after seeing the d20, once per roll. Uses equal to your Charisma modifier per long rest.",
             { stat = "CHA" }, { Dice(1, 10, "", "OTHER") }),
-        Passive(10, "Fiendish Resilience", "After each short or long rest choose a damage type other than force. You resist it until you choose another."),
+        Kit.Choice(10, "Fiendish Resilience", "After each short or long rest choose a damage type other than force. You resist it until you choose another.", RESILIENCE),
         Limited(14, "Hurl Through Hell", function(_, sheet)
             return ("Once per turn when you hit: the target makes a Charisma save, DC %d, or vanishes through the Lower Planes, taking the roll as psychic damage (unless it is a fiend) and returning incapacitated at the end of your next turn. Once per long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
         end, 1, { Dice(8, 10) }),
@@ -546,7 +564,7 @@ R.SUBCLASS_FEATURES = {
             return ("When you link minds with Awakened Mind: the creature makes a Wisdom save, DC %d. On a failure it has disadvantage attacking you and you have advantage attacking it while the link lasts. Once per short or long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
         end, 1, nil, "ALL"),
         Passive(10, "Eldritch Hex", "You always have Hex prepared, and its target also has disadvantage on saves with the chosen ability."),
-        Passive(10, "Thought Shield", "Your thoughts can't be read, you resist psychic damage, and creatures that deal it to you take the same amount."),
+        Passive(10, "Thought Shield", "Your thoughts can't be read, you resist psychic damage, and creatures that deal it to you take the same amount.", nil, { resist = { "psychic" } }),
         Passive(14, "Create Thrall", "Summon Aberration can last a minute without concentration; the creature then gains temporary hit points equal to your level plus Charisma modifier and deals your Hex's extra damage once per turn."),
     },
 

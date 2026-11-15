@@ -28,6 +28,8 @@ end
 --   strike = { sides = 8, damage = "radiant" }  a die added to every melee weapon hit
 --   spec = "Blood"     only for a character of that specialization (abilities too)
 --   limit = "UNARMORED" or "NOHEAVY"  armor that stops its effects (Sheet/Limits.lua)
+--   resist, immune, vulnerable = { "fire" }  damage types, conditionImmune = { "Charmed" },
+--                      whileOn = "Raging" (see Data/DamageTypes.lua)
 --   when = function(sheet)  only while this is true (any kind of feature); the sheet
 --                      may be a stand-in with just class, subclass and level
 function Kit.Passive(level, name, desc, effects, extra)
@@ -46,7 +48,8 @@ end
 --   uses   a number, { {level, uses}, ... } steps, or { stat = "WIS" } for that
 --          ability's modifier (never fewer than 1)
 --   short  what a short rest gives back: a number of uses or "ALL"; nil = long rest only
-function Kit.Limited(level, name, desc, uses, actions, short)
+--   otherwise  { resource, amount }: what a use costs instead once its own are spent
+function Kit.Limited(level, name, desc, uses, actions, short, otherwise)
     local pool = { name = name, from = level, short = short }
     if type(uses) == "number" then
         pool.steps = { { level, uses } }
@@ -57,7 +60,9 @@ function Kit.Limited(level, name, desc, uses, actions, short)
     end
     local feature = Kit.Ability(level, name, desc, function(current, sheet)
         local list = type(actions) == "function" and actions(current, sheet) or CopyTable(actions or {})
-        table.insert(list, 1, Kit.Spend(name))
+        local spend = Kit.Spend(name)
+        if otherwise then spend.otherwise, spend.otherwiseAmount = otherwise[1], otherwise[2] end
+        table.insert(list, 1, spend)
         return list
     end)
     feature.pool = pool
@@ -96,6 +101,19 @@ function Kit.Spend(resource, amount)
     return { type = "SPEND", resource = resource, amount = amount or 1, freeIfFull = "" }
 end
 
+-- A cost the player can take back once after the click, for a use or die that is only
+-- spent when it turned the roll around. `when` finishes "if ...": "the check still failed".
+function Kit.Refundable(spend, when)
+    spend.refund = when
+    return spend
+end
+
+-- A cost that is waived the first time the ability is used after each long rest.
+function Kit.FirstFree(spend)
+    spend.firstFree = true
+    return spend
+end
+
 function Kit.SwitchOn(passive)
     return { type = "TOGGLE", passive = passive, mode = "ON" }
 end
@@ -103,6 +121,13 @@ end
 -- A count of 0 rolls nothing and gives just the flat amount and the modifier.
 function Kit.Dice(count, sides, stat, kind, flat)
     return { type = "DICE", count = count, sides = sides, stat = stat or "", dice = kind or "DAMAGE", flat = flat or 0 }
+end
+
+-- Damage dice of a named type, for the types a feature treats differently: low
+-- "force" dice can count as higher (see Sheet/Metamorphosis.lua).
+function Kit.Typed(dice, damage)
+    dice.damage = damage
+    return dice
 end
 
 -- Dice that count once for each level of the spell slot the ability spends.

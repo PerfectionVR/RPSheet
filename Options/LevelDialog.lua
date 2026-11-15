@@ -79,13 +79,38 @@ end
 -- How many options of a pick list (Metamagic, Invocations) the character should know.
 local function PickLimit(key)
     if not draft then return 0 end
-    return ns.PickLimit(key, Sheet().class, ChoiceLevel())
+    return ns.PickLimit(key, Sheet().class, ChoiceLevel(), SubclassAfter())
 end
 
 local function PicksChosen(key)
     local count = 0
     for _ in pairs(draft.picks[key]) do count = count + 1 end
     return count
+end
+
+-- The character as this dialog would leave it, for a list whose options depend on
+-- other picks made here (spells that have to be in the spellbook).
+local function Picking()
+    return setmetatable({ picks = draft.picks, level = ChoiceLevel(), subclass = SubclassAfter() }, { __index = Sheet() })
+end
+
+-- Why an option of a list can't be picked right now, or nil.
+local function Blocked(key, name)
+    return ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Picking())
+end
+
+-- A list that follows another (list.follows) loses the picks that list no longer
+-- allows: a mastered spell that was taken out of the spellbook is open again.
+local function DropUnfollowed()
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        local list = R.PICK_LISTS[key]
+        if list.follows and list.blocked and PickLimit(key) > 0 then
+            local like = Picking()
+            for name in pairs(draft.picks[key]) do
+                if not list.items[name] or list.blocked(like, name) then draft.picks[key][name] = nil end
+            end
+        end
+    end
 end
 
 -- How many skills to pick expertise in, and the set to pick from (nil = any).
@@ -104,6 +129,21 @@ local function FeatSkillsPicked()
     local count = 0
     for _ in pairs(draft.featSkills) do count = count + 1 end
     return count
+end
+
+-- The feats whose own choices are asked for here (a damage type, spells, tools):
+-- those on the sheet, with this level's feat as it is being decided. Returns what
+-- ns.FeatChoiceProgress and Opt.FeatChoiceGroup need.
+local function FeatChoiceContext()
+    if not draft then return end
+    local sheet, override = Sheet(), nil
+    if draft.kind then
+        override = { id = "level:" .. draft.level, name = draft.record.choice == "FEAT" and draft.record.feat or "" }
+    end
+    local instances = ns.FeatInstances(sheet, override)
+    -- Picks for a feat that was swapped out here, or that no longer fit, are dropped.
+    ns.NormalizeFeatChoices(draft.featChoices, instances, ChoiceLevel())
+    return sheet, draft.featChoices, instances, ChoiceLevel()
 end
 
 local function ExpertisePicked()
@@ -139,7 +179,11 @@ local function Problem()
     end
     if AsksSubclass() and draft.taking and draft.subclass == "" then return "Choose a subclass: it is part of this level." end
     if StyleSlot() and draft.style == "" then return "Choose a Fighting Style: it is part of this level." end
-    return draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
+    local problem = draft.kind and Levels.Problem(Sheet(), draft.level, draft.record)
+    if problem then return problem end
+    -- Last: the feat has to be settled before its own choices are.
+    local _, store, instances, level = FeatChoiceContext()
+    return (select(3, ns.FeatChoiceProgress(store, instances, level)))
 end
 
 -- Closes the dialog, then opens the dialog for `nextLevel` or goes back to the settings.
@@ -167,7 +211,7 @@ local function Gains()
     if draft.taking then
         local die = class and class.hitDie or R.DEFAULT_HIT_DIE
         lines[#lines + 1] = ("Maximum HP %s%s|r, and one more d%d Hit Die."):format(
-            Opt.GREEN, Util.Signed(die / 2 + 1 + RPSheet:Mod("CON")), die)
+            Opt.GREEN, Util.Signed(die / 2 + 1 + RPSheet:OwnMod("CON")), die)
         local before, after = math.ceil((level - 1) / 4) + 1, math.ceil(level / 4) + 1
         if after ~= before then
             lines[#lines + 1] = ("Proficiency bonus %s+%d|r."):format(Opt.GREEN, after)
@@ -263,7 +307,10 @@ local args = {
             return (select(2, Opt.ListMap(class and class.subclasses, true)))
         end,
         get = function() return draft.subclass end,
-        set = function(_, value) draft.subclass = value end,
+        set = function(_, value)
+            draft.subclass = value
+            DropUnfollowed() -- its always-prepared spells can't be picked as well
+        end,
     },
 
     style = {
@@ -419,6 +466,7 @@ local args = {
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             if ExpertiseLimit() > 0 then sheet.expertise = CopyTable(draft.expertise) end
             if FeatSkillLimit() > 0 then sheet.featSkills = CopyTable(draft.featSkills) end
+            sheet.featChoices = CopyTable(draft.featChoices) -- kept per feat; the upkeep drops what no feat asks for
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
                 RPSheet:SetLevel(level)
@@ -498,6 +546,9 @@ for index, skill in ipairs(R.SKILLS) do
     }
 end
 
+-- The choices inside feats, right under the feat this level takes.
+args.featChoices = Opt.FeatChoiceGroup(43, FeatChoiceContext)
+
 -- Expertise: one checkbox per skill the character is proficient in.
 args.expertise = {
     type = "group", inline = true, order = 13.5, args = {},
@@ -531,7 +582,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
     -- A long list leaves out what the character can't pick yet.
     local function Hidden(name)
         return list.hideBlocked == true and draft ~= nil and not draft.picks[key][name]
-            and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
+            and Blocked(key, name) ~= nil
     end
     local section
     for index, name in ipairs(list.order) do
@@ -552,7 +603,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
         group.args["pick" .. index] = {
             type = "toggle", order = index, width = 1.5,
             name = function()
-                local blocked = draft and not draft.picks[key][name] and ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter())
+                local blocked = draft and not draft.picks[key][name] and Blocked(key, name)
                 -- A spell shows its level behind the name.
                 local tag = list.items[name].tag
                 local shown = tag and ("%s |cff888888(%s)|r"):format(name, tag) or name
@@ -562,7 +613,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             desc = list.items[name].desc,
             disabled = function()
                 if draft.picks[key][name] then return false end
-                return PicksChosen(key) >= PickLimit(key) or ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter()) ~= nil
+                return PicksChosen(key) >= PickLimit(key) or Blocked(key, name) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
             set = function(_, value)
@@ -581,6 +632,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
                         end
                     end
                 end
+                if not value then DropUnfollowed() end
             end,
         }
     end
@@ -641,9 +693,11 @@ function ns.OpenLevelDialog(level, reopen)
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
+        featChoices = CopyTable(sheet.featChoices or {}),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end
+    DropUnfollowed() -- a pick that stopped being valid is asked for again
     if kind == "BOON" then draft.record.choice = "FEAT" end
     -- The specialization's suggestions are pre-selected; the player can pick otherwise.
     local guide = R.SpecGuide(sheet.class, sheet.spec)

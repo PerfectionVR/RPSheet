@@ -15,6 +15,7 @@ local offered = {} -- sheet keys the wizard was already offered for this session
 -- buttons was pressed, which would bring a closed one straight back.
 local function Close()
     W.draft = nil
+    W.CloseCloset()
     C_Timer.After(0, function() AceConfigDialog:Close(DIALOG) end)
 end
 

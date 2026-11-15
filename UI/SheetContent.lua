@@ -1,5 +1,5 @@
--- What the sheet window shows. Populate rebuilds every row from the saved sheet, one
--- section at a time; Refresh only updates the text that changes during play.
+-- What the sheet window shows. Populate rebuilds every row from the saved sheet: the
+-- top part, the tab row, and the sections of the open tab; Refresh only updates the text that changes during play.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -106,6 +106,8 @@ local function TrackerSection(self, body)
         self:Refresh()
     end, "Heroic Inspiration", ns.Glossary["Heroic Inspiration"] .. "\n\nClick to gain or spend it.")
 
+    UI.AddDamageRows(self, body) -- damage by amount and type, with the rules applied
+
     self.deathLabel = nil
     if self:IsDown() then
         self.deathLabel = UI.AddLabel(body, 1, "", function(button)
@@ -173,17 +175,14 @@ local function CombatSection(self, body)
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
     Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)
-    -- Senses and resistances get a row each, after the numbers.
-    local senses, resistances = self:Senses(), self:Resistances()
+    -- Senses and what the character shrugs off get rows of their own, after the numbers.
+    local senses = self:Senses()
     local function After()
         if #senses > 0 then
             UI.AddLabel(body, 1, ("Senses %s%s|r"):format(UI.ACCENT, table.concat(senses, ", ")), nil, "Senses",
                 "Darkvision comes from your species or beast form. The others are read from the passives that are switched on.")
         end
-        if #resistances > 0 then
-            UI.AddLabel(body, 1, ("Resists %s%s|r"):format(UI.ACCENT, table.concat(resistances, ", ")), nil, "Resistances",
-                "You take half damage of these types. Read from the passives that are switched on: switch one off, or write \"resistance to fire damage\" in a passive of your own, and the row follows.")
-        end
+        UI.AddDefenseRows(self, body)
     end
     if self:CastStat() then
         Number("Spell DC", self:SpellDC(), nil, "Spell save DC: 8 + proficiency + " .. R.STAT_NAMES[self:CastStat()] .. " modifier.",
@@ -251,8 +250,11 @@ local function AbilitySection(self, body)
         for _, action in ipairs(ability.actions) do
             lines[#lines + 1] = UI.GREEN .. self:ActionText(action) .. "|r"
         end
-        UI.AddLabel(body, 1, ability.name, function() self:UseAbility(ability, ns.RollMode()) end,
-            ability.name, table.concat(lines, "\n"))
+        UI.AddLabel(body, 1, ability.name, function(button)
+            -- A right-click takes back a cost that turned out not to be spent, if one is open.
+            if button == "RightButton" and self:TakeBack(ability.name) then return end
+            self:UseAbility(ability, ns.RollMode())
+        end, ability.name, table.concat(lines, "\n"))
     end
 end
 
@@ -282,13 +284,27 @@ local function SpellSection(self, body)
         local info = self:SpellText(spell)
         local lines = {}
         if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
-        lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
-            or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\".%s"):format(R.ORDINALS[spell.level],
-                (spell.up or 0) > 0 and (" Each slot level above adds %dd%d."):format(spell.up, spell.sides) or "")
+        -- A spell chosen for a class feature says so, and how it is cast without a slot.
+        local mark, note, noSlots = self:ChosenSpellNote(spell)
+        if mark then
+            info = info ~= "" and (info .. ", " .. mark) or mark
+            lines[#lines + 1] = note
+        end
+        if not noSlots then
+            lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
+                or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\"."):format(R.ORDINALS[spell.level])
+        end
+        -- What a higher slot does for it (see Actions/SlotGrowth.lua).
+        for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
         local casting = R.SpellCastingNote(spell)
         if casting then lines[#lines + 1] = casting end
         if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
         if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
+        if R.GROWING_SPELLS[spell.name] then
+            lines[#lines + 1] = self:GrowingSides(spell)
+                and "It is running. Left-click when the target fails its save again: the die grows and the damage is rolled, without a slot. Right-click when it succeeds or the spell runs out: that ends it."
+                or "After casting, click it again each time the target fails its save: the die grows and the damage is rolled, without a slot."
+        end
         UI.AddLabel(body, 1, ("%s  %s%s|r"):format(spell.name, UI.GREY, info),
             function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name, table.concat(lines, "\n"),
             function() self:ExplainSpell(spell) end)
@@ -311,6 +327,7 @@ local function PassiveSection(self, body)
         local text = passive.enabled and passive.name or (UI.GREY .. passive.name .. " (off)|r")
         UI.AddLabel(body, 0.5, text, function()
             passive.enabled = not passive.enabled
+            if passive.enabled then self:PassiveSwitchedOn(passive) end -- some end others
             self:ClampState()
             PopulateSoon(self)
         end, passive.name, table.concat(lines, "\n"))
@@ -354,16 +371,11 @@ local function OriginSection(self, body)
         local score = self:Sheet().renown[faction] or 0
         if score > 0 then
             local tier = R.RenownTier(score)
-            -- The perks of every tier reached, lowest first.
-            local perks = {}
-            for index = #R.RENOWN_TIERS, 1, -1 do
-                local step = R.RENOWN_TIERS[index]
-                if score >= step[1] then perks[#perks + 1] = ("%s%s|r: %s"):format(UI.ACCENT, step[2], R.RENOWN_PERKS[step[2]]) end
-            end
+            -- The perks of every tier reached and the next one (Sheet/RenownSummary.lua).
             renown[#renown + 1] = {
                 text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),
-                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50."
-                    .. (#perks > 0 and ("\n\n" .. table.concat(perks, "\n")) or "") .. "\n\nThe faction's own perks come on top of these.",
+                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.\n\n"
+                    .. ns.RenownSummary(self:Sheet(), faction, UI.ACCENT),
             }
         end
     end
@@ -378,9 +390,17 @@ local function OriginSection(self, body)
     end
 end
 
-local SECTIONS = {
-    HeaderSection, TrackerSection, ConditionSection, CombatSection, CheckSection, SaveSection,
-    AbilitySection, SpellSection, PassiveSection, SkillSection, ToolSection, OriginSection,
+-- Always shown, above the tabs.
+local TOP = { HeaderSection, TrackerSection, ConditionSection, CombatSection }
+
+-- The rest, one tab at a time (UI/SheetTabs.lua).
+local TABS = {
+    { name = "Actions", tip = "Your abilities and spells, and your companion if you have one.",
+      UI.PetSection, AbilitySection, SpellSection },
+    { name = "Checks", tip = "Ability checks and saving throws.", CheckSection, SaveSection },
+    { name = "Skills", tip = "Skills and tools.", SkillSection, ToolSection },
+    { name = "Traits", tip = "Passives and traits, languages and renown.", PassiveSection, OriginSection },
+    { name = "Items", tip = "Your coins and what you carry.", UI.InventorySection },
 }
 
 ---------------------------------------------------------------------------
@@ -393,8 +413,16 @@ function RPSheet:Populate()
     body:PauseLayout()
     body:ReleaseChildren()
     self.sheetSlotLabels = {} -- the old lines are gone with the rows
-    for _, section in ipairs(SECTIONS) do
+    for _, section in ipairs(TOP) do
         section(self, body)
+    end
+    local tab = UI.AddTabBar(self, body, TABS)
+    local before = #body.children
+    for _, section in ipairs(tab) do
+        section(self, body)
+    end
+    if #body.children == before then
+        UI.AddLabel(body, 1, ("\n%sNothing here yet.|r"):format(UI.GREY))
     end
     -- Fill in the rows whose text comes from Refresh before laying out: a row that is
     -- still empty has no height, and the rows below it would be placed on top of it.
@@ -402,6 +430,7 @@ function RPSheet:Populate()
     body:ResumeLayout()
     body:DoLayout()
     self:PopulateSpellbook() -- the open spellbook follows the sheet
+    self:PopulateItemBrowser() -- and so does the open item browser
 end
 
 function RPSheet:Refresh()

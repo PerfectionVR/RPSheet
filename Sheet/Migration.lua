@@ -114,6 +114,8 @@ function ns.NormalizeState(state)
     end
     if type(state.conditions) ~= "table" then state.conditions = {} end
     state.exhaustion = tonumber(state.exhaustion) or 0
+    if type(state.freeUsed) ~= "table" then state.freeUsed = {} end
+    if type(state.spellUsed) ~= "table" then state.spellUsed = {} end
     local sheet = state.sheet
     sheet.extraLanguages = tonumber(sheet.extraLanguages) or 0
     if type(sheet.asi) ~= "table" then sheet.asi = {} end
@@ -121,7 +123,7 @@ function ns.NormalizeState(state)
     -- Choices are kept per level (see Sheet/Levels.lua); the totals follow from them.
     ns.Levels.Migrate(sheet)
     ns.Levels.Recompute(sheet)
-    for _, key in ipairs({ "dismissed", "languages", "renown", "traitChoices", "traitGranted", "maneuvers", "featureSkills", "featureSkillGranted", "featureScores", "featureOptions", "picks", "expertise", "expertiseGranted", "featSkills", "featSkillGranted", "tools", "spellbook" }) do
+    for _, key in ipairs({ "dismissed", "languages", "renown", "renownTraining", "renownGranted", "traitChoices", "traitGranted", "maneuvers", "featureSkills", "featureSkillGranted", "featureScores", "featureOptions", "picks", "expertise", "expertiseGranted", "featSkills", "featSkillGranted", "featChoices", "featGranted", "tools", "spellbook" }) do
         if type(sheet[key]) ~= "table" then sheet[key] = {} end
     end
     for _, key in ipairs(R.PICK_LIST_ORDER) do
@@ -134,6 +136,11 @@ function ns.NormalizeState(state)
     Util.NormalizeList(sheet.passives, R.TEMPLATES.passive)
     if type(sheet.spells) ~= "table" then sheet.spells = {} end
     Util.NormalizeList(sheet.spells, R.TEMPLATES.spell)
+    -- Coins and carried items (Sheet/Inventory.lua).
+    if type(sheet.items) ~= "table" then sheet.items = {} end
+    Util.NormalizeList(sheet.items, R.TEMPLATES.item)
+    for _, item in ipairs(sheet.items) do Util.NormalizeList(item.effects, R.TEMPLATES.effect, Any) end
+    ns.NormalizeInventory(sheet)
     for _, ability in ipairs(sheet.abilities) do
         Util.NormalizeList(ability.actions, R.TEMPLATES.action, Any)
         for _, action in ipairs(ability.actions) do

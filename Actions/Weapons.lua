@@ -5,12 +5,12 @@ local Util = ns.Util
 local RollText = ns.RollText
 
 function RPSheet:GetWeapon()
-    local weapons = Util.Named(self:Sheet().weapons)
+    local weapons = ns.ReadyWeapons(self:Sheet())
     return weapons[self:State().weapon] or weapons[1]
 end
 
 function RPSheet:SwapWeapon()
-    local count = #Util.Named(self:Sheet().weapons)
+    local count = #ns.ReadyWeapons(self:Sheet())
     if count == 0 then return end
     self:State().weapon = self:State().weapon % count + 1
     self:Refresh()

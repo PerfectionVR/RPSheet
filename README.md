@@ -8,6 +8,12 @@ Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
 
 ## Features
 
+- **Tabs on the sheet**: hit points, rests, conditions, combat numbers and your weapon
+  stay on top; abilities and spells, checks and saves, skills and tools, traits, and
+  items each have a tab below.
+- **Item browser**: a window listing what you carry and every item of the rules as a
+  block with its details and buttons to add, buy, equip and remove it.
+- **Minimize**: the sheet can fold up to its title bar and open only while hovered.
 - **Character sheet window** with HP, class resource and counter bars, AC, stats, skills,
   weapons, abilities and passives.
 - **Click to roll.** Rolls use the game's real `/roll`, so everyone nearby or in your group
@@ -151,17 +157,25 @@ other ten still need that.
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
       Arts that stop in the armor the rules name
-- [ ] Curse of Agony (Warlock): the die should grow after each failed save; the sheet
-      always rolls the starting d4
-- [ ] Metamorphosis (Demon Hunter): the three benefits to choose from are described,
-      none is applied
-- [ ] Psychic Whispers and Homing Strikes (Rogue), Tactical Mind (Warrior): a die or
-      use that should not be spent is put back by hand
-- [ ] Student of War (Warrior): the artisan's tools are ticked by hand, not chosen in
-      the level dialog
+- [x] Curse of Agony (Warlock): the die grows after each failed save. Click the spell
+      again for each one; right-click ends it
+- [x] Metamorphosis (Demon Hunter): casting it asks which of the three benefits you
+      take and applies it, as a passive you switch off when the spell ends
+- [ ] Metamorphosis: the benefit ending by itself after its minute, and force damage
+      from spells typed in by hand or from custom abilities counted for Devourer
+- [x] Tactical Mind (Warrior), Psi-Bolstered Knack and Homing Strikes (Rogue): one
+      click takes the use or die back when the roll still failed; Psychic Whispers is
+      free the first time after a long rest
+- [x] Rend Mind and Psychic Veil (Rogue): once the free use is gone, the sheet spends
+      the dice a further use costs
+- [x] Student of War (Warrior): the artisan's tools are chosen in the level dialog
 - [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
       Specialization at level 6 in place of Roving
-- [ ] The companion's own checks and saves, and its strike's mastery applied by the sheet
+- [x] The companion's own checks and saves; its strike rolls the charge die, names
+      prone or grapple, and uses the family's mastery when it is one of your picks
+- [x] The companion's Armor Class, speed and darkvision on the sheet
+- [x] The companion's two strikes at level 11 in one click
+- [ ] Changing the companion's mastery pick only after a long rest
 - [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
       Armor Class, speed, Strength and Dexterity while it is on
 - [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
@@ -175,16 +189,20 @@ other ten still need that.
       rest as run out. If you shift partway through a rest, switch the form back on
       afterwards. Outside rests the form never runs out by itself: switch it off when
       its hours are up
-- [ ] Other beasts as Wild Shape forms, and a beast form's own senses and Constitution
+- [x] Ninety beasts as Wild Shape forms, grouped by challenge rating, the larger ones
+      for the Circle of the Moon; a form's own Constitution and senses
+- [ ] Beast attacks: damage that depends on the situation (a charge, a bloodied
+      target) is described, not rolled; a beast's own skill bonuses where they beat the character's
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves
 - [x] A Demon Hunter's set of spells, following the specialization
 - [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
 - [x] Arcane Recovery, Font of Magic and Magical Cunning change spell slots by the click
-- [ ] Slots made with Font of Magic going above the usual number of slots
-- [ ] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
-      chosen from a list
+- [x] Slots made with Font of Magic go above the usual number of slots, until a long rest
+- [x] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
+      chosen in the level dialog and cast without a slot as the rules allow
+- [ ] Mystic Arcanum: swapping only one spell per level
 - [ ] Multiclassing
 
 **Spells**
@@ -193,8 +211,10 @@ other ten still need that.
 - [ ] Hand-written summaries for the core spells above 1st level (theirs are put
       together from the spell's facts)
 - [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
-- [ ] Spells that grow in another way with the slot (more targets, more darts, a
-      different die)
+- [x] Spells that grow in another way with the slot: more targets, longer durations
+      and fixed amounts are stated, second dice parts and fixed bonuses are rolled
+- [ ] The starting number of targets of the twenty plain "one more target per slot
+      level" spells read against the rules once more
 - [x] Spells that make several attacks roll them all in one click (Scorching Ray,
       Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
@@ -203,29 +223,56 @@ other ten still need that.
       out, and a spellbook window on the sheet to cast from and to prepare spells
 - [x] Spells chosen when a character is made and when it levels: the cantrips of
       every spellcasting class, and a Mage's spellbook spells (six, and two per level)
-- [ ] The prepared spells of the other classes chosen the same way (they are added on
-      the Spells page)
+- [x] The prepared spells of the other classes chosen the same way, exactly as many
+      as the class prepares; spells added by hand before count as picks
+- [ ] How often prepared spells may be swapped (any after a long rest, one per long
+      rest, or one per level, by class)
 - [ ] Copying spells into the book for gold and time; preparing only after a long rest
-- [ ] Tracking the gold and the components themselves
+- [x] Gold tracked on the sheet (see the inventory below)
+- [ ] Spell components with a price checked against, and taken from, the inventory
 
 **Character**
 
 - [x] Tool proficiencies: granted by class and background or ticked by hand, with a
       check to click for each
 - [ ] The professions and crafting rules
-- [ ] An armoury for weapons of your own, kept between characters
+- [x] An armoury for weapons of your own, kept between characters: save, add a copy,
+      rename, delete, and share one as a text string
 - [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
       Strength for it
-- [ ] Equipment, currency and magic items
+- [x] Coins with change, an inventory of gear with prices and weights against your
+      carrying capacity, and magic items: equipped and attuned (three at most), with
+      bonuses the sheet applies; a magic bonus on weapons; starting gold in the wizard
+- [x] A starting closet in the creation wizard: take as much plain gear as you like
+      and tick what you wear and wield
+- [x] Armor, shields and basic weapons in the inventory linked to Defense and Weapons:
+      equipping one puts it on or readies it, putting it away undoes that
+- [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
+      situation; magic armor and weapons, and weapons of your own, equipped from the
+      inventory; being over the carrying limit slowing you; the fixed starting gear
+      packages of each class and background (the closet has no budget)
 - [ ] Mounts, vehicles and companion creatures
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on
-- [ ] Immunities and vulnerabilities, and resistances halving damage by themselves
+- [x] Immunities, vulnerabilities and conditions you can't be put under, next to the
+      resistances; "Take damage" and "Heal" apply them, temporary hit points and the
+      rules for dropping to 0
+- [ ] Protection from spells that are running (the sheet doesn't track those): add
+      it as a passive of your own. Resistances with a choice or a condition of their
+      own (Heavenly Spirit, Boon of the Night Spirit) are not counted
 - [x] The perks every faction gives at each renown tier, shown with the score
-- [ ] Each faction's own renown perks
+- [x] Each faction's own renown perks, shown per tier; the sheet applies what it can
+      (a language, tool or skill from the faction's trainers, and blessings)
+- [ ] Renown gained by rule (a stronghold, another subfaction of your side reaching
+      a tier); renown with only one of the Explorers' League and the Reliquary
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
-- [ ] The other choices inside a feat (which spell for Magic Initiate, Keen Mind's and
-      Observant's skill, Elemental Adept's damage type)
+- [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
+      list, ability and spells, the skill of Keen Mind and Observant, Elemental
+      Adept's damage type, Crafter's tools, Musician's instruments, the spells of
+      Fey-Touched, Shadow-Touched and Ritual Caster, the Boons of Skill and Energy
+      Resistance
+- [ ] Skilled's tools in place of skills; Weapon Master unlocking a mastery;
+      Inscription Adept's higher spells
 
 **Play**
 

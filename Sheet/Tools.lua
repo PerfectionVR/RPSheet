@@ -1,17 +1,20 @@
 -- Tool proficiencies (data in Data/Tools.lua). A character is proficient with the
--- tools its class and background name, plus those ticked by hand in
--- sheet.tools[<name>] = true.
+-- tools its class and background name, the kind picked for a feature in the level
+-- dialog (Sheet/ToolPicks.lua), plus those ticked by hand in sheet.tools[<name>] = true.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 
--- Where the proficiency with a tool comes from: "class", "background", "chosen", or nil.
+-- Where the proficiency with a tool comes from: "class", "background", "feature" (picked
+-- in the level dialog), "feat" (picked for a feat there), "renown" (taught by a faction's
+-- trainer, Sheet/RenownTraining.lua), "chosen" (ticked by hand), or nil.
 function RPSheet:ToolSource(name)
-    local sheet, class = self:Sheet(), self:ClassData()
-    for _, tool in ipairs(class and R.CLASS_TOOLS[class.base] or {}) do
-        if tool == name then return "class" end
-    end
-    if R.BACKGROUND_TOOLS[sheet.background] == name then return "background" end
+    local sheet = self:Sheet()
+    local granted = ns.ToolGranted(sheet, name)
+    if granted then return granted end
+    if ns.ToolPicked(sheet, name) then return "feature" end
+    if ns.FeatTool(sheet, name) then return "feat" end
+    if ns.RenownTool(sheet, name) then return "renown" end
     if sheet.tools[name] then return "chosen" end
 end
 

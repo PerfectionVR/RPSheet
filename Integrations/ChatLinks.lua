@@ -53,8 +53,8 @@ function ns.TermInfo(term)
     if R.FEATS[term] then return term, { "Feat.", R.FEATS[term].desc } end
     if R.FIGHTING_STYLES[term] then return term, { "Fighting Style.", R.FIGHTING_STYLES[term].desc } end
     if R.TRAITS[term] and R.TRAITS[term].desc then return term, { R.TRAITS[term].desc } end
-    -- "STR check" and "STR save" read as the ability.
-    local stat, kind = term:match("^(%u%u%u) (%l+)$")
+    -- "STR check" and "STR save" read as the ability; so does a companion's own roll.
+    local stat, kind = (term:gsub("^companion ", "")):match("^(%u%u%u) (%l+)$")
     if stat and R.STAT_NAMES[stat] then
         local lines = { ns.Glossary[stat] }
         if kind == "save" then lines[#lines + 1] = ns.Glossary["Saving throw"] end

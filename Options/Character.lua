@@ -132,7 +132,7 @@ local function Summary()
         lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
     end
     if ns.OpenClassChoices(sheet) then
-        lines[#lines + 1] = ("%sYour class has choices to make: use \"Class choices\" below.|r"):format(Opt.RED)
+        lines[#lines + 1] = ("%sYour class or feats have choices to make: use \"Class and feat choices\" below.|r"):format(Opt.RED)
     end
     local pending = Levels.Pending(sheet)
     if #pending > 0 then
@@ -278,14 +278,14 @@ Opt.tabs.character = {
             name = function()
                 local limit = ns.ManeuverLimit(Sheet().subclass, Sheet().level)
                 if limit > 0 then return ("Maneuvers (%d of %d)"):format(ns.ManeuversKnown(Sheet()), limit) end
-                return "Class choices"
+                return "Class and feat choices"
             end,
-            desc = "The choices your class and subclass give you at this level, such as a Battle Master's maneuvers.",
+            desc = "The choices your class, subclass and feats give you at this level, such as a Battle Master's maneuvers or the spells of Magic Initiate.",
             hidden = function()
                 local sheet = Sheet()
                 return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
                     and #ns.OptionFeatures(sheet) == 0 and not ns.HasPickList(sheet)
-                    and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0)
+                    and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0 and not ns.HasFeatChoices(sheet))
             end,
             func = function() ns.OpenLevelDialog(Sheet().level) end,
         },

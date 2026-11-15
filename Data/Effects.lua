@@ -73,9 +73,10 @@ R.TOGGLE_MODES = { ON = "Switch on", OFF = "Switch off", TOGGLE = "Flip" }
 R.TEMPLATES = {
     -- style: the character's Fighting Style applies to it; mastery: see Rules.MASTERIES
     -- base: the basic weapon it is (see Data/Weapons.lua), empty for the player's own;
-    -- twoHands: a versatile weapon held in two hands
+    -- twoHands: a versatile weapon held in two hands; magic: a magic weapon's bonus
+    -- to its own attack and damage rolls; stowed: put away, so not on the sheet
     weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
-               base = "", twoHands = false },
+               base = "", twoHands = false, magic = 0, stowed = false },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },
@@ -90,6 +91,9 @@ R.TEMPLATES = {
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
         times = 1,                                                     -- WEAPON
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
+        refund = "",                                                   -- SPEND: when it can be taken back ("the check still failed")
+        otherwise = "", otherwiseAmount = 0,                           -- SPEND: another resource that pays once this one is used up
+        firstFree = false,                                             -- SPEND: waived for the first use after a long rest
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
     },
 }

@@ -19,7 +19,7 @@ function RPSheet:ActionText(action)
     elseif kind == "DICE" then
         local text = R.DICE_KINDS[action.dice] or "Dice"
         text = action.count > 0 and ("%s: %dd%d"):format(text, action.count, action.sides) or (text .. ":")
-        if (action.flat or 0) ~= 0 then text = text .. " + " .. action.flat end
+        if (action.flat or 0) ~= 0 then text = text .. (action.flat < 0 and " - " or " + ") .. math.abs(action.flat) end
         if action.perSlot then text = text .. " per slot level" end
         if (action.strain or "") ~= "" then text = text .. ", more with each use" end
         if (action.slotAdd or 0) > 0 then text = text .. (", +%dd%d per slot level above 1st"):format(action.slotAdd, action.sides) end
@@ -32,6 +32,9 @@ function RPSheet:ActionText(action)
     elseif kind == "SPEND" then
         local text = ("Spend %d %s"):format(action.amount, action.resource)
         if action.freeIfFull ~= "" then text = text .. (" (free when %s is full)"):format(action.freeIfFull) end
+        if action.firstFree then text = text .. " (free the first time after a long rest)" end
+        if (action.otherwise or "") ~= "" then text = text .. (", or %d %s once that is used up"):format(action.otherwiseAmount, action.otherwise) end
+        if (action.refund or "") ~= "" then text = text .. (" (right-click to take it back if %s)"):format(action.refund) end
         return text
     elseif kind == "GAIN" then
         return ("Regain %d %s"):format(action.amount, action.resource)
@@ -73,13 +76,23 @@ local function CollectCosts(self, ability)
                     end
                 end
             end
+            -- Used up, but another resource can pay for it (Psychic Veil, Rend Mind).
+            local amount = action.amount
+            if (action.otherwise or "") ~= "" and tracker.get() < amount then
+                local other = self:FindTracker(action.otherwise)
+                if other then tracker, amount = other, action.otherwiseAmount end
+            end
             local full = action.freeIfFull ~= "" and self:FindTracker(action.freeIfFull)
             if full and full.get() >= full.max then
                 texts[#texts + 1] = ("free, %s is full"):format(full.label)
+            elseif action.firstFree and self:FreeUseLeft(ability.name) then
+                costs.freeUse = true -- marked as taken once the ability has gone through
+                texts[#texts + 1] = "free, the first use since a long rest"
             else
-                costs[#costs + 1] = { tracker = tracker, amount = action.amount }
+                -- `refund` lets the player take it back afterwards (Actions/Refunds.lua).
+                costs[#costs + 1] = { tracker = tracker, amount = amount, refund = action.refund }
                 if tracker.kind == "slot" then costs.slotLevel = tracker.level end
-                texts[#texts + 1] = ("%d %s"):format(action.amount, tracker.label)
+                texts[#texts + 1] = ("%d %s"):format(amount, tracker.label)
             end
         end
     end
@@ -126,6 +139,7 @@ local function ApplyChanges(self, ability, costs)
     for _, cost in ipairs(costs) do
         cost.tracker.set(cost.tracker.get() - cost.amount)
     end
+    if costs.freeUse then self:TakeFreeUse(ability.name) end
     for _, action in ipairs(ability.actions) do
         if action.type == "GAIN" or action.type == "EMPTY" then
             local tracker = self:FindTracker(action.resource)
@@ -135,6 +149,7 @@ local function ApplyChanges(self, ability, costs)
         elseif action.type == "TOGGLE" then
             for _, passive in ipairs(self:Sheet().passives) do
                 if passive.name == action.passive then
+                    local wasOn = passive.enabled
                     if action.mode == "ON" then
                         passive.enabled = true
                         -- Taking a form ends any other form.
@@ -148,6 +163,8 @@ local function ApplyChanges(self, ability, costs)
                     else
                         passive.enabled = not passive.enabled
                     end
+                    -- Some passives end others when they start (see Sheet/Metamorphosis.lua).
+                    if passive.enabled and not wasOn then self:PassiveSwitchedOn(passive) end
                     switched = true
                 end
             end
@@ -163,6 +180,8 @@ end
 function RPSheet:UseAbility(ability, mode)
     -- One thing at a time: a roll that is still waiting for its result would be dropped.
     if self.busy or self:IsRolling() then return end
+    -- A companion's strike rolls with its own numbers and riders (Actions/Pet.lua).
+    if ns.PetAbility(self, ability, mode) then return end
 
     local costs, costTexts = CollectCosts(self, ability)
     if not costs then return end
@@ -209,6 +228,7 @@ function RPSheet:UseAbility(ability, mode)
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
         self:Announce(text)
+        self:OfferRefund(ability, costs)
         if switched then
             self:ClampState()
             self:Populate()
@@ -256,11 +276,13 @@ function RPSheet:UseAbility(ability, mode)
             local doubled = critical and word == "damage"
             local more = (action.slotAdd or 0) * math.max(0, (costs.slotLevel or 1) - 1)
             self:RollDice((count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
+                -- A feature can make low force damage dice count as higher.
+                local raised = action.damage == "force" and self:RaiseForceDice(rolls)
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
                     or ("%s %d"):format(word, mod)
-                parts[#parts + 1] = text .. (note and (" (" .. note .. ")") or "")
+                parts[#parts + 1] = text .. (raised and (" [" .. raised .. "]") or "") .. (note and (" (" .. note .. ")") or "")
                 step()
             end)
         elseif action.type == "WEAPON" then
@@ -270,6 +292,7 @@ function RPSheet:UseAbility(ability, mode)
             local target = weapon.heal and "HEALING" or "DAMAGE"
             local stat = self:WeaponStat(weapon)
             local mod = self:Mod(stat) + (bonusUsed[target] and 0 or (weapon.heal and self:Bonus(target) or self:DamageBonus(stat)))
+            if not weapon.heal then mod = mod + (weapon.magic or 0) end -- a magic weapon's own bonus
             bonusUsed[target] = true
             local doubled = critical and not weapon.heal
             local count, sides = self:WeaponDice(weapon)

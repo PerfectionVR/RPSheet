@@ -9,6 +9,7 @@ ns.defaults = {
         tooltip = true,
         share = true,
         locked = false,
+        minimized = false, -- the sheet window is only its title bar until hovered
         minimap = { hide = false },
         themePreset = "DARK",
         theme = CopyTable(ns.Themes.DARK),
@@ -18,11 +19,15 @@ ns.defaults = {
     char = {
         name = "",
         shown = true,
+        sheetTab = "Actions", -- the open tab of the sheet (UI/SheetTabs.lua)
     },
     -- One entry per Total RP 3 profile ("trp3:<profile id>"), shared by the whole account
     -- like TRP3's own profiles. Without TRP3 the key is "char:<Name-Realm>".
     -- "*" is AceDB's wildcard: any key that doesn't exist yet starts from these values.
     global = {
+        -- The armoury: weapons kept for every character on the account, each shaped like
+        -- an entry of a sheet's `weapons` (Sheet/WeaponStore.lua).
+        weaponStore = {},
         sheets = {
             ["*"] = {
                 created = false, -- set once the creation wizard was finished or skipped
@@ -36,6 +41,8 @@ ns.defaults = {
                 res = {},   -- custom resources, by name
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level
+                freeUsed = {}, -- [ability name] = true: its free first use since a long rest is gone
+                spellUsed = {}, -- [spell name] = true: its one casting without a slot is gone until a rest (Actions/SpellChoices.lua)
                 sheet = {
                     version = 2,
                     level = 1,
@@ -45,6 +52,8 @@ ns.defaults = {
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
                     renown = {},    -- [faction] = score
+                    renownTraining = {}, -- [faction] = language, tool or skill its trainers taught (Sheet/RenownTraining.lua)
+                    renownGranted = {},  -- [faction] = the language or skill that pick added
                     extraLanguages = 0, -- languages granted by features, on top of the usual three
                     asi = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 }, -- points from level-ups
                     background = "", alignment = "",
@@ -63,15 +72,20 @@ ns.defaults = {
                     passives = {},
                     spells = {},
                     spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
+                    coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
+                    items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")
+                    petMastery = false,  -- the companion's family is one of the Weapon Mastery picks (Sheet/Pet.lua)
                     tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
                     featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
+                    featChoices = {},      -- [feat instance] = the picks made for a feat's own choices (Sheet/FeatChoices.lua)
+                    featGranted = {},      -- [skill] = ranks those picks added (Sheet/FeatGrants.lua)
                     expertise = {},        -- [skill] = true: expertise picked for a class feature
                     expertiseGranted = {}, -- [skill] = true where that pick raised the skill
-                    picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations (Data/Picks.lua)
+                    picks = {},          -- [list][name] = true: Metamagic, Eldritch Invocations, a feature's tools (Data/Picks.lua)
                     maneuvers = {},     -- [maneuver name] = true, for a Battle Master
                     featureSkills = {}, -- [feature name] = skill picked for it (Student of War)
                     featureSkillGranted = {}, -- [feature name] = skill it made proficient

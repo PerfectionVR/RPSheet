@@ -18,7 +18,12 @@ end
 local function Text(self, level)
     if level == 0 then return UI.ACCENT .. "Cantrips|r  " .. UI.GREY .. "no slot needed|r" end
     local slots = self:SlotText(level)
-    return ("%s%s|r  %s%s|r"):format(UI.ACCENT, R.SPELL_LEVELS[level], UI.GREY, slots ~= "" and slots or "no slots of this level")
+    if slots == "" then
+        -- A Warlock's spells above 5th level are Mystic Arcanum: cast without a slot.
+        local class = self:ClassData()
+        slots = class and class.caster == "PACT" and "cast once each, without a slot" or "no slots of this level"
+    end
+    return ("%s%s|r  %s%s|r"):format(UI.ACCENT, R.SPELL_LEVELS[level], UI.GREY, slots)
 end
 
 -- Adds the line for a spell level and remembers it in `list` for RefreshSlotLabels.

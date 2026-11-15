@@ -32,7 +32,7 @@ local args = {
             local sheet = Sheet()
             local _, maxPrepared = RPSheet:SpellLimits()
             local _, prepared = RPSheet:SpellCounts()
-            return ("Your spellbook holds the spells of level 1 and higher that you own. You start with six and write in two more each level, chosen when you make the character and when you level; others can be copied in from scrolls and other books. Cantrips are not in the book: they are on the Spells page.\n\nIn the book: %s for level %d by the rules. Prepared: %s.\n\nOnly prepared spells can be cast, except rituals. Open the book from the Spells section of the sheet to cast and prepare.\n"):format(
+            return ("Your spellbook holds the spells of level 1 and higher that you own. You start with six and write in two more each level, chosen when you make the character and when you level; others can be copied in from scrolls and other books. Cantrips are not in the book: they are on the Spells page.\n\nIn the book: %s for level %d by the rules. Prepared: %s.\n\nOnly prepared spells can be cast, except rituals. Open the book from the Actions tab of the sheet to cast and prepare.\n"):format(
                 Count(#ns.SpellbookNames(sheet), ns.SpellbookSize(sheet)), sheet.level, Count(prepared, maxPrepared))
         end,
     },
@@ -96,6 +96,7 @@ table.insert(Opt.rebuilders, function()
             func = function()
                 RPSheet:UnprepareSpell(name)
                 ns.SpellbookRemove(Sheet(), name)
+                ns.ApplySpellChoices(Sheet()) -- a mastered or signature spell is open again
                 ns.RebuildOptions()
                 Opt.Changed()
             end,
