@@ -119,6 +119,9 @@ local function Summary()
             background.name, ns.Terms(background.stats), ns.Terms(background.skills, " and "),
             ns.Term("Origin feat", "origin feat"), ns.Term(background.feat))
     end
+    if ns.RenownRival(sheet) then
+        lines[#lines + 1] = ("%sYou have renown with two rival factions, under Customize, Lineage, languages, renown.|r"):format(Opt.RED)
+    end
     -- Choices that are waiting for the player
     for _, trait in ipairs(ns.OpenTraitChoices(sheet)) do
         lines[#lines + 1] = ("%s%s has a choice to make, under Customize, Lineage, languages, renown.|r"):format(Opt.RED, trait)

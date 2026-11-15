@@ -30,6 +30,7 @@ function RPSheet:EndConcentration(reason)
     -- A save still waiting for the damage clicks to stop is no longer needed.
     if self.concentrationTimer then self.concentrationTimer:Cancel() end
     self.concentrationDamage, self.concentrationTimer = nil, nil
+    self:EndConcentrationWards() -- protection that hung on the spell (Sheet/Wards.lua)
     self:Announce(("loses %s: %s."):format(ns.Mark("Concentrating"), reason))
     self:QueueBroadcast()
     self:PopulateSoon()
@@ -40,6 +41,8 @@ function RPSheet:ToggleCondition(name)
     conditions[name] = not conditions[name] or nil
     local term = ns.Mark(name)
     self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
+    -- Unticking it by hand ends the spell, and with it the protection it gave.
+    if name == "Concentrating" and not conditions[name] then self:EndConcentrationWards() end
     if conditions[name] and INCAPACITATES[name] then
         self:EndConcentration(name:lower())
         self:LeaveForms(name:lower()) -- a Wild Shape form ends too

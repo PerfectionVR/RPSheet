@@ -11,10 +11,16 @@
 --     str, dex, con   the scores the character takes on
 --     senses     { Darkvision = 60, Blindsight = 10 }: ranges in feet
 --     skills     skills the beast is proficient in
+--     bonus      { Perception = 3 }: its own bonus in each of them, used in the form
+--                when it beats the character's (Sheet/Derived.lua)
 --     attacks    { { name, attack bonus, dice, sides, flat damage, damage type, note,
 --                    plus = { dice, sides, type }   more damage of another type
 --                    reach = feet                    when longer than 5 feet
---                    ranged = "25/50" } }            a thrown or shot attack
+--                    ranged = "25/50"                a thrown or shot attack
+--                    alt = { label, dice, sides, flat }   other damage in a situation
+--                      ("charge", "Bloodied target", "while Bloodied"); with
+--                      extra = true the dice come on top instead. It gets a row of
+--                      its own, so the player says when the situation applies. } }
 --                An attack bonus of false is an action without an attack roll, such
 --                as one the target saves against; the note says how it works.
 --     note       anything else worth knowing

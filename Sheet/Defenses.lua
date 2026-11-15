@@ -70,6 +70,8 @@ function RPSheet:Defenses()
             local trait = R.TRAITS[auto:match("^trait:(.+)$") or ""]
             local feat = ns.FeatByName(name)
             Add(passive, name) -- a class feature carries its own lists
+            -- Damage types the player chose for it (Sheet/DefensePicks.lua).
+            for _, each in ipairs(ns.DefensePicks(sheet, name)) do Note("resist", each, name) end
             Add(feat, name)
             if trait and trait.passive and trait.passive.name == name then
                 Add(trait.passive, name) -- the form a trait switches on

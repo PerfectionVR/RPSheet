@@ -49,7 +49,7 @@ for name, beast in pairs(R.BEASTS) do
     R.FORMS[R.BeastFormPassive(name)] = {
         name = name, beast = true, ac = beast.ac, speed = beast.speed,
         scores = { STR = beast.str, DEX = beast.dex, CON = beast.con },
-        senses = beast.senses, skills = beast.skills,
+        senses = beast.senses, skills = beast.skills, skillBonus = beast.bonus,
     }
 end
 -- By challenge rating, then by name, so each rating is one heading in the dialog.

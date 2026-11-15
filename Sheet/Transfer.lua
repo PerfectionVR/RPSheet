@@ -130,6 +130,13 @@ local function CleanSheet(source)
             if type(pick) == "string" then sheet[field][faction] = Text(pick, 60) end
         end
     end
+    sheet.stronghold = R.STRONGHOLD_LANDS[source.stronghold] and source.stronghold or ""
+    -- Damage types chosen for a passive's resistance: only the ones its list allows.
+    sheet.defensePicks = {}
+    for name in pairs(R.DEFENSE_PICKS) do
+        local picks = ns.DefensePicks(source, name)
+        if #picks > 0 then sheet.defensePicks[name] = picks end
+    end
     if not R.ALLEGIANCES[sheet.allegiance] then sheet.allegiance = "" end
     sheet.maneuvers, sheet.featureSkills, sheet.featureSkillGranted = {}, {}, {}
     if type(source.maneuvers) == "table" then

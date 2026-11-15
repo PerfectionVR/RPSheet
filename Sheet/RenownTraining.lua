@@ -23,7 +23,7 @@ end
 function ns.RenownTrainingOptions(sheet, faction)
     local train, need = TrainingTier(faction)
     local names = {}
-    if not train or (tonumber(sheet.renown[faction]) or 0) < need then return names end
+    if not train or ns.RenownScore(sheet, faction) < need then return names end
     for _, name in ipairs(train) do names[#names + 1] = name end
     if train.anyLanguage then
         for _, language in ipairs(R.ALL_LANGUAGES) do names[#names + 1] = language end

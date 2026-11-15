@@ -10,6 +10,13 @@ local Kit = ns.FeatureKit
 
 local PREFIX = "form:"
 
+-- What the second row of an attack says about when to use it (Data/Beasts.lua: alt).
+local SITUATIONS = {
+    ["charge"] = "Use this row when you moved 20 feet straight at the target just before the hit: it rolls that damage.",
+    ["Bloodied target"] = "Use this row against a Bloodied target: it rolls the larger die.",
+    ["while Bloodied"] = "Use this row while you are Bloodied: it rolls the smaller damage.",
+}
+
 local function Find(list, auto)
     for _, entry in ipairs(list) do
         if entry.auto == auto then return entry end
@@ -58,12 +65,26 @@ function ns.ApplyBeastForms(sheet)
         local on = Entry(sheet.passives, onKey, passiveName, { enabled = false })
         on.desc = ("Switched on while you are a %s. %s"):format(name:lower(), beast.desc)
         on.effects = (moon and sheet.level >= 6) and { Kit.Bonus("SAVE:CON", 0, "WIS") } or {}
+        -- An attack whose damage changes in a situation (a charge, a Bloodied target)
+        -- gets a second row that rolls it that way: `alt` is then the attack's alt.
+        local rows = {}
         for index, attack in ipairs(beast.attacks) do
-            local key = ("%s%s:attack%d"):format(PREFIX, name, index)
+            rows[#rows + 1] = { attack, ("%s%s:attack%d"):format(PREFIX, name, index), ("%s: %s"):format(name, attack[1]) }
+            if attack.alt then
+                rows[#rows + 1] = { attack, ("%s%s:attack%d:alt"):format(PREFIX, name, index),
+                    ("%s: %s (%s)"):format(name, attack[1], attack.alt[1]), attack.alt }
+            end
+        end
+        for _, row in ipairs(rows) do
+            local attack, key, alt = row[1], row[2], row[4]
             if not sheet.dismissed[key] then
                 wanted[key] = true
-                local ability = Entry(sheet.abilities, key, ("%s: %s"):format(name, attack[1]))
+                local ability = Entry(sheet.abilities, key, row[3])
                 local note, plus = attack[7] and (" " .. attack[7]) or "", attack.plus
+                if alt then note = note .. " " .. SITUATIONS[alt[1]] end
+                -- The dice of this row: the usual ones, or the situation's in their place.
+                local count, sides, flat = attack[3], attack[4], attack[5]
+                if alt and not alt.extra then count, sides, flat = alt[2], alt[3], alt[4] end
                 ability.actions = {}
                 if attack[2] then
                     local kind = attack.ranged and ("A ranged attack (%s feet)"):format(attack.ranged)
@@ -77,9 +98,10 @@ function ns.ApplyBeastForms(sheet)
                     -- No attack roll: the target saves, or it simply happens.
                     ability.desc = ("%s form.%s%s"):format(name, note, attack[3] > 0 and (" The damage is %s."):format(attack[6]) or "")
                 end
-                if attack[3] > 0 or attack[5] ~= 0 then
-                    ability.actions[#ability.actions + 1] = Kit.Dice(attack[3], attack[4], "", "DAMAGE", attack[5])
+                if count > 0 or flat ~= 0 then
+                    ability.actions[#ability.actions + 1] = Kit.Dice(count, sides, "", "DAMAGE", flat)
                 end
+                if alt and alt.extra then ability.actions[#ability.actions + 1] = Kit.Dice(alt[2], alt[3], "", "DAMAGE", 0) end
                 if plus then ability.actions[#ability.actions + 1] = Kit.Dice(plus[1], plus[2], "", "DAMAGE", 0) end
             end
         end

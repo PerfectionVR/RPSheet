@@ -374,9 +374,12 @@ local function OriginSection(self, body)
     local languages = self:Languages()
     local renown = {}
     for _, faction in ipairs(R.ALL_FACTIONS) do
-        local score = self:Sheet().renown[faction] or 0
+        -- The score with what the rules add to it (Sheet/RenownRules.lua).
+        local score, added = ns.RenownScore(self:Sheet(), faction)
         if score > 0 then
             local tier = R.RenownTier(score)
+            if #added > 0 then tier = tier .. ", partly by rule" end
+            if ns.RenownRival(self:Sheet(), faction) then tier = tier .. " |cffff5555(rival)" end
             -- The perks of every tier reached and the next one (Sheet/RenownSummary.lua).
             renown[#renown + 1] = {
                 text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),

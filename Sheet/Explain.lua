@@ -95,10 +95,20 @@ local function SkillParts(self, skill)
     local parts = {}
     Ability(self, parts, skill.stat)
     local rank = self:Sheet().skills[skill.name] or 0
-    Add(parts, rank > 1 and "expertise" or "proficiency", rank * self:ProficiencyBonus())
+    local form = self:Form()
+    if rank == 0 and self:FormSkill(skill.name) then
+        Add(parts, ("proficiency (%s)"):format(form.name), self:ProficiencyBonus())
+    else
+        Add(parts, rank > 1 and "expertise" or "proficiency", rank * self:ProficiencyBonus())
+    end
     AddBonuses(self, parts, "SKILL:" .. skill.name)
     AddBonuses(self, parts, "SKILLS")
     AddBonuses(self, parts, "CHECKS")
+    -- The beast's own bonus replaces all of it when it is higher (see SkillMod).
+    local listed = self:FormSkillBonus(skill.name)
+    if listed and listed > Total(parts) then
+        return { { ("the %s's own bonus, higher than yours (%s)"):format(form.name:lower(), Util.Signed(Total(parts))), listed } }
+    end
     return parts
 end
 

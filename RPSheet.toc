@@ -102,6 +102,8 @@ Data\Factions.lua
 Data\FactionPerks.lua
 Data\FactionPerksHorde.lua
 Data\FactionPerksOrders.lua
+Data\RenownRules.lua
+Data\SpellWards.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -119,6 +121,9 @@ Sheet\Limits.lua
 Sheet\Senses.lua
 Sheet\DefenseText.lua
 Sheet\Defenses.lua
+Sheet\Wards.lua
+Sheet\WardCasting.lua
+Sheet\DefensePicks.lua
 Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
@@ -153,6 +158,7 @@ Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
+Sheet\RenownRules.lua
 Sheet\RenownTraining.lua
 Sheet\RenownPerks.lua
 Sheet\RenownSummary.lua
@@ -227,6 +233,7 @@ Options\Origin.lua
 Options\Scores.lua
 Options\Proficiencies.lua
 Options\Defense.lua
+Options\DefensePicks.lua
 Options\Resources.lua
 Options\Weapons.lua
 Options\WeaponStore.lua
