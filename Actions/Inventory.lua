@@ -49,6 +49,29 @@ function RPSheet:UseItem(item)
     Changed(self)
 end
 
+-- The carried entry of that name, if there is one.
+function RPSheet:CarriedItem(name)
+    for _, item in ipairs(self:Sheet().items) do
+        if item.name == name then return item end
+    end
+end
+
+-- Takes one off the list without a word; the last one takes the entry with it.
+function RPSheet:DropItem(item)
+    if item.qty > 1 then
+        item.qty = item.qty - 1
+        return
+    end
+    if item.equipped then self:SetEquipped(item, false) end
+    local items = self:Sheet().items
+    for index, other in ipairs(items) do
+        if other == item then
+            table.remove(items, index)
+            break
+        end
+    end
+end
+
 ---------------------------------------------------------------------------
 -- Adding and spending coins from the sheet
 ---------------------------------------------------------------------------

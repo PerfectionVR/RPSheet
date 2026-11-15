@@ -92,5 +92,5 @@ end
 Opt.lists.items = {
     extra = Opt.InventoryExtra,
     order = 5.5, title = "Inventory", noun = "item", template = R.TEMPLATES.item, build = Build,
-    help = "Your money and what you carry. Pick a listed item to add or buy, or add an empty one and fill it in yourself. Equip armor, a shield or a basic weapon to wear or ready it; the Defense and Weapons pages can still set those directly.\n",
+    help = "Your money and what you carry. Listed items are added and bought in the item browser; an item of your own is added here as an empty one to fill in. Equip armor, a shield or a basic weapon to wear or ready it; the Defense and Weapons pages can still set those directly.\n",
 }

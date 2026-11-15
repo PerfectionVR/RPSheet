@@ -430,6 +430,7 @@ function RPSheet:Populate()
     body:ResumeLayout()
     body:DoLayout()
     self:PopulateSpellbook() -- the open spellbook follows the sheet
+    self:PopulateItemBrowser() -- and so does the open item browser
 end
 
 function RPSheet:Refresh()

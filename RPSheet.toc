@@ -173,6 +173,8 @@ UI\SheetWindow.lua
 UI\SpellbookWindow.lua
 UI\PetSection.lua
 UI\InventorySection.lua
+UI\ItemCard.lua
+UI\ItemBrowser.lua
 UI\SheetTabs.lua
 UI\SheetContent.lua
 UI\Minimap.lua
