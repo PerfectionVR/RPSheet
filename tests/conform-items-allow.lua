@@ -27,4 +27,3 @@ Allow("magic/Shalamayne (Shalla'tor)/missing", "one half of Shalamayne, which th
 for _, name in ipairs({ "Bag of Beans", "Keoghtom's Ointment", "Nolzur's Marvelous Pigments", "Pot of Awakening", "Stone of Controlling Earth Elementals" }) do
     Allow("magic/" .. name .. "/weight", "the site gives the weight in the item's text, not as a number; the addon's is that weight")
 end
-Allow("magic/Adamantine Weapon/variant fits", "the site lets ammunition be adamantine too; the make is offered for melee weapons, ammunition not being a weapon of the sheet")

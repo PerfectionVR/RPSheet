@@ -18,6 +18,32 @@ local function ArmorLine(data, kind)
     return table.concat(parts, ", ") .. "."
 end
 
+-- What the item browser's search looks at for the item called `name` besides the
+-- name: its kind, what a weapon or armor is, a magic item's rarity and attunement,
+-- its note and its effects. The same facts as the block's lines, without the lines
+-- about this character, which cost more to work out for a whole tab.
+function UI.ItemWords(self, name, item)
+    local known = R.ITEMS[name]
+    local base = item and ns.ItemBase(item) or name
+    local weapon, armor = R.WEAPONS[base], R.ARMOR_ITEMS[base]
+    local parts = { known and known.kind or "", base }
+    if weapon then
+        parts[#parts + 1] = ("%s weapon %s mastery %s"):format(weapon.category == "SIMPLE" and "simple" or "martial", R.WeaponSummary(base), weapon.mastery)
+    elseif armor then
+        parts[#parts + 1] = ns.ArmorKind(armor) .. " armor"
+    end
+    local rarity = item and item.rarity ~= "" and item.rarity or (known and known.rarity)
+    if rarity or (item and item.magic) then
+        parts[#parts + 1] = "magic item " .. (rarity or "")
+        if item and item.attune or (not item and known and known.attune) then parts[#parts + 1] = "requires attunement" end
+    end
+    parts[#parts + 1] = item and item.desc ~= "" and item.desc or (known and known.desc) or ""
+    for _, effect in ipairs(item and item.effects or (known and known.effects) or {}) do
+        parts[#parts + 1] = self:EffectText(effect)
+    end
+    return table.concat(parts, "\n")
+end
+
 -- Lines for the item called `name`. `item` is the carried entry when there is one;
 -- its own note, rarity and effects go before the catalogue's. `classKey` judges the
 -- training by a class alone (the wizard's draft) and not by the active character.

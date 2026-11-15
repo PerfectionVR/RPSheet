@@ -27,6 +27,7 @@ local CLOSET = {
     title = function() return "Starting gear" end,
     class = function() return W.draft.class end,
     find = function() return nil end, -- nothing is carried yet; the draft only counts
+    ownListed = true,                 -- "Taken" repeats items of the other tabs
     gone = function() return W.draft == nil end,
     -- The cog: the closet belongs to a character that doesn't exist yet, so there is
     -- no page under Customize to open (and the active character's is not it).

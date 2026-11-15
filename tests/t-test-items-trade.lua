@@ -164,14 +164,13 @@ for _, key in ipairs(R.PROFESSION_ORDER) do
             -- learn it, pay it, make it
             Gold(0)
             if not recipe.basic then
-                Check(R.LEARNED_RECIPES[name], label .. ": not in the list of recipes to learn")
-                -- A recipe is learned by the item's name: one learned for another
-                -- profession's list is known here too, so forget it first.
-                RPSheet:LearnRecipe(name, false)
+                Check(R.LEARNED_RECIPES[recipe.id] == recipe and R.LEARNED_ITEMS[name], label .. ": not in the list of recipes to learn")
+                -- A recipe is learned for one profession: the same item learned for
+                -- another profession's list earlier in this loop is not known here.
                 Check(not RPSheet:RecipeKnown(recipe), label .. ": known before it was learned")
                 local can, why = RPSheet:CanCraft(profession, recipe)
                 Check(not can and why == "you haven't learned it", label .. ": unlearned gives " .. tostring(why))
-                RPSheet:LearnRecipe(name, true)
+                RPSheet:LearnRecipe(recipe, true)
             end
             Check(RPSheet:RecipeKnown(recipe), label .. ": not known")
             if cost > 0 then
@@ -201,9 +200,13 @@ for _, key in ipairs(R.PROFESSION_ORDER) do
     end
 end
 print("recipes made", recipes)
+-- Every magic item is made by someone or is on the list of those nobody makes.
 local unmade = {}
 for _, name in ipairs(R.ITEM_NAMES["Magic items"]) do
-    if not madeBy[name] and R.ITEMS[name].rarity ~= "Artifact" then unmade[#unmade + 1] = name end
+    if not madeBy[name] then
+        unmade[#unmade + 1] = name
+        Check(type(R.NOT_MADE[name]) == "string", name .. ": no profession makes it and it is not on the list of items that can't be made")
+    end
 end
 print("magic items no profession makes", #unmade, table.concat(unmade, "; "):sub(1, 600))
 
@@ -243,12 +246,15 @@ local rare = ns.FindRecipe(smithing, "+2 Weapon")
 can, why = RPSheet:CanCraft(smithing, rare)
 Check(not can and why == "it takes expert skill (proficiency bonus +4)", "skill too low: " .. tostring(why))
 -- learning
-RPSheet:LearnRecipe("Longsword", true)
-Check(RPSheet:Trade().recipes.Longsword == nil, "a recipe that comes with the skill is not recorded as learned")
+local bracers = ns.FindRecipe(smithing, "Bracers of Defense")
+RPSheet:LearnRecipe(longsword, true)
+Check(next(RPSheet:Trade().recipes) == nil or RPSheet:Trade().recipes[longsword.id] == nil, "a recipe that comes with the skill is not recorded as learned")
+RPSheet:LearnRecipe(bracers, true)
+Check(RPSheet:Trade().recipes["blacksmithing:Bracers of Defense"] == true, "learned")
+RPSheet:LearnRecipe(bracers, false)
+Check(RPSheet:Trade().recipes["blacksmithing:Bracers of Defense"] == nil, "forgotten")
 RPSheet:LearnRecipe("Bracers of Defense", true)
-Check(RPSheet:Trade().recipes["Bracers of Defense"] == true, "learned")
-RPSheet:LearnRecipe("Bracers of Defense", false)
-Check(RPSheet:Trade().recipes["Bracers of Defense"] == nil, "forgotten")
+Check(RPSheet:Trade().recipes["Bracers of Defense"] == nil, "a bare name is not a recipe")
 -- materials before coins
 local materials = RPSheet:Trade().materials
 Gold(10); materials.ore, materials.herbs = 300, 5000
@@ -612,7 +618,8 @@ sheet.recipes = { ["Bracers of Defense"] = true, Longsword = true, Nonsense = tr
 sheet.fragments = { plain = 2.9, magic = -1, failedAt = "3" }
 Run("NormalizeProfessions", ns.NormalizeProfessions, sheet)
 Check(sheet.materials.herbs == 0 and sheet.materials.ore == 12 and sheet.materials.fish == 0 and sheet.materials.bogus == nil, "materials put right")
-Check(sheet.recipes["Bracers of Defense"] == true and sheet.recipes.Longsword == nil and sheet.recipes.Nonsense == nil and sheet.recipes["Ring of Protection"] == nil, "recipes put right")
+Check(sheet.recipes["blacksmithing:Bracers of Defense"] == true and sheet.recipes["Bracers of Defense"] == nil and sheet.recipes.Longsword == nil
+    and sheet.recipes.Nonsense == nil and sheet.recipes["jewelcrafting:Ring of Protection"] == nil, "recipes put right")
 Check(sheet.fragments.plain == 2 and sheet.fragments.magic == 0 and sheet.fragments.failedAt == 3, "fragments put right")
 
 Done("trade")

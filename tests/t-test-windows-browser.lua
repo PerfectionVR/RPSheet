@@ -85,7 +85,8 @@ local function CheckView(where, firstText)
     end
     local open = 0
     for _, tab in ipairs(tabs) do if tab.open then open = open + 1 end end
-    Check(where .. ": " .. open .. " tabs are marked open", open == 1)
+    -- While every tab is searched at once, no single tab is the open one.
+    Check(where .. ": " .. open .. " tabs are marked open", open == (ns.UI.ItemBrowserState.everywhere and 0 or 1))
     CheckFlowRows(body, where)
     CheckOverlap(body, where)
     local edge = body.content:GetLeft() + body.content:GetWidth()
@@ -235,12 +236,16 @@ local function WalkTabs(where, firstText, each)
             local all = #Cards()
             Search(word:upper())
             Check(label .. ": searching " .. word .. " finds nothing", #Cards() > 0)
+            -- The search also looks at descriptions, so other blocks may show; the one
+            -- the word was taken from must be among those found, and they are fewer
+            -- than the whole tab or as many.
+            local byName = false
             for _, card in ipairs(Cards()) do
-                if not CardName(card):lower():find(word:lower(), 1, true) then
-                    Problem(label .. ": the search for " .. word .. " shows " .. CardName(card))
-                    break
-                end
+                if CardName(card):lower():find(word:lower(), 1, true) then byName = true end
             end
+            local _, _, found = Showing()
+            Check(label .. ": the search for " .. word .. " doesn't show a block of that name", byName or (found or 0) > 24)
+            Check(label .. ": the search for " .. word .. " shows more than the tab holds", #Cards() <= all)
             CheckView(label .. " search " .. word, firstText)
             Search("zzqq")
             local said
@@ -339,6 +344,8 @@ Try("inventory", function()
             Check(what .. ", attunement unchanged", now.attuned ~= before.attuned or #PRINTED > 0)
         elseif tostring(text):find("^Buy") then
             Check(what, now.qty == before.qty + 1 and now.coins < before.coins)
+        elseif tostring(text):find("^Sell") then
+            Check(what, now.qty == before.qty - 1 and now.coins > before.coins)
         else
             Problem("a button the test doesn't know: " .. tostring(text))
         end
@@ -352,6 +359,40 @@ Try("inventory", function()
             Check(label .. ": a button on page 2 went back to page 1", Showing() == 25)
         end
     end)
+    -- the search over every tab: the button next to the box switches it on and off
+    local function ModeButton() return PageButton("Search everything") or PageButton("This tab only") end
+    ClickTab("Magic")
+    local inTab = select(3, Showing())
+    Check("no Search everything button", PageButton("Search everything") ~= nil)
+    ClickPart("Search everything", PageButton("Search everything"), "LeftButton")
+    Check("Search everything doesn't switch", PageButton("This tab only") ~= nil and OpenTabName() == nil)
+    local everything = select(3, Showing())
+    Check(("everything (%s) is not more than one tab (%s)"):format(tostring(everything), tostring(inTab)), (everything or 0) > (inTab or 0) + 1000)
+    for turn = 1, 3 do
+        ClickPart("everything Next", PageButton("Next"), "LeftButton")
+        Check("everything: page " .. turn + 1 .. " starts at " .. tostring(Showing()), Showing() == turn * 24 + 1)
+        CheckView("inventory, everything page " .. turn + 1)
+    end
+    RPSheet:AddItem("Potion of Healing")
+    RPSheet:SheetChanged()
+    F.Settle()
+    Search("potion of healing")
+    Check("a new search of everything doesn't start at its first page", (Showing() or 1) == 1)
+    local tabsSeen = {}
+    for _, card in ipairs(Cards()) do
+        local title = F.Plain(card.titletext:GetText() or "")
+        tabsSeen[title:match("%((%a+)") or "?"] = true
+    end
+    Check("a search of everything doesn't say which tab a block is from", tabsSeen.Magic and tabsSeen.Carried)
+    ClickButtons("inventory, everything searched", 4, Snapshot, Effect)
+    Search("zzqq")
+    Check("a search of everything without a match shows blocks", #Cards() == 0)
+    Search("")
+    ClickPart("This tab only", PageButton("This tab only"), "LeftButton")
+    Check("This tab only doesn't go back to the tab", PageButton("Search everything") ~= nil and OpenTabName() == "Magic" and select(3, Showing()) == inTab)
+    ClickPart("Search everything", ModeButton(), "LeftButton")
+    ClickTab("Armor")
+    Check("clicking a tab doesn't leave the search of everything", PageButton("Search everything") ~= nil and OpenTabName() == "Armor")
     ClickTab("Carried")
     Check("Carried shows what was added", #Cards() > 3)
     ClickButtons("inventory tab Carried again", 4, Snapshot, Effect)

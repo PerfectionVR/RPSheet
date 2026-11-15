@@ -1,9 +1,10 @@
 -- What each making profession (Data/Professions.lua) can make out of the item lists
 -- (Data/Gear.lua, Data/GearArms.lua, Data/MagicItems.lua), and what making costs.
---   R.RECIPES[<profession key>] = list of { name, level, basic }
+--   R.RECIPES[<profession key>] = list of { name, level, basic, id }
 -- `level` is the skill it asks for: 2 for plain gear, by rarity for a magic item.
 -- `basic` recipes come with the skill; the others have to be learned first, from a
--- trainer, a find or a faction (sheet.recipes).
+-- trainer, a find or a faction. A recipe is learned for one profession: `id` is
+-- "<profession key>:<item name>", the key of the saved list (sheet.recipes).
 local _, ns = ...
 local R = ns.Rules
 
@@ -33,8 +34,10 @@ for bonus = 1, 3 do
 end
 
 R.RECIPES = {}
--- The recipes that have to be learned, by item name, for the saved list.
-R.LEARNED_RECIPES = {}
+-- The recipes that have to be learned: [id] = the recipe, for the saved list, and
+-- [item name] = true for an item that has such a recipe in any profession.
+R.LEARNED_RECIPES, R.LEARNED_ITEMS = {}, {}
+function R.RecipeId(key, name) return key .. ":" .. name end
 -- Adds the listed names (";" between them) that the item lists hold. "Name@5" asks
 -- for that skill where it is not the one the item's rarity gives. Also used by
 -- Data/RecipesMagic.lua, which adds the rest of the magic items.
@@ -46,8 +49,10 @@ local function Add(key, names, basic)
         name = name or entry
         local item = R.ITEMS[name]
         if item then
-            list[#list + 1] = { name = name, level = tonumber(level) or (item.rarity and R.RARITY_LEVEL[item.rarity]) or 2, basic = basic }
-            if not basic then R.LEARNED_RECIPES[name] = true end
+            local recipe = { name = name, level = tonumber(level) or (item.rarity and R.RARITY_LEVEL[item.rarity]) or 2, basic = basic,
+                id = R.RecipeId(key, name) }
+            list[#list + 1] = recipe
+            if not basic then R.LEARNED_RECIPES[recipe.id], R.LEARNED_ITEMS[name] = recipe, true end
         end
     end
 end

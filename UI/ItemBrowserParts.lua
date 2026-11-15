@@ -21,6 +21,8 @@ local function AddCard(self, body, entry, first)
     card:SetLayout("Flow")
     card:SetRelativeWidth(0.5)
     local marks = B.source.marks(self, entry)
+    -- Among the entries of every tab, a block says which tab it is from.
+    if entry.fromTab then table.insert(marks, 1, entry.fromTab.name) end
     local plain = ns.Util.HexCode(self.db.profile.theme.text) -- the title itself is in the accent colour
     card:SetTitle(#marks > 0 and ("%s  %s(%s)|r"):format(entry.name, plain, table.concat(marks, ", ")) or entry.name)
     local lines = B.source.lines and B.source.lines(self, entry) or UI.ItemLines(self, entry.name, entry.item, B.source.class(self))
@@ -45,27 +47,34 @@ local function AddTabs(self, body)
     if not found then B.open = B.source.first end -- its tab is gone
     for _, tab in ipairs(tabs) do
         local button = AceGUI:Create("RPSheetTab")
-        button:SetStyle(theme, tab == B.open)
+        button:SetStyle(theme, tab == B.open and not B.everywhere)
         button:SetText(tab.name)
         button:SetRelativeWidth(0.999 / #tabs) -- a hair under an even share: see UI/SheetTabs.lua
         button:SetCallback("OnClick", function()
-            B.open = tab
+            B.open, B.everywhere = tab, false -- a tab is one tab again
             Later(self)
         end)
         body:AddChild(button)
     end
 end
 
+-- The search box, and next to it the button that makes the search go over every tab
+-- of the source at once and back.
 local function AddSearch(self, body)
     local box = AceGUI:Create("EditBox")
-    box:SetLabel("Search in this tab (press Enter; empty shows everything)")
+    box:SetLabel(B.everywhere and "Search names and descriptions in every tab (press Enter; empty shows everything)"
+        or "Search names and descriptions in this tab (press Enter; empty shows everything)")
     box:SetText(B.search)
-    box:SetFullWidth(true)
+    box:SetRelativeWidth(0.7)
     box:SetCallback("OnEnterPressed", function(_, _, text)
         B.search = strtrim(text or ""):lower()
         Later(self)
     end)
     body:AddChild(box)
+    UI.AddItemButton(body, 0.3, B.everywhere and "This tab only" or "Search everything", true, function()
+        B.everywhere = not B.everywhere
+        Later(self)
+    end)
 end
 
 UI.ItemBrowserParts = { AddCard = AddCard, Later = Later, AddTabs = AddTabs, AddSearch = AddSearch }

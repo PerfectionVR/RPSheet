@@ -41,7 +41,7 @@ local STABLE = {
 
 function STABLE.standing(self)
     local riding, companion = self:Riding(), self:Companion()
-    return ("Money %s%s|r     On %s%s|r     Companion out %s%s|r\n%sBuy pays the price from your coins and asks for the seller's standing; Add takes it for nothing, for a gift or a reward. Saddles, feed and fuel are in the item browser, under Gear.|r"):format(
+    return ("Money %s%s|r     On %s%s|r     Companion out %s%s|r\n%sBuy pays the price from your coins and asks for the seller's standing; Add takes it for nothing, for a gift or a reward. No rule names a price for selling a mount or a vehicle: Remove takes it off the list, and what a buyer pays is between you and the DM. Saddles, feed and fuel are in the item browser, under Gear.|r"):format(
         UI.ACCENT, ns.CoinText(self:Coins()), UI.ACCENT, riding and riding.name or "foot",
         UI.ACCENT, companion and companion.name or "none", UI.GREY)
 end
@@ -59,6 +59,7 @@ function STABLE.marks(_, entry)
     if not owned then return marks end
     marks[#marks + 1] = "owned"
     if owned.riding then marks[#marks + 1] = owned.kind == "VEHICLE" and "aboard" or "riding" end
+    if owned.hitched then marks[#marks + 1] = "in harness" end
     if owned.called then marks[#marks + 1] = "out" end
     return marks
 end
@@ -84,6 +85,13 @@ function STABLE.buttons(self, card, entry, first)
     else
         local label = owned.riding and "Get off" or (owned.kind == "VEHICLE" and "Get aboard" or "Ride")
         UI.AddItemButton(card, 0.5, label, owned.riding or not self:MountRefusal(owned), function() self:ToggleRiding(owned) end)
+        -- An animal goes in harness, a drawn vehicle behind the harnessed animals.
+        if ns.CanPull(owned) or ns.IsDrawn(owned) then
+            UI.AddItemButton(card, 0.5, owned.hitched and "Unharness" or "Harness", true, function()
+                self:SetHitched(owned, not owned.hitched)
+                Changed(self)
+            end)
+        end
     end
     UI.AddItemButton(card, 0.45, "Remove", true, function()
         self:RemoveMount(owned)

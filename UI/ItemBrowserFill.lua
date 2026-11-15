@@ -10,14 +10,11 @@ local Later = UI.ItemBrowserParts.Later
 local AddTabs = UI.ItemBrowserParts.AddTabs
 local AddSearch = UI.ItemBrowserParts.AddSearch
 local B = UI.ItemBrowserState
+local Search = UI.ItemSearch
 
 -- The kinds of part the dialog skin (UI/DialogSkin.lua) styles in this window. The
 -- texts and tabs are themed where they are made.
 local THEMED = { ScrollFrame = true, InlineGroup = true, Button = true, EditBox = true }
-
-local function Matches(name)
-    return B.search == "" or name:lower():find(B.search, 1, true) ~= nil
-end
 
 -- Fills the window. Called when it opens and whenever what it shows has changed.
 function RPSheet:PopulateItemBrowser()
@@ -38,21 +35,11 @@ function RPSheet:PopulateItemBrowser()
     AddTabs(self, body)
     AddSearch(self, body)
 
-    local first = B.open == B.source.first
-    local entries = first and B.source.own(self) or {}
-    if not first and B.source.list then
-        entries = B.source.list(self, B.open)
-    elseif not first then
-        for _, name in ipairs(B.source.names and B.source.names(B.open.kind) or R.ITEM_NAMES[B.open.kind] or {}) do
-            entries[#entries + 1] = { name = name, item = B.source.find(self, name) }
-        end
-    end
-    -- The search goes over the whole tab; only the page that is open is built.
-    local matching = {}
-    for _, entry in ipairs(entries) do
-        if Matches(entry.name) then matching[#matching + 1] = entry end
-    end
-    local from, to = Pages.Range(#matching, B.source, B.open, B.search)
+    local first = B.open == B.source.first and not B.everywhere
+    -- The search goes over the whole tab, or over every tab; only the page that is
+    -- open is built.
+    local matching = Search.Find(self, B.source, B.open, B.search, B.everywhere)
+    local from, to = Pages.Range(#matching, B.source, B.everywhere and Search.ALL or B.open, B.search)
     local function Turn(step)
         Pages.Turn(step)
         B.toTop = true
@@ -60,7 +47,9 @@ function RPSheet:PopulateItemBrowser()
     end
     Pages.AddControls(body, from, to, #matching, Turn)
     for index = from, to do
-        AddCard(self, body, matching[index], first)
+        local entry = matching[index]
+        -- Among every tab's entries each block has the buttons of its own tab.
+        AddCard(self, body, entry, first or entry.fromTab == B.source.first)
     end
     if #matching == 0 then
         -- `source.empty` is what the first tab says; another tab that is empty says so itself.

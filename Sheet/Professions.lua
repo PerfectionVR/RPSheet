@@ -1,7 +1,8 @@
 -- The character's professions (Data/Professions.lua): which it can practise, how
 -- skilled it is, and what it has gathered. Saved on the sheet:
 --   sheet.materials[<kind>]   worth of gathered materials, in copper
---   sheet.recipes[<item>]     true for a recipe learned from a trainer, a find or a faction
+--   sheet.recipes[<id>]       true for a recipe learned from a trainer, a find or a
+--                             faction; the id is "<profession key>:<item name>"
 --   sheet.fragments           { plain, magic, failedAt }: archaeology finds
 -- Nothing says which professions a character has: that follows from its tool and
 -- skill proficiencies, and the skill level from its proficiency bonus.
@@ -26,8 +27,10 @@ function ns.NormalizeProfessions(sheet, source)
     local fragments = type(source.fragments) == "table" and source.fragments or {}
     local clean = { materials = {}, recipes = {}, fragments = {} }
     for _, kind in ipairs(R.MATERIAL_ORDER) do clean.materials[kind] = Whole(materials[kind], MAX_WORTH) end
-    for name in pairs(R.LEARNED_RECIPES) do
-        if recipes[name] == true then clean.recipes[name] = true end
+    -- A recipe was once learned by the item's name alone, for every profession that
+    -- lists it: such an entry becomes one per profession, so nothing learned is lost.
+    for id, recipe in pairs(R.LEARNED_RECIPES) do
+        if recipes[id] == true or recipes[recipe.name] == true then clean.recipes[id] = true end
     end
     clean.fragments.plain, clean.fragments.magic = Whole(fragments.plain, MAX_FRAGMENTS), Whole(fragments.magic, MAX_FRAGMENTS)
     local failedAt = tonumber(fragments.failedAt)

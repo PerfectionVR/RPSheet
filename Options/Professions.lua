@@ -77,32 +77,28 @@ for index, field in ipairs({ "plain", "magic" }) do
     }
 end
 
--- The profession (or professions) a learned recipe belongs to, and the skill it asks for.
-local function RecipeHome(name)
-    local homes, level = {}, 2
-    for _, key in ipairs(R.PROFESSION_ORDER) do
-        local profession = R.PROFESSIONS[key]
-        local recipe = profession.kind == "make" and ns.FindRecipe(profession, name)
-        if recipe then homes[#homes + 1], level = profession.name, recipe.level end
-    end
-    return table.concat(homes, ", "), level
-end
-
-local names = {}
-for name in pairs(R.LEARNED_RECIPES) do names[#names + 1] = name end
-table.sort(names)
-for index, name in ipairs(names) do
-    local homes, level = RecipeHome(name)
+-- A tick per recipe that has to be learned, by item name and then by profession: one
+-- that several professions list is learned for each of them apart.
+local learned = {}
+for _, recipe in pairs(R.LEARNED_RECIPES) do learned[#learned + 1] = recipe end
+table.sort(learned, function(a, b)
+    if a.name ~= b.name then return a.name < b.name end
+    return a.id < b.id
+end)
+for index, recipe in ipairs(learned) do
+    local profession = R.PROFESSIONS[recipe.id:match("^(%a+):")]
+    local label = ("%s %s(%s)|r"):format(recipe.name, GREY, profession.tab.name)
     args["recipe" .. index] = {
         type = "toggle", order = 31 + index / 1000, width = 1.5,
         name = function()
-            local beyond = RPSheet:Trade().recipes[name] and RPSheet:ProfessionLevel() < level
-            return beyond and ("%s %s(beyond your skill)|r"):format(name, Opt.RED) or name
+            local beyond = RPSheet:Trade().recipes[recipe.id] and RPSheet:ProfessionLevel() < recipe.level
+            return beyond and ("%s %s(beyond your skill)|r"):format(label, Opt.RED) or label
         end,
-        desc = ("%s. Takes %s skill (proficiency bonus +%d)."):format(homes, R.PROFESSION_LEVELS[level].name:lower(), level),
-        get = function() return RPSheet:Trade().recipes[name] == true end,
+        desc = ("%s. Takes %s skill (proficiency bonus +%d). Learned for this profession alone."):format(profession.name,
+            R.PROFESSION_LEVELS[recipe.level].name:lower(), recipe.level),
+        get = function() return RPSheet:Trade().recipes[recipe.id] == true end,
         set = function(_, value)
-            RPSheet:Trade().recipes[name] = value or nil
+            RPSheet:Trade().recipes[recipe.id] = value or nil
             Opt.Changed()
         end,
     }

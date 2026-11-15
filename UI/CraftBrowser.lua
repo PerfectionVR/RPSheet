@@ -33,6 +33,7 @@ local CRAFT = {
     title = function(self) return ("%s - Crafting"):format(self:GetCharacterName()) end,
     class = function() return nil end, -- judged by the active character
     find = function() return nil end,  -- a block describes the listed item, not a carried one
+    ownListed = true,                  -- "Can make" repeats recipes of the other tabs
 }
 
 -- A tab per making profession the character practises.
@@ -136,7 +137,7 @@ function CRAFT.buttons(self, card, entry)
     if not recipe.basic then
         local known = self:RecipeKnown(recipe)
         UI.AddItemButton(card, 0.5, known and "Forget recipe" or "Learned it", true, function()
-            self:LearnRecipe(recipe.name, not known)
+            self:LearnRecipe(recipe, not known)
             Changed(self)
         end)
     end

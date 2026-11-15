@@ -340,36 +340,80 @@ Eq(R.MagicItemValue("Artifact"), 0, "an artifact")
 Eq(R.MagicItemValue(""), 0, "no rarity")
 
 ---------------------------------------------------------------------------
--- Variants
+-- Variants: every make of every plain item it exists of
 ---------------------------------------------------------------------------
 Eq(R.VariantName(R.ITEM_VARIANT.mithral, "Chain Shirt"), "Mithral Chain Shirt", "variant name")
 Eq(R.VariantName(R.ITEM_VARIANT.weapon1, "Longsword"), "Longsword +1", "variant name")
 Eq(R.VariantName(R.ITEM_VARIANT["resist:fire"], "Plate Armor"), "Armor of Fire Resistance (Plate)", "variant name")
 Eq(R.VariantName(R.ITEM_VARIANT["resist:cold"], "Chain Mail"), "Armor of Cold Resistance (Chain Mail)", "variant name")
+Eq(R.VariantName(R.ITEM_VARIANT["Flame Tongue"], "Mace"), "Flame Tongue Mace", "variant name")
+Eq(R.VariantName(R.ITEM_VARIANT["Plate Armor of Etherealness"], "Half Plate Armor"), "Armor of Etherealness (Half Plate)", "variant name")
+Eq(R.VariantName(R.ITEM_VARIANT.ammo2, "Arrow"), "Arrow +2", "variant name")
 local VALUE = { Common = 10000, Uncommon = 40000, Rare = 400000, ["Very rare"] = 4000000, Legendary = 20000000 }
-local RARITY = { armor1 = "Rare", armor2 = "Very rare", armor3 = "Legendary", shield1 = "Uncommon", shield2 = "Rare", shield3 = "Very rare",
-    weapon1 = "Uncommon", weapon2 = "Rare", weapon3 = "Very rare", adamantineArmor = "Uncommon", mithral = "Uncommon",
-    adamantineWeapon = "Uncommon", silvered = "Common" }
+-- A few makes written out here on purpose: rarity, attunement, bonus.
+local KNOWN = {
+    armor1 = { "Rare", false, 1 }, armor3 = { "Legendary", false, 3 }, shield2 = { "Rare", false, 2 }, weapon3 = { "Very rare", false, 3 },
+    ammo1 = { "Uncommon", false, 0 }, adamantineArmor = { "Uncommon", false, 0 }, mithral = { "Uncommon", false, 0 }, silvered = { "Common", false, 0 },
+    ["resist:fire"] = { "Rare", true, 0 }, ["vulnerability:piercing"] = { "Rare", true, 0 }, ["Flame Tongue"] = { "Rare", true, 0 },
+    ["Frost Brand"] = { "Very rare", true, 0 }, ["Vorpal Sword"] = { "Legendary", true, 3 }, Defender = { "Legendary", true, 3 },
+    ["Holy Avenger"] = { "Legendary", true, 3 }, ["Nine Lives Stealer"] = { "Very rare", true, 2 }, ["Dragon Slayer"] = { "Rare", false, 1 },
+    ["Vicious Weapon"] = { "Rare", false, 0 }, ["Weapon of Warning"] = { "Uncommon", true, 0 }, ["Luck Blade"] = { "Legendary", true, 1 },
+    ["Efreeti Chain"] = { "Legendary", true, 3 }, ["Dwarven Plate"] = { "Very rare", false, 2 }, ["Elven Chain"] = { "Rare", false, 1 },
+    ["Demon Armor"] = { "Very rare", true, 1 }, ["Mariner's Armor"] = { "Uncommon", false, 0 }, ["Walloping Ammunition"] = { "Common", false, 0 },
+    ["Ammunition of Slaying"] = { "Very rare", false, 0 }, ["Enspelled Weapon (Rare)"] = { "Rare", true, 0 }, ["Sword of Sharpness"] = { "Very rare", true, 0 },
+}
+-- A piece of ammunition: its share of the bundle's price (whole copper) and weight.
+local AMMO = { Arrow = { 5, 0.05 }, Bolt = { 5, 0.075 }, ["Firearm Bullet"] = { 30, 0.2 }, Needle = { 2, 0.02 }, ["Sling Bullet"] = { 0, 0.075 } }
+local SWORD = { Greatsword = true, Longsword = true, Rapier = true, Scimitar = true, Shortsword = true }
+local METAL = { ["Chain Shirt"] = true, ["Scale Mail"] = true, Breastplate = true, ["Half Plate Armor"] = true, ["Ring Mail"] = true,
+    ["Chain Mail"] = true, ["Splint Armor"] = true, ["Plate Armor"] = true }
 local everything = {}
 for _, name in ipairs(R.ITEM_NAMES["Armor and shields"]) do everything[#everything + 1] = name end
 for _, name in ipairs(R.WEAPON_ORDER) do everything[#everything + 1] = name end
-local made, seenNames = 0, {}
-local METAL = { ["Chain Shirt"] = true, ["Scale Mail"] = true, Breastplate = true, ["Half Plate Armor"] = true, ["Ring Mail"] = true,
-    ["Chain Mail"] = true, ["Splint Armor"] = true, ["Plate Armor"] = true }
+for name in pairs(AMMO) do everything[#everything + 1] = name end
+Eq(#R.AMMO_PIECES, 5, "kinds of ammunition")
+-- What should fit, worked out here from the make's word for it.
+local function ShouldFit(variant, base)
+    local fits, weapon = variant.fits, R.WEAPONS[base]
+    local melee = weapon ~= nil and not weapon.ranged
+    if fits == "armor" then return R.ARMOR_ITEMS[base] ~= nil end
+    if fits == "metal" then return METAL[base] == true end
+    if fits == "shield" then return base == "Shield" end
+    if fits == "weapon" then return weapon ~= nil end
+    if fits == "melee" then return melee end
+    if fits == "sword" then return SWORD[base] == true end
+    if fits == "ammo" then return AMMO[base] ~= nil end
+    if fits == "arms" then return melee or AMMO[base] ~= nil end
+    return ("," .. fits .. ","):find("," .. base .. ",", 1, true) ~= nil
+end
+local function Sorted(list)
+    local copy = {}
+    for _, name in ipairs(list or {}) do copy[#copy + 1] = name end
+    table.sort(copy)
+    return table.concat(copy, " ")
+end
+local function Found(field)
+    local names = {}
+    for name in pairs(RPSheet:Defenses()[field]) do names[#names + 1] = name end
+    return Sorted(names)
+end
+local made, seenNames, seenTitles = 0, {}, {}
 for _, key in ipairs(R.ITEM_VARIANTS) do
     local variant = R.ITEM_VARIANT[key]
     local bases = ns.VariantBases(variant)
     Check(#bases > 0, key .. " fits nothing")
+    Check(not seenTitles[variant.title], variant.title .. ": two makes of one title")
+    seenTitles[variant.title] = true
+    Check(type(variant.desc) == "string" and #variant.desc > 20 and not variant.desc:find("Weapons page"), key .. ": its words: " .. tostring(variant.desc))
+    Check(VALUE[variant.rarity] ~= nil, key .. ": rarity " .. tostring(variant.rarity))
+    local known = KNOWN[key]
+    if known then
+        Eq(variant.rarity, known[1], key .. ": rarity"); Eq(variant.attune == true, known[2], key .. ": attunement"); Eq(variant.bonus or 0, known[3], key .. ": bonus")
+    end
     local fits = {}
     for _, base in ipairs(bases) do fits[base] = true end
     for _, base in ipairs(everything) do
-        -- what should fit, worked out here
-        local should
-        if variant.fits == "armor" then should = R.ARMOR_ITEMS[base] ~= nil
-        elseif variant.fits == "metal" then should = METAL[base] == true
-        elseif variant.fits == "shield" then should = base == "Shield"
-        elseif variant.fits == "weapon" then should = R.WEAPONS[base] ~= nil
-        else should = R.WEAPONS[base] ~= nil and not R.WEAPONS[base].ranged end
+        local should = ShouldFit(variant, base)
         Check((fits[base] == true) == should, ("%s on %s: fits %s, expected %s"):format(key, base, tostring(fits[base]), tostring(should)))
         local item = ns.NewVariantItem(key, base)
         Check((item ~= nil) == should, ("%s on %s: item %s"):format(key, base, tostring(item)))
@@ -379,17 +423,32 @@ for _, key in ipairs(R.ITEM_VARIANTS) do
             Check(not seenNames[item.name], item.name .. ": two variants make the same name")
             seenNames[item.name] = true
             Check(R.ITEMS[item.name] == nil, item.name .. ": the catalogue has an item of that name")
-            local rarity = RARITY[key] or "Rare"
-            Check(item.base == base and item.variant == key and item.magic and item.rarity == rarity, item.name .. ": base, make, rarity")
-            Eq(item.bonus, tonumber(key:match("^%a+(%d)$")) or 0, item.name .. ": bonus")
-            Eq(item.cost, VALUE[rarity] + R.ITEMS[base].cost, item.name .. ": price")
-            Eq(item.weight, R.ITEMS[base].weight, item.name .. ": weight")
-            Eq(item.attune, key:find("^resist:") ~= nil, item.name .. ": attunement")
+            Check(item.base == base and item.variant == key and item.magic and item.rarity == variant.rarity and item.tracked and not item.edited, item.name .. ": base, make, rarity")
+            Eq(item.bonus, variant.bonus or 0, item.name .. ": bonus")
+            local plainCost, plainWeight = R.ITEMS[base] and R.ITEMS[base].cost, R.ITEMS[base] and R.ITEMS[base].weight
+            if AMMO[base] then plainCost, plainWeight = AMMO[base][1], AMMO[base][2] end
+            Eq(item.cost, VALUE[variant.rarity] / (variant.stacks and 2 or 1) + plainCost, item.name .. ": price")
+            Check(math.abs(item.weight - plainWeight) < 1e-9, item.name .. ": weight " .. tostring(item.weight))
+            Eq(item.attune, variant.attune == true, item.name .. ": attunement")
+            Eq(#item.effects, #(variant.effects or {}), item.name .. ": effects")
             local added = Run("add " .. item.name, RPSheet.AddVariantItem, RPSheet, key, base)
             if added then
                 Lines(item.name .. " card", added.name, added)
                 RPSheet:SetEquipped(added, true)
                 local slot = ns.ItemSlot(added)
+                -- what the make wards against: only while worn and attuned
+                if variant.attune and (variant.resist or variant.immune or variant.vulnerable) then
+                    Check(Found("resist") == "" and Found("immune") == "" and Found("vulnerable") == "", added.name .. ": wards before attuning")
+                end
+                added.attuned = added.attune
+                Eq(Found("resist"), Sorted(variant.resist), added.name .. ": resistances")
+                Eq(Found("immune"), Sorted(variant.immune), added.name .. ": immunities")
+                Eq(Found("vulnerable"), Sorted(variant.vulnerable), added.name .. ": vulnerabilities")
+                for _, kind in ipairs(variant.resist or {}) do
+                    Eq(RPSheet:Defenses().resist[kind], added.name, added.name .. ": the resistance names the armor")
+                    Check(tContains(RPSheet:Resistances(), kind), added.name .. ": listed among the resistances")
+                end
+                Eq(RPSheet:ItemBonus("SAVES"), key == "Luck Blade" and 1 or 0, added.name .. ": saving throws")
                 if slot == "armor" then
                     local armor = R.ARMOR[R.ARMOR_ITEMS[base]]
                     Eq(sheet.armor, R.ARMOR_ITEMS[base], added.name .. ": armor on")
@@ -409,19 +468,9 @@ for _, key in ipairs(R.ITEM_VARIANTS) do
                         Eq(slowed, armor.minStr and 10 or 0, added.name .. ": Strength asked")
                     end
                     sheet.base.STR = 15
-                    -- resistance: worn and attuned
-                    local kind = key:match("^resist:(.+)$")
-                    if kind then
-                        Check(not RPSheet:Defenses().resist[kind], added.name .. ": resists before attuning")
-                        added.attuned = true
-                        Eq(RPSheet:Defenses().resist[kind], added.name, added.name .. ": resistance while worn and attuned")
-                        Check(tContains(RPSheet:Resistances(), kind), added.name .. ": listed among the resistances")
-                        RPSheet:SetEquipped(added, false)
-                        Check(not RPSheet:Defenses().resist[kind], added.name .. ": resists while put away")
-                        RPSheet:SetEquipped(added, true)
-                    else
-                        Check(next(RPSheet:Defenses().resist) == nil, added.name .. ": resists something")
-                    end
+                    RPSheet:SetEquipped(added, false)
+                    Check(Found("resist") == "" and Found("immune") == "" and Found("vulnerable") == "", added.name .. ": wards while put away")
+                    RPSheet:SetEquipped(added, true)
                 elseif slot == "shield" then
                     Check(sheet.shield and RPSheet:AC() == 10 + 4 + 2 + added.bonus, added.name .. ": Armor Class")
                 elseif slot == "weapon" then
@@ -431,7 +480,15 @@ for _, key in ipairs(R.ITEM_VARIANTS) do
                         Run(added.name .. " explain", RPSheet.ExplainWeapon, RPSheet, entry)
                     end
                 else
-                    Problem(added.name .. " has no slot")
+                    Check(AMMO[base] ~= nil, added.name .. " has no slot")
+                end
+                -- a second one: pieces of magic ammunition share an entry, the rest don't
+                added.attuned = false
+                local again = RPSheet:AddVariantItem(key, base)
+                if variant.stacks then
+                    Check(again == added and added.qty == 2 and #sheet.items == 1, added.name .. ": two pieces are one entry of two")
+                else
+                    Check(again ~= added and added.qty == 1 and #sheet.items == 2, added.name .. ": a second one is an entry of its own")
                 end
                 -- a renamed one still counts as its make
                 added.name = "Renamed " .. made
@@ -443,24 +500,36 @@ for _, key in ipairs(R.ITEM_VARIANTS) do
     end
 end
 print("variants", #R.ITEM_VARIANTS, "items made", made)
+Check(#R.ITEM_VARIANTS >= 70, "the named makes are there: " .. #R.ITEM_VARIANTS)
 Check(ns.NewVariantItem("nonsense", "Longsword") == nil and ns.NewVariantItem("mithral", "Nonsense") == nil and RPSheet:AddVariantItem("mithral", "Leather Armor") == nil,
     "what doesn't go together makes nothing")
--- The Customize page's three controls
+-- Each named make is also a listed item, and takes its rarity and attunement from it.
+for _, key in ipairs(R.ITEM_VARIANTS) do
+    local variant, listed = R.ITEM_VARIANT[key], R.ITEMS[key]
+    if listed then
+        Check(variant.rarity == listed.rarity and variant.attune == (listed.attune == true), key .. ": the make and the listed item disagree")
+    end
+end
+-- The makes are bought and added in the item browser; the Customize page no longer has the control.
 Clear()
 ns.RebuildOptions()
 local add = options.args.customize.args.items.args
-if Check(add.variantKind and add.variantPlain and add.variantAdd and add.variantPreview, "the variant controls are on the Inventory page") then
-    Check(add.variantAdd.disabled() == true, "Add it is off before anything is picked")
-    SetOption(add.variantKind, "variantKind", "mithral")
-    local values = add.variantPlain.values()
-    Check(values["Chain Mail"] and not values["Leather Armor"] and not values.Longsword, "only fitting bases are offered")
-    SetOption(add.variantPlain, "variantPlain", "Chain Mail")
-    Check(add.variantAdd.disabled() == false and add.variantPreview.name():find("Mithral Chain Mail"), "preview names it")
-    Run("variantAdd", add.variantAdd.func, { "variantAdd", option = add.variantAdd })
-    Check(#sheet.items == 1 and sheet.items[1].name == "Mithral Chain Mail", "Add it adds it")
-    SetOption(add.variantKind, "variantKind", "weapon1")
-    Check(add.variantPlain.get() == "" and add.variantAdd.disabled() == true, "a base that no longer fits is forgotten")
-end
+Check(add.variantKind == nil and add.browse ~= nil and add.browse.desc:find("Makes tab"), "the Inventory page points to the browser's Makes tab")
+-- A make that was made before, renamed and saved survives the upkeep; an old one is left as it is.
+local old = ns.NewVariantItem("weapon1", "Longsword")
+old.tracked, old.desc, old.cost = false, "Grandfather's.", 77
+sheet.items[1] = old
+local fresh = RPSheet:AddVariantItem("Flame Tongue", "Longsword")
+fresh.desc, fresh.cost, fresh.name = "", 0, "Emberfall"
+local mine = RPSheet:AddVariantItem("Flame Tongue", "Mace")
+mine.desc, mine.edited = "Mine.", true
+local bullet = ns.NewVariantItem("ammo1", "Firearm Bullet")
+sheet.items[#sheet.items + 1] = bullet
+Run("NormalizeInventory", ns.NormalizeInventory, sheet)
+Check(old.desc == "Grandfather's." and old.cost == 77 and old.variant == "weapon1", "a make from before edits were recorded is left alone")
+Check(fresh.desc == R.ITEM_VARIANT["Flame Tongue"].desc and fresh.cost == 400000 + 1500 and fresh.name == "Emberfall" and fresh.attune, "an untouched make follows its data, and keeps its name")
+Check(mine.desc == "Mine.", "an edited make is left alone")
+Check(bullet.base == "Firearm Bullet" and bullet.variant == "ammo1" and bullet.cost == 20000 + 30, "a magic bullet keeps what it is made of")
 FlushTimers()
 
 ---------------------------------------------------------------------------

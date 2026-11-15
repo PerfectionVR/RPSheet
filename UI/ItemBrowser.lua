@@ -24,9 +24,13 @@
 --   names(kind)            optional: the names of a tab, when they are not items
 --   lines(self, entry)     optional: what a block says, when it is not an item
 --   options()              optional: opens the Customize page behind the cog
+--   words(self, entry)     optional: what the search looks at besides the name and the
+--                          marks, when building the block's lines for it costs too much
+--   ownListed              true when the first tab only repeats entries of the other
+--                          tabs, so a search of every tab leaves it out
 --
 -- Only one page of blocks is built at a time (UI/ItemPages.lua); the search goes over
--- the whole tab.
+-- the whole tab, or over every tab at once (UI/ItemBrowserSearch.lua).
 local _, ns = ...
 local RPSheet = ns.addon
 local UI = ns.UI
@@ -35,10 +39,11 @@ local AceGUI = LibStub("AceGUI-3.0")
 -- What the window is showing, shared with UI/ItemBrowserParts.lua and ItemBrowserFill.lua:
 --   source   the source it shows
 --   open     the open tab: source.first or one of source.kinds
---   search   the text searched for in the tab
+--   search   the text searched for, in small letters
+--   everywhere   the search goes over every tab, not only the open one
 --   toTop    a page was turned: start reading it at its top
 --   fills    how often the window was filled, to tell whether showing it did
-local B = { search = "", toTop = false, fills = 0 }
+local B = { search = "", everywhere = false, toTop = false, fills = 0 }
 UI.ItemBrowserState = B
 
 local function Build(self)
@@ -68,7 +73,7 @@ end
 function RPSheet:ShowItemBrowser(wanted, tab)
     local same = B.source == wanted
     if not same then
-        B.source, B.open, B.search = wanted, tab or wanted.first, ""
+        B.source, B.open, B.search, B.everywhere = wanted, tab or wanted.first, "", false
     end
     local before = B.fills
     if not self.itemWindow then

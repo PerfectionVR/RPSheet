@@ -75,7 +75,7 @@ end
 -- (Data/Items.lua), otherwise an empty item of that name.
 function ns.NewItem(name)
     local item = CopyTable(R.TEMPLATES.item)
-    item.name = name
+    item.name, item.tracked = name, true -- from here on, an edit is recorded on it
     local known = R.ITEMS[name]
     if not known then return item end
     item.cost, item.weight, item.desc = known.cost, known.weight, known.desc or ""
@@ -87,16 +87,16 @@ function ns.NewItem(name)
     return item
 end
 
--- Adds `quantity` of an item. Plain gear of the same name stacks; a magic item is
--- always an entry of its own, since each is equipped and attuned by itself.
+-- Adds `quantity` of an item. Plain gear of the same name stacks, and so do magic
+-- items that are used up and need no attunement; any other magic item is an entry
+-- of its own, since each is equipped and attuned by itself (Sheet/ItemStacks.lua).
 function RPSheet:AddItem(name, quantity)
     local items = self:Sheet().items
     quantity = math.max(1, math.floor(quantity or 1))
-    for _, item in ipairs(items) do
-        if item.name == name and not item.magic then
-            item.qty = item.qty + quantity
-            return item
-        end
+    local stack = ns.StackFor(items, name)
+    if stack then
+        stack.qty = stack.qty + quantity
+        return stack
     end
     local item = ns.NewItem(name)
     item.qty = quantity
@@ -150,10 +150,10 @@ function ns.NormalizeInventory(sheet, source)
         item.qty, item.cost = Whole(item.qty, 9999), Whole(item.cost, 99999999)
         if not R.RARITIES[item.rarity] then item.rarity = "" end
         if not R.ITEM_LIMITS[item.limit] then item.limit = "" end
-        if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM) then item.base = "" end
+        if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM or R.AMMO_PIECE[item.base]) then item.base = "" end
         item.bonus = Whole(item.bonus, 3)
         if not R.ITEM_VARIANT[item.variant] then item.variant = "" end
-        item.scribed = item.scribed == true
+        item.scribed, item.edited, item.tracked = item.scribed == true, item.edited == true, item.tracked == true
         for at = #item.effects, 1, -1 do
             local effect = item.effects[at]
             if not R.EFFECT_TARGETS[effect.target] then

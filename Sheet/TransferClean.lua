@@ -13,7 +13,7 @@ local LIMITS = {
     count = { 0, 20 }, -- an ability's dice step with 0 dice gives just its flat amount
     times = { 1, 10 }, amount = { 0, 999 }, flat = { -200, 200 },
     magic = { 0, 3 }, qty = { 0, 9999 }, cost = { 0, 99999999 },
-    capacity = { 0, 999999 }, loyalty = { 0, R.LOYALTY_MAX },
+    capacity = { 0, 999999 }, loyalty = { 0, R.LOYALTY_MAX }, load = { 0, 999999 },
 }
 
 local function Text(value, maxLength)

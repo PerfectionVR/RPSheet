@@ -47,7 +47,7 @@ function RPSheet:MoveSpeed(kind)
         local _, pace = ns.MountPace(mount)
         local feet = mount[kind] or 0
         if feet <= 0 or pace == kind then return nil end
-        return self:Immobile() and 0 or feet
+        return self:Immobile() and 0 or self:MountSpeed(mount, kind) -- held back like its pace (Sheet/MountLoad.lua)
     end
     local best = Own(self, kind)
     if not best then return nil end
@@ -80,7 +80,9 @@ function RPSheet:ExplainMoveSpeed(kind)
     end
     local mount = self:RiddenMount()
     if mount then
-        Out(self, head .. ("you are riding %s, and its speeds count in place of your own (%s)."):format(mount.name, ns.MountSpeeds(mount)))
+        local held = self:MountHeldNote(mount)
+        Out(self, head .. ("you are riding %s, and its speeds count in place of your own (%s).%s"):format(mount.name, ns.MountSpeeds(mount),
+            held ~= "" and (" " .. held) or ""))
         return
     end
     local best, from, walks = Own(self, kind)
