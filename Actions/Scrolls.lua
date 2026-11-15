@@ -49,6 +49,7 @@ function RPSheet:ReadScroll(item)
     local name, level = ns.ScrollSpell(item)
     if not name then return false end
     if self.busy or self:IsRolling() then return false end
+    if self:CantAct("read a scroll") then return false end
     local found = not item.scribed and R.SCROLL_FOUND[math.max(0, math.min(9, level))] or nil
     local listed = R.SPELLS[name]
     if not listed then
@@ -62,11 +63,6 @@ function RPSheet:ReadScroll(item)
         return false
     end
     local known = self:PreparedSpell(name) or listed
-    local blocked = self:FormBlocksSpell(known)
-    if blocked then
-        self:Print(blocked)
-        return false
-    end
     -- The copy is cast without a slot and without components, at the spell's own
     -- level. A scroll's cantrip does grow with the reader's level, like any cantrip.
     local cast = CopyTable(known)
@@ -74,6 +70,12 @@ function RPSheet:ReadScroll(item)
     cast.damage = ns.SpellDamageType(known) or ""
     cast.material, cast.consumed, cast.auto = 0, false, ""
     cast.scroll = found
+    -- (asked of the copy: a scroll needs no component, which matters in a beast form)
+    local blocked = self:FormBlocksSpell(cast)
+    if blocked then
+        self:Print(blocked)
+        return false
+    end
     -- Shift is held to read it, so only the Next roll row sets advantage here.
     if listed.level <= reach then
         self:CastSpell(cast, self.rollMode)
@@ -84,14 +86,17 @@ function RPSheet:ReadScroll(item)
     local stat = self:CastStat(cast)
     local dc, label = 10 + listed.level, stat .. " check"
     local mod = self:CheckMod(stat)
-    self:RollD20(self:ResolveMode(label, self.rollMode), function(d20, note)
-        local passed = d20 + mod >= dc
-        self:Announce(("tries to read %s, a spell beyond their own: %s against DC %d - %s"):format(ns.Mark(item.name),
-            ns.RollText.Check(ns.Mark(label), d20, mod, note), dc,
-            passed and "the spell holds." or "the writing fades and the scroll is lost."))
-        -- A failure loses the scroll; otherwise the casting takes it. The Next roll row
-        -- was this check's, so it only reaches the spell when it is locked.
-        if passed then self:CastSpell(cast, self.rollMode) else Crumble(self, item) end
+    -- (what the check needs to know is asked first; a menu that is closed keeps the scroll)
+    self:AskRoll(label, self.rollMode, nil, function(answers)
+        self:RollTest(self:ResolveMode(label, self.rollMode, nil, nil, answers), function(d20, note, extra)
+            local passed = d20 + mod + (extra and extra.value or 0) >= dc
+            self:Announce(("tries to read %s, a spell beyond their own: %s against DC %d - %s"):format(ns.Mark(item.name),
+                ns.RollText.Check(ns.Mark(label), d20, mod, note, extra), dc,
+                passed and "the spell holds." or "the writing fades and the scroll is lost."))
+            -- A failure loses the scroll; otherwise the casting takes it. The Next roll row
+            -- was this check's, so it only reaches the spell when it is locked.
+            if passed then self:CastSpell(cast, self.rollMode) else Crumble(self, item) end
+        end)
     end)
     return false
 end

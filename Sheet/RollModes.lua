@@ -34,20 +34,31 @@ function RPSheet:Incapacitated()
     end
 end
 
+-- (for Actions/RollQuestions.lua, which asks about attacks and checks)
+ns.IsAttackRoll = IsAttack
+ns.IsCheckRoll = IsCheck
+
 -- A condition or armor that gives disadvantage on the roll: its name, or nil.
-function RPSheet:DisadvantageFrom(label)
+-- `answers` is what the player said about this one roll (Actions/RollQuestions.lua):
+-- Frightened = false when the source of the fear is out of sight, Grappled = false
+-- when the attack is against the grappler. Without an answer both count.
+function RPSheet:DisadvantageFrom(label, answers)
     local on = self:State().conditions
     -- Turned to stone, poison does nothing. Unconscious includes Prone.
     local poisoned = on.Poisoned and not on.Petrified
+    local frightened = on.Frightened and not (answers and answers.Frightened == false)
     if IsAttack(label) then
-        for _, name in ipairs({ "Blinded", "Frightened", "Prone", "Restrained" }) do
+        if on.Blinded then return "Blinded" end
+        if frightened then return "Frightened" end
+        for _, name in ipairs({ "Prone", "Restrained" }) do
             if on[name] then return name end
         end
         if poisoned then return "Poisoned" end
         if on.Unconscious then return "Unconscious" end
+        if on.Grappled and not (answers and answers.Grappled == false) then return "Grappled" end
     end
     if IsCheck(label) then
-        if on.Frightened then return "Frightened" end
+        if frightened then return "Frightened" end
         if poisoned then return "Poisoned" end
     end
     if label == "DEX save" and on.Restrained then return "Restrained" end
@@ -117,8 +128,10 @@ end
 -- Advantage and disadvantage from any number of sources cancel each other out.
 -- `also` is a second label the roll goes by, such as "STR attack" for an attack made
 -- with Strength. `extra` is true for advantage from something the sheet was told
--- about for this roll alone (what a save is against).
-function RPSheet:ResolveMode(label, mode, also, extra)
+-- about for this roll alone (what a save is against); `answers` is everything the
+-- player was asked about this roll, where `about` is that same thing.
+function RPSheet:ResolveMode(label, mode, also, extra, answers)
+    if answers and answers.about then extra = true end
     local advantage = extra == true or mode == "ADV" or self:HasAdvantage(label) or self:AdvantageFrom(label) ~= nil
         or (also ~= nil and self:HasAdvantage(also))
     -- Danger Sense doesn't work while incapacitated: without it, is there still advantage?
@@ -126,7 +139,7 @@ function RPSheet:ResolveMode(label, mode, also, extra)
         and ns.HasFeature(self:Sheet(), "Danger Sense") then
         advantage = self:AdvantageFrom(label) ~= nil or self:OtherAdvantage(label, "Danger Sense")
     end
-    local disadvantage = mode == "DIS" or self:DisadvantageFrom(label) ~= nil
+    local disadvantage = mode == "DIS" or self:DisadvantageFrom(label, answers) ~= nil
     if advantage and disadvantage then return nil end
     return (advantage and "ADV") or (disadvantage and "DIS") or nil
 end

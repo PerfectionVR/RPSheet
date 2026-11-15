@@ -6,7 +6,7 @@ local B, N = R.BEASTS, R.BEAST_NOTES
 -- 1/2
 B["Ape"] = { cr = 1 / 2, size = "Medium", ac = 12, speed = 30, moves = "climbing 30 feet", str = 16, dex = 14, con = 14, senses = {}, skills = { "Athletics", "Perception" }, bonus = { Athletics = 5, Perception = 3 },
     attacks = { { "Fist", 5, 1, 4, 3, "bludgeoning", N.twice },
-        { "Rock", 5, 2, 6, 3, "bludgeoning", N.recharge, ranged = "25/50" } } }
+        { "Rock", 5, 2, 6, 3, "bludgeoning", ranged = "25/50", recharge = 6 } } }
 B["Black Bear"] = { cr = 1 / 2, size = "Medium", ac = 11, speed = 30, moves = "climbing and swimming 30 feet", str = 15, dex = 12, con = 14, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 5 },
     attacks = { { "Rend", 4, 1, 6, 2, "slashing", N.twice } } }
 B["Crocodile"] = { cr = 1 / 2, size = "Large", ac = 12, speed = 20, moves = "swimming 30 feet", str = 15, dex = 10, con = 13, saves = { CON = 3 }, senses = {}, skills = { "Stealth" }, bonus = { Stealth = 2 },
@@ -42,18 +42,20 @@ B["Dire Wolf"] = { cr = 1, size = "Large", ac = 14, speed = 50, str = 17, dex = 
 B["Giant Hyena"] = { cr = 1, size = "Large", ac = 12, speed = 50, str = 16, dex = 14, con = 14, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 3 },
     note = "Once a day, as a bonus action right after damaging a creature that was already Bloodied: move up to half your speed and Bite once. That bite has a row of its own.",
     attacks = { { "Bite", 5, 2, 6, 3, "piercing",
-        follow = { "Rampage", "Bonus action, once a day, right after you damaged a creature that was already Bloodied: move up to half your speed, then make this bite." } } } }
+        follow = { "Rampage", "Bonus action, once a day, right after you damaged a creature that was already Bloodied: move up to half your speed, then make this bite.", day = true } } } }
 B["Giant Octopus"] = { cr = 1, size = "Large", ac = 11, speed = 10, moves = "swimming 60 feet", str = 17, dex = 13, con = 13, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 4, Stealth = 5 },
     note = N.water .. " Out of water it holds its breath for an hour. " .. N.ink,
+    extras = { R.BeastInk(10, "when you take damage") },
     attacks = { { "Tentacles", 5, 2, 6, 3, "bludgeoning", "A Medium or smaller target is grappled (DC 13 to escape) and restrained while it is. It takes all eight tentacles, so one target at a time.", rider = "{Grappled} if Medium or smaller, escape DC 13, and {Restrained} while it is held", reach = 10 } } }
 B["Giant Spider"] = { cr = 1, size = "Large", ac = 14, speed = 30, moves = "climbing 30 feet, also on ceilings and webs", str = 14, dex = 16, con = 12, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 4, Stealth = 7 },
     note = "It knows where anything touching the web it is on is.",
     attacks = { { "Bite", 5, 1, 8, 3, "piercing", plus = { 2, 6, "poison" } },
-        { "Web", false, 0, 4, 0, "no", "One creature you can see within 60 feet makes a DC 13 Dexterity save or is restrained until the web is destroyed (Armor Class 10, 5 hit points, weak to fire). Once used, it comes back on a 5 or 6 on a d6 rolled at the start of your turn.", rider = "DC 13 Dexterity save for one creature within 60 feet, or it is {Restrained} until the web is destroyed" } } }
+        { "Web", false, 0, 4, 0, "no", "One creature you can see within 60 feet makes a DC 13 Dexterity save or is restrained until the web is destroyed (Armor Class 10, 5 hit points, weak to fire).", recharge = 5, rider = "DC 13 Dexterity save for one creature within 60 feet, or it is {Restrained} until the web is destroyed" } } }
 B["Giant Toad"] = { cr = 1, size = "Large", ac = 11, speed = 30, moves = "swimming 30 feet", str = 15, dex = 13, con = 13, senses = { Darkvision = 60 }, skills = {},
     note = N.amphibious .. " It long jumps 20 feet and high jumps 10 feet, even from a standstill.",
     attacks = { { "Bite", 4, 1, 6, 2, "piercing", "A Medium or smaller target is grappled (DC 12 to escape).", rider = "{Grappled} if Medium or smaller, escape DC 12", plus = { 2, 4, "poison" } },
-        { "Swallow", false, 3, 6, 0, "acid", "You swallow a Medium or smaller creature you are grappling: it is blinded and restrained inside and takes the damage at the end of each of your turns. One at a time, and you can't Bite meanwhile." } } }
+        { "Swallow", false, 3, 6, 0, "acid", "You swallow a Medium or smaller creature you are grappling: it is blinded and restrained inside and takes the damage at the end of each of your turns. One at a time, and you can't Bite meanwhile. Click it at the end of each of your turns.",
+            rider = "The swallowed creature is {Blinded} and {Restrained}, and takes this at the end of each of your turns" } } }
 B["Lion"] = { cr = 1, size = "Large", ac = 12, speed = 50, str = 17, dex = 15, con = 11, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 3, Stealth = 4 },
     note = N.pack .. " With a 10-foot run-up it long jumps 25 feet.",
     attacks = { { "Rend", 5, 1, 8, 3, "slashing", "Two of these with the Attack action, or one and a Roar." },

@@ -256,6 +256,9 @@ Sheet\PassCache.lua
 Actions\AnnounceSplit.lua
 Actions\Announce.lua
 Actions\Dice.lua
+Actions\NextRollBonus.lua
+Actions\RollQuestions.lua
+Actions\Incapacitated.lua
 Actions\Weapons.lua
 Actions\Inventory.lua
 Actions\Scrolls.lua
@@ -275,6 +278,7 @@ Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\RestUndo.lua
+Actions\BeastUses.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua
 Actions\WardDamage.lua
@@ -330,6 +334,7 @@ UI\ScribeTab.lua
 UI\CraftBrowser.lua
 UI\ProfessionSection.lua
 UI\SheetHeader.lua
+UI\SheetNextRoll.lua
 UI\SheetTrackers.lua
 UI\SheetConditions.lua
 UI\SheetCombat.lua

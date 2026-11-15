@@ -36,7 +36,8 @@ function UI.SpellSection(self, body)
     local spells = Util.Named(self:Sheet().spells)
     local book = ns.HasSpellbook(self:Sheet())
     local atRest = ns.ChangesPreparedAtRest(self:Sheet())
-    if #spells == 0 and not book and not atRest then return end
+    local runs = self:ScrollRuns() -- growing spells read from a scroll (Actions/GrowingSpells.lua)
+    if #spells == 0 and not book and not atRest and #runs == 0 then return end
     table.sort(spells, function(a, b)
         if a.level ~= b.level then return a.level < b.level end
         return a.name < b.name
@@ -67,5 +68,15 @@ function UI.SpellSection(self, body)
             function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name,
             function() return Tip(self, spell) end,
             function() self:ExplainSpell(spell) end)
+    end
+    -- A growing spell read from a scroll runs with the scroll's numbers: a row of its
+    -- own for as long as it lasts.
+    for _, run in ipairs(runs) do
+        UI.AddLabel(body, 1, ("%s (from a scroll)  %s%s|r"):format(run.name, UI.GREY, self:SpellText(run)),
+            function(button)
+                if self.busy or self:IsRolling() then return end
+                self:GrowingSpellClick(run, button == "RightButton")
+            end, run.name .. " (from a scroll)",
+            "It is running. Left-click when the target fails its save again: the die grows and the damage is rolled. Right-click when it succeeds or the spell runs out: that ends it.")
     end
 end

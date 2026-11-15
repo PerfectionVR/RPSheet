@@ -134,6 +134,7 @@ Section("every beast's rows", function()
                         if attack.plus then Repeat(attack.plus[1], attack.plus[2], want) end
                         local at = #ROLLED
                         Rolls(10)
+                        RPSheet:State().beastUsed = nil -- (the limited ones are counted: see "beast actions with a limit")
                         RPSheet:UseAbility(ability)
                         Eq(Dice(at), table.concat(want, ","), label .. ": dice rolled")
                         local line = SENT[#SENT] or ""
@@ -162,6 +163,7 @@ Section("every beast's rows", function()
                             if attack.plus then Repeat(attack.plus[1] * 2, attack.plus[2], double) end
                             at = #ROLLED
                             Rolls(20)
+                            RPSheet:State().beastUsed = nil
                             RPSheet:UseAbility(ability)
                             Eq(Dice(at), table.concat(double, ","), label .. ": a natural 20 doubles the dice")
                         end

@@ -5,7 +5,9 @@
 --   * an ability for each of its attacks, with more rows where the data asks for
 --     them: one for a situation that changes the attack (a charge) and one for the
 --     same attack made as a follow-up,
+--   * an ability for each other thing it can do that has a limit to count,
 -- and there is one ability to leave any form. All are marked auto = "form:...".
+-- The limits (a recharge, once a day) are counted in Actions/BeastUses.lua.
 local _, ns = ...
 local R = ns.Rules
 local Kit = ns.FeatureKit
@@ -23,15 +25,15 @@ local SITUATIONS = {
 -- if Large or smaller". `ability` is one of the attack rows made below; nil for any
 -- other ability and for an attack without a rider. The charge row has its own.
 function ns.BeastRider(ability)
-    local name, index, row = (ability.auto or ""):match("^form:(.+):attack(%d+):?(%a*)$")
+    local name, kind, index, row = (ability.auto or ""):match("^form:(.+):(%a+)(%d+):?(%a*)$")
     local beast = name and R.BEASTS[name]
-    local attack = beast and beast.attacks[tonumber(index)]
-    if not attack then return end
+    local attack = beast and (kind == "extra" and beast.extras or beast.attacks or {})[tonumber(index)]
+    if not attack or (kind ~= "attack" and kind ~= "extra") then return end
     local rider = (row == "alt" and attack.alt and attack.alt.rider) or attack.rider
     if not rider then return end
     rider = (rider:gsub("{(.-)}", ns.Mark))
     -- Without an attack roll the rider is the save itself, not something a hit adds.
-    return attack[2] and ("On a hit: " .. rider) or rider
+    return (kind == "attack" and attack[2]) and ("On a hit: " .. rider) or rider
 end
 
 local function Find(list, auto)
@@ -98,6 +100,14 @@ function ns.ApplyBeastForms(sheet)
                     ("%s: %s (%s)"):format(name, attack[1], attack.follow[1]), nil, attack.follow }
             end
         end
+        for index, extra in ipairs(beast.extras or {}) do
+            local key = ("%s%s:extra%d"):format(PREFIX, name, index)
+            if not sheet.dismissed[key] then
+                wanted[key] = true
+                local ability = Entry(sheet.abilities, key, ("%s: %s"):format(name, extra[1]))
+                ability.desc, ability.actions = ("%s form. %s%s"):format(name, extra[2], R.BeastLimitNote(extra)), {}
+            end
+        end
         for _, row in ipairs(rows) do
             local attack, key, alt, follow = row[1], row[2], row[4], row[5]
             if not sheet.dismissed[key] then
@@ -106,6 +116,7 @@ function ns.ApplyBeastForms(sheet)
                 local note, plus = attack[7] and (" " .. attack[7]) or "", attack.plus
                 if alt then note = note .. " " .. SITUATIONS[alt[1]] end
                 if follow then note = note .. " " .. follow[2] end
+                note = note .. R.BeastLimitNote(follow or attack)
                 -- The dice of this row: the usual ones, or the situation's in their place.
                 local count, sides, flat = attack[3], attack[4], attack[5]
                 if alt and not alt.extra then count, sides, flat = alt[2], alt[3], alt[4] end

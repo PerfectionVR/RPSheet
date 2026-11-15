@@ -47,7 +47,8 @@ B["Giant Centipede"] = { cr = 1 / 4, size = "Small", ac = 14, speed = 30, moves 
 B["Giant Frog"] = { cr = 1 / 4, size = "Medium", ac = 11, speed = 30, moves = "swimming 30 feet", str = 12, dex = 13, con = 11, senses = { Darkvision = 30 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 2, Stealth = 3 },
     note = N.amphibious .. " It long jumps 20 feet and high jumps 10 feet, even from a standstill.",
     attacks = { { "Bite", 3, 1, 6, 2, "piercing", "A Medium or smaller target is grappled (DC 11 to escape).", rider = "{Grappled} if Medium or smaller, escape DC 11" },
-        { "Swallow", false, 2, 4, 0, "acid", "You swallow a Small or smaller creature you are grappling: it is blinded and restrained inside, and you can't Bite. At the end of your next turn it takes the damage and, if it lives, is spat out prone." } } }
+        { "Swallow", false, 2, 4, 0, "acid", "You swallow a Small or smaller creature you are grappling: it is blinded and restrained inside, and you can't Bite. At the end of your next turn it takes the damage and, if it lives, is spat out prone.",
+            rider = "The swallowed creature is {Blinded} and {Restrained}; it takes this at the end of your next turn and, if it lives, is spat out {Prone}" } } }
 B["Giant Lizard"] = { cr = 1 / 4, size = "Large", ac = 12, speed = 40, moves = "climbing 40 feet, also on ceilings", str = 15, dex = 12, con = 13, saves = { DEX = 3 }, senses = { Darkvision = 60 }, skills = {},
     attacks = { { "Bite", 4, 1, 8, 2, "piercing" } } }
 B["Giant Venomous Snake"] = { cr = 1 / 4, size = "Medium", ac = 14, speed = 40, moves = "swimming 40 feet", str = 10, dex = 18, con = 13, senses = { Blindsight = 10 }, skills = { "Perception" }, bonus = { Perception = 2 },
@@ -71,7 +72,7 @@ B["Swarm of Rats"] = { cr = 1 / 4, size = "Medium", ac = 10, speed = 30, moves =
 B["Swarm of Ravens"] = { cr = 1 / 4, fly = true, size = "Medium", ac = 12, speed = 10, moves = "flying 50 feet", str = 6, dex = 14, con = 12, senses = {}, skills = { "Perception" }, bonus = { Perception = 5 },
     note = N.swarm,
     attacks = { { "Beaks", 4, 1, 6, 2, "piercing", "Only 1d4, with nothing added, while you are Bloodied.", alt = { "while Bloodied", 1, 4, 0 } },
-        { "Cacophony", false, 0, 4, 0, "no", "One creature in your space makes a DC 10 Wisdom save. If it fails it is deafened until the start of your next turn, with disadvantage on ability checks and attacks while it is. " .. N.recharge, rider = "DC 10 Wisdom save for one creature in the swarm. On a failure it is {Deafened} until the start of your next turn, with disadvantage on ability checks and attacks" } } }
+        { "Cacophony", false, 0, 4, 0, "no", "One creature in your space makes a DC 10 Wisdom save. If it fails it is deafened until the start of your next turn, with disadvantage on ability checks and attacks while it is.", recharge = 6, rider = "DC 10 Wisdom save for one creature in the swarm. On a failure it is {Deafened} until the start of your next turn, with disadvantage on ability checks and attacks" } } }
 B["Wolf"] = { cr = 1 / 4, size = "Medium", ac = 12, speed = 40, str = 14, dex = 15, con = 12, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 5, Stealth = 4 },
     note = N.pack,
     attacks = { { "Bite", 4, 1, 6, 2, "piercing", "A Medium or smaller target is knocked prone.", rider = "{Prone} if Medium or smaller" } } }

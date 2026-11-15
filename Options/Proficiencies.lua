@@ -43,6 +43,17 @@ for i, stat in ipairs(R.STATS) do
     }
 end
 
+-- The questions the sheet asks with a roll (Actions/RollQuestions.lua). Their menus
+-- can stop them for this character; here they are switched back on.
+args.askHeader = { type = "header", order = 20, name = "Questions with a roll" }
+for i, question in ipairs(ns.ROLL_QUESTIONS) do
+    args["ask" .. question.key] = {
+        type = "toggle", order = 20 + i / 10, width = "full", name = question.setting, desc = question.help,
+        get = function() return not RPSheet:RollQuiet(question.key) end,
+        set = function(_, value) RPSheet:SetRollQuiet(question.key, not value) end,
+    }
+end
+
 for i, skill in ipairs(R.SKILLS) do
     args["skill" .. i] = {
         type = "select", order = 30 + i, name = ("%s (%s)"):format(skill.name, skill.stat),

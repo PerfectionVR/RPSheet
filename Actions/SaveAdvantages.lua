@@ -1,43 +1,33 @@
--- Asking what a saving throw is against. Some advantages only count against one thing
--- (being charmed, a spell), which the sheet can't know. So when a save is rolled by a
--- character that has such an advantage, a small menu lists what it has and rolls with
--- advantage when the player picks one. Rolling with advantage already skips the menu.
+-- The one question about a saving throw that the sheet rolls by itself: the save to
+-- keep a spell after taking damage, for a character with an advantage that only
+-- counts for some spells (one that was extended). What any other saving throw is
+-- against is asked in Actions/RollQuestions.lua.
 local _, ns = ...
 local RPSheet = ns.addon
 
--- Opens the menu for the save and returns true; false when there is nothing to ask,
--- and the roll goes on as it is (RPSheet:RollCheck in Actions/Dice.lua).
-function RPSheet:AskSaveAbout(label, mod, mode)
-    if mode == "ADV" then return false end
-    local _, asked = self:SaveAdvantages(label)
-    if #asked == 0 or self:ResolveMode(label, mode) == "ADV" then return false end
-    -- One line for each thing a save can be against, with everything that gives it.
-    local order, sources = {}, {}
-    for _, entry in ipairs(asked) do
-        if not sources[entry.about] then
-            sources[entry.about] = {}
-            order[#order + 1] = entry.about
-        end
-        table.insert(sources[entry.about], entry.from)
-    end
+-- Opens the menu for the save to keep concentrating and returns true; false when
+-- there is nothing to ask, and the save is rolled as it is (RPSheet:RollConcentration).
+function RPSheet:AskConcentration(damage)
+    local choices = self:ConcentrationChoices()
+    if #choices == 0 then return false end
+    -- Advantage that is there anyway, or that something would cancel out: nothing to ask.
+    local plain = self:ResolveMode("CON save", self:ConcentrationAdvantage() and "ADV" or nil)
+    if plain == self:ResolveMode("CON save", "ADV") then return false end
     if not (MenuUtil and MenuUtil.CreateContextMenu) then
-        local parts = {}
-        for _, about in ipairs(order) do parts[#parts + 1] = ("%s (%s)"):format(about, table.concat(sources[about], ", ")) end
-        self:Print(("You have advantage on this save if it is against %s: Shift-click to roll it that way."):format(table.concat(parts, "; ")))
+        self:Print(("The save to keep your spell was rolled without advantage: you have it for %s (%s)."):format(choices[1].about, choices[1].from))
         return false
     end
     MenuUtil.CreateContextMenu(UIParent, function(_, root)
-        root:CreateTitle(("%s: what is it against?"):format(label))
-        for _, about in ipairs(order) do
-            local from = table.concat(sources[about], ", ")
-            local button = root:CreateButton(("Against %s |cff909090(advantage)|r"):format(about),
-                function() self:RollCheck(label, mod, mode, about) end)
+        root:CreateTitle(("Took %d damage: which spell are you holding?"):format(damage))
+        for _, choice in ipairs(choices) do
+            local text = choice.about:sub(1, 1):upper() .. choice.about:sub(2)
+            local button = root:CreateButton(("%s |cff909090(advantage)|r"):format(text), function() self:RollConcentration(damage, true) end)
             button:SetTooltip(function(tooltip)
                 GameTooltip_SetTitle(tooltip, "Advantage")
-                GameTooltip_AddNormalLine(tooltip, ("From %s. Disadvantage from anything else cancels it out."):format(from), true)
+                GameTooltip_AddNormalLine(tooltip, ("From %s, on the save to keep that spell."):format(choice.from), true)
             end)
         end
-        root:CreateButton("Something else", function() self:RollCheck(label, mod, mode, false) end)
+        root:CreateButton("Another spell", function() self:RollConcentration(damage, false) end)
     end)
     return true
 end

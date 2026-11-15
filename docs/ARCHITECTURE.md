@@ -245,10 +245,15 @@ click on a row                              UI/Rows.lua: ClickLabel -> onClick(b
                                             else RPSheet.rollMode (the "Next roll" row)
   RPSheet:RollCheck(label, mod, mode)       or :Attack, :CastSpell, :UseAbility, ...
     RPSheet:AutoFail(label)                 a save that fails without a roll
-    RPSheet:AskSaveAbout(...)               Actions/SaveAdvantages.lua: may open a menu
-    RPSheet:ResolveMode(label, mode)        Sheet/RollModes.lua: adds advantage and
-                                            disadvantage from features, conditions, armor;
-                                            both together cancel out
+    RPSheet:AskRoll(label, mode, also, go)  Actions/RollQuestions.lua: may open a menu
+                                            (what a save is against, whom a Grappled
+                                            character attacks, ...) and calls go(answers);
+                                            asked before anything is spent
+    RPSheet:ResolveMode(label, mode, also,  Sheet/RollModes.lua: adds advantage and
+                        nil, answers)       disadvantage from features, conditions, armor
+                                            and the answers; both together cancel out
+    RPSheet:RollTest(mode, callback)        Actions/NextRollBonus.lua: RollD20, then the
+                                            die or number of the "Next roll" bonus rows
     RPSheet:RollD20(mode, callback)         two dice for ADV / DIS; uses up "Next roll"
       RPSheet:Roll(sides, callback)         "Self only": math.random, callback at once
         RandomRoll(1, sides)                otherwise the game's /roll, and `pending` is set
