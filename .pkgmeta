@@ -42,3 +42,4 @@ manual-changelog:
 ignore:
   - .github
   - .gitignore
+  - tests

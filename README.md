@@ -129,12 +129,20 @@ Each file does one job. `RPSheet.toc` lists them in load order.
 | `Data/` | Rules data, one file each: core rules, classes, species, backgrounds, effects, the example character |
 | `Sheet/` | The character sheet: storage per profile, conversion of old sheets, derived numbers, trackers (HP, resources, slots), summary |
 | `Actions/` | What the character does: announcing, dice, weapon attacks, abilities |
+| `tests/` | Regression tests that run the code outside the game (not shipped) |
 | `UI/` | The sheet window: themes, window and bar widgets, rows, window lifecycle, contents, minimap icon |
 | `Options/` | Settings and character editor, one file per tab, assembled by `Root.lua` |
 | `Wizard/` | Character creation: grants, the draft, the pages, the dialog |
 | `Integrations/` | Total RP 3 tooltip section and syncing with other players |
 
 To add a theme, edit `UI/Themes.lua`. To change rules numbers, edit the files in `Data/`.
+
+## Tests
+
+`tests/` runs the addon's code outside the game, in a fake game environment: every
+file loads, every class is built and levelled from 1 to 20, and every row, button and
+settings option is clicked. See [tests/README.md](tests/README.md) for what it needs
+and what it can't check (nothing is drawn). Release zips leave the folder out.
 
 ## Not built yet
 

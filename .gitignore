@@ -5,3 +5,7 @@ Libs/*
 
 # Packager output
 .release/
+
+# Tests: this machine's paths and copied libraries (see tests/README.md)
+tests/local.cfg
+tests/.cache/
