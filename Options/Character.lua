@@ -153,7 +153,9 @@ local function Summary()
         lines[#lines + 1] = Opt.RED .. warning .. "|r"
     end
     if ns.OpenClassChoices(sheet) then
-        lines[#lines + 1] = ("%sYour class or feats have choices to make: use \"Class and feat choices\" below.|r"):format(Opt.RED)
+        -- The button is named after the maneuvers for a Battle Master (see classChoices below).
+        lines[#lines + 1] = ("%sYour class or feats have choices to make: use \"%s\" below.|r"):format(Opt.RED,
+            ns.SheetManeuverLimit(sheet) > 0 and "Maneuvers" or "Class and feat choices")
     end
     local pending = Levels.Pending(sheet)
     if #pending > 0 and ns.IsMulticlass(sheet) then
