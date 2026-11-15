@@ -48,11 +48,15 @@ function ns.ApplyLineageSpells(sheet)
             end
         end
     end
-    for key, spell in pairs(current) do
-        sheet.abilities[#sheet.abilities + 1] = {
-            name = spell.name, auto = key,
-            desc = ("Lineage spell, gained at level %d. Cast it once per long rest without a spell slot; you can also cast it with your slots."):format(spell.level),
-            actions = { ns.FeatureKit.Spend(spell.name) },
-        }
+    -- In the order the lineage gives them, so the level 3 spell comes before the level 5 one.
+    for _, spell in ipairs(Spells(sheet)) do
+        local key = PREFIX .. spell.name
+        if current[key] then
+            sheet.abilities[#sheet.abilities + 1] = {
+                name = spell.name, auto = key,
+                desc = ("Lineage spell, gained at level %d. Cast it once per long rest without a spell slot; you can also cast it with your slots."):format(spell.level),
+                actions = { ns.FeatureKit.Spend(spell.name) },
+            }
+        end
     end
 end

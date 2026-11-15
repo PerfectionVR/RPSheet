@@ -140,6 +140,8 @@ function ns.SheetWith(sheet, key, level, subclass)
         for other, entry in pairs(type(sheet.classes) == "table" and sheet.classes or NONE) do classes[other] = entry end
         classes[key] = {
             level = level, subclass = subclass or old.subclass or "", spec = old.spec or "", skill = old.skill or "",
+            -- The class keeps the Fighting Styles it picked (Sheet/FightingStyles.lua).
+            fightingStyle = old.fightingStyle, fightingStyle2 = old.fightingStyle2,
         }
     end
     return setmetatable({}, {

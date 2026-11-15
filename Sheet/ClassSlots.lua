@@ -30,6 +30,10 @@ end
 -- True if the character has reached that level of that class.
 function ns.HasSlot(sheet, slot)
     local key, classLevel = ns.SlotClass(sheet, slot)
+    -- The first class's levels are only ever the plain numbers: a number of the other
+    -- kind that names it is left over from when it was a later class, and would count
+    -- that level's choice a second time.
+    if slot >= STEP and key == sheet.class then return false end
     return key ~= nil and classLevel >= 1 and classLevel <= ns.ClassLevel(sheet, key)
 end
 
