@@ -167,6 +167,11 @@ UI\Tab.lua
 UI\TermLabel.lua
 UI\Slider.lua
 UI\DialogBacking.lua
+UI\DialogSkin.lua
+UI\DialogSkinTools.lua
+UI\DialogSkinButton.lua
+UI\DialogSkinFrame.lua
+UI\DialogSkinWidgets.lua
 UI\Rows.lua
 UI\DefenseRows.lua
 UI\DamageMenu.lua
