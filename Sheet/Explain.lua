@@ -267,12 +267,10 @@ function RPSheet:ExplainWeapon(weapon)
     AddBonuses(self, damage, "DAMAGE")
     if self:WeaponStat(weapon) == "STR" then AddBonuses(self, damage, "STRDAMAGE") end
     -- Fighting Styles that fit this weapon (see RPSheet:WeaponStyle).
-    local seen = {}
-    for slot, field in ipairs(ns.STYLE_FIELDS) do
-        local name = sheet[field]
-        local style = R.FIGHTING_STYLES[name]
-        if style and not seen[name] and ns.HasStyleSlot(sheet, slot) and ns.FitsStyle(weapon, style) then
-            seen[name] = true
+    -- Every class's style counts, none twice (ns.StylesHeld).
+    for _, held in ipairs(ns.StylesHeld(sheet)) do
+        local name, style = held.name, held.style
+        if ns.FitsStyle(weapon, style) then
             Add(hit, name, style.attack)
             Add(damage, name, style.damage)
             if style.minDie then notes[#notes + 1] = ("%s: a damage die below %d counts as %d"):format(name, style.minDie, style.minDie) end
