@@ -1,0 +1,35 @@
+# (The book's Gnome has one fixed Gnomish Lineage, so the core Forest and Rock Gnome are not lineages here.)
+# Species of the setting's book (source WoW; "WoW<XPHB" = the book reuses the core species),
+# reduced from data/races.json. Facts only. Lineages are the species' _versions.
+species|Dracthyr|WoW|size=M|speed=walk=30|dv=60|traits=Darkvision,Gliding Wings,Natural Weaponry,Visage,Draconic Flight|resist=|skills=|cantrip=|spell3=|spell5=
+species|Draenei|WoW|size=M|speed=walk=30|dv=60|traits=Darkvision,Eredar Lineage,Heroic Presence|resist=choose:necrotic/poison/radiant/fire|skills=|cantrip=|spell3=|spell5=
+lineage|Draenei|Draenei|dv=|resist=necrotic|skills=|cantrip=spare the dying|spell3=healing word|spell5=prayer of healing
+lineage|Draenei|Krokul|dv=|resist=poison|skills=|cantrip=poison spray|spell3=ray of sickness|spell5=hold person
+lineage|Draenei|Lightforged|dv=|resist=radiant|skills=|cantrip=sacred flame|spell3=guiding bolt|spell5=aid
+lineage|Draenei|Man'ari|dv=|resist=fire|skills=|cantrip=fire bolt|spell3=hellish rebuke|spell5=darkness
+species|Dwarf|WoW<XPHB|size=M|speed=walk=30|dv=120|traits=Darkvision,Dwarven Resilience,Dwarven Toughness,Stonecunning|resist=poison|skills=|cantrip=|spell3=|spell5=
+species|Earthen|WoW|size=M|speed=walk=30|dv=120|traits=Azerite Surge,Darkvision,Earthen Resilience,Ingest Minerals,Quiet Contemplation|resist=poison|skills=|cantrip=|spell3=|spell5=
+species|Elf|WoW<XPHB|size=M|speed=walk=30|dv=60|traits=Darkvision,Elven Lineage,Fey Ancestry,Keen Senses,Trance|resist=|skills=choose:insight/perception/survival|cantrip=|spell3=|spell5=
+lineage|Elf|Blood Elf|dv=|resist=|skills=|cantrip=choose:wizard|spell3=detect magic|spell5=arcane vigor
+lineage|Elf|High Elf|dv=|resist=|skills=|cantrip=choose:wizard|spell3=detect magic|spell5=misty step
+lineage|Elf|Night Elf|dv=|resist=|skills=stealth|cantrip=|spell3=longstrider|spell5=pass without trace
+lineage|Elf|Nightborne|dv=120|resist=|skills=|cantrip=arcane pulse|spell3=faerie fire|spell5=darkness
+lineage|Elf|Void Elf|dv=120|resist=|skills=|cantrip=mind sliver|spell3=entropic embrace|spell5=misty step
+species|Forsaken|WoW|size=S,M|speed=walk=30|dv=60|traits=Darkvision,Deathly Endurance,Everlasting,Touch of the Grave,Will of the Forsaken|resist=necrotic|skills=|cantrip=|spell3=|spell5=
+species|Gnome|WoW<XPHB|size=S|speed=walk=30|dv=60|traits=Darkvision,Gnomish Cunning,Gnomish Lineage|resist=|skills=|cantrip=mending/prestidigitation|spell3=|spell5=
+species|Goblin|WoW|size=S|speed=walk=30|dv=60|traits=Darkvision,Fey Ancestry,Fury of the Small,Nimble Escape|resist=|skills=|cantrip=|spell3=|spell5=
+species|Haranir|WoW|size=M|speed=walk=30|dv=120|traits=Darkvision,Gift of the World Tree,Haranir Magic|resist=|skills=nature,survival|cantrip=druidcraft/thorn whip|spell3=entangle|spell5=spike growth
+species|Human|WoW<XPHB|size=S,M|speed=walk=30|dv=0|traits=Resourceful,Skillful,Versatile|resist=|skills=any:1|cantrip=|spell3=|spell5=
+species|Mechagnome|WoW|size=S|speed=walk=30|dv=0|traits=Built for Success,Emergency Fail-Safe,Mechanical Nature,Sentry's Rest,Specialized Design|resist=poison|skills=|cantrip=|spell3=|spell5=
+species|Orc|WoW<XPHB|size=M|speed=walk=30|dv=120|traits=Adrenaline Rush,Darkvision,Relentless Endurance|resist=|skills=|cantrip=|spell3=|spell5=
+species|Pandaren|WoW|size=M|speed=walk=30|dv=60|traits=Bouncy,Darkvision,Inner Peace,Quaking Palm|resist=|skills=|cantrip=|spell3=|spell5=
+species|Tauren|WoW|size=M|speed=walk=30|dv=0|traits=Horns,Goring Rush,Hammering Horns,Tauren Lineage|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Tauren|Highmountain Tauren|dv=|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Tauren|Mulgore Tauren|dv=|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Tauren|Taunka|dv=|resist=cold|skills=|cantrip=|spell3=|spell5=
+species|Troll|WoW|size=M|speed=walk=30|dv=60|traits=Bloodied Frenzy,Darkvision,Troll Healing,Troll Lineage|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Troll|Amani Troll|dv=|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Troll|Darkspear Troll|dv=|resist=|skills=|cantrip=|spell3=|spell5=
+lineage|Troll|Zandalari Troll|dv=|resist=|skills=|cantrip=|spell3=|spell5=
+species|Vulpera|WoW|size=S|speed=walk=30|dv=60|traits=Darkvision,Fire Resistance,Nose for Trouble,Vulpera Nimbleness|resist=fire|skills=|cantrip=|spell3=|spell5=
+species|Worgen|WoW|size=M|speed=walk=30|dv=60|traits=Darkvision,Darkflight,Instinctual Shift|resist=|skills=|cantrip=|spell3=|spell5=

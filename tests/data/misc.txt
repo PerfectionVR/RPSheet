@@ -1,0 +1,149 @@
+# Smaller lists. Conditions: data/conditionsdiseases.json (XPHB; names only).
+# Class gear: data/class/class-*.json (XPHB), startingEquipment; the last option is coins alone.
+# Everything else: the setting's book, data/book/book-wow.json (chapters 2 to 4), headings and
+# table rows only. mountrow = the "Mounts for Purchase" table; mountas = the creature an item
+# of the book says the mount is, with that creature's speeds, size and Strength from the
+# bestiaries; powered = the "Powered Vehicles" table.
+condition|Blinded
+condition|Charmed
+condition|Deafened
+condition|Exhaustion
+condition|Frightened
+condition|Grappled
+condition|Incapacitated
+condition|Invisible
+condition|Paralyzed
+condition|Petrified
+condition|Poisoned
+condition|Prone
+condition|Restrained
+condition|Stunned
+condition|Unconscious
+status|Bloodied
+status|Concentration
+status|Surprised
+tier|Friendly|3
+tier|Honored|10
+tier|Revered|25
+tier|Exalted|50
+side|Alliance|HR
+side|Horde|HR
+faction|ALLIANCE|Darnassus|FHRE
+faction|ALLIANCE|Exodar|FHRE
+faction|ALLIANCE|Gilneas|FHRE
+faction|ALLIANCE|Gnomeregan|FHRE
+faction|ALLIANCE|Ironforge|FHRE
+faction|ALLIANCE|Obsidian Warders|FHRE
+faction|ALLIANCE|Stormwind|FHRE
+faction|ALLIANCE|Tushui|FHRE
+faction|HORDE|Bilgewater Cartel|FHRE
+faction|HORDE|Dark Talons|FHRE
+faction|HORDE|Darkspear Tribe|FHRE
+faction|HORDE|Huojin|FHRE
+faction|HORDE|Orgrimmar|FHRE
+faction|HORDE|Silvermoon City|FHRE
+faction|HORDE|Thunder Bluff|FHRE
+faction|HORDE|Undercity|FHRE
+faction|OTHER|Argent Dawn|FHRE
+faction|OTHER|Cenarion Circle|FHRE
+faction|OTHER|Earthen Ring|FHRE
+faction|OTHER|Explorers' League/Reliquary|FHRE
+faction|OTHER|Kirin Tor|FHRE
+faction|OTHER|Steamwheedle Cartel|FHRE
+faction|OTHER|Valdrakken Accord|FHRE
+language|ALLIANCE|Common
+language|ALLIANCE|Common Sign Language
+language|ALLIANCE|Darnassian
+language|ALLIANCE|Draconic
+language|ALLIANCE|Draenei
+language|ALLIANCE|Dwarven
+language|ALLIANCE|Gnomish
+language|ALLIANCE|Hara'ni
+language|ALLIANCE|Pandaren
+language|ALLIANCE|Thalassian
+language|HORDE|Orcish
+language|HORDE|Orcish Sign Language
+language|HORDE|Draconic
+language|HORDE|Goblin
+language|HORDE|Forsaken
+language|HORDE|Hara'ni
+language|HORDE|Pandaren
+language|HORDE|Shalassian
+language|HORDE|Taur-ahe
+language|HORDE|Thalassian
+language|HORDE|Vulpera
+language|HORDE|Zandali
+language|RARE|Cyphers of the First Ones
+language|RARE|Druidic
+language|RARE|Eredun
+language|RARE|Furbolg
+language|RARE|Kalimag
+language|RARE|Nathrezim
+language|RARE|Nazja
+language|RARE|Nerglish
+language|RARE|Nerubian
+language|RARE|Ogre
+language|RARE|Qiraji
+language|RARE|Shath'Yar
+language|RARE|Thieves' Cant
+language|RARE|Titan
+language|RARE|Vrykul
+proflevel|2|Apprentice|Common
+proflevel|3|Journeyman|Uncommon
+proflevel|4|Expert|Rare
+proflevel|5|Artisan|Very Rare
+proflevel|6|Master|Legendary
+mountrow|Camel|need=|cap=450|gp=50
+mountrow|Dire Wolf|need=10 Orgrimmar|cap=510|gp=750
+mountrow|Draft Horse|need=|cap=540|gp=50
+mountrow|Elekk|need=10 Exodar|cap=510|gp=400
+mountrow|Giant Goat|need=10 Ironforge|cap=510|gp=400
+mountrow|Giant Hyena|need=10 Steamwheedle Cartel|cap=480|gp=750
+mountrow|Giant Seahorse|need=|cap=450|gp=1000
+mountrow|Gryphon|need=25 ALLIANCE|cap=540|gp=2000
+mountrow|Hawkstrider|need=10 Silvermoon City|cap=420|gp=150
+mountrow|Kodo|need=10 Thunder Bluff|cap=450|gp=100
+mountrow|Mechanostrider|need=10 Gnomeregan|cap=420|gp=450
+mountrow|Nightsaber|need=10 Darnassus|cap=510|gp=750
+mountrow|Pandarian Dragon Turtle|need=10 Huojin,Tushui|cap=480|gp=500
+mountrow|Raptor|need=10 Darkspear Tribe|cap=570|gp=1000
+mountrow|Riding Horse|need=|cap=480|gp=75
+mountrow|Talbuk|need=|cap=480|gp=150
+mountrow|Warhorse|need=10 Stormwind|cap=540|gp=400
+mountrow|Warhorse Skeleton|need=10 Undercity|cap=540|gp=500
+mountrow|Wind Rider|need=25 HORDE|cap=450|gp=2000
+mountrow|Zhevra|need=|cap=480|gp=200
+mountas|Cenarion War Hippogryph|as=Hippogriff|spd=walk 40,fly 60|sz=L|str=17
+mountas|Dire Wolf|as=Dire Wolf|spd=walk 50|sz=L|str=17
+mountas|Elekk|as=Giant Goat|spd=walk 40,climb 30|sz=L|str=17
+mountas|Giant Goat|as=Giant Goat|spd=walk 40,climb 30|sz=L|str=17
+mountas|Giant Hyena|as=Giant Hyena|spd=walk 50|sz=L|str=16
+mountas|Giant Seahorse|as=Giant Seahorse|spd=walk 5,swim 40|sz=L|str=15
+mountas|Gryphon|as=Griffon|spd=walk 30,fly 80|sz=L|str=18
+mountas|Hawkstrider|as=Axe Beak|spd=walk 50|sz=L|str=14
+mountas|Kodo|as=Giant Lizard|spd=walk 40,climb 40|sz=L|str=15
+mountas|Mechanostrider|as=Mechanostrider|spd=walk 60|sz=L|str=14
+mountas|Nightsaber|as=Tiger|spd=walk 40|sz=L|str=17
+mountas|Pandarian Dragon Turtle|as=Pandarian Dragon Turtle|spd=walk 30,swim 60|sz=L|str=16
+mountas|Raptor|as=Allosaurus|spd=walk 60|sz=L|str=19
+mountas|Talbuk|as=Elk|spd=walk 50|sz=L|str=16
+mountas|Warhorse|as=Warhorse|spd=walk 60|sz=L|str=18
+mountas|Warhorse Skeleton|as=Warhorse Skeleton|spd=walk 60|sz=L|str=18
+mountas|Wind Rider|as=Giant Bat|spd=walk 10,fly 60|sz=L|str=15
+mountas|Zhevra|as=Elk|spd=walk 50|sz=L|str=16
+powered|Flying Machine|need=|mph=4|crew=1|pass=0|cargo=300|ac=19|hp=27|gp=
+powered|Goblin Trike|need=10 any goblin cartel|mph=3|crew=1|pass=0|cargo=600|ac=19|hp=27|gp=400
+powered|Mechano-Hog|need=10 HORDE|mph=4|crew=1|pass=1|cargo=800|ac=19|hp=27|gp=4000
+powered|Mekgineer's Chopper|need=10 ALLIANCE|mph=4|crew=1|pass=1|cargo=800|ac=19|hp=27|gp=4000
+classgear|Barbarian|A=greataxe;handaxe*4;explorer's pack;cp:1500|B=cp:7500
+classgear|Bard|A=leather armor;dagger*2;type:instrumentMusical;entertainer's pack;cp:1900|B=cp:9000
+classgear|Cleric|A=chain shirt;shield;mace;holy symbol;priest's pack;cp:700|B=cp:11000
+classgear|Druid|A=leather armor;shield;sickle;druidic focus;explorer's pack;herbalism kit;cp:900|B=cp:5000
+classgear|Fighter|A=chain mail;greatsword;flail;javelin*8;dungeoneer's pack;cp:400|B=studded leather armor;scimitar;shortsword;longbow;arrows (20);quiver;dungeoneer's pack;cp:1100|C=cp:15500
+classgear|Monk|A=spear;dagger*5;type:instrumentMusical/toolArtisan;explorer's pack;cp:1100|B=cp:5000
+classgear|Paladin|A=chain mail;shield;longsword;javelin*6;holy symbol;priest's pack;cp:900|B=cp:15000
+classgear|Ranger|A=studded leather armor;scimitar;shortsword;longbow;arrows (20);quiver;sprig of mistletoe;explorer's pack;cp:700|B=cp:15000
+classgear|Rogue|A=leather armor;dagger*2;shortsword;shortbow;arrows (20);quiver;thieves' tools;burglar's pack;cp:800|B=cp:10000
+classgear|Sorcerer|A=spear;dagger*2;crystal;dungeoneer's pack;cp:2800|B=cp:5000
+classgear|Warlock|A=leather armor;sickle;dagger*2;orb;book;scholar's pack;cp:1500|B=cp:10000
+classgear|Wizard|A=dagger*2;quarterstaff;robe;spellbook;scholar's pack;cp:500|B=cp:5500

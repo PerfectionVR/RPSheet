@@ -1,0 +1,51 @@
+# Beasts of challenge rating 6 or lower (XMM, WoW), reduced from data/bestiary/bestiary-xmm.json
+# and bestiary-wow.json. Empty facts are left out. abil = Str,Dex,Con,Int,Wis,Cha.
+# atk = actions, ba = bonus actions, ";" between them: name:m+5 (melee, to hit):dice type:r5
+# (reach) or rg25/50 (range):more damage on top or in a situation. "save dex 13" = no attack
+# roll but a saving throw; "-" = neither. (R5) = recharges on 5-6. Part 1 of 2.
+beast|Allosaurus|XMM|cr=2|sz=L|ac=13|hp=51|spd=walk 60|abil=19,13,17,2,12,5|sk=perception+5|atk=Bite:m+6:2d10+4 piercing:r5;Claws:m+6:1d8+4 slashing:r5
+beast|Ankylosaurus|XMM|cr=3|sz=H|ac=15|hp=68|spd=walk 30|abil=19,11,15,2,12,5|sv=str+6|multi=two Tail attacks.|atk=Tail:m+6:1d10+4 bludgeoning:r10
+beast|Ape|XMM|cr=1/2|sz=M|ac=12|hp=19|spd=walk 30,climb 30|abil=16,14,14,6,12,7|sk=athletics+5,perception+3|multi=two Fist attacks.|atk=Fist:m+5:1d4+3 bludgeoning:r5;Rock (R6):r+5:2d6+3 bludgeoning:rg25/50
+beast|Archelon|XMM|cr=4|sz=H|ac=17|hp=90|spd=walk 20,swim 80|abil=18,16,13,4,14,6|sk=stealth+5|tr=Amphibious|multi=two Bite attacks.|atk=Bite:m+6:3d6+4 piercing:r5
+beast|Baboon|XMM|cr=0|sz=S|ac=12|hp=3|spd=walk 30,climb 30|abil=8,14,11,4,12,6|tr=Pack Tactics|atk=Bite:m+1:1d4-1 piercing:r5
+beast|Badger|XMM|cr=0|sz=T|ac=11|hp=5|spd=walk 20,burrow 5|abil=10,11,16,2,12,5|sk=perception+3|sn=darkvision 30|atk=Bite:m+2:1 piercing:r5
+beast|Bat|XMM|cr=0|sz=T|ac=12|hp=1|spd=walk 5,fly 30|abil=2,15,8,2,12,4|sn=blindsight 60|atk=Bite:m+4:1 piercing:r5
+beast|Black Bear|XMM|cr=1/2|sz=M|ac=11|hp=19|spd=walk 30,climb 30,swim 30|abil=15,12,14,2,12,7|sk=perception+5|sn=darkvision 60|multi=two Rend attacks.|atk=Rend:m+4:1d6+2 slashing:r5
+beast|Blood Hawk|XMM|cr=1/8|sz=S|ac=12|hp=7|spd=walk 10,fly 60|abil=6,14,10,3,14,5|sk=perception+6|tr=Pack Tactics|atk=Beak:m+4:1d4+2 piercing:r5:1d8+2 piercing
+beast|Boar|XMM|cr=1/4|sz=M|ac=11|hp=13|spd=walk 40|abil=13,11,14,2,9,5|tr=Bloodied Fury|atk=Gore:m+3:1d6+1 piercing:r5:1d6 piercing
+beast|Brown Bear|XMM|cr=1|sz=L|ac=11|hp=22|spd=walk 40,climb 30|abil=17,12,15,2,13,7|sk=perception+3|sn=darkvision 60|multi=one Bite attack and one Claw attack.|atk=Bite:m+5:1d8+3 piercing:r5;Claw:m+5:1d4+3 slashing:r5
+beast|Camel|XMM|cr=1/8|sz=L|ac=10|hp=17|spd=walk 50|abil=15,8,17,2,11,5|sv=con+5|sn=darkvision 60|atk=Bite:m+4:1d4+2 bludgeoning:r5
+beast|Cat|XMM|cr=0|sz=T|ac=12|hp=2|spd=walk 40,climb 40|abil=3,15,10,3,12,7|sk=perception+3,stealth+4|sv=dex+4|sn=darkvision 60|tr=Jumper|atk=Scratch:m+4:1 slashing:r5
+beast|Constrictor Snake|XMM|cr=1/4|sz=L|ac=13|hp=13|spd=walk 30,swim 30|abil=15,14,12,1,10,3|sk=perception+2,stealth+4|sn=blindsight 10|atk=Bite:m+4:1d8+2 piercing:r5;Constrict:save str 12:3d4:bludgeoning
+beast|Crab|XMM|cr=0|sz=T|ac=11|hp=3|spd=walk 20,swim 20|abil=6,11,12,1,8,2|sk=stealth+2|sn=blindsight 30|tr=Amphibious|atk=Claw:m+2:1 bludgeoning:r5
+beast|Crocodile|XMM|cr=1/2|sz=L|ac=12|hp=13|spd=walk 20,swim 30|abil=15,10,13,2,10,5|sk=stealth+2|sv=con+3|tr=Hold Breath|atk=Bite:m+4:1d8+2 piercing:r5
+beast|Deer|XMM|cr=0|sz=M|ac=13|hp=4|spd=walk 50|abil=11,16,11,2,14,5|sk=perception+4|sn=darkvision 60|tr=Agile|atk=Ram:m+2:1d4 bludgeoning:r5
+beast|Dire Wolf|XMM|cr=1|sz=L|ac=14|hp=22|spd=walk 50|abil=17,15,15,3,12,7|sk=perception+5,stealth+4|sn=darkvision 60|tr=Pack Tactics|atk=Bite:m+5:1d10+3 piercing:r5
+beast|Draft Horse|XMM|cr=1/4|sz=L|ac=10|hp=15|spd=walk 40|abil=18,10,15,2,11,7|atk=Hooves:m+6:1d4+4 bludgeoning:r5
+beast|Eagle|XMM|cr=0|sz=S|ac=12|hp=4|spd=walk 10,fly 60|abil=6,15,12,2,14,7|sk=perception+6|atk=Talons:m+4:1d4+2 slashing
+beast|Elephant|XMM|cr=4|sz=H|ac=12|hp=76|spd=walk 40|abil=22,9,17,3,11,6|multi=two Gore attacks.|atk=Gore:m+8:2d8+6 piercing:r5|ba=Trample:save dex 16:2d10+6:bludgeoning
+beast|Elk|XMM|cr=1/4|sz=L|ac=10|hp=11|spd=walk 50|abil=16,10,11,2,10,6|sk=perception+2|sn=darkvision 60|atk=Ram:m+5:1d6+3 bludgeoning:r5:1d6 bludgeoning
+beast|Frog|XMM|cr=0|sz=T|ac=11|hp=1|spd=walk 20,swim 20|abil=1,13,8,1,8,3|sk=perception+1,stealth+3|sn=darkvision 30|tr=Amphibious,Standing Leap|atk=Bite:m+3:1 piercing:r5
+beast|Giant Badger|XMM|cr=1/4|sz=M|ac=13|hp=15|spd=walk 30,burrow 10|abil=13,10,17,2,12,5|sk=perception+3|sn=darkvision 60|atk=Bite:m+3:2d4+1 piercing:r5
+beast|Giant Bat|XMM|cr=1/4|sz=L|ac=13|hp=22|spd=walk 10,fly 60|abil=15,16,11,2,12,6|sn=blindsight 120|atk=Bite:m+5:1d6+3 piercing:r5
+beast|Giant Boar|XMM|cr=2|sz=L|ac=13|hp=42|spd=walk 40|abil=17,10,16,2,7,5|sv=str+5|tr=Bloodied Fury|atk=Gore:m+5:2d6+3 piercing:r5:2d6 piercing
+beast|Giant Centipede|XMM|cr=1/4|sz=S|ac=14|hp=9|spd=walk 30,climb 30|abil=5,14,12,1,7,3|sn=blindsight 30|atk=Bite:m+4:1d4+2 piercing:r5
+beast|Giant Constrictor Snake|XMM|cr=2|sz=H|ac=12|hp=60|spd=walk 30,swim 30|abil=19,14,12,1,10,3|sk=perception+2|sn=blindsight 10|multi=one Bite attack and uses Constrict.|atk=Bite:m+6:2d6+4 piercing:r10;Constrict:save str 14:2d8+4:bludgeoning
+beast|Giant Crab|XMM|cr=1/8|sz=M|ac=15|hp=13|spd=walk 30,swim 30|abil=13,13,11,1,9,3|sk=stealth+3|sn=blindsight 30|tr=Amphibious|atk=Claw:m+3:1d6+1 bludgeoning:r5
+beast|Giant Crocodile|XMM|cr=5|sz=H|ac=14|hp=85|spd=walk 30,swim 50|abil=21,9,17,2,10,7|sk=stealth+5|tr=Hold Breath|multi=one Bite attack and one Tail attack.|atk=Bite:m+8:3d10+5 piercing:r5;Tail:m+8:3d8+5 bludgeoning:r10
+beast|Giant Fire Beetle|XMM|cr=0|sz=S|ac=13|hp=4|spd=walk 30,climb 30|abil=8,10,12,1,7,3|sn=blindsight 30|tr=Illumination|atk=Bite:m+1:1 fire:r5
+beast|Giant Frog|XMM|cr=1/4|sz=M|ac=11|hp=18|spd=walk 30,swim 30|abil=12,13,11,2,10,3|sk=perception+2,stealth+3|sn=darkvision 30|tr=Amphibious,Standing Leap|atk=Bite:m+3:1d6+2 piercing:r5;Swallow:-:2d4:acid
+beast|Giant Goat|XMM|cr=1/2|sz=L|ac=11|hp=19|spd=walk 40,climb 30|abil=17,13,12,3,12,6|sk=perception+3|sv=str+5|sn=darkvision 60|atk=Ram:m+5:1d6+3 bludgeoning:r5:2d4 bludgeoning
+beast|Giant Hyena|XMM|cr=1|sz=L|ac=12|hp=45|spd=walk 50|abil=16,14,14,2,12,7|sk=perception+3|sn=darkvision 60|atk=Bite:m+5:2d6+3 piercing:r5|ba=Rampage (1/Day):-
+beast|Giant Lizard|XMM|cr=1/4|sz=L|ac=12|hp=19|spd=walk 40,climb 40|abil=15,12,13,2,10,5|sv=dex+3|sn=darkvision 60|tr=Spider Climb|atk=Bite:m+4:1d8+2 piercing:r5
+beast|Giant Octopus|XMM|cr=1|sz=L|ac=11|hp=45|spd=walk 10,swim 60|abil=17,13,13,5,10,4|sk=perception+4,stealth+5|sn=darkvision 60|tr=Water Breathing|atk=Tentacles:m+5:2d6+3 bludgeoning:r10|re=Ink Cloud (1/Day)
+beast|Giant Rat|XMM|cr=1/8|sz=S|ac=13|hp=7|spd=walk 30,climb 30|abil=7,16,11,2,10,4|sk=perception+2|sv=dex+5|sn=darkvision 60|tr=Pack Tactics|atk=Bite:m+5:1d4+3 piercing
+beast|Giant Scorpion|XMM|cr=3|sz=L|ac=15|hp=52|spd=walk 40|abil=16,13,15,1,9,3|sn=blindsight 60|multi=two Claw attacks and one Sting attack.|atk=Claw:m+5:1d6+3 bludgeoning:r5;Sting:m+5:1d8+3 piercing:r5:2d10 poison
+beast|Giant Seahorse|XMM|cr=1/2|sz=L|ac=14|hp=16|spd=walk 5,swim 40|abil=15,12,11,2,12,5|tr=Water Breathing|atk=Ram:m+4:2d6+2 bludgeoning:r5:2d8+2 bludgeoning|ba=Bubble Dash:-
+beast|Giant Shark|XMM|cr=5|sz=H|ac=13|hp=92|spd=walk 5,swim 60|abil=23,11,21,1,10,5|sk=perception+3|sn=blindsight 60|tr=Water Breathing|multi=two Bite attacks.|atk=Bite:m+9:3d10+6 piercing:r5
+beast|Giant Spider|XMM|cr=1|sz=L|ac=14|hp=26|spd=walk 30,climb 30|abil=14,16,12,2,11,4|sk=perception+4,stealth+7|sn=darkvision 60|tr=Spider Climb,Web Walker|atk=Bite:m+5:1d8+3 piercing:r5:2d6 poison;Web (R5):save dex 13
+beast|Giant Squid|XMM|cr=6|sz=H|ac=12|hp=120|spd=walk 5,swim 80|abil=23,14,12,5,11,4|sk=perception+6|sv=str+9,dex+5|sn=darkvision 120|tr=Water Breathing|multi=one Bite attack and one Tentacle attack.|atk=Bite:m+9:4d10+6 piercing:r5;Tentacle:m+9:3d8+6 bludgeoning:r15|re=Ink Cloud (1/Day)
+beast|Giant Toad|XMM|cr=1|sz=L|ac=11|hp=39|spd=walk 30,swim 30|abil=15,13,13,2,10,3|sn=darkvision 60|tr=Amphibious,Standing Leap|atk=Bite:m+4:1d6+2 piercing:r5:2d4 poison;Swallow:-:3d6:acid
+beast|Giant Venomous Snake|XMM|cr=1/4|sz=M|ac=14|hp=11|spd=walk 40,swim 40|abil=10,18,13,2,10,3|sk=perception+2|sn=blindsight 10|atk=Bite:m+6:1d4+4 piercing:r10:1d8 poison
+beast|Giant Wasp|XMM|cr=1/2|sz=M|ac=13|hp=22|spd=walk 10,fly 50|abil=10,14,10,1,10,3|tr=Flyby|atk=Sting:m+4:1d6+2 piercing:r5:2d4 poison
+beast|Giant Weasel|XMM|cr=1/8|sz=M|ac=13|hp=9|spd=walk 40,climb 30|abil=11,17,10,4,12,5|sk=acrobatics+5,perception+3,stealth+5|sn=darkvision 60|atk=Bite:m+5:1d4+3 piercing:r5

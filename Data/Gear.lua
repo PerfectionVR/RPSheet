@@ -18,6 +18,14 @@ R.AddGear("Adventuring gear",
     .. "Signal Whistle|5|0;Spellbook|5000|3;Spyglass|100000|1;String|10|0;Tent|200|20;Tinderbox|50|1;Torch|1|1;"
     .. "Traveler's Clothes|200|4;Vial|100|0;Waterskin|20|5")
 
+-- Food and drink, single pieces of what is sold in bundles, and the poisons.
+R.AddGear("Adventuring gear",
+    "Ale (mug)|4|0;Bread (loaf)|2|0;Cheese (wedge)|10|0;Common Wine (bottle)|20|0;Fine Wine (bottle)|1000|0;"
+    .. "Firearm Bullet|30|0.2;Iron Spike|10|0.5;Needle|2|0.02;"
+    .. "Assassin's Blood|15000|0;Burnt Othur Fumes|50000|0;Carrion Crawler Mucus|20000|0;Essence of Ether|30000|0;"
+    .. "Lolth's Sting|20000|0;Malice|25000|0;Midnight Tears|150000|0;Oil of Taggit|40000|0;Pale Tincture|25000|0;"
+    .. "Purple Worm Poison|200000|0;Serpent Venom|20000|0;Torpor|60000|0;Truth Serum|15000|0;Wyvern Poison|120000|0")
+
 -- A pack is bought and carried as one item; its weight is that of everything in it.
 R.AddGear("Packs",
     "Burglar's Pack|1600|47.5;Diplomat's Pack|3900|39;Dungeoneer's Pack|1200|55;"

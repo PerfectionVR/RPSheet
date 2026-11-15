@@ -135,6 +135,8 @@ Data\MagicItemsStones.lua
 Data\MagicItemsGadgets.lua
 Data\MagicItemsForge.lua
 Data\MagicItemsCloth.lua
+Data\MagicItemsMore.lua
+Data\MagicItemsAzeroth.lua
 Data\RecipesMagic.lua
 Data\RecipesVehicles.lua
 Data\Scrolls.lua

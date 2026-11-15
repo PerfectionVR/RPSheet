@@ -1,0 +1,118 @@
+# Magic makes of plain items (data/magicvariants.json, XDMG) and the item groups
+# (data/items.json itemGroup; XDMG, WoW). variant|name|source|rarity|attunement|fits|bonus.
+# Rarity: C common, U uncommon, R rare, V very rare, L legendary, A artifact, * varies.
+# Attunement: empty = none, a = needs it, a:<who> = by that kind of creature.
+# fits: item types (LA, MA, HA armor; S shield; M melee; A, AF ammunition), names or kinds.
+variant|+1 Ammunition|XDMG|U||fits=A,AF|bw=+1
+variant|+1 Armor|XDMG|R||fits=LA,MA,HA|bac=+1
+variant|+1 Shield (*)|XDMG|U||fits=S|bac=+1
+variant|+1 Weapon|XDMG|U||fits=weapon|bw=+1
+variant|+2 Ammunition|XDMG|R||fits=A,AF|bw=+2
+variant|+2 Armor|XDMG|V||fits=LA,MA,HA|bac=+2
+variant|+2 Shield (*)|XDMG|R||fits=S|bac=+2
+variant|+2 Weapon|XDMG|R||fits=weapon|bw=+2
+variant|+3 Ammunition|XDMG|V||fits=A,AF|bw=+3
+variant|+3 Armor|XDMG|L||fits=LA,MA,HA|bac=+3
+variant|+3 Shield (*)|XDMG|V||fits=S|bac=+3
+variant|+3 Weapon|XDMG|V||fits=weapon|bw=+3
+variant|Adamantine Armor|XDMG|U||fits=MA,HA not Hide Armor
+variant|Adamantine Weapon|XDMG|U||fits=A,AF,M
+variant|Ammunition of Slaying|XDMG|V||fits=A,AF
+variant|Armor of Acid Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Cold Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Fire Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Force Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Gleaming|XDMG|C||fits=LA,MA,HA
+variant|Armor of Lightning Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Necrotic Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Poison Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Psychic Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Radiant Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Thunder Resistance|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Vulnerability (Bludgeoning)|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Vulnerability (Piercing)|XDMG|R|a|fits=LA,MA,HA
+variant|Armor of Vulnerability (Slashing)|XDMG|R|a|fits=LA,MA,HA
+variant|Berserker Axe|XDMG|R|a|fits=Battleaxe,Greataxe,Halberd|bw=+1
+variant|Cast-Off Armor|XDMG|C||fits=LA,MA,HA
+variant|Dancing Sword|XDMG|V|a|fits=sword
+variant|Defender|XDMG|L|a|fits=M|bw=+3
+variant|Demon Armor|XDMG|V|a|fits=LA,MA,HA|bac=+1
+variant|Dragon Slayer|XDMG|R||fits=simple,martial|bw=+1
+variant|Dwarven Plate|XDMG|V||fits=Half Plate Armor,Plate Armor|bac=+2
+variant|Efreeti Chain|XDMG|L|a|fits=Chain Mail,Chain Shirt|bac=+3
+variant|Elven Chain|XDMG|R||fits=Chain Mail,Chain Shirt|bac=+1
+variant|Energy Bow|XDMG|V|a|fits=Longbow,Shortbow|bw=+1
+variant|Enspelled Armor (Cantrip)|XDMG|U|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 1)|XDMG|U|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 2)|XDMG|R|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 3)|XDMG|R|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 4)|XDMG|V|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 5)|XDMG|V|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 6)|XDMG|L|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 7)|XDMG|L|a|fits=LA,MA,HA
+variant|Enspelled Armor (Level 8)|XDMG|L|a|fits=LA,MA,HA
+variant|Enspelled Weapon (Cantrip)|XDMG|U|a|fits=simple,martial
+variant|Enspelled Weapon (Level 1)|XDMG|U|a|fits=simple,martial
+variant|Enspelled Weapon (Level 2)|XDMG|R|a|fits=simple,martial
+variant|Enspelled Weapon (Level 3)|XDMG|R|a|fits=simple,martial
+variant|Enspelled Weapon (Level 4)|XDMG|V|a|fits=simple,martial
+variant|Enspelled Weapon (Level 5)|XDMG|V|a|fits=simple,martial
+variant|Enspelled Weapon (Level 6)|XDMG|L|a|fits=simple,martial
+variant|Enspelled Weapon (Level 7)|XDMG|L|a|fits=simple,martial
+variant|Enspelled Weapon (Level 8)|XDMG|L|a|fits=simple,martial
+variant|Executioner's Axe|XDMG|V||fits=Battleaxe,Greataxe,Halberd,Handaxe|bw=+1
+variant|Flame Tongue|XDMG|R|a|fits=M
+variant|Frost Brand|XDMG|V|a|fits=Glaive,Greatsword,Longsword,Rapier,Scimitar,Shortsword
+variant|Giant Slayer|XDMG|R||fits=simple,martial|bw=+1
+variant|Hammer of Thunderbolts|XDMG|L|a|fits=Maul,Warhammer|bw=+1
+variant|Holy Avenger|XDMG|L|a:a paladin|fits=simple,martial|bw=+3
+variant|Luck Blade|XDMG|L|a|fits=Glaive,Greatsword,Longsword,Rapier,Scimitar,Sickle,Shortsword|bw=+1
+variant|Mariner's Armor|XDMG|U||fits=LA,MA,HA
+variant|Mithral Armor|XDMG|U||fits=MA,HA not Hide Armor
+variant|Moon-Touched Sword|XDMG|C||fits=sword
+variant|Moonblade|XDMG|L|a:a creature of the weapon's choice|fits=Greatsword,Longsword,Rapier,Scimitar,Shortsword|bw=+1
+variant|Nine Lives Stealer|XDMG|V|a|fits=simple,martial|bw=+2
+variant|Oathbow|XDMG|V|a|fits=Longbow,Shortbow
+variant|Plate Armor of Etherealness (*)|XDMG|L|a|fits=Half Plate Armor,Plate Armor
+variant|Silvered Weapon|XDMG|C||fits=simple,martial
+variant|Smoldering Armor|XDMG|C||fits=LA,MA,HA
+variant|Sword of Life Stealing|XDMG|R|a|fits=Glaive,Greatsword,Longsword,Rapier,Scimitar,Shortsword
+variant|Sword of Sharpness|XDMG|V|a|fits=Glaive,Greatsword,Longsword,Scimitar
+variant|Sword of Vengeance|XDMG|U|a|fits=Glaive,Greatsword,Longsword,Rapier,Scimitar,Shortsword|bw=+1
+variant|Sword of Wounding|XDMG|R|a|fits=Glaive,Greatsword,Longsword,Rapier,Scimitar,Shortsword
+variant|Sylvan Talon|XDMG|C|a|fits=Dagger,Rapier,Scimitar,Shortsword,Sickle,Spear
+variant|Vicious Weapon|XDMG|R||fits=simple,martial
+variant|Vorpal Sword|XDMG|L|a|fits=Glaive,Greatsword,Longsword,Scimitar|bw=+3
+variant|Walloping Ammunition|XDMG|C||fits=A,AF
+variant|Weapon of Warning|XDMG|U|a|fits=simple,martial
+group|Armor of Resistance|XDMG|R|a|n=10
+group|Armor of Vulnerability|XDMG|R|a|n=3
+group|Bag of Tricks|XDMG|U||n=3
+group|Belt of Giant Strength|XDMG|*|a|n=6
+group|Carpet of Flying|XDMG|V||n=4
+group|Dragon Scale Mail|XDMG|V|a|n=10
+group|Elemental Gem|XDMG|U||n=4
+group|Enspelled Armor|XDMG|*|a|n=9
+group|Enspelled Staff|XDMG|*|a:a Spellcaster|n=9
+group|Enspelled Weapon|XDMG|*|a|n=9
+group|Eye and Hand of Vecna|XDMG|A|a|n=2
+group|Figurine of Wondrous Power|XDMG|*||n=9
+group|Horn of Valhalla|XDMG|*||n=4
+group|Instrument of the Bards|XDMG|*|a:a bard|n=7
+group|Ioun Stone|XDMG|*|a|n=14
+group|Manual of Golems|XDMG|V||n=4
+group|Potion of Giant Strength|XDMG|*||n=6
+group|Potion of Resistance|XDMG|U||n=10
+group|Potions of Healing|XDMG|*||n=4
+group|Potions of Mana|WoW|*||n=3
+group|Potions of Rejuvenation|WoW|*||n=3
+group|Quaal's Feather Token|XDMG|*||n=6
+group|Ring of Elemental Command|XDMG|L|a|n=4
+group|Ring of Resistance|XDMG|R||n=10
+group|Rod of the Pact Keeper|XDMG|*|a:a warlock|n=3
+group|Scroll of Protection|XDMG|R||n=14
+group|Scroll of Titan Summoning|XDMG|L||n=7
+group|Spell Scroll|XDMG|*||n=10
+group|Troll's Blood Elixirs|WoW|*||n=4
+group|Wand of the War Mage|XDMG|*|a:a spellcaster|n=3
+group|Wraps of Unarmed Power|XDMG|*||n=3
