@@ -329,27 +329,24 @@ Small gaps left in what is built. None is planned; say so if one matters to you.
   Metamorphosis after its minute, spell durations, "once a turn" protection such as
   Resistance, and temporary flight (Draconic Flight and the like) are ended or
   switched by hand or by a rest.
-- **Multiclassing**: a Mage with Druid levels uses the Mage's budget for both recovery
-  features; two classes built on the same core class (Paladin with Death Knight,
-  Hunter with Demon Hunter) are refused; the weapon mastery limit is the highest of
-  the classes; the wizard takes at most three more classes, sets no specialization
-  for them and does not ask for a Champion's second Fighting Style.
-- **Levelling**: Metamagic, Invocations and maneuvers can be exchanged freely, not
-  one per level; a Mage's cantrip exchange after a long rest is done under
-  Customize.
-- **Spells**: Cordon of Arrows' ammunition is not checked; a weapon of your own
-  counts as any kind for a weapon component; Resistance or Time Dilation cast on you
-  by someone else has no switch (Warding Bond has); a scroll does not check that the
-  spell is on your list or within your level.
-- **Items**: magic items have no prices, so renown discounts don't reach them; named
-  armor and weapon variants (adamantine, mithral, resistance) are not listed; items
-  already in an inventory don't pick up effects added to the catalogue later.
-- **Companions and mounts**: the Dragonkin and Elemental gifts depend on what a save
-  is about and stay text; carrying capacities the rules don't list are worked out
-  from Strength.
-- **Professions**: gathering and disenchanting don't check that you carry the tool;
-  the time to build a vehicle is an estimate, since the rules give none.
-- **Wild Shape**: riders without damage (knocked prone on a charge) stay text.
+- **Multiclassing**: two classes built on the same core class (Paladin with Death
+  Knight, Hunter with Demon Hunter) can't be combined: by the rules they are one
+  class with different subclasses. Weapon Mastery picks from several classes add
+  up, which is one reading of a rule tables disagree on.
+- **Spells**: Cordon of Arrows takes four pieces whatever the slot; a weapon of your
+  own needs a worth set before it serves as a component; a Warlock's Mystic Arcanum
+  levels don't count when a scroll asks what you can cast.
+- **Items**: the variant control covers bonus, adamantine, mithral, silvered and
+  resistance makes only, and adds without buying; an inventory item is only
+  refreshed from the catalogue when it has no effects and an untouched note.
+- **Companions and mounts**: carrying capacities the rules don't list are worked out
+  from Strength and marked as estimates.
+- **Professions**: the time to build a vehicle is the usual crafting rate, since the
+  rules give none.
+- **Conditions**: disadvantage that depends on the target (Grappled) or on line of
+  sight (Frightened) is not told apart; saves rolled from an ability's own save step
+  don't ask what they are against.
+- **Wild Shape**: a Giant Hyena's once-a-day Rampage is not counted.
 
 ## Bundled libraries
 

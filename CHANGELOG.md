@@ -2,6 +2,33 @@
 
 ## Unreleased
 
+- Saving throws ask what they are against when a trait, feat, blessing, item or
+  companion gives you advantage against it, and roll with advantage when you pick
+  it; Shift-click skips the question. Gnomish Cunning, War Caster and Eldritch Mind
+  apply by themselves.
+- Conditions: Unconscious also makes you Prone; exhaustion counts on death saves;
+  Danger Sense stops while incapacitated; losing a concentration save ends the
+  protection the spell gave.
+- Magic items have prices by rarity and can be bought and sold; faction discounts
+  apply. Customize > Inventory can make a magic variant of plain armor, a shield or
+  a weapon (+1 to +3, adamantine, mithral, silvered, resistance).
+- Spell scrolls: you can only read spells on your class's list, a spell above your
+  level takes a check that can lose the scroll, and scrolls you didn't write cast
+  with fixed numbers.
+- Customize > Defense: one dropdown adds any protective spell someone else cast on
+  you. Cordon of Arrows uses four arrows or bolts.
+- Level-up: one Metamagic option or Eldritch Invocation can be exchanged per level,
+  one maneuver when you learn new ones; a new Customize page sets them freely. A
+  Mage can exchange one cantrip after a long rest in the spellbook window.
+- Creation wizard: any number of extra classes the level allows, each with its
+  specialization and Fighting Style.
+- Arcane Recovery and Natural Recovery each use their own class's level; Weapon
+  Mastery picks from several classes add up.
+- Beast form attacks announce what a hit also does, with its DC; charges and
+  follow-up bites have their own rows.
+- Herbalism, mining, skinning and disenchanting need the tool among your items.
+- Long lists in the item, crafting and stable windows show a page at a time (24 per
+  page); search still looks through the whole tab. The sheet rebuilds less often.
 - Multiclassing: take your next level in another class from the Character tab, or
   split a new character's levels over several classes in the creation wizard. The
   sheet checks the ability scores the new class needs, gives its reduced training,

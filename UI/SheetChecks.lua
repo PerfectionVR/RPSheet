@@ -24,7 +24,9 @@ function UI.SaveSection(self, body)
         UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat] .. " saving throw",
-            ("%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP),
+            -- Advantage that only counts against some things is named too (Sheet/SaveAdvantages.lua).
+            ("%s%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.",
+                self:SaveAdvantageText(stat) and ("\n\n" .. self:SaveAdvantageText(stat)) or "", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP),
             function() self:ExplainSave(stat) end)
     end
 end
