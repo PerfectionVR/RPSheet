@@ -14,7 +14,8 @@ local RED, GREEN, GREY = "|cffff5555", "|cff80ff80", "|cff909090"
 -- The parts a casting of this spell is checked for, or nil when there are none or the
 -- check is off. Kept by spell name, so it holds for spells saved long ago too.
 function RPSheet:SpellComponents(spell)
-    if self:Sheet().componentsWaived then return nil end
+    -- A spell read from a scroll needs none (Actions/Scrolls.lua).
+    if self:Sheet().componentsWaived or spell.fromScroll then return nil end
     return R.SPELL_COMPONENTS[spell.name]
 end
 

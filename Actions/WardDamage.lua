@@ -33,8 +33,9 @@ local function Remove(self, passive)
     end
 end
 
--- A bond ends when its caster drops to 0 hit points.
-local function EndBondsAtZero(self)
+-- A bond ends when its caster drops to 0 hit points. Actions/Damage.lua calls this
+-- once the damage has really been taken, which can be after a die rolled in chat.
+function RPSheet:EndBondsAtZero()
     if (self:State().hp or 1) > 0 then return end
     local passives = self:Sheet().passives
     for at = #passives, 1, -1 do
@@ -67,8 +68,7 @@ function RPSheet:TakeDamage(amount, damageType, reduction, ward)
         wards = RolledWards(self, damageType)
     end
     if #wards == 0 then
-        TakeDamage(self, amount, damageType, reduction)
-        return EndBondsAtZero(self)
+        return TakeDamage(self, amount, damageType, reduction)
     end
     if self.busy or self:IsRolling() then
         self:Print("Another roll is still going. Take the damage again when it is done.")
@@ -81,8 +81,7 @@ function RPSheet:TakeDamage(amount, damageType, reduction, ward)
         if not entry then
             self.busy = false
             TakeDamage(self, amount, damageType, total, table.concat(notes, "; "))
-            UseUp(self, wards)
-            return EndBondsAtZero(self)
+            return UseUp(self, wards)
         end
         local count, sides = entry.option.roll[1], entry.option.roll[2]
         self:RollDice(count, sides, function(rolls)
@@ -118,7 +117,7 @@ function RPSheet:PayWardDebt(passive)
             self:EndConcentration("at 0 hit points")
             self:LeaveForms("at 0 hit points")
         end
-        EndBondsAtZero(self)
+        self:EndBondsAtZero()
         self:QueueBroadcast()
         self:PopulateSoon()
     end)

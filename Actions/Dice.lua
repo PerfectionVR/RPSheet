@@ -50,8 +50,8 @@ end
 -- Advantage ("ADV") or disadvantage ("DIS") from the keys held while clicking a roll:
 -- Shift for advantage, Ctrl for disadvantage. Nil for a normal roll.
 -- Without a key held, the "Next roll" row on the sheet decides (see CycleRollMode).
--- Unless that row is locked, it goes back to normal once a d20 has been rolled with
--- it (see RollD20), so an ability that rolls no d20 doesn't use it up.
+-- Unless that row is locked, it goes back to normal once a d20 has been rolled
+-- (see RollD20), so an ability that rolls no d20 doesn't use it up.
 function ns.RollMode()
     if IsShiftKeyDown() then return "ADV" end
     if IsControlKeyDown() then return "DIS" end
@@ -75,15 +75,18 @@ end
 
 -- Rolls a d20, or two with advantage or disadvantage, and passes on the die that
 -- counts plus a note such as " [advantage: 14, 6]" for the announcement.
-function RPSheet:RollD20(mode, callback)
+-- `own` is true for a roll the "Next roll" row has no say in (a death save, the save
+-- to keep a spell): such a roll leaves the row as it is.
+function RPSheet:RollD20(mode, callback, own)
+    -- The "Next roll" row is used up by this roll, unless it is locked: also when a
+    -- condition cancelled its advantage out, since it was the choice for this roll.
+    if self.rollMode and not self.rollModeLocked and not own then
+        self.rollMode = nil
+        self:Refresh()
+    end
     if mode ~= "ADV" and mode ~= "DIS" then
         self:Roll(20, function(d20) callback(d20, "") end)
         return
-    end
-    -- The "Next roll" row is used up by this roll, unless it is locked.
-    if self.rollMode and not self.rollModeLocked then
-        self.rollMode = nil
-        self:Refresh()
     end
     self:RollDice(2, 20, function(rolls)
         local kept = mode == "ADV" and math.max(rolls[1], rolls[2]) or math.min(rolls[1], rolls[2])

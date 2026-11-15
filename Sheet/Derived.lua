@@ -155,19 +155,21 @@ function RPSheet:MaxHP()
 end
 
 -- Unarmored Defense: without armor, a class adds an ability modifier to Armor Class;
--- a Monk's stops working with a shield. Only one way of working out Armor Class
--- counts at a time, so of several classes the best one is used.
+-- a Monk's stops working with a shield. A character who has the feature can't gain
+-- it again from another class, so the first class that has it decides: the first
+-- class, then the later ones in the usual class order (the sheet doesn't keep the
+-- order in which those were taken).
 function RPSheet:UnarmoredDefense()
-    local sheet, best, stat = self:Sheet(), nil, nil
+    local sheet = self:Sheet()
     if sheet.armor ~= "NONE" then return 0 end
     for _, key in ipairs(ns.ClassKeys(sheet)) do
         local class = R.CLASSES[key]
-        if class.unarmored and (class.unarmoredShield or not sheet.shield) then
-            local bonus = self:Mod(class.unarmored)
-            if not best or bonus > best then best, stat = bonus, class.unarmored end
+        if class.unarmored then
+            if sheet.shield and not class.unarmoredShield then return 0 end
+            return self:Mod(class.unarmored), class.unarmored
         end
     end
-    return best or 0, stat
+    return 0
 end
 
 function RPSheet:AC()

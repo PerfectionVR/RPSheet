@@ -110,7 +110,7 @@ function RPSheet:RollConcentration(damage)
         end
         self:Announce(("took %d damage while concentrating - %s, DC %d: %s"):format(damage,
             ns.RollText.Check(ns.Mark("CON save"), d20, mod, note), dc, kept and "keeps the spell" or "loses the spell"))
-    end)
+    end, true)
 end
 
 -- A menu at the cursor with a tick box per condition.

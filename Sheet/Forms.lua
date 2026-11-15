@@ -11,6 +11,25 @@ function RPSheet:Form()
     end
 end
 
+local MOON = "Circle of the Moon"
+
+-- True for a spell the Circle of the Moon keeps prepared at the character's level in
+-- that class. Another class's always-prepared spells are not the circle's.
+local function CircleSpell(sheet, spell)
+    local view = ns.SubclassView(sheet, MOON)
+    if not view or not (spell.auto or ""):find("^prepared:") then return false end
+    for _, feature in ipairs(R.SUBCLASS_FEATURES[MOON] or {}) do
+        for _, step in ipairs(type(feature.prepared) == "table" and feature.prepared or {}) do
+            if view.level >= step[1] then
+                for name in step[2]:gmatch("[^,]+") do
+                    if strtrim(name) == spell.name then return true end
+                end
+            end
+        end
+    end
+    return false
+end
+
 -- Why a spell can't be cast in the form the character is in, or nil when it can.
 -- No spells in a form, except a Circle of the Moon druid's own circle spells, and from
 -- level 18 (Beast Spells) any spell without a priced or consumed component.
@@ -18,7 +37,7 @@ function RPSheet:FormBlocksSpell(spell)
     local form = self:Form()
     if not form then return end
     local sheet = self:Sheet()
-    if ns.HasSubclass(sheet, "Circle of the Moon") and (spell.auto or ""):find("^prepared:") then return end
+    if CircleSpell(sheet, spell) then return end
     if ns.HasFeature(sheet, "Beast Spells") then
         -- The listed spells go by the component data; a spell of the player's own by its fields.
         if R.SPELL_COMPONENTS[spell.name] or (spell.material or 0) > 0 or spell.consumed then

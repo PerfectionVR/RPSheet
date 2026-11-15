@@ -105,8 +105,10 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         self:Print(blocked)
         return
     end
+    -- A spell read from a scroll (Actions/Scrolls.lua) needs no slot and is a casting of its own.
+    local scroll = spell.fromScroll ~= nil
     -- A spell with a growing die that is already running rolls its next turn instead.
-    if self:GrowingSpellClick(spell, ritual) then return end
+    if not scroll and self:GrowingSpellClick(spell, ritual) then return end
     -- A component with a price has to be carried, for a ritual too (Sheet/SpellComponents.lua).
     -- For a spell that needs it once per target, `benefit` says how many (Sheet/ComponentTargets.lua).
     local missing = self:MissingComponents(spell, benefit)
@@ -117,15 +119,15 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
 
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
-    ritual = ritual and spell.ritual and spell.level > 0
+    ritual = not scroll and ritual and spell.ritual and spell.level > 0
     -- A spell chosen for a class feature may need no slot (see Actions/SpellChoices.lua).
     local chosen, spent
-    if spell.level > 0 and not ritual then chosen, spent = self:ChosenCasting(spell) end
+    if spell.level > 0 and not ritual and not scroll then chosen, spent = self:ChosenCasting(spell) end
     if spent then
         self:Print(spent)
         return
     end
-    if spell.level > 0 and not ritual and not chosen then
+    if spell.level > 0 and not ritual and not chosen and not scroll then
         local level = math.max(spell.level, self.castLevel or 0)
         slot = FindSlot(self, level)
         if not slot then
@@ -156,8 +158,12 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if chosen then self:SpendChosenCasting(spell, chosen) end
         local used = self:SpendComponents(spell, benefit)
         if #used > 0 then parts[#parts + 1] = "uses up " .. table.concat(used, ", ") end
-        if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level
-        self.castLevel = nil
+        if scroll then
+            self:ScrollWasCast(spell) -- the scroll crumbles now
+        else
+            if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level
+            self.castLevel = nil
+        end
         if R.GROWING_SPELLS[spell.name] then
             self:StartGrowingSpell(spell)
             self:PopulateSoon() -- the row now shows the next die
@@ -168,6 +174,9 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if spell.concentration and not growth.noConcentration then
             local conditions = self:State().conditions
             parts[#parts + 1] = conditions.Concentrating and "concentrating on it now, the earlier spell ends" or "concentrating"
+            -- Protection that hung on the earlier spell ends with it (Sheet/Wards.lua). Done
+            -- here, once the new spell is really cast: a question it asks can still be left open.
+            if conditions.Concentrating then self:EndConcentrationWards() end
             conditions.Concentrating = true
             self:PopulateSoon()
         end
@@ -180,6 +189,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if slot then text = text .. (" (%s)"):format(slot.label) end
         if chosen then text = text .. (" (%s, no slot)"):format(chosen.feature) end
         if ritual then text = text .. " (as a ritual, no slot)" end
+        if scroll then text = text .. " (from a scroll)" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
         self.busy = false
         self:Announce(text)
