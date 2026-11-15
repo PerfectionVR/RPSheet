@@ -2,10 +2,12 @@
 --   * Taking a level: a list lets one earlier pick be exchanged, or none (list.swaps);
 --     a list of another class than the one the level is taken in lets none.
 --   * Opened again for a level the character already has: the dialog is for filling
---     in what is still open, so the spells and cantrips that were chosen stay. They
---     are changed on the Spells page under Customize, which holds to nothing.
+--     in what is still open, so what was chosen stays. Spells are changed on the
+--     Spells page under Customize and the class's options on the page beside it
+--     (Options/ClassPicks.lua); those hold to nothing.
 -- L.draft.before[<list>] are the picks made before the dialog opened, and
 -- L.draft.fixed[<list>] says why none of them may go ("OPEN" or "CLASS").
+-- A Battle Master's maneuvers are held the same way (Options/LevelDialogManeuvers.lua).
 local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
@@ -22,8 +24,10 @@ function L.RememberPicks(sheet)
         -- A list with more picks than it allows is left free, so it can be put right.
         local fits = L.PicksChosen(key) <= limit
         if limit > 0 and draft.taking and list.swaps then
-            draft.before[key] = CopyTable(draft.picks[key])
-            if fits and not (class and class.base == list.base) then draft.fixed[key] = "CLASS" end
+            if fits then
+                draft.before[key] = CopyTable(draft.picks[key])
+                if not (class and class.base == list.base) then draft.fixed[key] = "CLASS" end
+            end
         elseif limit > 0 and not draft.taking and list.swapGroup and fits then
             draft.before[key] = CopyTable(draft.picks[key])
             draft.fixed[key] = "OPEN"
@@ -47,13 +51,13 @@ local function HoldsPicks()
     for key, why in pairs(L.draft.fixed) do
         if why == "OPEN" and next(L.draft.before[key] or {}) then return true end
     end
-    return false
+    return next(L.draft.maneuversBefore or {}) ~= nil
 end
 
 args.settled = {
     type = "description", order = 2.5,
     hidden = function() return not HoldsPicks() end,
-    name = Opt.GOLD .. "The spells and cantrips you had chosen stay as they are here: this window is for filling in what is still open.|r "
+    name = Opt.GOLD .. "The spells, cantrips and class options you had chosen stay as they are here: this window is for filling in what is still open.|r "
         .. "The rules let you exchange one when you gain a level, or after a long rest, depending on the class. "
-        .. "To change one anyway, delete it under Customize, Spells: nothing is held to the rules there, and its place can then be filled here.\n",
+        .. "To change one anyway, go to Customize: delete a spell under Spells, or untick an option under " .. Opt.CLASS_PICKS_PAGE .. ". Nothing is held to the rules there, and its place can then be filled here.\n",
 }

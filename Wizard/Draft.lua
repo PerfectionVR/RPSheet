@@ -34,7 +34,7 @@ function W.NewDraft()
         base = { STR = 8, DEX = 8, CON = 8, INT = 8, WIS = 8, CHA = 8 },
         bonus = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 },
         alignment = "",
-        fightingStyle = "",
+        fightingStyle = "", fightingStyle2 = "", -- the first class's; a later class has its own (Wizard/Styles.lua)
         closet = {}, -- starting gear taken: item name -> how many (Wizard/Closet.lua)
         worn = {},   -- the taken armor, shield and weapons that are equipped
         gold = 0,    -- gold pieces to start with
@@ -80,10 +80,7 @@ function W.StepProblem()
         if W.FirstLevel() >= R.SUBCLASS_LEVEL and #class.subclasses > 0 and draft.subclass == "" then
             return ("Choose a subclass: a character of level %d or higher has one."):format(R.SUBCLASS_LEVEL)
         end
-        if W.NeedsFightingStyle() and draft.fightingStyle == "" then
-            return "Choose a Fighting Style."
-        end
-        return W.ExtrasProblem(1)
+        return W.ExtrasProblem(1) or W.StyleProblem()
     elseif draft.step == 2 then
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
@@ -131,7 +128,7 @@ function W.Finish()
     for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
     sheet.scoreMethod = draft.scoreMethod
     sheet.base, sheet.bonus = CopyTable(draft.base), CopyTable(draft.bonus)
-    sheet.fightingStyle = W.NeedsFightingStyle() and draft.fightingStyle or ""
+    W.ApplyStyles(sheet) -- each class's Fighting Styles, where it has the feature by its level
     for skill, picked in pairs(draft.classSkills) do
         if picked then sheet.skills[skill] = 1 end
     end

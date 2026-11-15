@@ -1,13 +1,13 @@
 -- The "More classes" part of the wizard's class step, for a character made above
--- level 1: a row per other class with its levels, its subclass once it has the levels
--- for one, and the one skill a few classes give. The rules behind it are in
--- Wizard/MoreClasses.lua; the scores of 13 are checked on the ability score step.
+-- level 1: a row per other class with its levels, its specialization, its subclass
+-- once it has the levels for one, the one skill a few classes give and its Fighting
+-- Styles (Wizard/Styles.lua). The rules behind it are in Wizard/MoreClasses.lua, the
+-- text above the rows in Wizard/MoreClassSummary.lua; the scores of 13 are checked on
+-- the ability score step.
 local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
 local W = ns.Wizard
-
-local GOLD, RED = Opt.GOLD, Opt.RED
 
 local function Row(index)
     return W.draft and W.Extras()[index] or nil
@@ -23,9 +23,10 @@ local function Room(index)
     return W.draft.level - 1 - W.ExtraLevels(index)
 end
 
-local function Open()
+function W.MoreClassesOpen()
     return W.draft ~= nil and R.CLASSES[W.draft.class] ~= nil and W.draft.level >= 2
 end
+local Open = W.MoreClassesOpen
 
 -- A row is shown when it is filled, and the next one while a level is left for it.
 local function Shown(index)
@@ -44,35 +45,6 @@ local function Choices(index)
         if not used[key] then keys[#keys + 1] = key end
     end
     return keys
-end
-
--- "Strength or Dexterity" for the abilities a class needs at 13.
-local function Needs(class)
-    local rule, names = R.MULTICLASS[class.base], {}
-    for _, stat in ipairs(rule and rule.primary or {}) do names[#names + 1] = ns.Term(R.STAT_NAMES[stat]) end
-    return table.concat(names, rule and rule.either and " or " or " and ")
-end
-
-local function Summary()
-    if not Open() then return "" end
-    local draft, rows = W.draft, W.Extras()
-    if #rows == 0 then
-        return "Above level 1 you can split your levels over more than one class. Your first class gives its saving throws and full training; another class gives less, and asks for a score of 13 in its main abilities and in those of your first class.\n"
-    end
-    local first = R.CLASSES[draft.class]
-    local parts = { ("%s %d"):format(first.name, W.FirstLevel()) }
-    for _, row in ipairs(rows) do parts[#parts + 1] = ("%s %d"):format(R.CLASSES[row.class].name, row.level) end
-    local lines = { ("%sLevel %d: %s|r"):format(GOLD, draft.level, table.concat(parts, " / ")) }
-    lines[#lines + 1] = ("%s, your first class, needs %s %d or higher to take another."):format(first.name, Needs(first), R.MULTICLASS_SCORE)
-    for index, row in ipairs(rows) do
-        local class = R.CLASSES[row.class]
-        lines[#lines + 1] = ("%s%s|r needs %s %d or higher and gives %s."):format(
-            GOLD, class.name, Needs(class), R.MULTICLASS_SCORE, ns.MulticlassGains(row.class))
-        local block = W.ExtraBlock(index, false)
-        if block then lines[#lines + 1] = ("%s%s: %s.|r"):format(RED, class.name, block) end
-    end
-    lines[#lines + 1] = "|cff909090The scores are checked on the ability score step. The choices of each class's levels are asked after the character is made.|r"
-    return table.concat(lines, "\n") .. "\n"
 end
 
 local function ClassPicker(index, order)
@@ -107,7 +79,8 @@ local function ClassPicker(index, order)
             -- A hero class is its subclass: the choice is fixed from the start.
             rows[index] = {
                 class = value, level = rows[index] and rows[index].level or 1,
-                subclass = class.hero and class.subclasses[1] or "", skill = "",
+                subclass = class.hero and class.subclasses[1] or "", spec = "", skill = "",
+                fightingStyle = "", fightingStyle2 = "",
             }
         end,
     }
@@ -136,8 +109,9 @@ local function LevelSlider(index, order)
     end)
 end
 
--- A dropdown for a field of a row, from a list of names.
-local function RowPicker(index, order, field, name, desc, list)
+-- A dropdown for a field of a row, from a list of names. `onSet(row, value)` runs
+-- after a choice is made.
+local function RowPicker(index, order, field, name, desc, list, onSet)
     return {
         type = "select", order = order, name = name, desc = desc,
         hidden = function() return not Row(index) or #list() == 0 end,
@@ -150,19 +124,37 @@ local function RowPicker(index, order, field, name, desc, list)
         set = function(_, value)
             local row = Row(index)
             if row then row[field] = value end
+            if row and onSet then onSet(row, value) end
         end,
     }
+end
+
+-- A specialization pre-selects what it suggests, where that is a single choice.
+local function FollowSpec(row, spec)
+    local guide = R.SpecGuide(row.class, spec)
+    if not guide then return end
+    if guide.subclass and not R.CLASSES[row.class].hero then row.subclass = guide.subclass end
+    if guide.style then row.fightingStyle = guide.style end
+end
+
+-- What the specialization suggests for the levels the row has, or "".
+local function Suggested(index)
+    local row = Row(index)
+    local lines = row and R.SpecSuggestions(row.class, row.spec or "", row.level, 1) or {}
+    if #lines == 0 then return "" end
+    return ("%sSuggested for %s|r" .. "\n" .. "%s" .. "\n"):format(Opt.GOLD, row.spec, table.concat(lines, "\n"))
 end
 
 -- Adds the rows to the options of the wizard's class page, under the class skills.
 function W.AddMoreClassArgs(args)
     args.moreHeader = { type = "header", order = 7, name = "More classes", hidden = function() return not Open() end }
     args.moreSummary = {
-        type = "description", order = 7.1, fontSize = "medium", name = Summary, dialogControl = "RPSheetTermLabel",
+        type = "description", order = 7.1, fontSize = "medium", name = W.MoreClassSummary, dialogControl = "RPSheetTermLabel",
         hidden = function() return not Open() end,
     }
     for index = 1, W.MOST_EXTRAS do
         local order = 7.2 + index * 0.1
+        local function Holder() return Row(index) end
         args["moreClass" .. index] = ClassPicker(index, order)
         args["moreLevel" .. index] = LevelSlider(index, order + 0.01)
         args["moreSubclass" .. index] = RowPicker(index, order + 0.02, "subclass", "Subclass",
@@ -171,8 +163,21 @@ function W.AddMoreClassArgs(args)
                 if not class or class.hero or row.level < R.SUBCLASS_LEVEL then return {} end
                 return class.subclasses
             end)
+        args["moreSpec" .. index] = RowPicker(index, order + 0.015, "spec", "Specialization",
+            "How you play this class. It has no rules of its own: it guides the choice of subclass and Fighting Style, and pre-selects what it suggests.",
+            function()
+                local class = RowClass(index)
+                return class and class.specs or {}
+            end, FollowSpec)
         args["moreSkill" .. index] = RowPicker(index, order + 0.03, "skill", "Skill from this class",
             "The one skill this class gives when it isn't your first class.", function() return W.ExtraSkills(index) end)
+        args["moreStyle" .. index] = W.StyleOption(order + 0.032, 1, Holder)
+        args["moreStyleTwo" .. index] = W.StyleOption(order + 0.034, 2, Holder)
+        args["moreGuide" .. index] = {
+            type = "description", order = order + 0.036, fontSize = "medium",
+            name = function() return Suggested(index) end,
+            hidden = function() return Suggested(index) == "" end,
+        }
         args["moreBreak" .. index] = { type = "description", order = order + 0.04, name = "", hidden = function() return not Shown(index) end }
     end
 end

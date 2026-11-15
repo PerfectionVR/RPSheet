@@ -210,6 +210,7 @@ Sheet\PrepareRules.lua
 Sheet\PrepareChanges.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
+Sheet\CantripSwap.lua
 Sheet\Scribing.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
@@ -271,6 +272,7 @@ UI\Rows.lua
 UI\DefenseRows.lua
 UI\DamageMenu.lua
 UI\SlotLabels.lua
+UI\SpellbookCantrips.lua
 UI\SheetWindow.lua
 UI\SpellbookWindow.lua
 UI\PreparedWindow.lua
@@ -310,11 +312,13 @@ Options\Common.lua
 Wizard\Grants.lua
 Wizard\Draft.lua
 Wizard\MoreClasses.lua
+Wizard\Styles.lua
 Wizard\MoreClassRules.lua
 Wizard\Closet.lua
 Wizard\StartingGear.lua
 Wizard\GearChoices.lua
 Wizard\ClosetBrowser.lua
+Wizard\MoreClassSummary.lua
 Wizard\MoreClassesPage.lua
 Wizard\Pages.lua
 Wizard\Dialog.lua
@@ -322,10 +326,12 @@ Options\General.lua
 Options\Character.lua
 Options\Multiclass.lua
 Options\MulticlassPage.lua
+Options\ClassPicks.lua
 Options\FeatChoices.lua
 Options\LevelDialogState.lua
 Options\LevelDialogCounts.lua
 Options\LevelDialogSwaps.lua
+Options\LevelDialogManeuvers.lua
 Options\LevelDialogCheck.lua
 Options\LevelDialogGains.lua
 Options\LevelDialogClass.lua

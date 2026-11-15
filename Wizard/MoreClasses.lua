@@ -1,6 +1,7 @@
 -- A wizard character of several classes: the classes taken beside the first and how
 -- the levels are split. draft.classes is a list of
---   { class = <class key>, level = n, subclass = "", skill = "" }
+--   { class = <class key>, level = n, subclass = "", spec = "", skill = "",
+--     fightingStyle = "", fightingStyle2 = "" }   (the styles: Wizard/Styles.lua)
 -- and the first class keeps the levels the others leave. What the rules ask of another
 -- class is asked through the same check the level dialog uses (Sheet/ClassRules.lua),
 -- on a stand-in for the character the draft would make (Wizard/MoreClassRules.lua).
@@ -10,7 +11,9 @@ local _, ns = ...
 local R = ns.Rules
 local W = ns.Wizard
 
-W.MOST_EXTRAS = 3 -- other classes the wizard has rows for; more are added under Customize
+-- A row for every class beside the first: how many can be taken is up to the levels
+-- there are to split and to what the rules ask of each class.
+W.MOST_EXTRAS = #R.CLASS_ORDER - 1
 
 local NONE = {}
 
@@ -43,30 +46,15 @@ function W.DraftClasses()
     return list
 end
 
--- The class that brings the Fighting Style feature by its level, or nil.
-function W.StyleClass()
-    if not W.draft or not R.CLASSES[W.draft.class] then return end
-    for _, entry in ipairs(W.DraftClasses()) do
-        for level = 1, entry.level do
-            for _, feature in ipairs(ns.FeaturesGainedAt(entry.class, entry.subclass, level)) do
-                if feature.name == ns.STYLE_FEATURES[1] then return entry.class end
-            end
-        end
-    end
-end
-
-function W.NeedsFightingStyle()
-    return W.StyleClass() ~= nil
-end
-
--- Weapons whose mastery the new character may set: the class that allows the most counts.
+-- Weapons whose mastery the new character may set: what each of its classes allows at
+-- its own level, added together (the reading is given at RPSheet:MasteryLimit).
 function W.MasteryLimit()
-    local most = 0
+    local total = 0
     for _, entry in ipairs(W.DraftClasses()) do
         local base = R.CLASSES[entry.class].base
-        most = math.max(most, ns.FeatureKit.AtLevel(entry.level, R.MASTERY_LIMITS[base] or {}) or 0)
+        total = total + (ns.FeatureKit.AtLevel(entry.level, R.MASTERY_LIMITS[base] or {}) or 0)
     end
-    return most
+    return total
 end
 
 -- Another first class was chosen: it can't be one of the others as well.
@@ -78,14 +66,16 @@ function W.DropExtra(key)
 end
 
 -- Puts the other classes on the new sheet (Sheet/Classes.lua). A hero class comes
--- with its subclass; any other has one from level 3 of the class.
+-- with its subclass; any other has one from level 3 of the class. Their Fighting
+-- Styles follow in W.ApplyStyles.
 function W.ApplyExtras(sheet)
     if type(sheet.classes) ~= "table" then sheet.classes = {} end
     for _, row in ipairs(W.Extras()) do
-        local class = R.CLASSES[row.class]
-        local subclass = row.level >= R.SUBCLASS_LEVEL and row.subclass or ""
-        if class.hero then subclass = class.subclasses[1] or "" end
-        sheet.classes[row.class] = { level = row.level, subclass = subclass, spec = "", skill = row.skill or "" }
+        local spec = ""
+        for _, name in ipairs(R.CLASSES[row.class].specs or {}) do
+            if name == row.spec then spec = name end
+        end
+        sheet.classes[row.class] = { level = row.level, subclass = W.EntrySubclass(row), spec = spec, skill = row.skill or "" }
     end
     ns.NormalizeClasses(sheet)
 end

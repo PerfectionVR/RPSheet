@@ -24,9 +24,12 @@ function ns.MulticlassBlock(sheet, key)
     local class = R.CLASSES[key]
     if not class or not R.CLASSES[sheet.class] then return "choose a first class first" end
     if ns.ClassLevel(sheet, key) > 0 then return end
+    -- Two classes on one core class (Paladin and Death Knight, Hunter and Demon
+    -- Hunter) are that one class with different subclasses. Another class has to be a
+    -- different class, and a class has one subclass, so the two can't be combined.
     for _, own in ipairs(ns.ClassKeys(sheet)) do
         if R.CLASSES[own].base == class.base then
-            return ("it is the same class as your %s"):format(R.CLASSES[own].name)
+            return ("like your %s it is the %s class with another subclass, and a class can't be taken twice"):format(R.CLASSES[own].name, class.base)
         end
     end
     if class.hero and sheet.level + 1 < R.HERO_START_LEVEL then
@@ -54,7 +57,7 @@ function ns.MulticlassWarnings(sheet)
             warnings[#warnings + 1] = ("%s needs %s %d or higher for a character with several classes."):format(class.name, lacking, R.MULTICLASS_SCORE)
         end
         if bases[class.base] then
-            warnings[#warnings + 1] = ("%s and %s are the same class by the rules and can't be combined."):format(bases[class.base], class.name)
+            warnings[#warnings + 1] = ("%s and %s are both the %s class, each with its own subclass. A class can't be taken twice, so by the rules they can't be combined."):format(bases[class.base], class.name, class.base)
         end
         bases[class.base] = class.name
         if key ~= sheet.class and ns.ClassSubclass(sheet, key) ~= "" and ns.ClassLevel(sheet, key) < R.SUBCLASS_LEVEL and not class.hero then

@@ -189,7 +189,7 @@ function RPSheet:UseAbility(ability, mode)
     local slotPlans = {}
     for _, action in ipairs(ability.actions) do
         if action.type == "SLOTS" then
-            local plan = ns.PlanSlotAction(self, action)
+            local plan = ns.PlanSlotAction(self, action, ability)
             if not plan then return end
             slotPlans[#slotPlans + 1] = plan
         end

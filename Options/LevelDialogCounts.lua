@@ -64,6 +64,29 @@ function L.DropUnfollowed()
     end
 end
 
+-- A class's options (Metamagic, Invocations) lose the picks that ask for something
+-- the character doesn't have: a level of the class, or another pick. They can be set
+-- freely under Customize; here their places are asked for again.
+function L.DropUnmet()
+    for _, key in ipairs(R.PICK_LIST_ORDER) do
+        local list = R.PICK_LISTS[key]
+        if not list.custom and L.PickLimit(key) > 0 then
+            local view, picked = ns.ListView(L.Picking(), key), L.draft.picks[key]
+            local dropped = true
+            while dropped do
+                dropped = false
+                for name in pairs(picked) do
+                    local item = list.items[name]
+                    if not item or (item.level and view.level < item.level) or (item.needs and not picked[item.needs]) then
+                        picked[name], dropped = nil, true
+                        break
+                    end
+                end
+            end
+        end
+    end
+end
+
 -- How many skills to pick expertise in, and the set to pick from (nil = any).
 function L.ExpertiseLimit()
     if not L.draft then return 0 end

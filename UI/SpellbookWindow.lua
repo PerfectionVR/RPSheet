@@ -1,5 +1,6 @@
--- The spellbook window: every spell in a Mage's book, by level. Opened from the
--- sheet's Spells section. Left-click casts, right-click prepares or puts away.
+-- The spellbook window: a Mage's cantrips (UI/SpellbookCantrips.lua) and every spell
+-- in the book, by level. Opened from the sheet's Spells section. Left-click casts,
+-- right-click prepares or puts away.
 local ADDON, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -110,6 +111,7 @@ function RPSheet:PopulateSpellbook()
         if #names == 0 then
             UI.AddLabel(body, 1, UI.GREY .. "The book is empty. Add spells under Customize, Spellbook (the cog above).|r")
         end
+        self:AddBookCantrips(body) -- with the exchange of one after a long rest (UI/SpellbookCantrips.lua)
         -- The core spells and the spells of Azeroth each under their own heading, by level.
         local section, level
         for _, name in ipairs(names) do

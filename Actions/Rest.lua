@@ -36,6 +36,7 @@ function RPSheet:LongRest()
     state.petMasteryChanged = nil -- Weapon Mastery picks can be changed again
     state.prepareClosed = nil     -- and so can the prepared spells
     state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
+    state.cantripSwap = nil       -- and a Mage's exchange of one cantrip (Sheet/CantripSwap.lua)
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).

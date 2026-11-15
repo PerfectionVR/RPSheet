@@ -1,7 +1,8 @@
 -- Exchanging picks when a level is gained. Some lists let only so many of the picks
 -- made at earlier levels be given up for others at a level-up: one Mystic Arcanum
--- spell, one cantrip, one prepared spell of a class that changes them by level. The
--- list says so with `swapGroup` and `swaps` (Data/Picks.lua); the level dialog asks here.
+-- spell, one cantrip, one prepared spell of a class that changes them by level, one
+-- Metamagic option, one Eldritch Invocation. The list says so with `swapGroup` and
+-- `swaps` (Data/Picks.lua); the level dialog asks here.
 --   before  { [list] = { [name] = true } }  the picks the character had before the level
 --   picks   the same shape: the picks as they are being made
 --   like    the character as the dialog would leave it, for a list's own check
@@ -39,6 +40,11 @@ function ns.PickSwapLocked(key, name, before, picks, like, fixed)
     if not (before[key] or NONE)[name] or not (picks[key] or NONE)[name] then return false end
     if fixed then return true end
     if not list.swaps then return false end
+    -- A pick another earlier pick builds on can't be the one given up.
+    for other in pairs(picks[key]) do
+        local item = list.items[other]
+        if item and item.needs == name and before[key][other] then return true end
+    end
     return ns.PickSwapsUsed(list.swapGroup, before, picks, like) >= list.swaps
 end
 
@@ -52,5 +58,5 @@ function ns.PickSwapNote(key, before, picks, like, fixed)
     if list.swaps == 0 then return list.stayNote or "; earlier spells stay, you change them after a long rest" end
     local left = list.swaps - ns.PickSwapsUsed(list.swapGroup, before, picks, like)
     if left <= 0 then return "; this level's exchange is made" end
-    return "; one earlier spell may be exchanged"
+    return ("; one earlier %s may be exchanged"):format(list.what or "spell")
 end
