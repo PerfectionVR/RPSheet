@@ -17,6 +17,19 @@ local function Build(spell)
             get = function() return spell.level end,
             set = function(_, value) spell.level = value; Opt.Changed() end,
         },
+        -- Only a character with more than one spellcasting class has this to choose.
+        class = {
+            type = "select", order = 2.4, name = "Class",
+            desc = "The class this spell belongs to. It is cast with that class's spellcasting ability and counts against that class's cantrips or prepared spells.",
+            hidden = function() return #ns.CasterKeys(Opt.Sheet()) < 2 end,
+            values = function()
+                local values = {}
+                for _, key in ipairs(ns.CasterKeys(Opt.Sheet())) do values[key] = R.CLASSES[key].name end
+                return values
+            end,
+            get = function() return ns.SpellClass(Opt.Sheet(), spell) end,
+            set = function(_, value) spell.class = value; Opt.Changed() end,
+        },
         free = With({
             type = "toggle", order = 2.5, width = "double",
             name = "Doesn't count against my limit",
@@ -82,6 +95,20 @@ local function Limits()
     local function Count(have, limit)
         return ("%s%d of %d|r"):format(have > limit and Opt.RED or Opt.GOLD, have, limit)
     end
+    -- With several classes every spellcasting class has its own numbers.
+    local sheet = Opt.Sheet()
+    if ns.IsMulticlass(sheet) then
+        local lines = {}
+        for _, key in ipairs(ns.CasterKeys(sheet)) do
+            local classCantrips, classPrepared, classHighest = RPSheet:SpellLimits(key)
+            local haveCantrips, havePrepared = RPSheet:SpellCounts(nil, key)
+            lines[#lines + 1] = ("%s: cantrips %s, prepared spells %s, of spell levels up to %s."):format(R.CLASSES[key].name,
+                Count(haveCantrips, classCantrips), Count(havePrepared, classPrepared),
+                classHighest > 0 and R.SPELL_LEVELS[classHighest]:lower() or "none")
+        end
+        lines[#lines + 1] = "Each class prepares its own spells, as if it were your only class, and casts them with its own ability; the spell slots are shared. A spell's page says which class it belongs to. Spells marked as not counting are left out.\n"
+        return table.concat(lines, "\n")
+    end
     local text = ("Prepared spells %s, with spell slots up to %s."):format(Count(prepared, maxPrepared), highest > 0 and R.SPELL_LEVELS[highest]:lower() or "none")
     if maxCantrips > 0 then text = ("Cantrips %s. "):format(Count(cantrips, maxCantrips)) .. text end
     return text .. " Spells marked as not counting are left out.\n"
@@ -103,6 +130,19 @@ local function Available()
     -- Spells the class's own subclass gives are always prepared: they only need the slots.
     for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
         if not have[name] then names[#names + 1] = name end
+    end
+    -- The spells of the classes taken after the first.
+    local listed = {}
+    for _, name in ipairs(names) do listed[name] = true end
+    for _, key in ipairs(ns.ExtraClassKeys(Opt.Sheet())) do
+        for _, name in ipairs(R.SPELL_LISTS[R.CLASSES[key].base] or {}) do
+            if not have[name] and not listed[name] and R.SPELLS[name].level <= highest then
+                names[#names + 1], listed[name] = name, true
+            end
+        end
+        for _, name in ipairs(R.CLASS_SPELLS[key] or {}) do
+            if not have[name] and not listed[name] then names[#names + 1], listed[name] = name, true end
+        end
     end
     table.sort(names, R.SpellBefore) -- core spells first, then those of Azeroth
     return names
@@ -142,9 +182,24 @@ local function Extra(args)
             for _, name in ipairs(R.CLASS_SPELLS[Opt.Sheet().class] or {}) do
                 if name == picked then spell.free = true end -- always prepared
             end
+            -- With several classes the spell goes to the first of them that has it on
+            -- its list; it can be given to another on the spell's own page.
+            local sheet = Opt.Sheet()
+            if ns.IsMulticlass(sheet) then
+                for _, key in ipairs(ns.CasterKeys(sheet)) do
+                    local owns = false
+                    for _, name in ipairs(R.SPELL_LISTS[R.CLASSES[key].base] or {}) do owns = owns or name == picked end
+                    for _, name in ipairs(R.CLASS_SPELLS[key] or {}) do
+                        if name == picked then owns, spell.free = true, true end
+                    end
+                    if owns and (spell.class or "") == "" then spell.class = key end
+                end
+            end
             spells[#spells + 1] = spell
             -- A Mage prepares from the book, so the spell is written into it as well.
-            if ns.HasSpellbook(Opt.Sheet()) and spell.level > 0 and not spell.free then ns.SpellbookAdd(Opt.Sheet(), picked) end
+            if ns.HasSpellbook(sheet) and spell.level > 0 and not spell.free and ns.SpellIsOf(spell, ns.BookClass(sheet)) then
+                ns.SpellbookAdd(sheet, picked)
+            end
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()

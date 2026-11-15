@@ -116,10 +116,10 @@ local function Extra(args)
         type = "select", order = 0.5, name = "Basic weapons", width = "double",
         desc = "Every simple and martial weapon with its damage, properties and mastery. Ones your class isn't proficient with are marked.",
         values = function()
-            local class, values = Opt.Sheet().class, {}
+            local sheet, values = Opt.Sheet(), {}
             for _, name in ipairs(R.WEAPON_ORDER) do
                 values[name] = ("%s - %s%s"):format(name, R.WeaponSummary(name),
-                    ns.WeaponProficient(class, name) and "" or " |cffff5555(not proficient)|r")
+                    ns.SheetWeaponProficient(sheet, name) and "" or " |cffff5555(not proficient)|r")
             end
             return values
         end,
@@ -134,7 +134,7 @@ local function Extra(args)
             local sheet = Opt.Sheet()
             local mastery = RPSheet:MasteriesUsed() < RPSheet:MasteryLimit()
             sheet.weapons[#sheet.weapons + 1] = ns.NewBasicWeapon(picked,
-                function(stat) return RPSheet:Mod(stat) end, ns.WeaponProficient(sheet.class, picked), mastery)
+                function(stat) return RPSheet:Mod(stat) end, ns.SheetWeaponProficient(sheet, picked), mastery)
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()

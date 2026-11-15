@@ -15,7 +15,9 @@ end
 -- out exactly as the rest ends.
 local function EndFormAfter(self, hours)
     local form = self:Form()
-    if form and form.beast and math.floor((self:Sheet().level or 1) / 2) <= hours then
+    -- A beast form lasts half the level in the class that shapeshifts.
+    local shifter = ns.BaseView(self:Sheet(), "Druid") or self:Sheet()
+    if form and form.beast and math.floor((shifter.level or 1) / 2) <= hours then
         self:LeaveForms("the form ran out during the rest")
     end
 end
@@ -71,13 +73,18 @@ function RPSheet:ShortRest()
 end
 
 -- Rolls one hit die and heals by the result plus the Constitution modifier (at least 1).
-function RPSheet:SpendHitDie()
-    local state, class = self:State(), self:ClassData()
-    if (state.hitDice or 0) <= 0 then
+-- `pool` is the Hit Dice bar that was clicked: a character whose classes have dice of
+-- different sizes has one per size. Without it the first one is used.
+function RPSheet:SpendHitDie(pool)
+    local state = self:State()
+    for _, tracker in ipairs(self:GetTrackers()) do
+        if not pool and tracker.kind == "hitdice" then pool = tracker end
+    end
+    if not pool or (pool.get() or 0) <= 0 then
         self:Print("No hit dice left. A long rest restores them.")
         return
     end
-    local sides = class and class.hitDie or ns.Rules.DEFAULT_HIT_DIE
+    local sides = pool.sides
     local mod = self:Mod("CON")
     -- Species traits: a hit die that always heals its maximum, or a little extra per die.
     local extra = self:TraitValue("hitDie")
@@ -86,7 +93,7 @@ function RPSheet:SpendHitDie()
     self:RollDice(1, sides, function(rolls)
         if maximum then rolls[1] = sides end
         local healed = math.max(1, rolls[1] + mod)
-        state.hitDice = state.hitDice - 1
+        pool.set(pool.get() - 1)
         state.hp = math.min(self:MaxHP(), (state.hp or 0) + healed)
         self:ClearDeathSaves()
         self:Announce(("spends a hit die - %s (now %d/%d HP)"):format(

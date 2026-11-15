@@ -43,7 +43,7 @@ end
 -- True if the character picks from any list at all.
 function ns.HasPickList(sheet)
     for _, key in ipairs(R.PICK_LIST_ORDER) do
-        if ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then return true end
+        if ns.SheetPickLimit(sheet, key) > 0 then return true end
     end
     return false
 end
@@ -51,7 +51,7 @@ end
 -- True if any list has the wrong number of picks.
 function ns.OpenPicks(sheet)
     for _, key in ipairs(R.PICK_LIST_ORDER) do
-        local limit = ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass)
+        local limit = ns.SheetPickLimit(sheet, key)
         if limit > 0 and ns.PicksKnown(sheet, key) ~= limit then return true end
     end
     return false
@@ -62,7 +62,7 @@ function ns.ApplyPicks(sheet)
     local wanted = {}
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         -- A list marked custom has its own way onto the sheet (beast forms).
-        if not R.PICK_LISTS[key].custom and ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then
+        if not R.PICK_LISTS[key].custom and ns.SheetPickLimit(sheet, key) > 0 then
             for name in pairs(sheet.picks[key] or {}) do
                 local auto = ("pick:%s:%s"):format(key, name)
                 if R.PICK_LISTS[key].items[name] and not sheet.dismissed[auto] then

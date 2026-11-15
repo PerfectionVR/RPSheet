@@ -13,45 +13,64 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 local DIALOG = ADDON .. "Level"
 
 -- The level being decided, while the dialog is open:
---   level, taking (true when it is a new level), kind ("ASI", "BOON" or nil),
---   record (the choice so far), subclass (picked here), reopen (settings were open)
+--   level (the number of the level its choice is kept under, Sheet/ClassSlots.lua),
+--   class (the class the level belongs to), classLevel (its level in that class),
+--   taking (true when it is a new level), newClass (the first level in that class),
+--   kind ("ASI", "BOON" or nil), record (the choice so far), subclass and skill
+--   (picked here), reopen (settings were open)
 local draft
 
 local function Sheet() return RPSheet:Sheet() end
 
+local function DraftClass()
+    return draft and R.CLASSES[draft.class]
+end
+
 local function AsksSubclass()
-    local class = RPSheet:ClassData()
-    return draft.level >= R.SUBCLASS_LEVEL and Sheet().subclass == "" and class and #class.subclasses > 0
+    local class = DraftClass()
+    return draft.classLevel >= R.SUBCLASS_LEVEL and ns.ClassSubclass(Sheet(), draft.class) == "" and class and #class.subclasses > 0
+end
+
+-- The subclass the dialog's class will have once this dialog is confirmed.
+local function SubclassAfter()
+    local current = ns.ClassSubclass(Sheet(), draft.class)
+    return current ~= "" and current or draft.subclass
 end
 
 -- The Fighting Style slot (1 or 2) this level opens, or nil.
 local function StyleSlot()
     if not draft or not draft.taking then return end
-    local sheet = Sheet()
-    local subclass = sheet.subclass ~= "" and sheet.subclass or draft.subclass
-    for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, subclass, draft.level)) do
+    for _, feature in ipairs(ns.FeaturesGainedAt(draft.class, SubclassAfter(), draft.classLevel)) do
         for slot, name in ipairs(ns.STYLE_FEATURES) do
             if feature.name == name then return slot end
         end
     end
 end
 
--- The subclass the character will have once this dialog is confirmed.
-local function SubclassAfter()
-    local sheet = Sheet()
-    return sheet.subclass ~= "" and sheet.subclass or draft.subclass
+-- The whole character as this dialog would leave it: the level being taken counted
+-- in, in its class, and the subclass picked here. When an earlier level's choice is
+-- looked at again it is the character as it is. The classes' own choices are asked for
+-- this character, each class by its own level (Sheet/ClassViews.lua).
+local function Like()
+    local subclass = SubclassAfter()
+    if not draft.like or draft.likeSubclass ~= subclass then
+        local sheet = Sheet()
+        local level = draft.taking and draft.classLevel or ns.ClassLevel(sheet, draft.class)
+        draft.like, draft.likeSubclass = ns.SheetWith(sheet, draft.class, level, subclass), subclass
+    end
+    return draft.like
 end
 
--- The level the class's own choices are for: the one being taken, or the level the
--- character has when an earlier level's choice is looked at again.
-local function ChoiceLevel()
-    return draft.taking and draft.level or Sheet().level
+-- Skills the first level of a class taken after the first lets the character pick from.
+local function NewClassSkills()
+    if not draft or not draft.newClass then return {} end
+    return ns.MulticlassSkills(Sheet(), draft.class, draft.skill)
 end
 
 -- How many maneuvers the character should know at that level.
 local function ManeuverLimit()
     if not draft then return 0 end
-    return ns.ManeuverLimit(SubclassAfter(), ChoiceLevel())
+    return ns.SheetManeuverLimit(Like())
 end
 
 local function ManeuversPicked()
@@ -63,23 +82,21 @@ end
 -- Features with a skill to pick, as the character will be after this dialog.
 local function SkillFeatures()
     if not draft then return {} end
-    local sheet = Sheet()
-    return ns.SkillChoiceFeatures({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel() })
+    return ns.SkillChoiceFeatures(Like())
 end
 
 -- Features with options to pick in this dialog: the ones still open when taking a
 -- level, all of them when looking at the choices again.
 local function OptionFeatures()
     if not draft then return {} end
-    local sheet = Sheet()
-    local like = setmetatable({ subclass = SubclassAfter(), level = ChoiceLevel() }, { __index = sheet })
+    local like = Like()
     return draft.taking and ns.OpenOptionFeatures(like) or ns.OptionFeatures(like)
 end
 
 -- How many options of a pick list (Metamagic, Invocations) the character should know.
 local function PickLimit(key)
     if not draft then return 0 end
-    return ns.PickLimit(key, Sheet().class, ChoiceLevel(), SubclassAfter())
+    return ns.SheetPickLimit(Like(), key)
 end
 
 local function PicksChosen(key)
@@ -91,12 +108,14 @@ end
 -- The character as this dialog would leave it, for a list whose options depend on
 -- other picks made here (spells that have to be in the spellbook).
 local function Picking()
-    return setmetatable({ picks = draft.picks, level = ChoiceLevel(), subclass = SubclassAfter() }, { __index = Sheet() })
+    return setmetatable({ picks = draft.picks }, { __index = Like() })
 end
 
--- Why an option of a list can't be picked right now, or nil.
+-- Why an option of a list can't be picked right now, or nil. The level and subclass
+-- that count are those of the class the list belongs to.
 local function Blocked(key, name)
-    return ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Picking())
+    local view = ns.ListView(Picking(), key)
+    return ns.PickBlocked(key, name, view.level, draft.picks[key], view.subclass, view)
 end
 
 -- True if a pick made at an earlier level has to stay: only so many may be exchanged
@@ -111,7 +130,7 @@ local function DropUnfollowed()
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         local list = R.PICK_LISTS[key]
         if list.follows and list.blocked and PickLimit(key) > 0 then
-            local like = Picking()
+            local like = ns.ListView(Picking(), key)
             for name in pairs(draft.picks[key]) do
                 if not list.items[name] or list.blocked(like, name) then draft.picks[key][name] = nil end
             end
@@ -122,8 +141,7 @@ end
 -- How many skills to pick expertise in, and the set to pick from (nil = any).
 local function ExpertiseLimit()
     if not draft then return 0 end
-    local sheet = Sheet()
-    return ns.ExpertiseLimit({ class = sheet.class, subclass = SubclassAfter(), level = ChoiceLevel(), passives = sheet.passives })
+    return ns.ExpertiseLimit(Like())
 end
 
 -- Skills to choose for the feats on the sheet (Skilled, Skill Expert).
@@ -155,8 +173,8 @@ local function FeatChoiceContext()
     end
     local instances = ns.FeatInstances(sheet, override)
     -- Picks for a feat that was swapped out here, or that no longer fit, are dropped.
-    ns.NormalizeFeatChoices(draft.featChoices, instances, ChoiceLevel())
-    return sheet, draft.featChoices, instances, ChoiceLevel()
+    ns.NormalizeFeatChoices(draft.featChoices, instances, Like().level)
+    return sheet, draft.featChoices, instances, Like().level
 end
 
 local function ExpertisePicked()
@@ -166,6 +184,10 @@ local function ExpertisePicked()
 end
 
 local function Problem()
+    -- A class the character doesn't have yet has to be open to it.
+    local block = draft.newClass and ns.MulticlassBlock(Sheet(), draft.class)
+    if block then return ("You can't take a level of %s: %s."):format(DraftClass().name, block) end
+    if #NewClassSkills() > 0 and draft.skill == "" then return "Choose the skill your new class gives you." end
     local featSkills = FeatSkillLimit()
     if featSkills > 0 and FeatSkillsPicked() ~= featSkills then
         return ("Choose %d skills or tools for your feats (%d chosen)."):format(featSkills, FeatSkillsPicked())
@@ -219,32 +241,39 @@ end
 -- What the level gives
 ---------------------------------------------------------------------------
 local function Gains()
-    local sheet, class = Sheet(), RPSheet:ClassData()
-    local level, lines = draft.level, {}
+    local sheet, class = Sheet(), DraftClass()
+    -- The class's features come at its own level; the proficiency bonus follows the
+    -- whole character's.
+    local level, total, lines = draft.classLevel, Like().level, {}
     if draft.taking then
         local die = class and class.hitDie or R.DEFAULT_HIT_DIE
         lines[#lines + 1] = ("Maximum HP %s%s|r, and one more d%d Hit Die."):format(
             Opt.GREEN, Util.Signed(die / 2 + 1 + RPSheet:OwnMod("CON")), die)
-        local before, after = math.ceil((level - 1) / 4) + 1, math.ceil(level / 4) + 1
+        local before, after = math.ceil((total - 1) / 4) + 1, math.ceil(total / 4) + 1
         if after ~= before then
             lines[#lines + 1] = ("Proficiency bonus %s+%d|r."):format(Opt.GREEN, after)
         end
+        if draft.newClass then
+            lines[#lines + 1] = ("A class taken after your first gives less than it does at the start: %s. It gives no saving throw proficiencies."):format(
+                ns.MulticlassGains(draft.class))
+        end
     end
-    local subclass = sheet.subclass ~= "" and sheet.subclass or draft.subclass
-    local features = ns.FeaturesGainedAt(sheet.class, subclass, level)
+    local subclass = SubclassAfter()
+    local features = ns.FeaturesGainedAt(draft.class, subclass, level)
     if draft.taking and #features > 0 then
         lines[#lines + 1] = ""
         for _, feature in ipairs(features) do
             -- Some descriptions follow the level.
             local desc = feature.desc
-            if type(desc) == "function" then desc = desc(level, setmetatable({ level = level }, { __index = sheet })) end
+            if type(desc) == "function" then desc = desc(level, ns.ClassView(Like(), draft.class)) end
             lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feature.name, desc)
         end
     end
     -- What the specialization suggests for this level.
-    local suggestions = R.SpecSuggestions(sheet.class, sheet.spec, level)
+    local spec = ns.ClassSpec(sheet, draft.class)
+    local suggestions = R.SpecSuggestions(draft.class, spec, level)
     if #suggestions > 0 then
-        lines[#lines + 1] = ("\n%sSuggested for %s|r: %s"):format(Opt.GOLD, sheet.spec, table.concat(suggestions, " "))
+        lines[#lines + 1] = ("\n%sSuggested for %s|r: %s"):format(Opt.GOLD, spec, table.concat(suggestions, " "))
     end
     if draft.taking and class and class.cast then
         lines[#lines + 1] = "\nSpell slots and class resources that grow are listed in chat when you take the level."
@@ -297,8 +326,13 @@ local args = {
         type = "description", order = 1, fontSize = "large",
         name = function()
             if not draft then return "" end
-            local text = draft.taking and ("Level %d to %d"):format(draft.level - 1, draft.level)
-                or ("Your choice for level %d"):format(draft.level)
+            local total = Like().level
+            local text = draft.taking and ("Level %d to %d"):format(total - 1, total)
+                or ("Your choice for %s"):format(ns.SlotLabel(Sheet(), draft.level))
+            -- With several classes, or a new one, the class the level is taken in is named.
+            if draft.taking and (draft.newClass or ns.IsMulticlass(Sheet())) then
+                text = ("%s: %s level %d"):format(text, DraftClass().name, draft.classLevel)
+            end
             return Opt.GOLD .. text .. "|r\n"
         end,
     },
@@ -312,11 +346,11 @@ local args = {
         desc = "Its features are added to the sheet. A subclass that isn't listed can be typed under Customize afterwards.",
         hidden = function() return not draft or not AsksSubclass() end,
         values = function()
-            local class = RPSheet:ClassData()
+            local class = DraftClass()
             return (Opt.ListMap(class and class.subclasses, true))
         end,
         sorting = function()
-            local class = RPSheet:ClassData()
+            local class = DraftClass()
             return (select(2, Opt.ListMap(class and class.subclasses, true)))
         end,
         get = function() return draft.subclass end,
@@ -324,6 +358,14 @@ local args = {
             draft.subclass = value
             DropUnfollowed() -- its always-prepared spells can't be picked as well
         end,
+    },
+    newClassSkill = {
+        type = "select", order = 10.5, name = "Skill from your new class", width = "double",
+        desc = "A class taken after your first gives one skill from its list, where it gives any. Skills you are proficient in are left out.",
+        hidden = function() return #NewClassSkills() == 0 end,
+        values = function() return (Opt.ListMap(NewClassSkills())) end,
+        get = function() return draft.skill end,
+        set = function(_, value) draft.skill = value end,
     },
 
     style = {
@@ -336,8 +378,8 @@ local args = {
             return table.concat(lines, "\n\n")
         end,
         hidden = function() return not StyleSlot() end,
-        values = function() return (Opt.ListMap(ns.StyleChoices(Sheet(), StyleSlot() or 1), true)) end,
-        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices(Sheet(), StyleSlot() or 1), true))) end,
+        values = function() return (Opt.ListMap(ns.StyleChoices(ns.ClassView(Sheet(), draft.class), StyleSlot() or 1), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices(ns.ClassView(Sheet(), draft.class), StyleSlot() or 1), true))) end,
         get = function() return draft.style end,
         set = function(_, value) draft.style = value end,
     },
@@ -353,8 +395,7 @@ local args = {
         desc = "A skill from your class's list that you aren't proficient in yet.",
         hidden = function() return #SkillFeatures() == 0 end,
         values = function()
-            local sheet = Sheet()
-            local like = setmetatable({ subclass = SubclassAfter(), level = ChoiceLevel(), featureSkills = draft.featureSkills }, { __index = sheet })
+            local like = setmetatable({ featureSkills = draft.featureSkills }, { __index = Like() })
             return (Opt.ListMap(ns.FeatureSkillOptions(like, SkillFeatures()[1])))
         end,
         get = function() return draft.featureSkills[SkillFeatures()[1]] end,
@@ -464,11 +505,14 @@ local args = {
     },
     confirm = {
         type = "execute", order = 91,
-        name = function() return draft and draft.taking and ("Take level " .. draft.level) or "Save choice" end,
+        name = function() return draft and draft.taking and ("Take level " .. Like().level) or "Save choice" end,
         disabled = function() return not draft or Problem() ~= nil end,
         func = function()
             local sheet, level, taking = Sheet(), draft.level, draft.taking
-            if AsksSubclass() and draft.subclass ~= "" then sheet.subclass = draft.subclass end
+            -- For a class that is only added by taking the level, RPSheet:SetLevel below
+            -- writes the subclass and the skill.
+            local subclass = AsksSubclass() and draft.subclass ~= "" and draft.subclass or nil
+            if subclass then ns.SetSubclass(sheet, draft.class, subclass) end
             local slot = StyleSlot()
             if slot and draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = draft.style end
             if draft.kind then Levels.Set(sheet, level, draft.record) end
@@ -484,7 +528,7 @@ local args = {
             sheet.featChoices = CopyTable(draft.featChoices) -- kept per feat; the upkeep drops what no feat asks for
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
-                RPSheet:SetLevel(level)
+                RPSheet:SetLevel(sheet.level + 1, draft.class, { subclass = subclass, skill = draft.skill })
             else
                 ns.ApplyGrants(sheet)
                 ns.NormalizeState(RPSheet:State())
@@ -518,7 +562,7 @@ for index, stat in ipairs(R.STATS) do
         local sheet, mine, placed = Sheet(), draft.record.asi[stat] or 0, 0
         for _, other in ipairs(R.STATS) do placed = placed + (draft.record.asi[other] or 0) end
         local saved = Levels.Record(sheet, draft.level)
-        local counted = saved and draft.level <= sheet.level and saved.asi[stat] or 0
+        local counted = saved and ns.HasSlot(sheet, draft.level) and saved.asi[stat] or 0
         local room = R.MAX_SCORE - (RPSheet:NaturalScore(stat) - counted) -- your own score: an item that sets it higher leaves the room as it is
         return 0, math.max(0, math.min(R.ASI_POINTS, mine + R.ASI_POINTS - placed, room))
     end)
@@ -725,17 +769,30 @@ LibStub("AceConfig-3.0"):RegisterOptionsTable(DIALOG, {
 })
 AceConfigDialog:SetDefaultSize(DIALOG, 620, 560)
 
--- Opens the dialog for `level`: the next level to take it, or a level the character
--- has to make or change its choice. `reopen` brings the settings back afterwards.
-function ns.OpenLevelDialog(level, reopen)
+-- Opens the dialog for `level`: a level the character has (its number, see
+-- Sheet/ClassSlots.lua) to make or change its choice, or nothing to take the next
+-- level. `reopen` brings the settings back afterwards. `classKey` is the class the
+-- next level is taken in: the first class when left out, another of the character's
+-- classes, or a class it doesn't have yet.
+function ns.OpenLevelDialog(level, reopen, classKey)
     local sheet = Sheet()
-    level = level or sheet.level + 1
-    if level > R.MAX_LEVEL then return end
+    local taking = not (level and ns.HasSlot(sheet, level))
+    local own, classLevel
+    if taking then
+        if sheet.level >= R.MAX_LEVEL then return end
+        own = R.CLASSES[classKey] and classKey or sheet.class
+        classLevel = ns.ClassLevel(sheet, own) + 1
+        level = ns.LevelSlot(sheet, own, classLevel)
+    else
+        own, classLevel = ns.SlotClass(sheet, level)
+    end
     if reopen == nil then reopen = AceConfigDialog.OpenFrames[ADDON] ~= nil end
     local kind = Levels.Kind(sheet, level)
     local record = Levels.Record(sheet, level)
+    local newClass = taking and ns.ClassLevel(sheet, own) == 0
     draft = {
-        level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
+        level = level, class = own, classLevel = classLevel, newClass = newClass, skill = "",
+        taking = taking, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
         featTools = CopyTable(sheet.featTools or {}), before = {},
@@ -748,19 +805,21 @@ function ns.OpenLevelDialog(level, reopen)
     -- exchanged while taking it (see SwapLocked).
     if draft.taking then
         for _, key in ipairs(R.PICK_LIST_ORDER) do
-            if R.PICK_LISTS[key].swaps and ns.PickLimit(key, sheet.class, level - 1, sheet.subclass) > 0 then
+            if R.PICK_LISTS[key].swaps and ns.SheetPickLimit(sheet, key) > 0 then
                 draft.before[key] = CopyTable(draft.picks[key])
             end
         end
     end
     if kind == "BOON" then draft.record.choice = "FEAT" end
+    -- A hero class taken as a new class comes with its subclass.
+    if newClass and R.CLASSES[own].hero then draft.subclass = R.CLASSES[own].subclasses[1] or "" end
     -- The specialization's suggestions are pre-selected; the player can pick otherwise.
-    local guide = R.SpecGuide(sheet.class, sheet.spec)
+    local guide = R.SpecGuide(own, ns.ClassSpec(sheet, own))
     if guide then
         if guide.subclass and AsksSubclass() then draft.subclass = guide.subclass end
         local slot = StyleSlot()
         if guide.style and slot then
-            for _, name in ipairs(ns.StyleChoices(sheet, slot)) do
+            for _, name in ipairs(ns.StyleChoices(ns.ClassView(sheet, own), slot)) do
                 if name == guide.style then draft.style = name end
             end
         end

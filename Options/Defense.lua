@@ -14,6 +14,9 @@ local function Summary()
         ("Hit points: d%d at level 1, then the average each level, plus your Constitution modifier per level."):format(
             class and class.hitDie or R.DEFAULT_HIT_DIE),
     }
+    if ns.IsMulticlass(sheet) then
+        lines[#lines + 1] = "The levels of a class taken later count with that class's own die, at its average."
+    end
     local armor = R.ARMOR[sheet.armor]
     local training, kind = RPSheet:ArmorTraining(), ns.ArmorKind(sheet.armor)
     if kind and not training[kind] then

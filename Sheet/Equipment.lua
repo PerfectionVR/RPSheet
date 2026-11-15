@@ -42,7 +42,7 @@ local function ReadyWeapon(sheet, item, on, modifier, canMaster)
         end
     end
     if found or not on or not R.WEAPONS[base] then return end
-    local weapon = ns.NewBasicWeapon(base, modifier, ns.WeaponProficient(sheet.class, base), canMaster())
+    local weapon = ns.NewBasicWeapon(base, modifier, ns.SheetWeaponProficient(sheet, base), canMaster())
     weapon.name, weapon.magic = item.name, item.bonus or 0
     sheet.weapons[#sheet.weapons + 1] = weapon
 end

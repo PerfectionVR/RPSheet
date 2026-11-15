@@ -31,7 +31,9 @@ function UI.ItemLines(self, name, item, classKey)
     if weapon then
         lines[#lines + 1] = ("%s weapon: %s. Mastery: %s."):format(
             weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(base), weapon.mastery)
-        if not ns.WeaponProficient(classKey or self:Sheet().class, base) then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
+        local proficient
+        if classKey then proficient = ns.WeaponProficient(classKey, base) else proficient = ns.SheetWeaponProficient(self:Sheet(), base) end
+        if not proficient then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
     elseif armor then
         local kind = ns.ArmorKind(armor)
         lines[#lines + 1] = ArmorLine(R.ARMOR[armor], kind)

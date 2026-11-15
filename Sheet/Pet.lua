@@ -7,7 +7,7 @@ local Util = ns.Util
 
 function RPSheet:HasPet()
     local sheet = self:Sheet()
-    return sheet.subclass == "Beast Master" and sheet.level >= 3
+    return ns.SubclassLevel(sheet, "Beast Master") >= 3
 end
 
 -- The family in lower case for announcements ("wolf"), or nil when none is picked.

@@ -174,7 +174,7 @@ function RPSheet:ExplainAC()
     if form then
         local formParts = { { form.name, form.ac } }
         if form.acStat then Add(formParts, R.STAT_NAMES[form.acStat], self:Mod(form.acStat)) end
-        if form.beast and sheet.subclass == "Circle of the Moon" then
+        if form.beast and ns.HasSubclass(sheet, "Circle of the Moon") then
             Add(formParts, "Circle Forms (at least 13 + Wisdom)", math.max(0, 13 + self:Mod("WIS") - form.ac))
         end
         AddBonuses(self, formParts, "AC")
@@ -189,8 +189,9 @@ function RPSheet:ExplainAC()
     else
         Add(parts, "Dexterity", dex)
     end
-    if sheet.armor == "NONE" and class and class.unarmored and (class.unarmoredShield or not sheet.shield) then
-        Add(parts, "Unarmored Defense, " .. R.STAT_NAMES[class.unarmored], self:Mod(class.unarmored))
+    local unarmored, unarmoredStat = self:UnarmoredDefense()
+    if unarmoredStat then
+        Add(parts, "Unarmored Defense, " .. R.STAT_NAMES[unarmoredStat], unarmored)
     end
     if sheet.shield then Add(parts, "shield", R.SHIELD_AC) end
     Add(parts, "magic armor and shield", self:WornBonus())

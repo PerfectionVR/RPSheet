@@ -58,18 +58,17 @@ function ns.ExpertiseLimit(sheet)
     if not R.CLASSES[sheet.class] then return 0 end
     local fromFeats = FeatPicks(sheet, "expertisePicks")
     if fromFeats > 0 then count, anySkill = fromFeats, true end
-    for level = 1, sheet.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
-            if feature.expertise then
-                count = count + (Kit.AtLevel(sheet.level, feature.expertise.steps) or 0)
-                if feature.expertise.skills then
-                    for _, skill in ipairs(feature.expertise.skills) do allowed[skill] = true end
-                else
-                    anySkill = true
-                end
+    -- Each class's feature counts by the level in that class.
+    ns.EachGainedFeature(sheet, function(feature, view)
+        if feature.expertise then
+            count = count + (Kit.AtLevel(view.level, feature.expertise.steps) or 0)
+            if feature.expertise.skills then
+                for _, skill in ipairs(feature.expertise.skills) do allowed[skill] = true end
+            else
+                anySkill = true
             end
         end
-    end
+    end)
     return count, (not anySkill and count > 0) and allowed or nil
 end
 
