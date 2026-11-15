@@ -2,6 +2,47 @@
 
 ## Unreleased
 
+- New Trade tab for professions. Your professions follow your tool proficiencies and
+  your skill follows your proficiency bonus. Roll gathering checks (herbalism,
+  mining, skinning, fishing, archaeology) against the region you pick, keep what you
+  gather as materials, and make listed gear and magic items in a crafting window
+  that checks your tools and skill, pays with materials before coins and tells you
+  how long it takes. Enchanters can disenchant; artisan cooks can lay out a feast.
+- Mounts, vehicles and companion creatures: a stable to browse, add and buy them, and
+  a section on the Items tab. Click a mount to ride it and your Speed row shows its
+  speed; flying and swimming mounts need an Exotic Saddle and a mount must be larger
+  than you. Companion creatures have a loyalty score and give their gift at 10.
+- Spells that need a component with a price can only be cast while you carry it, and
+  components the spell uses up are taken from your inventory; one worth more will do.
+  A Reagents tab in the item browser sells them, tooltips say what you need, and
+  "Check spell components" under Customize > Spells switches it off.
+- Every core spell of 2nd level and higher has a short written summary in place of
+  the bare line of facts.
+- Magic items can set an ability score or your speed (Amulet of Health, Gauntlets of
+  Ogre Power, Headband of Intellect, the Belts of Giant Strength, Boots of Striding
+  and Springing), and your own items and passives can too. About fifty more magic
+  items are in the browser.
+- Creating a character: two buttons take your class's and your background's
+  starting gear into the closet and set your gold to what is left over.
+- Levelling: one Mystic Arcanum spell, and one prepared spell for classes that change
+  them by level, can be exchanged per level. Classes that change prepared spells
+  after a long rest have a "Change prepared spells" window on the Actions tab.
+- Skilled can pick tools, Weapon Master unlocks the mastery of its weapon kind, and
+  Inscription Adept gains Glyph of Warding at level 5 and Symbol at level 13.
+- Your own spells and ability dice can have a damage type; force damage from them
+  counts for Metamorphosis: Devourer.
+- Wild Shape: attacks that hit harder after a charge or against a Bloodied target
+  have a second row that rolls it, and a beast's own skill bonus is used when it
+  beats yours.
+- Renown: +1 for a stronghold in a faction's lands, and your home faction rises as
+  the other factions of your side reach each tier. Renown with both the Explorers'
+  League and the Reliquary is flagged in red.
+- Casting a protective spell on yourself (Stoneskin, Protection from Energy, Fire
+  Shield and more) switches on its resistance until a rest, the end of
+  concentration, or you click it off. Heavenly Spirit asks which damage types you
+  resist; Boon of the Night Spirit has a "Shadowy Form" passive.
+- The creation wizard and the level-up window follow your sheet theme.
+- The sheet's smallest width is 340, to fit its six tabs.
 - Carrying more than your capacity holds your speed to 5 feet; the Speed row and
   its explanation show it.
 - A found spell can be copied into the spellbook for 50 gp per spell level, paid

@@ -152,7 +152,6 @@ other ten still need that.
 - [x] A second check of the twelve classes after the Warrior against the rules, by
       one reviewer per class; what they found is fixed. The Warrior was checked the
       same way afterwards
-- [ ] An in-game play-through of the ten classes other than the Warrior, Mage and Druid
 - [x] Path of the Berserker (Shaman) and the War Domain (Priest), which the rules also list
 - [x] Invocations that can be taken more than once; a Death Knight's undead steed
 - [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
@@ -161,8 +160,8 @@ other ten still need that.
       again for each one; right-click ends it
 - [x] Metamorphosis (Demon Hunter): casting it asks which of the three benefits you
       take and applies it, as a passive you switch off when the spell ends
-- [ ] Metamorphosis: the benefit ending by itself after its minute, and force damage
-      from spells typed in by hand or from custom abilities counted for Devourer
+- [x] Metamorphosis: force damage from your own spells and ability dice counted for
+      Devourer, through a damage type you set on them
 - [x] Tactical Mind (Warrior), Psi-Bolstered Knack and Homing Strikes (Rogue): one
       click takes the use or die back when the roll still failed; Psychic Whispers is
       free the first time after a long rest
@@ -183,16 +182,12 @@ other ten still need that.
 - [x] A beast form stops spellcasting, and ends at 0 hit points, when incapacitated,
       and on a rest that outlasts it (a short rest below level 4, a long rest below
       level 18)
-- [ ] Timing a beast form. It lasts half your level in hours, but the sheet keeps no
-      clock, so it can't tell when you shifted. A rest therefore assumes you were in
-      the form from its start, and counts a form that lasts exactly as long as the
-      rest as run out. If you shift partway through a rest, switch the form back on
-      afterwards. Outside rests the form never runs out by itself: switch it off when
-      its hours are up
 - [x] Ninety beasts as Wild Shape forms, grouped by challenge rating, the larger ones
       for the Circle of the Moon; a form's own Constitution and senses
-- [ ] Beast attacks: damage that depends on the situation (a charge, a bloodied
-      target) is described, not rolled; a beast's own skill bonuses where they beat the character's
+- [x] Beast attacks whose damage depends on the situation (a charge, a Bloodied target,
+      a thinned swarm) have a second row that rolls it; a beast's own skill bonuses
+      are used where they beat yours
+- [ ] A beast's own saving throw bonuses where they beat the character's
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves
@@ -202,19 +197,18 @@ other ten still need that.
 - [x] Slots made with Font of Magic go above the usual number of slots, until a long rest
 - [x] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
       chosen in the level dialog and cast without a slot as the rules allow
-- [ ] Mystic Arcanum: swapping only one spell per level
+- [x] Mystic Arcanum: one spell exchanged per level
 - [ ] Multiclassing
 
 **Spells**
 
 - [x] Core-rule spells of every level, with level, save or attack, dice and concentration
-- [ ] Hand-written summaries for the core spells above 1st level (theirs are put
-      together from the spell's facts)
+- [x] Hand-written summaries for every core spell above 1st level
 - [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
 - [x] Spells that grow in another way with the slot: more targets, longer durations
       and fixed amounts are stated, second dice parts and fixed bonuses are rolled
-- [ ] The starting number of targets of the twenty plain "one more target per slot
-      level" spells read against the rules once more
+- [x] The starting number of targets of the twenty plain "one more target per slot
+      level" spells read against the rules once more: all correct
 - [x] Spells that make several attacks roll them all in one click (Scorching Ray,
       Eldritch Blast, Flurry, Azure Strike)
 - [x] Ritual casting: right-click a ritual spell to cast it without a slot
@@ -225,19 +219,27 @@ other ten still need that.
       every spellcasting class, and a Mage's spellbook spells (six, and two per level)
 - [x] The prepared spells of the other classes chosen the same way, exactly as many
       as the class prepares; spells added by hand before count as picks
-- [ ] How often prepared spells may be swapped (any after a long rest, one per long
-      rest, or one per level, by class)
+- [x] How often prepared spells may be swapped, by class: one per level in the level
+      dialog, or after a long rest (all, or one) in a window on the sheet
+- [ ] Reopening the level dialog for a level you already have does not hold to the
+      one-swap-per-level limits; cantrip swaps
 - [x] Copying a found spell into the book for 50 gp a level, taken from your coins
 - [x] A spellbook's prepared spells changed only after a long rest (until the first
       spell cast after it; the Customize page is free)
 - [x] Gold tracked on the sheet (see the inventory below)
-- [ ] Spell components with a price checked against, and taken from, the inventory
+- [x] Spell components with a price checked against, and taken from, the inventory
+- [ ] Components that are a weapon (Conjure Barrage, Steel Wind Strike, True Strike) or
+      coins (Gentle Repose); components needed once per target are checked as one
 
 **Character**
 
 - [x] Tool proficiencies: granted by class and background or ticked by hand, with a
       check to click for each
-- [ ] The professions and crafting rules
+- [x] Professions: they follow your tool proficiencies and your skill follows your
+      proficiency bonus; gathering checks by region, materials, archaeology,
+      disenchanting, and crafting listed items with tool, skill and cost checks
+- [ ] Crafting the magic items, spell scrolls and vehicles that are not in the item
+      lists; checking that you carry the tool, not only that you are proficient
 - [x] An armoury for weapons of your own, kept between characters: save, add a copy,
       rename, delete, and share one as a text string
 - [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
@@ -249,50 +251,66 @@ other ten still need that.
       and tick what you wear and wield
 - [x] Armor, shields and basic weapons in the inventory linked to Defense and Weapons:
       equipping one puts it on or readies it, putting it away undoes that
-- [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
-      situation; the fixed starting gear
-      packages of each class and background (the closet has no budget)
+- [x] Magic items that set an ability score or a speed, and about fifty whose bonus
+      depends on the situation (the part that always holds is counted)
+- [x] The starting gear of each class and background, taken into the closet with one
+      button
+- [ ] Swimming, climbing and flying speeds as numbers (items that give them only say
+      so); the choices inside a starting gear set are picked by hand
 - [x] Carrying more than you can holds your speed to 5 feet
 - [x] Magic and named armor, shields and weapons equipped from the inventory: an item
       can count as a plain one and carry a magic bonus; a weapon of your own is
       readied by an item of the same name
-- [ ] Mounts, vehicles and companion creatures
+- [x] Mounts, vehicles and companion creatures: a stable to add and buy them, riding
+      (the mount's speed on the Speed row), and companions with loyalty and gifts
+- [ ] Renown discounts on prices; companion gifts that are advantage or damage
+      reduction (text only); crafted and summoned mounts
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on
 - [x] Immunities, vulnerabilities and conditions you can't be put under, next to the
       resistances; "Take damage" and "Heal" apply them, temporary hit points and the
       rules for dropping to 0
-- [ ] Protection from spells that are running (the sheet doesn't track those): add
-      it as a passive of your own. Resistances with a choice or a condition of their
-      own (Heavenly Spirit, Boon of the Night Spirit) are not counted
+- [x] Protection from spells cast on yourself (Stoneskin, Protection from Energy and
+      others): switched on by the casting, ended by a rest, by concentration or by
+      hand; Heavenly Spirit's damage types and Boon of the Night Spirit's resistance
+- [ ] Spell protection that rolls its reduction (Resistance, Time Dilation) or guards
+      someone else (Warding Bond)
 - [x] The perks every faction gives at each renown tier, shown with the score
 - [x] Each faction's own renown perks, shown per tier; the sheet applies what it can
       (a language, tool or skill from the faction's trainers, and blessings)
-- [ ] Renown gained by rule (a stronghold, another subfaction of your side reaching
-      a tier); renown with only one of the Explorers' League and the Reliquary
+- [x] Renown gained by rule: a stronghold in a faction's lands, and the other factions
+      of your side reaching a tier; renown with both the Explorers' League and the
+      Reliquary is flagged
+- [ ] Renown by rule goes by the scores as they are now, not by the first time a tier
+      was reached
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
 - [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
       list, ability and spells, the skill of Keen Mind and Observant, Elemental
       Adept's damage type, Crafter's tools, Musician's instruments, the spells of
       Fey-Touched, Shadow-Touched and Ritual Caster, the Boons of Skill and Energy
       Resistance
-- [ ] Skilled's tools in place of skills; Weapon Master unlocking a mastery;
+- [x] Skilled's tools in place of skills; Weapon Master unlocking a mastery;
       Inscription Adept's higher spells
 
 **Play**
 
 - [x] Conditions changing your own rolls and speed by themselves
 - [x] The concentration save rolled when you take damage; a failure ends the spell
-- [ ] Conditions that end by themselves
+- [ ] Conditions and effects that end by themselves. The sheet keeps no clock, so
+      nothing runs out by itself: a beast form's hours, Metamorphosis after its
+      minute and a spell's duration are ended by a rest or by hand. A rest assumes
+      you were in a beast form from its start
+- [ ] An in-game play-through of the ten classes other than the Warrior, Mage and Druid
 - [ ] Initiative order and turn tracking
 - [ ] A view for the DM of the whole party
 
 **Addon**
 
 - [ ] Syncing tested between two players
-- [ ] Languages other than English
-- [ ] The creation wizard and level dialog drawn in the sheet's theme (they have a
-      themed background only)
+- [x] The creation wizard and level dialog drawn in the sheet's theme: frame, title,
+      headings, text and buttons
+- [ ] Themed checkbox, slider, dropdown and edit box art in those dialogs; the settings
+      window in the sheet's theme
 
 ## Bundled libraries
 
