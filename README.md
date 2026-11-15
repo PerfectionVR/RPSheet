@@ -577,10 +577,10 @@ other ten still need that.
 
 - [x] Conditions changing your own rolls and speed by themselves
 - [x] The concentration save rolled when you take damage; a failure ends the spell
-- [ ] Conditions and effects that end by themselves. The sheet keeps no clock, so
-      nothing runs out by itself: a beast form's hours, Metamorphosis after its
-      minute and a spell's duration are ended by a rest or by hand. A rest assumes
-      you were in a beast form from its start
+- [ ] Conditions and effects that end by themselves: they will be counted in turns
+      by the turn-based combat below. Until then a beast form's hours, Metamorphosis
+      after its minute and a spell's duration end by a rest or by hand; there is no
+      clock outside combat. A rest assumes you were in a beast form from its start
 - [ ] An in-game play-through of the ten classes other than the Warrior, Mage and Druid
 - [ ] Initiative order and turn tracking
 - [ ] A view for the DM of the whole party
@@ -599,7 +599,7 @@ other ten still need that.
 
 Small gaps left in what is built. None is planned; say so if one matters to you.
 
-- **No clock or turns** (waits for the combat items above): a beast form's hours,
+- **No turns yet** (they come with turn-based combat; there is no clock outside it): a beast form's hours,
   Metamorphosis after its minute, spell durations, "once a turn" protection such as
   Resistance, and temporary flight (Draconic Flight and the like) are ended or
   switched by hand or by a rest.
