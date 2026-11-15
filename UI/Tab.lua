@@ -33,8 +33,8 @@ local methods = {
             edge:SetColorTexture(accent[1], accent[2], accent[3], open and 1 or 0.3)
         end
         -- The page's top line runs under every tab but the open one.
-        self.base:SetColorTexture(accent[1], accent[2], accent[3], 1)
-        self.base:SetShown(not open)
+        self.underline:SetColorTexture(accent[1], accent[2], accent[3], 1)
+        self.underline:SetShown(not open)
         self.hover:SetColorTexture(unpack(theme.highlight))
         self:SetHeight(theme.fontSize + 12)
     end,
@@ -65,10 +65,10 @@ local function Constructor()
     right:SetWidth(1)
 
     -- The line under the tab; it also spans the gap, so the line is unbroken.
-    local base = frame:CreateTexture(nil, "ARTWORK")
-    base:SetPoint("BOTTOMLEFT")
-    base:SetPoint("BOTTOMRIGHT")
-    base:SetHeight(1)
+    local underline = frame:CreateTexture(nil, "ARTWORK")
+    underline:SetPoint("BOTTOMLEFT")
+    underline:SetPoint("BOTTOMRIGHT")
+    underline:SetHeight(1)
 
     local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     text:SetPoint("LEFT", fill, 2, 0)
@@ -76,7 +76,7 @@ local function Constructor()
     text:SetJustifyH("CENTER")
     text:SetWordWrap(false)
 
-    local widget = { type = Type, frame = frame, fill = fill, hover = hover, edges = { top, left, right }, base = base, text = text }
+    local widget = { type = Type, frame = frame, fill = fill, hover = hover, edges = { top, left, right }, underline = underline, text = text }
     for name, method in pairs(methods) do widget[name] = method end
 
     frame:SetScript("OnClick", function() widget:Fire("OnClick") end)
