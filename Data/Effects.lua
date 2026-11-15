@@ -135,4 +135,6 @@ R.TEMPLATES.spell = {
     hitsUp = 0,                -- more of them for each slot level above the spell's own
     hitsScale = false,         -- a cantrip that makes more of them at character levels 5, 11 and 17
     ritual = false,            -- can be cast as a ritual: no slot, ten minutes longer
+    edited = false,            -- the player changed it under Customize: it keeps those fields (Sheet/SpellRefresh.lua)
+    tracked = false,           -- true once `edited` is kept for it; a copy saved before that is compared once
 }

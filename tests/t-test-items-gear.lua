@@ -197,7 +197,8 @@ local function Character(spec)
     local purse = sheet.coins
     Check(purse.gp == expect.gold and purse.sp == (expect.silver or 0) and purse.pp + purse.ep + purse.cp == 0, label .. ": coins " .. ns.PurseText(purse))
     for _, tool in ipairs(expect.tools) do
-        Check(sheet.tools[tool] == true and RPSheet:ToolSource(tool) ~= nil, label .. ": not proficient with the chosen " .. tool)
+        -- (a Monk's is taken over as the class's pick: Sheet/ToolPicks.lua)
+        Check((sheet.tools[tool] == true or ns.ToolPicked(sheet, tool)) and RPSheet:ToolSource(tool) ~= nil, label .. ": not proficient with the chosen " .. tool)
     end
     local ready = {}
     for _, weapon in ipairs(ns.ReadyWeapons(sheet)) do ready[#ready + 1] = weapon.name end

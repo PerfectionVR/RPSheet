@@ -161,6 +161,7 @@ ns.ApplyGrants(sheet)                         Wizard/Grants.lua
     ns.ApplySpellPicks                        Sheet/SpellPicks.lua
     ns.ApplyPreparedPicks                     Sheet/PreparedPicks.lua (before the next)
     ns.ApplyPreparedSpells                    Sheet/PreparedSpells.lua
+      ns.RefreshListedSpells                  Sheet/SpellRefresh.lua  (saved copies follow the spell data)
     ns.ApplySpellbook                         Sheet/Spellbook.lua
     ns.ApplySpellChoices                      Sheet/SpellChoices.lua  (after the book)
     ns.ApplyFeatSpells                        Sheet/FeatSpells.lua    (last of spells)
@@ -537,6 +538,18 @@ spell defined by hand is put on `R.SPELL_LISTS` in `Data/Spells.lua`. Then, as n
 does (`Data/SlotGrowth.lua`), a written summary (`Data/SpellSummaries<level>.lua`),
 components per target or of a special kind (`Data/SpellComponents.lua`,
 `Data/SpellComponentKinds.lua`), protection it gives (`Data/SpellWards.lua`).
+Ask `R.ClassSpellList(classKey)` / `R.OnClassSpellList(classKey, name)`
+(`Data/SpellLists.lua`) for a class's spells, not `R.SPELL_LISTS` itself: a Death
+Knight and a Demon Hunter leave out part of their core class's list.
+
+**Correcting a spell.** A spell on a sheet is a copy of its entry, and
+`ns.RefreshListedSpells` brings the copies up to date on every upkeep: fully for a copy
+the player never changed, and only in the fields the Customize page can't change for one
+they did (`spell.edited`, set by that page's controls). Copies saved before that mark
+existed are compared once with every value the entry ever had, so **when you change a
+fact or the summary of a listed spell, add the old value to `Data/SpellFormer.lua`
+(`Was`) or `Data/SpellFormerText.lua` (`Read`)**; `tests/t-test-levelling-savedspells.lua`
+checks that each former value is brought up to date.
 
 **An item.** Plain gear: add `Name|price in copper|weight` to the right
 `R.AddGear(kind, ...)` call in `Data/Gear.lua` or `Data/GearArms.lua`. A magic item:

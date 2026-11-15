@@ -40,12 +40,6 @@ Allow("the component is a number of arrows or a coin, which the site gives no pr
 -- Wards ----------------------------------------------------------------------------
 Allow("the casting is instantaneous, the feast's benefits last 24 hours", "Heroes' Feast|ward hours")
 
--- Class lists ------------------------------------------------------------------------
-Allow("OPEN, outside the spell data: a Death Knight shares the Paladin's list in the addon and so can pick the three spells the setting adds for Paladins; the site's Death Knight list leaves them out",
-    "Death Knight list|Consecration; Death Knight list|Guided Prayer; Death Knight list|Divine Shield")
-Allow("OPEN, outside the spell data: a Demon Hunter shares the Ranger's list in the addon and so can pick the three spells the setting adds for Hunters; the site's Demon Hunter list leaves them out",
-    "Demon Hunter list|Freezing Trap; Demon Hunter list|Serpent Sting; Demon Hunter list|Explosive Trap")
-
 -- Always prepared ----------------------------------------------------------------------
 Allow("the spell is a class feature of its own on the sheet (an ability that casts it), not an entry of the spell list",
     "Druid prepared|Find Familiar")

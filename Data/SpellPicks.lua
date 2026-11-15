@@ -34,6 +34,9 @@ for _, base in ipairs({ "Cleric", "Druid", "Sorcerer", "Warlock", "Wizard" }) do
         local key = "cantrips" .. base
         R.PICK_LISTS[key] = {
             title = "Cantrips", base = base, custom = true, known = R.CANTRIPS_KNOWN[base], items = items, order = order,
+            -- A subclass chosen in the dialog may bring a cantrip that was picked: the
+            -- dialog then drops that pick (Sheet/SpellPicks.lua says which).
+            follows = "subclass",
             -- One earlier cantrip may be exchanged when a level of the class is gained, or
             -- none (Sheet/PickSwaps.lua).
             swapGroup = key, swaps = CANTRIP_SWAPS[R.CANTRIP_RULES[base]],

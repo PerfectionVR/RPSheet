@@ -80,8 +80,8 @@ end
 -- Spells of the class that could still be written into the book: level 1 and higher,
 -- up to the highest level the character has slots for.
 function ns.SpellbookChoices(sheet, highest)
-    local class, names = R.CLASSES[(ns.BaseView(sheet, BOOK_CLASS) or sheet).class], {}
-    for _, name in ipairs(class and R.SPELL_LISTS[class.base] or {}) do
+    local names = {}
+    for _, name in ipairs(R.ClassSpellList((ns.BaseView(sheet, BOOK_CLASS) or sheet).class)) do
         local level = R.SPELLS[name].level
         if level > 0 and level <= highest and not ns.InSpellbook(sheet, name) then names[#names + 1] = name end
     end

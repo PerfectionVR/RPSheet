@@ -34,6 +34,18 @@ function ns.SpellClass(sheet, spell)
     return keys[1]
 end
 
+-- What a spell is called in a list of the character's spells. Two classes that each
+-- prepare the same spell both have it, each cast with its own ability, so a spell
+-- that is on the list more than once names its class: "Cure Wounds (Druid)".
+function ns.SpellRowName(sheet, spell)
+    local same = 0
+    for _, other in ipairs(sheet.spells or {}) do
+        if other.name == spell.name then same = same + 1 end
+    end
+    local class = same > 1 and R.CLASSES[ns.SpellClass(sheet, spell) or ""]
+    return class and ("%s (%s)"):format(spell.name, class.name) or spell.name
+end
+
 -- The class key to write on a spell that a class's upkeep puts on the sheet: only a
 -- view of one class of several has one. A character of one class leaves it empty.
 function ns.SpellTag(sheet)
@@ -57,6 +69,19 @@ function ns.ForeignPicks(view, lists)
         if key and ns.PickLimit(key, other.class, other.level) > 0 then
             for name in pairs(other.picks[key] or {}) do names[name] = true end
         end
+    end
+    return names
+end
+
+-- { [name] = true } for the spells a class of several still has on the list with a
+-- mark of one kind (`prefix`, such as "spell:"). Two classes can have the same spell
+-- under the same mark; when the player deletes one, the mark is noted as deleted
+-- (sheet.dismissed), and the class whose entry is still there isn't the one meant.
+function ns.OwnEntries(sheet, prefix, tag)
+    local names = {}
+    if not tag then return names end
+    for _, spell in ipairs(sheet.spells) do
+        if spell.class == tag and (spell.auto or "") == prefix .. spell.name then names[spell.name] = true end
     end
     return names
 end

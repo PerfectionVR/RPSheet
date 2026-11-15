@@ -100,12 +100,13 @@ for name, spell in pairs(SITE) do
     end
 end
 
--- SITE_GRANTS[#] = { kind, class, classSource, subclass, option, prepared = { [level] = { names } } }
+-- SITE_GRANTS[#] = { kind, class, classSource, subclass, option, prepared = { [level] = { names } },
+--                    cantrips = the same for the cantrips it makes known }
 -- with the spells' names as the site's list spells them.
 SITE_GRANTS = {}
 for _, line in ipairs(Lines("site-granted-spells.txt")) do
     local f = Fields(line, "|")
-    local grant = { kind = f[1], class = f[2], classSource = f[3], subclass = f[4], option = f[6], prepared = {}, others = {} }
+    local grant = { kind = f[1], class = f[2], classSource = f[3], subclass = f[4], option = f[6], prepared = {}, cantrips = {}, others = {} }
     for _, part in ipairs(List(f[7] or "", ";")) do
         local how, level, names = part:match("^(%a+) ([%w_]+):(.*)$")
         local list = {}
@@ -114,6 +115,15 @@ for _, line in ipairs(Lines("site-granted-spells.txt")) do
             grant.prepared[tonumber(level)] = list
         elseif how then
             grant.others[#grant.others + 1] = part
+            -- A cantrip a feature makes known is one more the character has prepared.
+            if how == "known" and tonumber(level) then
+                for _, name in ipairs(list) do
+                    if SITE[name] and SITE[name].level == 0 then
+                        grant.cantrips[tonumber(level)] = grant.cantrips[tonumber(level)] or {}
+                        table.insert(grant.cantrips[tonumber(level)], name)
+                    end
+                end
+            end
         end
     end
     SITE_GRANTS[#SITE_GRANTS + 1] = grant

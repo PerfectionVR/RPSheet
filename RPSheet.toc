@@ -48,6 +48,7 @@ Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\SpellsCore.lua
+Data\SpellLists.lua
 Data\SpellGroups.lua
 Data\SlotGrowth.lua
 Data\GrowingSpells.lua
@@ -62,6 +63,8 @@ Data\SpellSummaries7.lua
 Data\SpellSummaries8.lua
 Data\SpellSummaries9.lua
 Data\SpellSummaries.lua
+Data\SpellFormer.lua
+Data\SpellFormerText.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua
@@ -237,6 +240,7 @@ Sheet\LineageSpells.lua
 Sheet\PreparedPicks.lua
 Sheet\PrepareRules.lua
 Sheet\PrepareChanges.lua
+Sheet\SpellRefresh.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\CantripSwap.lua

@@ -86,6 +86,11 @@ end
 -- list. `anySubclass` leaves the subclass out of it, for a list no subclass owns.
 function ns.SheetPickLimit(sheet, key, anySubclass)
     local view = ns.ListView(sheet, key)
+    -- A list of what a class starts with is only for the character's first class.
+    local list = R.PICK_LISTS[key]
+    local whole = view
+    while whole.viewOf do whole = whole.viewOf end
+    if list and list.firstClass and whole.class ~= view.class then return 0 end
     return ns.PickLimit(key, view.class, view.level, not anySubclass and view.subclass or nil)
 end
 

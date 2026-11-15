@@ -40,29 +40,8 @@ end
 -- Adds the spells reached, and takes off those of another subclass or a level the
 -- character no longer has. A spell the player added by hand is left as it is.
 function ns.ApplyPreparedSpells(sheet)
-    -- Spells added before higher slots added dice learn how many they add.
-    for _, spell in ipairs(sheet.spells) do
-        local known = R.SPELLS[spell.name]
-        if known and known.ritual and known.level == spell.level then spell.ritual = true end
-        -- ...and what casting them takes.
-        if known and known.level == spell.level then
-            spell.time, spell.material, spell.consumed = known.time, known.material, known.consumed
-        end
-        -- Spells that make several attacks learn how many.
-        if known and known.level == spell.level and (known.hits > 1 or known.hitsUp > 0 or known.hitsScale) then
-            spell.hits, spell.hitsUp, spell.hitsScale, spell.desc = known.hits, known.hitsUp, known.hitsScale, known.desc
-        end
-        -- Spells the sheet now rolls more of take the listed dice and summary.
-        local growth = R.SLOT_GROWTH[spell.name]
-        if known and known.level == spell.level and growth and growth.refresh then
-            spell.count, spell.sides, spell.dice, spell.desc = known.count, known.sides, known.dice, known.desc
-        end
-        -- A core spell saved with its line of facts takes the written summary.
-        spell.desc = R.FreshSpellSummary(spell) or spell.desc
-        if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
-            spell.up = known.up
-        end
-    end
+    -- Corrections to the listed spells reach the copies on the sheet first.
+    ns.RefreshListedSpells(sheet)
     local wanted, from = Wanted(sheet)
     local have = {}
     for index = #sheet.spells, 1, -1 do

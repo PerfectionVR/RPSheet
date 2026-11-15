@@ -9,7 +9,6 @@ dofile(ARG3 .. "/t-conform-lib.lua")
 Allow("background/Scribe/gear", "the site's structured list drops the counts; its own text says Oil (3 flasks) and Parchment (12 sheets), which is what the addon hands out")
 Allow("classgear/Druid/1", "the druidic focus is handed out as a Quarterstaff, which is the wooden-staff focus and a weapon the sheet can ready")
 Allow("feat/Ability Score Improvement/missing", "raising scores is the level dialog's own choice, not a feat in the list")
-Allow("feat/Inscription Adept/need", "needs proficiency with one of three tools; the feat table has no tool prerequisite, so the level dialog can't check it (reported)")
 Allow("condition/Exhaustion/missing", "exhaustion is counted in levels of its own (Rules.MAX_EXHAUSTION), not ticked like a condition")
 Allow("condition/Concentrating/extra", "the site lists Concentration as a status; the sheet tracks it beside the conditions")
 Allow("status/Surprised", "being surprised is the DM's call at the start of a fight; the sheet has nothing to track")
@@ -257,6 +256,7 @@ local function AddonNeed(feat)
     if feat.needTraining then parts["armor:" .. feat.needTraining] = true end
     if feat.needCaster then parts["caster"] = true end
     if feat.needSpecies then parts["species:" .. R.SPECIES[feat.needSpecies].name:lower()] = true end
+    if feat.needTools then parts["tools"] = true end
     return Keys(parts)
 end
 
@@ -280,8 +280,15 @@ for _, row in ipairs(ReadData("feats.txt")) do
             Same(key .. "repeatable", feat.repeatable and 1 or 0, row.rep)
             Same(key .. "level", (feat.kind == "GENERAL" and "L4") or (feat.kind == "BOON" and "L19") or "", row.pre:match("L%d+") or "")
             local need = SiteNeed(row.pre)
-            if need:find("tool:") then need = "tools" end
+            -- Proficiency with one of several tools: their names have spaces, so they are
+            -- compared apart from the other needs.
+            local tools = {}
+            for tool in (row.pre:match("prof:(tool:.+)$") or ""):gmatch("tool:([^/]+)") do tools[#tools + 1] = tool:lower() end
+            if #tools > 0 then need = "tools" end
             Same(key .. "need", AddonNeed(feat), need)
+            local mine = {}
+            for _, tool in ipairs(feat.needTools or {}) do mine[#mine + 1] = tool:lower() end
+            Same(key .. "tools", Sorted(mine), Sorted(tools))
         end
     end
 end
