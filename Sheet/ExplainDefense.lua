@@ -17,9 +17,7 @@ function RPSheet:ExplainSpeed()
     end
     local mount = self:RiddenMount()
     if mount then
-        local feet, mode = ns.MountPace(mount)
-        Out(self, ("Speed |cffffd100%d ft|r: you are riding %s, and its speed counts in place of your own (%s%s). Your armor, your load and your exhaustion don't slow it. On foot your speed is %d ft."):format(
-            feet, mount.name, mode ~= "" and (mode == "fly" and "flying; it moves " or "swimming; it moves ") or "it moves ", ns.MountSpeeds(mount), self:Speed(true)))
+        Out(self, self:MountSpeedText(mount)) -- with what holds the mount back (Sheet/MountLoad.lua)
         return
     end
     local species, form = self:SpeciesData(), self:Form()

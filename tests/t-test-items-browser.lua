@@ -115,10 +115,14 @@ local SHEET = Source(RPSheet.ToggleItemBrowser, RPSheet)
 if Check(SHEET ~= nil, "the inventory's source") then
     -- every kind of the catalogue has a tab
     local tabbed = {}
+    local makesTab
     for _, tab in ipairs(SHEET.kinds) do
-        tabbed[tab.kind] = true
-        Check(R.ITEM_NAMES[tab.kind] ~= nil and #R.ITEM_NAMES[tab.kind] > 0, "inventory tab " .. tab.name .. " lists nothing (" .. tostring(tab.kind) .. ")")
+        if tab.makes then makesTab = tab else
+            tabbed[tab.kind] = true
+            Check(R.ITEM_NAMES[tab.kind] ~= nil and #R.ITEM_NAMES[tab.kind] > 0, "inventory tab " .. tab.name .. " lists nothing (" .. tostring(tab.kind) .. ")")
+        end
     end
+    Check(makesTab ~= nil and makesTab.name == "Makes", "the inventory has a Makes tab")
     for _, kind in ipairs(R.ITEM_KINDS) do Check(tabbed[kind], "no inventory tab for " .. kind) end
     Eq(#SHEET.own(RPSheet), 0, "nothing carried")
     Gold(0)
@@ -159,7 +163,7 @@ if Check(SHEET ~= nil, "the inventory's source") then
     -- every listed item's Buy button agrees with the price and the purse
     Gold(50)
     for _, tab in ipairs(SHEET.kinds) do
-        for _, each in ipairs(Entries(SHEET, tab)) do
+        for _, each in ipairs(not tab.makes and Entries(SHEET, tab) or {}) do
             local price = R.ITEMS[each.name].cost
             local _, _, _, list = Card(SHEET, each, false, "inventory " .. tab.name)
             Check(#list == 3 and list[1].text == "Add" and list[3].text == "Remove", each.name .. ": buttons are Add, Buy, Remove")
@@ -173,6 +177,7 @@ if Check(SHEET ~= nil, "the inventory's source") then
     Eq(#own, 1, "one entry carried")
     buttons = Card(SHEET, own[1], true, "carried")
     Check(buttons.Equip and buttons["Add one"] and buttons.Remove and buttons.Remove.enabled, "a carried plain item: Equip, Add one, Remove")
+    Check(buttons["Sell  7 gp 5 sp"] and buttons["Sell  7 gp 5 sp"].enabled, "and Sell at half its price")
     Click(buttons.Equip, "Equip the longsword")
     Check(sword.equipped and #ns.ReadyWeapons(sheet) == 1, "Equip readied it")
     buttons, marks = Card(SHEET, own[1], true, "carried")
@@ -296,7 +301,18 @@ if Check(STABLE ~= nil, "the stable's source") then
     for _, entry in ipairs(owned) do
         local item = entry.item
         local buttons, marks, _, list = Card(STABLE, entry, true, "owned")
-        Check(#list == 2 and list[2].text == "Remove" and list[2].enabled, entry.name .. ": two buttons, the second Remove")
+        -- An animal and a drawn vehicle have a button for the harness between the two.
+        local harness = ns.CanPull(item) or ns.IsDrawn(item)
+        Check(#list == (harness and 3 or 2) and list[#list].text == "Remove" and list[#list].enabled, entry.name .. ": the last button is Remove")
+        if harness then
+            Check(list[2].text == "Harness" and list[2].enabled, entry.name .. ": Harness")
+            Click(list[2], "Harness " .. entry.name)
+            Check(item.hitched, entry.name .. ": in harness")
+            buttons, marks = Card(STABLE, entry, true, "owned")
+            Check(buttons.Unharness and table.concat(marks, ", ") == "owned, in harness", entry.name .. ": now Unharness, marked in harness")
+            Click(buttons.Unharness, "Unharness " .. entry.name)
+            Check(not item.hitched, entry.name .. ": out of harness")
+        end
         if item.kind == "COMPANION" then
             Check(list[1].text == "Call" and list[1].enabled, entry.name .. ": Call")
             Click(list[1], "Call " .. entry.name)
@@ -566,6 +582,15 @@ NewChar("WARRIOR", 5)
 RPSheet:AddItem("Longsword"); RPSheet:AddMount("Riding Horse")
 Run("show the inventory", RPSheet.ToggleItemBrowser, RPSheet); FlushTimers()
 Run("fill it", RPSheet.PopulateItemBrowser, RPSheet)
+-- the search, over the tab and over everything, through the window's own state
+local state = UI.ItemBrowserState
+state.search = "healing"
+Run("fill it searching", RPSheet.PopulateItemBrowser, RPSheet)
+state.everywhere = true
+Run("fill it searching everything", RPSheet.PopulateItemBrowser, RPSheet)
+state.search = ""
+Run("fill it with everything", RPSheet.PopulateItemBrowser, RPSheet)
+state.everywhere = false
 Run("show the stable", RPSheet.ToggleMountBrowser, RPSheet); FlushTimers()
 Run("fill it", RPSheet.PopulateItemBrowser, RPSheet)
 Run("show crafting", RPSheet.ShowCrafting, RPSheet); FlushTimers()

@@ -427,7 +427,8 @@ owns those. Per-row data goes through `widget:SetUserData`.
 that shows blocks with buttons, and knows nothing about items. What it lists comes from
 a *source* table; the header comment of `UI/ItemBrowser.lua` documents every field
 (`title`, `first`, `kinds`, `own`, `list`, `find`, `marks`, `lines`, `notes`,
-`buttons`, `standing`, `top`, `class`, `empty`, `gone`, `names`, `options`).
+`buttons`, `standing`, `top`, `class`, `empty`, `gone`, `names`, `options`, `words`,
+`ownListed`).
 
 | Source | File | Opened by |
 |---|---|---|
@@ -438,8 +439,12 @@ a *source* table; the header comment of `UI/ItemBrowser.lua` documents every fie
 
 There is one window: showing another source replaces what it shows.
 `RPSheet:ShowItemBrowser(source)` toggles, `RPSheet:OpenItemBrowser(source, tab)` never
-closes. Only one page of 24 blocks is built (`UI/ItemPages.lua`); the search runs over
-the whole tab first. A new browser is a new source table, not a new window.
+closes. Only one page of 24 blocks is built (`UI/ItemPages.lua`); the search
+(`UI/ItemBrowserSearch.lua`) runs first, over the whole tab or, with "Search
+everything", over every tab of the source, and looks at a block's name, marks and
+words. A new browser is a new source table, not a new window. The inventory's Makes
+tab (`UI/ItemMakes.lua`) lists every magic make of every plain item it exists of
+(`Data/ItemVariants.lua`, `Data/ItemVariantsNamed.lua`).
 
 **The settings, the wizard and the level dialog** are AceConfig options tables shown by
 AceConfigDialog under three names: `"RPSheet"`, `"RPSheetWizard"`, `"RPSheetLevel"`. Only
@@ -532,9 +537,19 @@ components per target or of a special kind (`Data/SpellComponents.lua`,
 `R.AddGear(kind, ...)` call in `Data/Gear.lua` or `Data/GearArms.lua`. A magic item:
 `R.AddMagicItem(name, rarity, desc, effects, extra)` in one of the `Data/MagicItems*.lua`
 files; `effects` are passive effects that count while it is equipped (and attuned, with
-`extra.attune`). The item browser, prices (`Data/MagicItemPrices.lua`) and recipes
-(`Data/RecipesMagic.lua`) pick it up from the catalogue; check that it lands in a
-recipe list if it should be craftable.
+`extra.attune`). The item browser and prices (`Data/MagicItemPrices.lua`) pick it up
+from the catalogue. It also needs a recipe (`Data/RecipesMagic.lua`,
+`Data/RecipesFinds.lua`) or a line in `R.NOT_MADE` saying why nobody makes it:
+`tests/t-test-items-recipes.lua` fails otherwise. One that exists of any plain weapon
+or suit of armor of a kind also gets a make in `Data/ItemVariantsNamed.lua`.
+
+A carried entry (`R.TEMPLATES.item`) is `tracked` when it was made since edits are
+recorded and `edited` once a Customize setter changed it. The upkeep
+(`Sheet/ItemUpkeep.lua`) rewrites a tracked, unedited entry from the catalogue on every
+load, so a correction to an item's data reaches the characters that carry it; an
+edited one is never touched, and an untracked one (saved before the marks) keeps the
+old careful rule. Code that changes a catalogue item's entry on purpose must set
+`edited`, or the next load undoes it.
 
 **A Customize page.** A new file in `Options/`, listed in `RPSheet.toc` before
 `Options\Root.lua`:

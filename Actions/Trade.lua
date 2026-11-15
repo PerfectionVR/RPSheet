@@ -59,7 +59,10 @@ function RPSheet:Disenchantable()
     local list, level = {}, self:ProfessionLevel()
     if not self:CanPractise(ENCHANTING) then return list end
     for _, item in ipairs(self:Sheet().items or {}) do
-        local row = item.magic and not R.CONSUMABLES[item.name] and R.DISENCHANT[item.rarity]
+        -- Used up by one use: a potion, a dust, a piece of magic ammunition.
+        local make = R.ITEM_VARIANT[item.variant or ""]
+        local usedUp = R.CONSUMABLES[item.name] or (make and make.stacks)
+        local row = item.magic and not usedUp and R.DISENCHANT[item.rarity]
         if item.name ~= "" and row and level >= row.level then list[#list + 1] = item end
     end
     return list

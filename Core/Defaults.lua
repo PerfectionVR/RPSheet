@@ -88,6 +88,7 @@ ns.defaults = {
                     coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
                     items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
                     mounts = {},         -- mounts, vehicles and companion creatures owned; entries follow Rules.TEMPLATES.mount (Sheet/Mounts.lua)
+                    bodyWeight = 0,      -- pounds the character weighs, for what its mount carries; 0 = not said (Sheet/MountLoad.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     defensePicks = {},   -- [passive name] = { damage types chosen for its resistance } (Sheet/DefensePicks.lua)
@@ -109,7 +110,7 @@ ns.defaults = {
                     traitGranted = {}, -- [trait name] = skill it made proficient
                     -- Professions (Sheet/Professions.lua fills in what is missing).
                     materials = {}, -- [kind] = worth of gathered materials, in copper
-                    recipes = {},   -- [item name] = true: a recipe learned beyond the basic ones
+                    recipes = {},   -- ["<profession>:<item name>"] = true: a recipe learned beyond the basic ones
                     toolsWaived = false, -- true: things are made without checking that the tool is carried (a DM ruling)
                     fragments = {}, -- { plain, magic, failedAt }: archaeology finds
                 },

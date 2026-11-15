@@ -16,7 +16,7 @@ local function Vehicle(name, level, materials)
     local cost = materials or math.floor(known.cost / 2)
     R.VEHICLE_RECIPES[name] = { cost = cost, days = math.max(1, math.ceil(cost * 2 / R.CRAFT_COPPER_PER_DAY)) }
     local list = R.RECIPES.engineering
-    list[#list + 1] = { name = name, level = level, basic = true, vehicle = true }
+    list[#list + 1] = { name = name, level = level, basic = true, vehicle = true, id = R.RecipeId("engineering", name) }
 end
 
 Vehicle("Goblin Trike", 3)

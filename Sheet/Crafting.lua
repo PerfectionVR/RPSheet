@@ -35,9 +35,10 @@ function RPSheet:CraftDays(profession, name)
     return self:ProfessionHaste(profession) and days / 2 or days
 end
 
--- True when the recipe needs no learning or was learned.
+-- True when the recipe needs no learning or was learned, for the profession whose
+-- list it is in: the same item learned for another profession doesn't count.
 function RPSheet:RecipeKnown(recipe)
-    return recipe.basic or self:Trade().recipes[recipe.name] == true
+    return recipe.basic or self:Trade().recipes[recipe.id] == true
 end
 
 -- True when the character may make the recipe now. Otherwise false and why not.
@@ -66,10 +67,13 @@ end
 
 -- Records that a recipe was learned (or, with false, forgets it). The sheet can't
 -- know when a trainer, a find or a faction teaches one, so the player says so.
-function RPSheet:LearnRecipe(name, known)
-    if not R.LEARNED_RECIPES[name] then return end
-    self:Trade().recipes[name] = known and true or nil
-    if known then self:Print(("You now know how to make %s."):format(name)) end
+function RPSheet:LearnRecipe(recipe, known)
+    if type(recipe) ~= "table" or not R.LEARNED_RECIPES[recipe.id] then return end
+    self:Trade().recipes[recipe.id] = known and true or nil
+    if known then
+        local profession = R.PROFESSIONS[recipe.id:match("^(%a+):")]
+        self:Print(("You now know how to make %s with %s."):format(recipe.name, profession.name:lower()))
+    end
 end
 
 -- Makes one: pays the materials (gathered ones first, then coins; with `coinsOnly`

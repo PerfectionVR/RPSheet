@@ -225,7 +225,7 @@ local RENAME = {
 -- A make's `fits` in the addon for what the site says it goes on.
 local FITS = {
     ["LA,MA,HA"] = "armor", ["MA,HA not Hide Armor"] = "metal", ["S"] = "shield", ["weapon"] = "weapon",
-    ["simple,martial"] = "weapon",
+    ["simple,martial"] = "weapon", ["M"] = "melee", ["A,AF"] = "ammo", ["A,AF,M"] = "arms",
 }
 local function AddonName(name, rarity)
     if name:find("^Enspelled %a+ %(") then return name:gsub("%(.+%)", "(" .. (RARITY[rarity] or rarity) .. ")") end
@@ -238,7 +238,7 @@ local variantByTitle = {}
 for _, key in ipairs(R.ITEM_VARIANTS) do variantByTitle[R.ITEM_VARIANT[key].title] = R.ITEM_VARIANT[key] end
 
 local siteMagic = {}
-local function Magic(name, rarity, attune, pounds, fits)
+local function Magic(name, rarity, attune, pounds, fits, bonus)
     local known = AddonName(name, rarity)
     siteMagic[known] = true
     counts.magic = counts.magic + 1
@@ -248,19 +248,26 @@ local function Magic(name, rarity, attune, pounds, fits)
         Same(key .. "attunement", item.attune and "a" or "", attune ~= "" and "a" or "")
         if pounds then Same(key .. "weight", item.weight, pounds) end
     end
-    local variant = variantByTitle[known]
+    -- A make that the site has once per kind (the three suits of vulnerability) is
+    -- one make each in the addon too, under the site's own name.
+    local variant = fits and variantByTitle[name] or variantByTitle[known]
     if variant then
-        siteMagic["variant:" .. known] = true
+        siteMagic["variant:" .. variant.title] = true
         Same(key .. "variant rarity", variant.rarity, RARITY[rarity] or rarity)
         Same(key .. "variant attunement", variant.attune and "a" or "", attune ~= "" and "a" or "")
         Same(key .. "variant fits", variant.fits, FITS[fits] or fits)
+        -- A weapon's or a suit's bonus is on the make; a piece of ammunition's is for
+        -- the one shot and only said.
+        if variant.fits ~= "ammo" then Same(key .. "variant bonus", variant.bonus or 0, tonumber(bonus) or 0) end
+    elseif fits then
+        siteMagic["variant:" .. known] = true -- a make the addon should have
     end
 end
 for _, file in ipairs({ "items-magic-1.txt", "items-magic-2.txt", "items-magic-3.txt" }) do
     for _, row in ipairs(ReadData(file)) do Magic(row[1], row[3], row[4] or "", tonumber(row[6]) or 0) end
 end
 for _, row in ipairs(ReadData("items-variants.txt")) do
-    if row[1] == "variant" then Magic(row[2], row[4], row[5] or "", nil, row.fits) end
+    if row[1] == "variant" then Magic(row[2], row[4], row[5] or "", nil, row.fits, row.bw or row.bac) end
 end
 local addonMagic = {}
 for _, name in ipairs(R.ITEM_NAMES["Magic items"]) do addonMagic[name] = true end

@@ -134,13 +134,19 @@ end
 -- numbers, one mount ridden and one companion out at most.
 function ns.NormalizeMounts(sheet)
     if type(sheet.mounts) ~= "table" then sheet.mounts = {} end
-    local riding, called = false, false
+    local riding, called, harnessed = false, false, false
+    sheet.bodyWeight = Whole(sheet.bodyWeight, 999) -- what the character weighs, for its mount (Sheet/MountLoad.lua)
     for _, entry in ipairs(sheet.mounts) do
         if not R.MOUNT_KINDS[entry.kind] then entry.kind = "MOUNT" end
         if not R.MOUNT_SIZES[entry.size] then entry.size = "L" end
         if not R.COMPANIONS[entry.family] then entry.family = "" end
         for _, key in ipairs({ "speed", "fly", "swim", "climb" }) do entry[key] = Whole(entry[key], 999) end
         entry.cost, entry.capacity, entry.weight = Whole(entry.cost, 99999999), Whole(entry.capacity, 999999), Whole(entry.weight, 99999)
+        entry.load = entry.kind == "VEHICLE" and Whole(entry.load, 999999) or 0
+        -- In harness: an animal that can pull, or one drawn vehicle.
+        local drawn = ns.IsDrawn(entry)
+        entry.hitched = entry.hitched == true and (ns.CanPull(entry) or (drawn and not harnessed))
+        harnessed = harnessed or (drawn and entry.hitched)
         entry.loyalty = Whole(entry.loyalty, R.LOYALTY_MAX)
         entry.riding = entry.riding == true and entry.kind ~= "COMPANION" and not riding
         entry.called = entry.called == true and entry.kind == "COMPANION" and not called

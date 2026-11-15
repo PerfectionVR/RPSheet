@@ -29,13 +29,14 @@ end
 local function VehicleLines(self, lines, about, known)
     if about.travel ~= "" then
         lines[#lines + 1] = ("Travels at %s. Those aboard don't choose a travel pace."):format(about.travel)
-        if about.capacity > 0 then lines[#lines + 1] = ("Cargo: %d lb."):format(about.capacity) end
+        if about.capacity > 0 then lines[#lines + 1] = ("Cargo: %d lb.%s"):format(about.capacity, about.load > 0 and (" Loaded with %d lb."):format(about.load) or "") end
         if known and known.group == "Powered vehicles" then
             lines[#lines + 1] = ("It burns Fuel: one load (item browser, Gear) lasts %d hours of travel."):format(R.FUEL_HOURS)
         end
         return
     end
     lines[#lines + 1] = ("Pulled by animals. It weighs %d lb.; an animal pulls %d times what it carries, the vehicle included, and a team adds up."):format(about.weight, R.DRAW_TIMES)
+    if about.load > 0 then lines[#lines + 1] = ("Loaded with %d lb."):format(about.load) end
     for _, animal in ipairs(self:Sheet().mounts or {}) do
         if animal.kind == "MOUNT" and animal.name ~= "" and animal.capacity > 0 and not ns.MountIsThing(animal) then
             local load = ns.PullLimit(animal, about)
@@ -68,6 +69,13 @@ function UI.MountLines(self, name, entry)
         VehicleLines(self, lines, about, known)
     else
         CompanionLines(self, lines, about, entry ~= nil)
+    end
+    -- An owned one: in harness, and whether what it carries or pulls is too much.
+    if entry then
+        if entry.hitched then lines[#lines + 1] = UI.GREY .. (about.kind == "VEHICLE" and "In harness: your harnessed animals pull it.|r" or "In harness: it pulls your harnessed vehicle.|r") end
+        local problem = self:VehicleLoadProblem(entry)
+        if not problem and entry.riding and about.kind == "MOUNT" then problem = self:MountHeldNote(entry) end
+        if problem and problem ~= "" then lines[#lines + 1] = RED .. problem .. "|r" end
     end
     if about.desc ~= "" then lines[#lines + 1] = about.desc end
 

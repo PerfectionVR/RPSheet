@@ -62,10 +62,48 @@ function RPSheet:ItemBuyPrice(name, quantity)
     end)
 end
 
+-- The same for a magic make of a plain item (Data/ItemVariants.lua): covered up to
+-- the rarity the standing reaches, like any magic item. 0 when the two don't go together.
+function RPSheet:VariantBuyPrice(key, base)
+    local item = ns.NewVariantItem(key, base)
+    return Reduced(self, item and item.cost or 0, function(top) return (RANK[item.rarity] or 99) <= RANK[top] end)
+end
+
 -- The same for a listed mount or vehicle: only the everyday ones are covered.
 function RPSheet:MountBuyPrice(name)
     local known = R.MOUNTS[name]
     return Reduced(self, known and known.cost or 0, function() return R.DISCOUNT_RIDES[name] == true end)
+end
+
+-- What a carried item sells for, in copper: half its price, like all equipment, magic
+-- or not. Trade goods and valuables keep their full worth: a spell component named by
+-- its worth (a gem, a pearl) and a relic an archaeologist put together. Also returns
+-- true for those. 0 when it has no price, or one too small to halve.
+function ns.SellPrice(item)
+    local known = R.ITEMS[item.name]
+    local full = (known ~= nil and known.kind == "Spell components" and item.variant == "") or item.name:find("^Relic %(") ~= nil
+    if full then return item.cost, true end
+    return math.floor(item.cost / 2), false
+end
+
+-- "Sell  4 gp 5 sp" for a Sell button, or "No resale".
+function ns.SellLabel(item)
+    local price = ns.SellPrice(item)
+    return price > 0 and ("Sell  " .. ns.CoinText(price)) or "No resale"
+end
+
+-- What the Sell button's tooltip and the Customize page say about selling.
+ns.SELL_HELP = "Equipment sells for half its price, magic items too. Gems and other spell components named by their worth, and relics, keep their full worth."
+
+-- Sells one of a carried item: the coins come in and one goes off the list, the
+-- last one taking the entry with it. False when it has nothing to sell for.
+function RPSheet:SellItem(item)
+    local price = ns.SellPrice(item)
+    -- A button may outlive its item: what is no longer on the list can't be sold again.
+    if price <= 0 or item.qty <= 0 or not tContains(self:Sheet().items, item) then return false end
+    self:AddCoins(price, "sold " .. item.name)
+    self:DropItem(item)
+    return true
 end
 
 -- "Buy  9 gp (-10%)" for a Buy button, or "No price".

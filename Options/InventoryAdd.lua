@@ -20,8 +20,7 @@ function Opt.InventoryExtra(args)
     args.listHeader = { type = "header", order = 0.5, name = "Add an item" }
     args.browse = {
         type = "execute", order = 0.51, name = "Browse items", width = "double",
-        desc = "Opens the item browser: what you carry and every listed item as a block, with what it is and does and buttons to add, buy, equip and remove it.",
+        desc = "Opens the item browser: what you carry and every listed item as a block, with what it is and does and buttons to add, buy, sell, equip and remove it. Its Makes tab has the magic makes of plain armor, weapons and ammunition: a magic bonus, a rare metal, a Flame Tongue of any weapon.",
         func = function() RPSheet:ToggleItemBrowser() end,
     }
-    Opt.VariantArgs(args, 0.6) -- a magic make of a plain armor or weapon (Options/InventoryVariant.lua)
 end

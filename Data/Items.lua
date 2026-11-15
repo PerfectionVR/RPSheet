@@ -19,6 +19,8 @@ R.TEMPLATES.item = {
     limit = "",        -- "UNARMORED": its effects stop in armor or with a shield (Sheet/Limits.lua)
     variant = "",      -- the magic make of a plain armor or weapon it is (Data/ItemVariants.lua)
     scribed = false,   -- a spell scroll this character wrote itself (Actions/Scrolls.lua)
+    edited = false,    -- the player changed it under Customize: the catalogue leaves it alone from then on
+    tracked = false,   -- made since edits are recorded; an older item is refreshed with care (Sheet/ItemUpkeep.lua)
     effects = {},
 }
 

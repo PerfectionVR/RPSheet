@@ -138,10 +138,12 @@ Data\MagicItemsCloth.lua
 Data\MagicItemsMore.lua
 Data\MagicItemsAzeroth.lua
 Data\RecipesMagic.lua
+Data\RecipesFinds.lua
 Data\RecipesVehicles.lua
 Data\Scrolls.lua
 Data\MagicItemPrices.lua
 Data\ItemVariants.lua
+Data\ItemVariantsNamed.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -184,6 +186,7 @@ Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
 Sheet\ItemUpkeep.lua
+Sheet\ItemStacks.lua
 Sheet\SpellComponents.lua
 Sheet\ComponentKinds.lua
 Sheet\ComponentAmmo.lua
@@ -191,6 +194,7 @@ Sheet\ComponentTargets.lua
 Sheet\SetEffects.lua
 Sheet\Mounts.lua
 Sheet\MountStore.lua
+Sheet\MountLoad.lua
 Sheet\Companions.lua
 Sheet\MoveSpeeds.lua
 Sheet\Professions.lua
@@ -312,9 +316,11 @@ UI\PetSection.lua
 UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemPages.lua
+UI\ItemBrowserSearch.lua
 UI\ItemBrowser.lua
 UI\ItemBrowserParts.lua
 UI\ItemBrowserFill.lua
+UI\ItemMakes.lua
 UI\ShopChoice.lua
 UI\ItemBrowserSheet.lua
 UI\MountCard.lua
@@ -406,7 +412,6 @@ Options\Spells.lua
 Options\Spellbook.lua
 Options\Passives.lua
 Options\Coins.lua
-Options\InventoryVariant.lua
 Options\InventoryAdd.lua
 Options\Inventory.lua
 Options\Mounts.lua

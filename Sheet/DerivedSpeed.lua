@@ -12,7 +12,7 @@ function RPSheet:Speed(onFoot)
     if self:Immobile() then return 0 end
     -- In the saddle the mount's speed counts in place of your own (Sheet/Mounts.lua).
     local mount = not onFoot and self:RiddenMount()
-    if mount then return (ns.MountPace(mount)) end
+    if mount then return self:MountSpeed(mount) end -- held back when it carries or pulls too much (Sheet/MountLoad.lua)
     -- An item can set the speed everything is added to, or multiply the outcome.
     local base, times = self:BaseSpeed(), self:EffectMultiplier("SPEED")
     local gift = self:CompanionSpeed() -- a loyal flying companion (Sheet/Companions.lua)

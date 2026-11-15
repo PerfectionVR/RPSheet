@@ -1,7 +1,9 @@
 -- The rest of what each making profession can make (Data/Recipes.lua has the plain
--- gear and the first magic items): every magic item of the lists, put with the
--- profession and skill that makes it. Potions, wands, weapons, armor and scrolls up
--- to rare come with the skill; everything else is a recipe to be learned.
+-- gear and the first magic items): the magic items the professions name, each put
+-- with the profession and skill that makes it. Data/RecipesFinds.lua has the ones
+-- they don't name, and the few that can't be made at all; between the three files
+-- every magic item of the lists is covered. Potions, wands, weapons, armor and scrolls
+-- up to rare come with the skill; everything else is a recipe to be learned.
 local _, ns = ...
 local R = ns.Rules
 local Add = R.AddRecipes
