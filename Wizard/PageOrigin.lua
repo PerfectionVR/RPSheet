@@ -3,7 +3,7 @@ local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
 local W = ns.Wizard
-local GOLD, RED = Opt.GOLD, Opt.RED
+local GOLD = Opt.GOLD
 local Field, Page = W.DraftField, W.Page
 local DraftTraitPicker = W.DraftTraitPicker -- Wizard/PageOriginTraits.lua
 

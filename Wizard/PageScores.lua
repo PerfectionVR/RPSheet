@@ -5,7 +5,7 @@ local R = ns.Rules
 local Opt = ns.Opt
 local Util = ns.Util
 local W = ns.Wizard
-local GOLD, RED = Opt.GOLD, Opt.RED
+local GOLD = Opt.GOLD
 local Page = W.Page
 
 local function ScoreSummary()

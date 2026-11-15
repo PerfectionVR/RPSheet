@@ -43,7 +43,7 @@ function RPSheet:ExplainSpeed()
 end
 
 function RPSheet:ExplainAC()
-    local sheet, class = self:Sheet(), self:ClassData()
+    local sheet = self:Sheet()
     local form = self:Form()
     if form then
         local formParts = { { form.name, form.ac } }

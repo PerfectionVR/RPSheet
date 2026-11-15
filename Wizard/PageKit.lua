@@ -25,5 +25,5 @@ local function DraftClass()
     return R.CLASSES[W.draft.class]
 end
 
-W.PageStep, W.DraftField, W.Page, W.DraftClass = Step, Field, Page, DraftClass
+W.DraftField, W.Page, W.DraftClass = Field, Page, DraftClass
 W.pages = {} -- filled by the page files, by step number

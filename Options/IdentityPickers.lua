@@ -3,7 +3,7 @@ local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 local Opt = ns.Opt
-local Sheet, With = Opt.Sheet, Opt.With
+local Sheet = Opt.Sheet
 
 -- Changing class, species or background hands out what they grant (saving throws,
 -- skills, traits, origin feat). Nothing already on the sheet is removed.

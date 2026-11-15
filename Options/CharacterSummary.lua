@@ -4,7 +4,7 @@ local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 local Opt = ns.Opt
-local Sheet, With = Opt.Sheet, Opt.With
+local Sheet = Opt.Sheet
 local Levels = ns.Levels
 
 local function Summary()

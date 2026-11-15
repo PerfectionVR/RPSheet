@@ -4,16 +4,13 @@ local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 local Opt = ns.Opt
-local Sheet, With = Opt.Sheet, Opt.With
+local Sheet = Opt.Sheet
 local Levels = ns.Levels
 local Summary = Opt.CharacterSummary -- Options/CharacterSummary.lua
 
 local function NoCharacter() return RPSheet:ClassData() == nil end
 
--- The lowest level a character can go back to.
-local function MinLevel()
-    return 1
-end
+local MIN_LEVEL = 1 -- the lowest level a character can go back to
 
 Opt.tabs.character = {
     type = "group", order = 1, name = "Character",
@@ -36,9 +33,9 @@ Opt.tabs.character = {
         levelDown = {
             hidden = NoCharacter,
             type = "execute", order = 3.2,
-            name = function() return Sheet().level <= MinLevel() and ("Level " .. Sheet().level) or ("Back to level " .. (Sheet().level - 1)) end,
+            name = function() return Sheet().level <= MIN_LEVEL and ("Level " .. Sheet().level) or ("Back to level " .. (Sheet().level - 1)) end,
             desc = "Goes down one level. What that level gave is taken off the sheet again: its features, hit points, and the choice you made for it.",
-            disabled = function() return Sheet().level <= MinLevel() end,
+            disabled = function() return Sheet().level <= MIN_LEVEL end,
             confirm = function()
                 return ("Go back to level %d? Everything level %d gave is removed, including the choice you made for it."):format(Sheet().level - 1, Sheet().level)
             end,

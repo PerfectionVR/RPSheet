@@ -3,7 +3,6 @@
 -- so only one page of them is built at a time.
 local _, ns = ...
 local UI = ns.UI
-local AceGUI = LibStub("AceGUI-3.0")
 
 local PAGE = 24 -- blocks on a page: twelve rows of two
 

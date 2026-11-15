@@ -32,15 +32,6 @@ function ns.SheetWeaponProficient(sheet, name)
     return false
 end
 
--- Basic weapons a class is proficient with, in the usual order.
-function ns.ProficientWeapons(classKey)
-    local names = {}
-    for _, name in ipairs(R.WEAPON_ORDER) do
-        if ns.WeaponProficient(classKey, name) then names[#names + 1] = name end
-    end
-    return names
-end
-
 -- A sheet entry for a basic weapon. `modifier(stat)` gives the character's ability
 -- modifiers, to pick the better of Strength and Dexterity for a finesse weapon.
 -- `mastery` true also sets the weapon's mastery.

@@ -3,7 +3,7 @@ local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
 local W = ns.Wizard
-local GOLD, RED = Opt.GOLD, Opt.RED
+local GOLD = Opt.GOLD
 
 -- What the draft can pick for a species trait: skills its class and background don't
 -- already give, or origin feats other than the background's.

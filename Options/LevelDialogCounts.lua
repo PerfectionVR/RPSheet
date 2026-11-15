@@ -2,7 +2,6 @@
 -- made in the draft, and what keeps an option from being picked.
 local _, ns = ...
 local R = ns.Rules
-local Opt = ns.Opt
 local L = ns.LevelDialog
 
 -- How many maneuvers the character should know at that level.
