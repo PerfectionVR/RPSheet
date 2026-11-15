@@ -42,6 +42,7 @@ function RPSheet:LongRest()
     -- Humans wake up inspired (Resourceful).
     if HasPassive(self:Sheet(), "Resourceful") then state.inspiration = true end
     self:Announce("finishes a long rest.")
+    self:QueueBroadcast() -- the group sees the new hit points, also while the sheet is closed
     self:PopulateSoon()
 end
 
@@ -70,6 +71,7 @@ function RPSheet:ShortRest()
     local text = "finishes a short rest"
     if #regained > 0 then text = text .. " (regains " .. table.concat(regained, ", ") .. ")" end
     self:Announce(text .. ".")
+    self:QueueBroadcast()
     self:Refresh()
 end
 
@@ -99,6 +101,7 @@ function RPSheet:SpendHitDie(pool)
         self:ClearDeathSaves()
         self:Announce(("spends a hit die - %s (now %d/%d HP)"):format(
             RollText.Dice("healing", rolls, sides, mod), state.hp, self:MaxHP()))
+        self:QueueBroadcast()
         self:PopulateSoon()
     end)
 end

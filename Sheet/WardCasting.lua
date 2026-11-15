@@ -14,16 +14,11 @@ local RPSheet = ns.addon
 local SpellBenefits, AskBenefit, TakeBenefit = RPSheet.SpellBenefits, RPSheet.AskBenefit, RPSheet.TakeBenefit
 
 -- The picks a casting chooses between, or the earlier answer for any other spell.
--- CastSpell asks this once nothing can stop the casting any more, so it is also where
--- a new concentration spell ends the wards that hung on the old one.
+-- (The wards that hung on an earlier concentration spell end when the new one is
+-- cast: RPSheet:CastSpell in Actions/Spells.lua.)
 function RPSheet:SpellBenefits(spell)
     local ward = R.SPELL_WARDS[spell.name]
-    if not ward then
-        local benefits = SpellBenefits(self, spell)
-        -- With a menu of its own the casting can still be called off, so nothing ends yet.
-        if not benefits and spell.concentration and self:State().conditions.Concentrating then self:EndConcentrationWards() end
-        return benefits
-    end
+    if not ward then return SpellBenefits(self, spell) end
     local picks = {}
     for index, option in ipairs(ward) do
         -- A spell with a side for the caster switches that one on; the other side is
@@ -44,7 +39,6 @@ function RPSheet:AskBenefit(spell, benefits, onPick)
         return true
     end
     if not (MenuUtil and MenuUtil.CreateContextMenu) then
-        if ward.conc then self:EndWards(nil, true) end
         self:Print(("If %s is on you, add its protection as a passive of your own."):format(spell.name))
         return false
     end

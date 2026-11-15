@@ -338,9 +338,12 @@ R.FEATURES = {
         Limited(2, "Magical Cunning", function(level)
             return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots."
                 or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up."
-        end, 1, function(level)
+        end, 1, function(level, sheet)
             local pact = R.PACT_SLOTS[level]
-            return { { type = "GAIN", resource = R.ORDINALS[pact[2]] .. "-level slot", amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
+            -- Beside another class's spell slots the pact slots have a bar of their own (Sheet/Trackers.lua).
+            local _, beside = ns.SheetSlots(sheet and sheet.viewOf or sheet or {})
+            local bar = beside and ("Pact slot (%s level)"):format(R.ORDINALS[pact[2]]) or (R.ORDINALS[pact[2]] .. "-level slot")
+            return { { type = "GAIN", resource = bar, amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
         end),
         Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
         Passive(11, "Mystic Arcanum", "You choose one 6th-level spell of your class, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once per long rest without a slot: click it on your spell list. They are chosen when you level, and you can swap one each level."),

@@ -55,5 +55,5 @@ function RPSheet:RollDeathSave()
         end
         self:Announce(("rolls a death save: %d%s (%s)."):format(d20, penalty > 0 and (" - %d for exhaustion"):format(penalty) or "", outcome))
         self:PopulateSoon()
-    end)
+    end, true)
 end

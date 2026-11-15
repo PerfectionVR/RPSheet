@@ -7,8 +7,10 @@
 --   A scroll the character wrote (item.scribed) casts with its own spell save DC and
 --   spell attack bonus; any other casts with the fixed numbers of its level.
 -- The casting goes through the usual one (Actions/Spells.lua) as a copy of the spell
--- that needs no slot and no components. A spell the lists don't know can't be judged
--- or rolled: it is only announced.
+-- marked fromScroll = the scroll: it needs no slot and no components, keeps its name
+-- (so what the sheet knows about the spell by name still holds: a ward it switches
+-- on, a number it adds), and takes the scroll once it is really cast. A spell the
+-- lists don't know can't be judged or rolled: it is only announced.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -33,9 +35,16 @@ local function Crumble(self, item)
     self:PopulateSoon()
 end
 
--- Reads the scroll. True when it was read and should crumble; false when something
--- stopped the reading and the scroll is kept, or when a check is being rolled, which
--- takes the scroll itself once the die has fallen.
+-- Called by the casting when a spell read from a scroll has gone through: only then
+-- does the scroll crumble, so one whose casting is called off (a question left open)
+-- or still waiting for its dice is kept.
+function RPSheet:ScrollWasCast(spell)
+    Crumble(self, spell.fromScroll)
+end
+
+-- Reads the scroll. True when it was read and should crumble (a spell the lists
+-- don't know); false when something stopped the reading and the scroll is kept, or
+-- when the casting or the check takes the scroll itself once it is decided.
 function RPSheet:ReadScroll(item)
     local name, level = ns.ScrollSpell(item)
     if not name then return false end
@@ -58,17 +67,17 @@ function RPSheet:ReadScroll(item)
         self:Print(blocked)
         return false
     end
-    -- The copy is no listed spell: no slot (level 0), no components, base strength.
-    -- A scroll's cantrip does grow with the reader's level, like any cantrip.
+    -- The copy is cast without a slot and without components, at the spell's own
+    -- level. A scroll's cantrip does grow with the reader's level, like any cantrip.
     local cast = CopyTable(known)
-    cast.name, cast.level, cast.class = ("%s (scroll)"):format(name), 0, key
+    cast.class, cast.fromScroll = key, item
     cast.damage = ns.SpellDamageType(known) or ""
     cast.material, cast.consumed, cast.auto = 0, false, ""
     cast.scroll = found
     -- Shift is held to read it, so only the Next roll row sets advantage here.
     if listed.level <= reach then
         self:CastSpell(cast, self.rollMode)
-        return true
+        return false -- the casting takes the scroll (RPSheet:ScrollWasCast)
     end
 
     -- Beyond the reader's own casting: an ability check first.
@@ -80,8 +89,9 @@ function RPSheet:ReadScroll(item)
         self:Announce(("tries to read %s, a spell beyond their own: %s against DC %d - %s"):format(ns.Mark(item.name),
             ns.RollText.Check(ns.Mark(label), d20, mod, note), dc,
             passed and "the spell holds." or "the writing fades and the scroll is lost."))
-        Crumble(self, item)
-        if passed then self:CastSpell(cast, self.rollMode) end
+        -- A failure loses the scroll; otherwise the casting takes it. The Next roll row
+        -- was this check's, so it only reaches the spell when it is locked.
+        if passed then self:CastSpell(cast, self.rollMode) else Crumble(self, item) end
     end)
     return false
 end

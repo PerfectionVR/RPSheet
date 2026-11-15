@@ -85,6 +85,7 @@ local function Apply(self, amount, damageType, reduction, ward, why)
     elseif final > 0 and state.conditions.Concentrating then
         self:RollConcentration(final)
     end
+    self:EndBondsAtZero() -- a Warding Bond the character cast (Actions/WardDamage.lua)
     self:QueueBroadcast()
     self:PopulateSoon()
 end

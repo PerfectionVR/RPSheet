@@ -27,11 +27,19 @@ function RPSheet:PetRollMod(stat)
     return self:PetMod(stat) + self:ProficiencyBonus()
 end
 
+-- A stand-in for a spell of the class that has the companion, so that the spell
+-- attack modifier and save DC asked for are that class's: a character whose first
+-- spellcasting class is another one casts those spells with another ability.
+local function MasterSpell(self)
+    local view = ns.SubclassView(self:Sheet(), "Beast Master")
+    return view and { class = view.class } or nil
+end
+
 -- The strike's attack bonus (the master's spell attack modifier) and what is added
 -- to its damage die.
 function RPSheet:PetStrikeMods()
     local wisdom = self:Mod("WIS")
-    return self:SpellAttack() or (self:ProficiencyBonus() + wisdom), R.PetBlock(self:Sheet()).flat + wisdom
+    return self:SpellAttack(MasterSpell(self)) or (self:ProficiencyBonus() + wisdom), R.PetBlock(self:Sheet()).flat + wisdom
 end
 
 -- The companion's Armor Class follows its master's Wisdom.
@@ -41,7 +49,7 @@ end
 
 -- The save DC a creature grappled by the strike escapes against.
 function RPSheet:PetGrappleDC()
-    return self:SpellDC() or (8 + self:ProficiencyBonus() + self:Mod("WIS"))
+    return self:SpellDC(MasterSpell(self)) or (8 + self:ProficiencyBonus() + self:Mod("WIS"))
 end
 
 ---------------------------------------------------------------------------
