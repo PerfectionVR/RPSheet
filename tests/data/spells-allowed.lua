@@ -48,8 +48,6 @@ Allow("OPEN, outside the spell data: a Demon Hunter shares the Ranger's list in 
 
 -- Always prepared ----------------------------------------------------------------------
 Allow("the spell is a class feature of its own on the sheet (an ability that casts it), not an entry of the spell list",
-    "Hunter prepared|Hunter's Mark; Demon Hunter prepared|Hunter's Mark; Druid prepared|Find Familiar")
-Allow("OPEN, outside the spell data: the feature's text says the spell is always prepared, but the feature isn't marked to put it on the spell list",
-    "Death Knight prepared|Rune Strike; Druid prepared|Speak with Animals; Warlock prepared|Contact Other Plane; Druid, Circle of the Stars prepared|Guiding Bolt")
+    "Druid prepared|Find Familiar")
 
 return A
