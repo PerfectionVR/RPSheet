@@ -142,6 +142,7 @@ function W.Finish()
         sheet.resources, sheet.weapons, sheet.spells = old.resources, old.weapons, old.spells
         sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives)
         sheet.items, sheet.coins = old.items or {}, old.coins or sheet.coins
+        sheet.mounts = old.mounts or {}
     end
     sheet.coins.gp = (sheet.coins.gp or 0) + (draft.gold or 0)
     W.FillInventory(sheet)

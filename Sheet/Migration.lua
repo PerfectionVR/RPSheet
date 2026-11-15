@@ -141,6 +141,10 @@ function ns.NormalizeState(state)
     Util.NormalizeList(sheet.items, R.TEMPLATES.item)
     for _, item in ipairs(sheet.items) do Util.NormalizeList(item.effects, R.TEMPLATES.effect, Any) end
     ns.NormalizeInventory(sheet)
+    -- Mounts, vehicles and companion creatures (Sheet/Mounts.lua).
+    if type(sheet.mounts) ~= "table" then sheet.mounts = {} end
+    Util.NormalizeList(sheet.mounts, R.TEMPLATES.mount)
+    ns.NormalizeMounts(sheet)
     for _, ability in ipairs(sheet.abilities) do
         Util.NormalizeList(ability.actions, R.TEMPLATES.action, Any)
         for _, action in ipairs(ability.actions) do

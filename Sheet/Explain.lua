@@ -90,7 +90,12 @@ local function SkillParts(self, skill)
     local parts = {}
     Ability(self, parts, skill.stat)
     local rank = self:Sheet().skills[skill.name] or 0
-    Add(parts, rank > 1 and "expertise" or "proficiency", rank * self:ProficiencyBonus())
+    local gift = self:CompanionSkillRank(skill.name)
+    if gift > rank then
+        Add(parts, "expertise from your companion", gift * self:ProficiencyBonus())
+    else
+        Add(parts, rank > 1 and "expertise" or "proficiency", rank * self:ProficiencyBonus())
+    end
     AddBonuses(self, parts, "SKILL:" .. skill.name)
     AddBonuses(self, parts, "SKILLS")
     AddBonuses(self, parts, "CHECKS")
@@ -123,10 +128,18 @@ function RPSheet:ExplainSpeed()
         Out(self, ("Speed |cffffd1000 ft|r: you are %s."):format(stuck))
         return
     end
+    local mount = self:RiddenMount()
+    if mount then
+        local feet, mode = ns.MountPace(mount)
+        Out(self, ("Speed |cffffd100%d ft|r: you are riding %s, and its speed counts in place of your own (%s%s). Your armor, your load and your exhaustion don't slow it. On foot your speed is %d ft."):format(
+            feet, mount.name, mode ~= "" and (mode == "fly" and "flying; it moves " or "swimming; it moves ") or "it moves ", ns.MountSpeeds(mount), self:Speed(true)))
+        return
+    end
     local species, form = self:SpeciesData(), self:Form()
     local parts = { { species and species.name or "base", species and species.speed or 30 } }
     if form then parts = { { form.name, form.speed } } end
     AddBonuses(self, parts, "SPEED")
+    Add(parts, "flying companion", self:CompanionSpeed())
     Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty())
     if not form and self:Overloaded() then
         Out(self, ("Speed |cffffd100%d ft|r: you carry %.1f lb., more than the %d lb. you can, which holds your speed to %d feet. Without the load: %s."):format(

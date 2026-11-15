@@ -15,6 +15,9 @@
 --   buttons(self, card, entry, first)   adds the block's buttons
 --   empty                  what the first tab says when there is nothing in it
 --   gone()                 optional: true when the source no longer applies
+--   names(kind)            optional: the names of a tab, when they are not items
+--   lines(self, entry)     optional: what a block says, when it is not an item
+--   options()              optional: opens the Customize page behind the cog
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -37,7 +40,7 @@ local function Build(self)
     window.frame:SetToplevel(true)
     window:SetCallback("OnLockClick", function() window:SetLocked(not window.locked) end)
     window:SetCallback("OnMinimizeClick", function() window:SetMinimized(not window.minimized) end)
-    window:SetCallback("OnEditClick", function() ns.OpenInventoryOptions() end)
+    window:SetCallback("OnEditClick", function() (source and source.options or ns.OpenInventoryOptions)() end)
     window:SetCallback("OnShow", function() self:PopulateItemBrowser() end)
     self.itemWindow = window
 
@@ -86,7 +89,8 @@ local function AddCard(self, body, entry, first)
     card:SetRelativeWidth(0.5)
     local marks = source.marks(self, entry)
     card:SetTitle(#marks > 0 and ("%s  |cffffffff(%s)|r"):format(entry.name, table.concat(marks, ", ")) or entry.name)
-    UI.AddLabel(card, 1, table.concat(UI.ItemLines(self, entry.name, entry.item, source.class(self)), "\n"))
+    local lines = source.lines and source.lines(self, entry) or UI.ItemLines(self, entry.name, entry.item, source.class(self))
+    UI.AddLabel(card, 1, table.concat(lines, "\n"))
     source.buttons(self, card, entry, first)
     body:AddChild(card)
 end
@@ -148,7 +152,7 @@ function RPSheet:PopulateItemBrowser()
     local first, shown = open == source.first, 0
     local entries = first and source.own(self) or {}
     if not first then
-        for _, name in ipairs(R.ITEM_NAMES[open.kind] or {}) do
+        for _, name in ipairs(source.names and source.names(open.kind) or R.ITEM_NAMES[open.kind] or {}) do
             entries[#entries + 1] = { name = name, item = source.find(self, name) }
         end
     end

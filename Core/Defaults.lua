@@ -74,6 +74,7 @@ ns.defaults = {
                     spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
                     coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
                     items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
+                    mounts = {},         -- mounts, vehicles and companion creatures owned; entries follow Rules.TEMPLATES.mount (Sheet/Mounts.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")

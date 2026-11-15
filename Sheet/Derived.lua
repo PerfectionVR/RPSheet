@@ -169,12 +169,17 @@ function RPSheet:Initiative()
     return self:Mod("DEX") + self:Bonus("INIT")
 end
 
-function RPSheet:Speed()
+-- `onFoot` leaves the mount out: the character's own speed.
+function RPSheet:Speed(onFoot)
     if self:Immobile() then return 0 end
+    -- In the saddle the mount's speed counts in place of your own (Sheet/Mounts.lua).
+    local mount = not onFoot and self:RiddenMount()
+    if mount then return (ns.MountPace(mount)) end
     local form = self:Form()
-    if form then return math.max(0, form.speed + self:Bonus("SPEED")) end
+    local gift = self:CompanionSpeed() -- a loyal flying companion (Sheet/Companions.lua)
+    if form then return math.max(0, form.speed + self:Bonus("SPEED") + gift) end
     local species = self:SpeciesData()
-    local speed = math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") - self:ArmorSpeedPenalty())
+    local speed = math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") + gift - self:ArmorSpeedPenalty())
     -- Hauling more than you can carry.
     if self:Overloaded() then speed = math.min(speed, R.OVERLOADED_SPEED) end
     return speed
@@ -197,6 +202,7 @@ end
 function RPSheet:SkillMod(skill)
     local rank = self:Sheet().skills[skill.name] or 0
     if rank == 0 and self:FormSkill(skill.name) then rank = 1 end
+    rank = math.max(rank, self:CompanionSkillRank(skill.name)) -- a loyal companion's gift
     return self:Mod(skill.stat) + rank * self:ProficiencyBonus()
         + self:Bonus("SKILL:" .. skill.name) + self:Bonus("SKILLS") + self:Bonus("CHECKS")
 end

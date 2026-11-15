@@ -73,6 +73,10 @@ Data\Items.lua
 Data\Gear.lua
 Data\GearArms.lua
 Data\MagicItems.lua
+Data\Mounts.lua
+Data\MountList.lua
+Data\Vehicles.lua
+Data\Companions.lua
 Data\Equipment.lua
 Data\FeatChoices.lua
 Data\Example.lua
@@ -108,6 +112,9 @@ Sheet\Defenses.lua
 Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
+Sheet\Mounts.lua
+Sheet\MountStore.lua
+Sheet\Companions.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
@@ -144,6 +151,7 @@ Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
 Actions\Inventory.lua
+Actions\Mounts.lua
 Actions\Abilities.lua
 Actions\Pet.lua
 Actions\Refunds.lua
@@ -176,6 +184,9 @@ UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemBrowser.lua
 UI\ItemBrowserSheet.lua
+UI\MountCard.lua
+UI\MountSection.lua
+UI\MountBrowser.lua
 UI\SheetTabs.lua
 UI\SheetContent.lua
 UI\Minimap.lua
@@ -212,6 +223,7 @@ Options\Passives.lua
 Options\Coins.lua
 Options\InventoryAdd.lua
 Options\Inventory.lua
+Options\Mounts.lua
 Options\Appearance.lua
 Options\Transfer.lua
 Options\Root.lua
