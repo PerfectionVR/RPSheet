@@ -30,8 +30,17 @@ end
 -- What a row shows and does is kept on the row itself (its user data, which AceGUI
 -- clears when the row is released), so all rows share these handlers instead of each
 -- getting functions of its own every time the sheet is rebuilt.
+-- A tooltip's body may be a function that gives the text: it is only called here, when
+-- the mouse is over the row, so rebuilding the sheet doesn't pay for the tooltips of
+-- rows nobody hovers. (EXPLAIN_TIP: see the "[?]" below.)
+local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the [?] in front to see how this number is worked out.|r"
+
 local function ShowTooltip(widget)
     local body = widget:GetUserData("tipBody")
+    if type(body) == "function" then
+        body = body()
+        if widget:GetUserData("explain") then body = (body or "") .. EXPLAIN_TIP end
+    end
     GameTooltip:SetOwner(widget.frame, "ANCHOR_RIGHT")
     GameTooltip:AddLine(widget:GetUserData("tipTitle"))
     if body and body ~= "" then GameTooltip:AddLine(body, 1, 1, 1, true) end
@@ -48,7 +57,6 @@ end
 -- The small "[?]" in front of a row that can explain its number. Clicking it shows
 -- the maths; clicking the rest of the row does what the row normally does.
 local EXPLAIN_MARK = "|cff8f8f8f[?]|r "
-local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the [?] in front to see how this number is worked out.|r"
 
 -- True if the mouse is over the mark at the start of the row.
 local function OverMark(label)
@@ -80,6 +88,8 @@ end
 -- A row of text taking `relWidth` of the window's width (1 = full, 0.5 = half).
 -- With `onClick(mouseButton)` it highlights under the mouse and can be clicked.
 -- With `explain()` it gets a "[?]" in front that calls it.
+-- `tipBody` is the tooltip's text, or a function that gives it when the row is hovered:
+-- use a function where the text takes work (lists, explanations, spell and item text).
 function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain)
     local theme = Theme()
     local label = AceGUI:Create("InteractiveLabel")
@@ -93,7 +103,11 @@ function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain
         label:SetUserData("explain", explain)
         label:SetCallback("OnClick", ClickLabel)
     end
-    if tipTitle then AttachTooltip(label, tipTitle, explain and ((tipBody or "") .. EXPLAIN_TIP) or tipBody) end
+    if tipTitle then
+        -- (a function's text gets the line about the "[?]" when it is shown)
+        local fixed = type(tipBody) ~= "function"
+        AttachTooltip(label, tipTitle, fixed and explain and ((tipBody or "") .. EXPLAIN_TIP) or tipBody)
+    end
     parent:AddChild(label)
     return label
 end

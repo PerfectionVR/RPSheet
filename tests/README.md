@@ -41,7 +41,7 @@ ends with a summary line; `run-all.sh` fails when any script reports a problem.
 | `t-test-play-*.lua` | Damage, healing, death saves, conditions, casting, components, beast forms, companion, rests, scrolls |
 | `t-test-levelling-*.lua` | Every level-up for every class, multiclassing, levelling down, exchange limits, refused choices, Customize, export and import, old saved characters, the wizard |
 | `t-test-items-*.lua` | Coins, inventory, equipping, every catalogue item, the item browser's sources, professions and crafting, mounts, starting gear, the armoury |
-| `t-test-windows-*.lua` | The real AceGUI and AceConfigDialog on a fake frame API (`-ui*.lua`), then the sheet, its tabs and rows, the item browser, popups, every settings page, the wizard and level dialog by clicking, and the dialog skin's restore |
+| `t-test-windows-*.lua` | The real AceGUI and AceConfigDialog on a fake frame API (`-ui*.lua`), then the sheet, its tabs and rows, the item browser, popups, every settings page, the wizard and level dialog by clicking, and the dialog skin's restore; `-tooltips` reads every tooltip of the sheet and the spell windows, and given a file name writes them all to it, to compare two versions of the addon |
 | `*-lib.lua`, `*-base.lua`, `*-walk.lua`, `*-dialog.lua`, `*-codec.lua` | Helpers shared by the scripts of one group |
 | `dupkeys.py`, `dupfuncs.py`, `freenames.py`, `toccheck.py` | Static checks: a key twice in a table, a function defined twice, undeclared names, the load list against the files |
 

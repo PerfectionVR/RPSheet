@@ -26,11 +26,11 @@ function RPSheet:AddBookCantrips(body)
         local text = info ~= "" and ("%s  %s%s|r"):format(name, UI.GREY, info) or name
         UI.AddLabel(body, 1, text, function(button)
             if button == "RightButton" then Change(self, name) else self:CastFromBook(name, ns.RollMode()) end
-        end, name, ("%s\n%s%s|r"):format(spell.desc or "", UI.GREY, HELP))
+        end, name, function() return ("%s\n%s%s|r"):format(spell.desc or "", UI.GREY, HELP) end)
     end
     for _, name in ipairs(offered) do
         UI.AddLabel(body, 1, ("%s%s  can be learned|r"):format(UI.GREY, name), function(button)
             if button == "RightButton" then Change(self, name) else self:Print(OFFER_HELP) end
-        end, name, ("%s\n%s%s|r"):format(R.SPELLS[name].desc or "", UI.GREY, OFFER_HELP))
+        end, name, function() return ("%s\n%s%s|r"):format(R.SPELLS[name].desc or "", UI.GREY, OFFER_HELP) end)
     end
 end

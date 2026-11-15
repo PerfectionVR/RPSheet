@@ -41,12 +41,10 @@ function RPSheet:ToggleSpellbook()
     if self.bookWindow.frame:IsShown() then self.bookWindow:Hide() else self.bookWindow:Show() end
 end
 
--- One row per spell. Spells that aren't prepared are greyed.
-local function AddSpell(self, body, name)
-    local known = R.SPELLS[name]
-    local prepared = self:PreparedSpell(name)
+-- What a spell's tooltip says in the book: its text, how it is cast, and whether it is
+-- prepared. Worked out when the row is hovered.
+local function Tip(self, known, prepared)
     local spell = prepared or known
-    local info = self:SpellText(spell)
     local lines = {}
     if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
     local casting = R.SpellCastingNote(spell)
@@ -55,8 +53,8 @@ local function AddSpell(self, body, name)
     -- What a higher slot does for it (see Actions/SlotGrowth.lua).
     for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
     -- A spell chosen for a class feature (mastered, signature) says so.
-    local mark, note
-    if prepared then mark, note = self:ChosenSpellNote(prepared) end
+    local _, note
+    if prepared then _, note = self:ChosenSpellNote(prepared) end
     if note then lines[#lines + 1] = note end
     if prepared then
         lines[#lines + 1] = UI.GREEN .. "Prepared.|r"
@@ -66,6 +64,15 @@ local function AddSpell(self, body, name)
         lines[#lines + 1] = "Not prepared: it can't be cast until it is."
     end
     lines[#lines + 1] = UI.GREY .. HELP .. "|r"
+    return table.concat(lines, "\n")
+end
+
+-- One row per spell. Spells that aren't prepared are greyed.
+local function AddSpell(self, body, name)
+    local known = R.SPELLS[name]
+    local prepared = self:PreparedSpell(name)
+    local info = self:SpellText(prepared or known)
+    local mark = prepared and self:ChosenSpellNote(prepared)
 
     local tags = {}
     if info ~= "" then tags[#tags + 1] = info end
@@ -87,7 +94,7 @@ local function AddSpell(self, body, name)
         else
             self:CastFromBook(name, ns.RollMode())
         end
-    end, name, table.concat(lines, "\n"))
+    end, name, function() return Tip(self, known, prepared) end)
 end
 
 -- Fills the window. Called when it opens and whenever the sheet is rebuilt.

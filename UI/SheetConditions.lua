@@ -6,17 +6,21 @@ local UI = ns.UI
 -- What the character is under: conditions (a menu of tick boxes) and exhaustion.
 function UI.ConditionSection(self, body)
     local active = self:Conditions()
-    local lines = {}
-    for _, condition in ipairs(R.CONDITIONS) do
-        if self:State().conditions[condition.name] then
-            lines[#lines + 1] = ("%s%s|r: %s"):format(UI.ACCENT, condition.name, condition.desc)
+    -- What each condition the character is under does, listed when the row is hovered.
+    local function Tip()
+        local lines = {}
+        for _, condition in ipairs(R.CONDITIONS) do
+            if self:State().conditions[condition.name] then
+                lines[#lines + 1] = ("%s%s|r: %s"):format(UI.ACCENT, condition.name, condition.desc)
+            end
         end
+        lines[#lines + 1] = "Click to choose the conditions you are under."
+        return table.concat(lines, "\n\n")
     end
-    lines[#lines + 1] = "Click to choose the conditions you are under."
     local label
     label = UI.AddLabel(body, 1,
         ("Conditions %s%s|r"):format(UI.ACCENT, #active > 0 and table.concat(active, ", ") or "none"),
-        function() self:OpenConditionMenu(label.frame) end, "Conditions", table.concat(lines, "\n\n"))
+        function() self:OpenConditionMenu(label.frame) end, "Conditions", Tip)
 
     local exhaustion = self:Exhaustion()
     UI.AddLabel(body, 1, ("Exhaustion %s%d|r"):format(exhaustion > 0 and "|cffff5555" or UI.ACCENT, exhaustion),

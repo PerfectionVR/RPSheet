@@ -19,10 +19,13 @@ function UI.OriginSection(self, body)
             local tier = table.concat(notes, ", ")
             if ns.RenownRival(self:Sheet(), faction) then tier = (tier ~= "" and tier .. " " or "") .. "|cffff5555(rival)" end
             -- The perks of every tier reached and the next one (Sheet/RenownSummary.lua).
+            -- (put together when the row is hovered)
             renown[#renown + 1] = {
                 text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),
-                tip = "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.\n\n"
-                    .. ns.RenownSummary(self:Sheet(), faction, UI.ACCENT),
+                tip = function()
+                    return "Standing with a faction. Friendly at 3, Honored at 10, Revered at 25, Exalted at 50.\n\n"
+                        .. ns.RenownSummary(self:Sheet(), faction, UI.ACCENT)
+                end,
             }
         end
     end
