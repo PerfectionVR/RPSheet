@@ -32,6 +32,18 @@ local CASES = {
         { a = "customize", seed = 1742088915, p = { option = "options.customize.spells.item8.name", text = "1" } },
         { a = "final", seed = 1438017031, p = {} },
     } },
+    -- A spell's roll still on its way when a new character is made: the result
+    -- landed on the new character and raised an error.
+    { name = "roll lands on the next character", steps = {
+        { a = "make", seed = 1, p = { class = "EVOKER", level = 7, extras = 0, tick = "Fireball" } },
+        { a = "hold rolls", seed = 562202533, p = {} },
+        { a = "cast", seed = 450439724, p = { mode = "none", ritual = false, slotClicks = 6, spell = "Fireball" } },
+        { a = "wizard open", seed = 1183392276, p = {} },
+        { a = "make", seed = 2, p = { class = "WARRIOR", level = 6, extras = 0 } },
+        { a = "land rolls", seed = 1558605604, p = { stop = true } },
+    }, check = function()
+        if FUZZ.cast ~= "Fireball" then return "the case didn't cast its spell (" .. tostring(FUZZ.cast) .. ")" end
+    end },
 }
 
 local played, problems = 0, 0

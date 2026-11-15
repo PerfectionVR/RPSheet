@@ -45,6 +45,7 @@ function RPSheet:UpdateSheetKey()
     local previous = self.sheetKey
     if key == previous then return false end
     self.sheetKey = key
+    if previous then self:ForgetRoll() end -- (Actions/Dice.lua)
 
     local sheets, old = self.db.global.sheets, self.db.char
     local blank = ns.defaults.global.sheets["*"]
@@ -98,6 +99,7 @@ end
 -- with the window and editor rebuilt. `keepResourceValues` leaves the current values
 -- of the player's own resources alone, for when the resource list was carried over.
 function RPSheet:ReplaceSheet(sheet, keepResourceValues)
+    self:ForgetRoll() -- the character before may have a roll on its way (Actions/Dice.lua)
     local state = self:State()
     state.sheet = sheet -- (one that names only part of the fields, like the example, is made whole by ns.NormalizeState)
     state.created, state.weapon, state.hp = true, 1, nil

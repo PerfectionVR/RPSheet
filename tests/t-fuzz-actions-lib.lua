@@ -158,6 +158,7 @@ Action("cast", { weight = 10, guard = function() return Playing() and #RPSheet:S
     local spell = Named("spell", RPSheet:Sheet().spells)
     -- the slot level row: clicked a few times to cast with a higher slot
     for _ = 1, Z.Int("slotClicks", 0, 12) - 6 do RPSheet:CycleCastLevel() end
+    Z.cast = spell.name -- (for the cases that need a certain spell)
     RPSheet:CastSpell(spell, Mode(), Z.Flip("ritual", 0.15))
 end })
 Action("ability", { weight = 10, guard = function() return Playing() and #RPSheet:Sheet().abilities > 0 end, run = function()
