@@ -19,9 +19,11 @@ local function Pounds(weight)
     return (("%.1f"):format(weight):gsub("%.0$", ""))
 end
 
-local function ItemRow(self, body, item)
+-- What an item's tooltip says: what it is and adds, whether that counts now, and how
+-- it is clicked. Worked out when it is hovered.
+local function ItemTip(self, item)
     local active, why = self:ItemActive(item)
-    local lines, marks = {}, {}
+    local lines = {}
     if item.magic then
         local color = R.RARITY_COLORS[item.rarity] or UI.ACCENT
         lines[#lines + 1] = ("%sMagic item%s|r"):format(color, item.rarity ~= "" and (", " .. item.rarity:lower()) or "")
@@ -40,7 +42,11 @@ local function ItemRow(self, body, item)
         lines[#lines + 1] = "Right-click: " .. (item.attuned and "end the attunement." or "attune to it.")
         lines[#lines + 1] = "\n" .. ATTUNE_HELP
     end
+    return table.concat(lines, "\n")
+end
 
+local function ItemRow(self, body, item)
+    local marks = {}
     if item.equipped then marks[#marks + 1] = "equipped" end
     if item.attune then marks[#marks + 1] = item.attuned and "attuned" or (RED .. "needs attunement|r" .. UI.GREY) end
     local name = item.magic and ((R.RARITY_COLORS[item.rarity] or UI.ACCENT) .. item.name .. "|r") or item.name
@@ -55,7 +61,7 @@ local function ItemRow(self, body, item)
         else
             self:ToggleEquipped(item)
         end
-    end, item.name, table.concat(lines, "\n"))
+    end, item.name, function() return ItemTip(self, item) end)
 end
 
 function UI.InventorySection(self, body)
@@ -65,8 +71,10 @@ function UI.InventorySection(self, body)
         "Opens a window with what you carry and every listed item as a block: what it is and does, with buttons to add, buy, equip and remove it.")
     UI.AddLabel(body, 1, "Coins  " .. ns.PurseText(self:Purse(), UI.ACCENT),
         function(button) self:CoinDialog(button == "RightButton") end, "Coins",
-        ("Worth %s in all.\nPlatinum is 10 gold, gold is 10 silver, silver is 10 copper; an electrum piece is half a gold piece.\n\nLeft-click: add coins.\nRight-click: spend coins. Coins that fit the price are paid first, a larger one is broken for change when you run short of small ones, and you can't spend more than you have."):format(
-            ns.CoinText(self:Coins())))
+        function()
+            return ("Worth %s in all.\nPlatinum is 10 gold, gold is 10 silver, silver is 10 copper; an electrum piece is half a gold piece.\n\nLeft-click: add coins.\nRight-click: spend coins. Coins that fit the price are paid first, a larger one is broken for change when you run short of small ones, and you can't spend more than you have."):format(
+                ns.CoinText(self:Coins()))
+        end)
 
     local attuned, names = self:AttunedItems(), {}
     for _, item in ipairs(attuned) do names[#names + 1] = item.name end
@@ -81,8 +89,10 @@ function UI.InventorySection(self, body)
             over and RED or UI.ACCENT, Pounds(weight), capacity, over and (RED .. " over the limit|r") or "",
             UI.GREY, #items, #items == 1 and "item" or "items"),
         nil, "Carrying capacity",
-        ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought in the item browser (Browse items, above)."):format(
-            R.CARRY_PER_STRENGTH[self:Sheet().size] or R.CARRY_PER_STRENGTH.M, capacity,
-            over and ("\n\n" .. RED .. "You are carrying more than that, which holds your speed to 5 feet. The Speed row shows it.|r") or ""))
+        function()
+            return ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought in the item browser (Browse items, above)."):format(
+                R.CARRY_PER_STRENGTH[self:Sheet().size] or R.CARRY_PER_STRENGTH.M, capacity,
+                over and ("\n\n" .. RED .. "You are carrying more than that, which holds your speed to 5 feet. The Speed row shows it.|r") or "")
+        end)
     for _, item in ipairs(items) do ItemRow(self, body, item) end
 end

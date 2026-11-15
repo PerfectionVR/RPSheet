@@ -4,6 +4,33 @@ local R = ns.Rules
 local UI = ns.UI
 local Util = ns.Util
 
+-- What a spell's tooltip says below its own text: how it is cast, what a higher slot
+-- does for it, its components, and how it is clicked. Worked out when it is hovered.
+local function Tip(self, spell)
+    local lines = {}
+    if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
+    -- A spell chosen for a class feature says so, and how it is cast without a slot.
+    local mark, note, noSlots = self:ChosenSpellNote(spell)
+    if mark then lines[#lines + 1] = note end
+    if not noSlots then
+        lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
+            or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\"."):format(R.ORDINALS[spell.level])
+    end
+    -- What a higher slot does for it (see Actions/SlotGrowth.lua).
+    for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
+    local casting = R.SpellCastingNote(spell)
+    if casting then lines[#lines + 1] = casting end
+    for _, line in ipairs(self:ComponentHelp(spell)) do lines[#lines + 1] = line end
+    if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
+    if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
+    if R.GROWING_SPELLS[spell.name] then
+        lines[#lines + 1] = self:GrowingSides(spell)
+            and "It is running. Left-click when the target fails its save again: the die grows and the damage is rolled, without a slot. Right-click when it succeeds or the spell runs out: that ends it."
+            or "After casting, click it again each time the target fails its save: the die grows and the damage is rolled, without a slot."
+    end
+    return table.concat(lines, "\n")
+end
+
 -- The spell list, cantrips first, then by level.
 function UI.SpellSection(self, body)
     local spells = Util.Named(self:Sheet().spells)
@@ -33,32 +60,12 @@ function UI.SpellSection(self, body)
             self:AddLevelLabel(body, shown, self.sheetSlotLabels)
         end
         local info = self:SpellText(spell)
-        local lines = {}
-        if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
-        -- A spell chosen for a class feature says so, and how it is cast without a slot.
-        local mark, note, noSlots = self:ChosenSpellNote(spell)
-        if mark then
-            info = info ~= "" and (info .. ", " .. mark) or mark
-            lines[#lines + 1] = note
-        end
-        if not noSlots then
-            lines[#lines + 1] = spell.level == 0 and "A cantrip: no spell slot needed."
-                or ("Uses your lowest free slot of %s level or higher, or the level set at \"Cast at\"."):format(R.ORDINALS[spell.level])
-        end
-        -- What a higher slot does for it (see Actions/SlotGrowth.lua).
-        for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
-        local casting = R.SpellCastingNote(spell)
-        if casting then lines[#lines + 1] = casting end
-        for _, line in ipairs(self:ComponentHelp(spell)) do lines[#lines + 1] = line end
-        if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
-        if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
-        if R.GROWING_SPELLS[spell.name] then
-            lines[#lines + 1] = self:GrowingSides(spell)
-                and "It is running. Left-click when the target fails its save again: the die grows and the damage is rolled, without a slot. Right-click when it succeeds or the spell runs out: that ends it."
-                or "After casting, click it again each time the target fails its save: the die grows and the damage is rolled, without a slot."
-        end
+        -- A spell chosen for a class feature says so.
+        local mark = self:ChosenSpellNote(spell)
+        if mark then info = info ~= "" and (info .. ", " .. mark) or mark end
         UI.AddLabel(body, 1, ("%s  %s%s|r"):format(spell.name, UI.GREY, info),
-            function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name, table.concat(lines, "\n"),
+            function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name,
+            function() return Tip(self, spell) end,
             function() self:ExplainSpell(spell) end)
     end
 end

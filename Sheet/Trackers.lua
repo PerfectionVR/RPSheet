@@ -32,7 +32,7 @@ end
 --   reset   value after a long rest
 --   short   what a short rest gives back: "ALL", a number of uses, or nil for nothing
 function RPSheet:GetTrackers()
-    local state, sheet, class = self:State(), self:Sheet(), self:ClassData()
+    local state, sheet = self:State(), self:Sheet()
     local list = {}
     local function add(kind, label, max, reset, store, key, short)
         if max <= 0 then return end

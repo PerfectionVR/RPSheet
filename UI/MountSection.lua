@@ -38,19 +38,39 @@ local function RidingRow(self, body, entry)
     UI.AddLabel(body, 1, ("Riding %s%s|r  %s%d ft%s, carries %s%d lb.|r"):format(UI.ACCENT, entry.name, UI.GREY, feet,
             mode ~= "" and (" " .. mode) or "", gear > entry.capacity and RED or "", entry.capacity),
         function() self:ToggleRiding(entry) end, "Riding " .. entry.name,
-        ("Its speed counts in place of your own; the Speed row shows it.\n\nIt carries %d lb.: you and everything on you. Your gear weighs %.1f lb.; your own weight comes on top, which the DM judges.%s\n\nGetting on or off costs half your speed: %d feet of your movement.\n\n%s\n\nClick to dismount."):format(
-            entry.capacity, gear, gear > entry.capacity and ("\n" .. RED .. "Your gear alone is more than it can carry.|r") or "", half, RIDE_HELP))
+        function()
+            return ("Its speed counts in place of your own; the Speed row shows it.\n\nIt carries %d lb.: you and everything on you. Your gear weighs %.1f lb.; your own weight comes on top, which the DM judges.%s\n\nGetting on or off costs half your speed: %d feet of your movement.\n\n%s\n\nClick to dismount."):format(
+                entry.capacity, gear, gear > entry.capacity and ("\n" .. RED .. "Your gear alone is more than it can carry.|r") or "", half, RIDE_HELP)
+        end)
+end
+
+-- What an owned mount, vehicle or companion creature's tooltip says: what it is, and
+-- how it is clicked. Worked out when it is hovered.
+local function RowTip(self, entry)
+    local lines = UI.MountLines(self, entry.name, entry)
+    if entry.kind == "COMPANION" then
+        lines[#lines + 1] = "\n" .. R.COMPANION_HELP .. "\n\n" .. R.LOYALTY_HELP
+        lines[#lines + 1] = ("\nLeft-click: %s.\nRight-click: it was treated particularly well (rolls 1d%d for loyalty).\nShift-click: it took damage."):format(
+            entry.called and "dismiss it" or "call it", R.LOYALTY_TREAT)
+    else
+        local why = self:MountRefusal(entry)
+        if entry.kind == "MOUNT" then lines[#lines + 1] = "\n" .. RIDE_HELP .. "\n\n" .. KEEP_HELP end
+        if entry.riding then
+            lines[#lines + 1] = "\nClick to get off."
+        elseif why then
+            lines[#lines + 1] = ("\n%sYou can't get on: %s.|r"):format(UI.GREY, why)
+        else
+            lines[#lines + 1] = "\nClick to get on."
+        end
+    end
+    return table.concat(lines, "\n")
 end
 
 local function Row(self, body, entry)
-    local lines = UI.MountLines(self, entry.name, entry)
     local text, onClick
     if entry.kind == "COMPANION" then
         local family = R.COMPANIONS[entry.family]
         text = ("%s  %s%s, loyalty %d%s|r"):format(entry.name, UI.GREY, family and entry.family:lower() or "companion", entry.loyalty, entry.called and " (out)" or "")
-        lines[#lines + 1] = "\n" .. R.COMPANION_HELP .. "\n\n" .. R.LOYALTY_HELP
-        lines[#lines + 1] = ("\nLeft-click: %s.\nRight-click: it was treated particularly well (rolls 1d%d for loyalty).\nShift-click: it took damage."):format(
-            entry.called and "dismiss it" or "call it", R.LOYALTY_TREAT)
         onClick = function(button)
             if IsShiftKeyDown() then
                 self:HurtCompanion(entry)
@@ -61,23 +81,15 @@ local function Row(self, body, entry)
             end
         end
     else
-        local speeds, why = ns.MountSpeeds(entry), self:MountRefusal(entry)
+        local speeds = ns.MountSpeeds(entry)
         local parts = {}
         if speeds ~= "" then parts[#parts + 1] = speeds end
         if entry.capacity > 0 then parts[#parts + 1] = entry.capacity .. " lb." end
         if entry.riding then parts[#parts + 1] = entry.kind == "VEHICLE" and "(aboard)" or "(riding)" end
         text = ("%s  %s%s|r"):format(entry.name, UI.GREY, table.concat(parts, ", "))
-        if entry.kind == "MOUNT" then lines[#lines + 1] = "\n" .. RIDE_HELP .. "\n\n" .. KEEP_HELP end
-        if entry.riding then
-            lines[#lines + 1] = "\nClick to get off."
-        elseif why then
-            lines[#lines + 1] = ("\n%sYou can't get on: %s.|r"):format(UI.GREY, why)
-        else
-            lines[#lines + 1] = "\nClick to get on."
-        end
         onClick = function() self:ToggleRiding(entry) end
     end
-    UI.AddLabel(body, 1, text, onClick, entry.name, table.concat(lines, "\n"))
+    UI.AddLabel(body, 1, text, onClick, entry.name, function() return RowTip(self, entry) end)
 end
 
 function UI.MountSection(self, body)

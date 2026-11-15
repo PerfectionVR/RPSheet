@@ -57,13 +57,17 @@ local function AddSpell(self, body, name, isPrepared, classKey)
     end
     local spell = entry or known
     local info = self:SpellText(spell)
-    local lines = {}
-    if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
-    local casting = R.SpellCastingNote(spell)
-    if casting then lines[#lines + 1] = casting end
-    for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
-    lines[#lines + 1] = isPrepared and (UI.GREEN .. "Prepared.|r") or "Not prepared: it can't be cast until it is."
-    lines[#lines + 1] = UI.GREY .. HELP .. "|r"
+    -- (put together when the row is hovered)
+    local function Tip()
+        local lines = {}
+        if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
+        local casting = R.SpellCastingNote(spell)
+        if casting then lines[#lines + 1] = casting end
+        for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
+        lines[#lines + 1] = isPrepared and (UI.GREEN .. "Prepared.|r") or "Not prepared: it can't be cast until it is."
+        lines[#lines + 1] = UI.GREY .. HELP .. "|r"
+        return table.concat(lines, "\n")
+    end
 
     local text
     if isPrepared then
@@ -80,7 +84,7 @@ local function AddSpell(self, body, name, isPrepared, classKey)
         else
             self:Print(("%s isn't prepared. Right-click it to prepare it."):format(name))
         end
-    end, name, table.concat(lines, "\n"))
+    end, name, Tip)
 end
 
 -- The spells of one class (an entry of ns.PrepareRules). `named` puts the class's name

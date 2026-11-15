@@ -34,6 +34,7 @@ end
 -- The pick that counts right now: made, still on the list, and the score high enough.
 local function Pick(sheet, faction)
     local pick = sheet.renownTraining[faction]
+    if pick == nil then return end -- nothing picked: no need to list what could be
     for _, name in ipairs(ns.RenownTrainingOptions(sheet, faction)) do
         if name == pick then return pick end
     end

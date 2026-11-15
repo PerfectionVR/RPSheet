@@ -9,7 +9,6 @@
 -- { text = what to announce, apply = function } or nil after telling the player why.
 local _, ns = ...
 local R = ns.Rules
-local RPSheet = ns.addon
 
 local POINTS = "Sorcery Points"
 local SLOT_COST = { 2, 3, 5, 6, 7 } -- Sorcery Points for a slot of levels 1 to 5

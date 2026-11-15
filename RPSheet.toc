@@ -155,9 +155,18 @@ Sheet\ClassHitDice.lua
 Sheet\MulticlassSlots.lua
 Sheet\ClassRules.lua
 Sheet\Levels.lua
+Sheet\LevelRules.lua
+Sheet\LevelStore.lua
+Sheet\LevelMigrate.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
 Sheet\Derived.lua
+Sheet\DerivedScores.lua
+Sheet\DerivedEffects.lua
+Sheet\DerivedDefense.lua
+Sheet\DerivedSpeed.lua
+Sheet\DerivedChecks.lua
+Sheet\DerivedSpells.lua
 Sheet\Forms.lua
 Sheet\Pet.lua
 Sheet\Metamorphosis.lua
@@ -195,7 +204,15 @@ Sheet\Equipment.lua
 Sheet\ItemVariants.lua
 Sheet\Trackers.lua
 Sheet\Summary.lua
+Sheet\ExplainKit.lua
+Sheet\ExplainChecks.lua
+Sheet\ExplainDefense.lua
+Sheet\ExplainSpells.lua
+Sheet\ExplainWeapon.lua
 Sheet\Explain.lua
+Sheet\TransferClean.lua
+Sheet\TransferChoices.lua
+Sheet\TransferSheet.lua
 Sheet\Transfer.lua
 Sheet\WeaponStore.lua
 Sheet\WeaponShare.lua
@@ -228,6 +245,7 @@ Sheet\RenownPerks.lua
 Sheet\RenownSummary.lua
 Sheet\Shop.lua
 Sheet\LevelUp.lua
+Sheet\PassCache.lua
 
 # Things the character does
 Actions\Announce.lua
@@ -236,6 +254,9 @@ Actions\Weapons.lua
 Actions\Inventory.lua
 Actions\Scrolls.lua
 Actions\Mounts.lua
+Actions\AbilityText.lua
+Actions\AbilityCosts.lua
+Actions\AbilitySteps.lua
 Actions\Abilities.lua
 Actions\Pet.lua
 Actions\Refunds.lua
@@ -289,6 +310,8 @@ UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemPages.lua
 UI\ItemBrowser.lua
+UI\ItemBrowserParts.lua
+UI\ItemBrowserFill.lua
 UI\ShopChoice.lua
 UI\ItemBrowserSheet.lua
 UI\MountCard.lua
@@ -328,9 +351,19 @@ Wizard\GearChoices.lua
 Wizard\ClosetBrowser.lua
 Wizard\MoreClassSummary.lua
 Wizard\MoreClassesPage.lua
-Wizard\Pages.lua
+Wizard\PageKit.lua
+Wizard\PageClassSkills.lua
+Wizard\PageClass.lua
+Wizard\PageOriginTraits.lua
+Wizard\PageOrigin.lua
+Wizard\PageScores.lua
+Wizard\PageAlignment.lua
+Wizard\PageDetails.lua
 Wizard\Dialog.lua
 Options\General.lua
+Options\IdentityPickers.lua
+Options\Identity.lua
+Options\CharacterSummary.lua
 Options\Character.lua
 Options\Multiclass.lua
 Options\MulticlassPage.lua

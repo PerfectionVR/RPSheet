@@ -10,7 +10,8 @@ function UI.CheckSection(self, body)
         local mod = self:CheckMod(stat)
         UI.AddLabel(body, 0.33, ("%s %d %s(%s)|r"):format(stat, self:Score(stat), UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " check", mod, ns.RollMode()) end,
-            R.STAT_NAMES[stat], ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP),
+            R.STAT_NAMES[stat],
+            function() return ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP) end,
             function() self:ExplainCheck(stat) end)
     end
 end
@@ -25,8 +26,11 @@ function UI.SaveSection(self, body)
             function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat] .. " saving throw",
             -- Advantage that only counts against some things is named too (Sheet/SaveAdvantages.lua).
-            ("%s%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.",
-                self:SaveAdvantageText(stat) and ("\n\n" .. self:SaveAdvantageText(stat)) or "", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP),
+            function()
+                local advantage = self:SaveAdvantageText(stat)
+                return ("%s%s\n\n%s\n\n%s"):format(saves[stat] and "Proficient." or "Not proficient.",
+                    advantage and ("\n\n" .. advantage) or "", ns.Glossary["Saving throw"], ns.ROLL_MODE_HELP)
+            end,
             function() self:ExplainSave(stat) end)
     end
 end

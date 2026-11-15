@@ -43,20 +43,6 @@ function ns.ArmorKind(armorKey)
     return armor and armor.name:match("%((%a+)%)")
 end
 
--- Armor keys a character with this training can wear, in the usual order.
--- `current` is always included, so an existing choice stays visible.
-function ns.ArmorChoices(training, current)
-    local values, order = {}, {}
-    for _, key in ipairs(R.ARMOR_ORDER) do
-        local kind = ns.ArmorKind(key)
-        if not kind or training[kind] or key == current then
-            values[key] = R.ARMOR[key].name
-            order[#order + 1] = key
-        end
-    end
-    return values, order
-end
-
 -- The same for a whole character: the first class's training, and the smaller part a
 -- class taken later adds (Data/Multiclass.lua).
 function ns.SheetArmorTraining(sheet)
@@ -102,17 +88,6 @@ function RPSheet:MasteriesUsed()
         if R.MASTERIES[weapon.mastery] and not weapon.heal then used = used + 1 end
     end
     return used
-end
-
--- Weapons whose mastery counts: the first ones in the list, up to the limit.
-function RPSheet:MasteredWeapons()
-    local counted, left = {}, self:MasteryLimit() - (self:PetMastery() and 1 or 0)
-    for _, weapon in ipairs(self:Sheet().weapons) do
-        if R.MASTERIES[weapon.mastery] and not weapon.heal and left > 0 then
-            counted[weapon], left = true, left - 1
-        end
-    end
-    return counted, left
 end
 
 ---------------------------------------------------------------------------

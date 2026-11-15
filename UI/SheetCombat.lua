@@ -21,7 +21,7 @@ function UI.CombatSection(self, body)
     Number("Initiative", Signed(self:Initiative()),
         function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,
         "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainInitiative() end)
-    Number("Speed", self:Speed() .. " ft" .. UI.RidingMark(self), nil, UI.SpeedTip(self), function() self:ExplainSpeed() end)
+    Number("Speed", self:Speed() .. " ft" .. UI.RidingMark(self), nil, function() return UI.SpeedTip(self) end, function() self:ExplainSpeed() end)
     -- Swimming, climbing and flying speeds, only when the character has one (Sheet/MoveSpeeds.lua).
     for _, kind in ipairs(R.MOVE_KINDS) do
         local feet = self:MoveSpeed(kind)
@@ -53,11 +53,15 @@ function UI.CombatSection(self, body)
     self.attackLabel = nil
     local weapon = self:GetWeapon()
     if weapon then
-        local help = "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP
-        local properties = ns.WeaponPropertyLines(weapon)
-        if #properties > 0 then help = help .. "\n\n" .. table.concat(properties, "\n") end
-        local name, mastery = self:WeaponMastery(weapon)
-        if name then help = help .. ("\n\n%s%s|r: %s"):format(UI.ACCENT, name, mastery.desc) end
+        -- The weapon's properties and mastery, put together when the row is hovered.
+        local function Help()
+            local help = "Left-click: roll to hit, then damage. A natural 20 doubles the damage dice.\nRight-click: swap to the next weapon.\n" .. ns.ROLL_MODE_HELP
+            local properties = ns.WeaponPropertyLines(weapon)
+            if #properties > 0 then help = help .. "\n\n" .. table.concat(properties, "\n") end
+            local name, mastery = self:WeaponMastery(weapon)
+            if name then help = help .. ("\n\n%s%s|r: %s"):format(UI.ACCENT, name, mastery.desc) end
+            return help
+        end
         self.attackLabel = UI.AddLabel(body, 1, "", function(button)
             if button == "RightButton" then
                 self:SwapWeapon()
@@ -65,7 +69,7 @@ function UI.CombatSection(self, body)
             else
                 self:Attack(ns.RollMode())
             end
-        end, "Attack", help, function()
+        end, "Attack", Help, function()
             local current = self:GetWeapon()
             if current then self:ExplainWeapon(current) end
         end)
