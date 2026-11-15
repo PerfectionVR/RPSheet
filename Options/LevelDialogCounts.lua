@@ -122,7 +122,8 @@ function L.FeatChoiceContext()
     local instances = ns.FeatInstances(sheet, override)
     -- Picks for a feat that was swapped out here, or that no longer fit, are dropped.
     ns.NormalizeFeatChoices(L.draft.featChoices, instances, L.Like().level)
-    return sheet, L.draft.featChoices, instances, L.Like().level
+    -- The preview with this dialog's picks, so a class cantrip ticked here counts.
+    return L.Picking(), L.draft.featChoices, instances, L.Like().level
 end
 
 function L.ExpertisePicked()

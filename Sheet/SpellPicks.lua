@@ -17,7 +17,8 @@ local kept = {}
 function ns.CantripsElsewhere(sheet, fresh)
     local now = GetTime()
     if not fresh and kept.names and kept.time == now and kept.spells == sheet.spells and kept.class == sheet.class
-        and kept.subclass == sheet.subclass and kept.spec == sheet.spec and kept.level == sheet.level then
+        and kept.subclass == sheet.subclass and kept.spec == sheet.spec and kept.level == sheet.level
+        and kept.featChoices == sheet.featChoices then
         return kept.names
     end
     local names = {}
@@ -33,7 +34,7 @@ function ns.CantripsElsewhere(sheet, fresh)
         -- Entries of the two kinds above are covered there; a stale one is on its way out.
         if spell.level == 0 and spell.free and not auto:find("^prepared:") and not auto:find("^feat:") then names[spell.name] = true end
     end
-    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level }
+    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices }
     return names
 end
 

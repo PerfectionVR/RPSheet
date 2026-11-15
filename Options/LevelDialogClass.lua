@@ -25,6 +25,11 @@ args.subclass = {
         L.DropUnfollowed() -- its always-prepared spells can't be picked as well
     end,
 }
+args.subclassInfo = {
+    type = "description", order = 10.1, fontSize = "medium",
+    hidden = function() return not L.draft or not L.AsksSubclass() or (L.draft.subclass or "") == "" end,
+    name = function() return L.draft and ns.SubclassSummary(L.draft.subclass) or "" end,
+}
 args.newClassSkill = {
     type = "select", order = 10.5, name = "Skill from your new class", width = "double",
     desc = "A class taken after your first gives one skill from its list, where it gives any. Skills you are proficient in are left out.",

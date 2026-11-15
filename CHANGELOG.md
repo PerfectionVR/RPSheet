@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- A cantrip can no longer be taken twice in the level dialog, once as a class cantrip
+  and once through Magic Initiate (True Strike for a Sage Mage, Guidance for an
+  Acolyte Priest), whichever is picked first.
+- Choosing a subclass shows what it is and its features by level, in the creation
+  wizard, the level dialog and Customize. The Mage's Evoker says it is the school
+  of evocation magic, not the Evoker class.
 - Spells already on a character follow corrections to the built-in spells; a spell
   you changed yourself keeps what you set and offers "Use the built-in spell".
 - Death Knights and Demon Hunters have their own spell lists. A cantrip you have from

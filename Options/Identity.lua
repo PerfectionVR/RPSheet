@@ -53,6 +53,11 @@ Opt.custom.identity = {
             -- Picking a subclass hands out its features; changing it swaps them.
             set = function(_, value) Sheet().subclass = value; Opt.Regrant() end,
         }, "subclasses"),
+        subclassInfo = {
+            type = "description", order = 5.5, fontSize = "medium",
+            hidden = function() return ns.SubclassSummary(Sheet().subclass) == "" end,
+            name = function() return ns.SubclassSummary(Sheet().subclass) end,
+        },
         subclassText = {
             type = "input", order = 6, name = "Or type a subclass",
             desc = "For a subclass that isn't in the list. Its features aren't built in; add them under Abilities and Passives.",

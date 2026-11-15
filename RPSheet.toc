@@ -118,6 +118,7 @@ Data\SubclassMonk.lua
 Data\SubclassEvoker.lua
 Data\SubclassWarlockMage.lua
 Data\ClassOverrides.lua
+Data\SubclassNotes.lua
 Data\Metamorphosis.lua
 Data\Lineages.lua
 Data\Factions.lua
@@ -225,6 +226,7 @@ Sheet\Transfer.lua
 Sheet\WeaponStore.lua
 Sheet\WeaponShare.lua
 Sheet\ClassFeatures.lua
+Sheet\SubclassInfo.lua
 Sheet\Maneuvers.lua
 Sheet\Picks.lua
 Sheet\PickSwaps.lua
