@@ -85,9 +85,18 @@ end
 function RPSheet:ExplainSave(stat)
     local parts = {}
     Ability(self, parts, stat)
-    if self:Sheet().saves[stat] then Add(parts, "proficiency", self:ProficiencyBonus()) end
+    local listed, form = self:FormSaveBonus(stat), self:Form()
+    if self:Sheet().saves[stat] then
+        Add(parts, "proficiency", self:ProficiencyBonus())
+    elseif listed then
+        Add(parts, ("proficiency (%s)"):format(form.name), self:ProficiencyBonus())
+    end
     AddBonuses(self, parts, "SAVES")
     AddBonuses(self, parts, "SAVE:" .. stat)
+    -- The beast's own bonus replaces all of it when it is higher (see SaveMod).
+    if listed and listed > Total(parts) then
+        parts = { { ("the %s's own bonus, higher than yours (%s)"):format(form.name:lower(), Util.Signed(Total(parts))), listed } }
+    end
     Show(self, R.STAT_NAMES[stat] .. " saving throw", parts)
 end
 

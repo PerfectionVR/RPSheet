@@ -40,6 +40,11 @@ for name, beast in pairs(R.BEASTS) do
     beast.level, beast.moonLevel = Levels(beast)
     local crName = CR_NAMES[beast.cr] or ("%d"):format(beast.cr)
     local skills = #beast.skills > 0 and (" Proficient in " .. table.concat(beast.skills, ", ") .. ".") or ""
+    local saves = {}
+    for _, stat in ipairs(R.STATS) do
+        if beast.saves and beast.saves[stat] then saves[#saves + 1] = R.STAT_NAMES[stat] end
+    end
+    if #saves > 0 then skills = ("%s Proficient in %s saving throws."):format(skills, table.concat(saves, " and ")) end
     beast.desc = ("%s beast, challenge rating %s. Armor Class %d, speed %d feet%s. Strength %d, Dexterity %d, Constitution %d.%s%s%s"):format(
         beast.size, crName, beast.ac, beast.speed, beast.moves and (", " .. beast.moves) or "", beast.str, beast.dex, beast.con,
         SensesText(beast), skills, beast.note and (" " .. beast.note) or "")
@@ -49,7 +54,7 @@ for name, beast in pairs(R.BEASTS) do
     R.FORMS[R.BeastFormPassive(name)] = {
         name = name, beast = true, ac = beast.ac, speed = beast.speed,
         scores = { STR = beast.str, DEX = beast.dex, CON = beast.con },
-        senses = beast.senses, skills = beast.skills, skillBonus = beast.bonus,
+        senses = beast.senses, skills = beast.skills, skillBonus = beast.bonus, saveBonus = beast.saves,
     }
 end
 -- By challenge rating, then by name, so each rating is one heading in the dialog.

@@ -1,7 +1,10 @@
 -- Spell components with a price (Data/SpellComponents.lua) against what the character
 -- carries: whether a spell can be cast, what the casting uses up, and what the spell's
 -- tooltip says about it. A setting under Customize, Spells switches the check off,
--- for a table where the DM rules otherwise.
+-- for a table where the DM rules otherwise. Parts that are a weapon or coins are
+-- counted in Sheet/ComponentKinds.lua; the number of targets, for a spell that needs
+-- its components once for each, is asked in Sheet/ComponentTargets.lua and arrives
+-- here as pick.targets.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -37,40 +40,48 @@ function RPSheet:CarriedComponent(part)
     return best, count
 end
 
--- "4 x Ivory strip (50 gp)", "Black onyx (150 gp) for each corpse"
-local function PartText(part)
-    local text = part.qty > 1 and ("%d x %s"):format(part.qty, part.item) or part.item
-    if part.each then text = ("%s for each %s"):format(text, part.each) end
-    return text
-end
-
--- Why the spell can't be cast for want of a component, or nil when it can.
-function RPSheet:MissingComponents(spell)
-    local missing = {}
+-- Why the spell can't be cast for want of a component, or nil when it can. `pick` is
+-- the answer to "how many targets"; without one the spell is checked for one target.
+function RPSheet:MissingComponents(spell, pick)
+    local targets = type(pick) == "table" and pick.targets or nil
+    local missing, advice = {}, {}
     for _, part in ipairs(self:SpellComponents(spell) or {}) do
-        local _, count = self:CarriedComponent(part)
-        if count < part.qty then missing[#missing + 1] = PartText(part) end
+        if self:ComponentCount(part) < ns.ComponentNeed(part, targets) then
+            missing[#missing + 1] = ns.ComponentText(part, targets)
+            if part.weapon then
+                advice.weapon = "Ready such a weapon first. "
+            elseif not part.coins then
+                advice.item = "Add or buy it in the item browser (Reagents); one worth more will do. "
+            end
+        end
     end
     if #missing == 0 then return nil end
-    return ("%s needs a component you don't carry: %s. Add or buy it in the item browser (Reagents); one worth more will do. A DM's ruling can switch this check off under Customize, Spells.")
-        :format(spell.name, table.concat(missing, "; "))
+    return ("%s needs something you don't have%s: %s. %s%sA DM's ruling can switch this check off under Customize, Spells.")
+        :format(spell.name, (targets or 1) > 1 and (" for %d targets"):format(targets) or "", table.concat(missing, "; "),
+            advice.item or "", advice.weapon or "")
 end
 
--- Takes what the casting uses up out of the inventory. Returns the names taken.
-function RPSheet:SpendComponents(spell)
-    local taken = {}
+-- Takes what the casting uses up out of the inventory and the purse. Returns the
+-- names of what was taken.
+function RPSheet:SpendComponents(spell, pick)
+    local targets = type(pick) == "table" and pick.targets or nil
+    local taken, dropped = {}, false
     for _, part in ipairs(self:SpellComponents(spell) or {}) do
-        if part.consumed then
-            for _ = 1, part.qty do
+        local need = part.consumed and ns.ComponentNeed(part, targets) or 0
+        if part.coins and need > 0 then
+            if self:SpendCoins(part.coins * need, spell.name) then taken[#taken + 1] = ns.CoinText(part.coins * need) end
+        elseif not part.weapon then
+            for _ = 1, need do
                 local item = self:CarriedComponent(part)
                 if item then
                     taken[#taken + 1] = item.name
+                    dropped = true
                     self:DropItem(item)
                 end
             end
         end
     end
-    if #taken > 0 then
+    if dropped then
         ns.RebuildOptions() -- an item's page under Customize may be gone
         self:PopulateSoon() -- the tooltips and the item list say how many are left
     end
@@ -82,21 +93,25 @@ function RPSheet:ComponentHelp(spell)
     local lines = {}
     local parts = R.SPELL_COMPONENTS[spell.name]
     if not parts then return lines end
-    local waived = self:Sheet().componentsWaived
+    local waived, each = self:Sheet().componentsWaived, false
     for _, part in ipairs(parts) do
-        local _, count = self:CarriedComponent(part)
-        local have
+        local count, have = self:ComponentCount(part), ""
+        local enough = count >= ns.ComponentNeed(part)
         if waived then
             have = ""
-        elseif count >= part.qty then
-            have = (" %sYou carry %d.|r"):format(GREEN, count)
+        elseif part.weapon then
+            local weapon = self:ComponentWeapon(part)
+            have = weapon and (" %sYour %s will do.|r"):format(GREEN, weapon) or (" %sYou have none ready.|r"):format(RED)
+        elseif part.coins then
+            have = enough and (" %sYou have it.|r"):format(GREEN) or (" %sYou can't pay it.|r"):format(RED)
         else
-            have = (" %sYou carry %s.|r"):format(RED, count == 0 and "none" or tostring(count))
+            have = (" %sYou carry %s.|r"):format(enough and GREEN or RED, count == 0 and "none" or tostring(count))
         end
-        lines[#lines + 1] = ("Needs %s%s.%s"):format(PartText(part), part.consumed and ", used up by the casting" or ", which is kept", have)
-        if part.each and not waived then
-            lines[#lines + 1] = GREY .. "The sheet checks for one" .. (part.consumed and " and takes one" or "") .. "; see to the rest yourself.|r"
-        end
+        lines[#lines + 1] = ("Needs %s%s.%s"):format(ns.ComponentText(part), part.consumed and ", used up by the casting" or ", which is kept", have)
+        each = each or part.each ~= nil
+    end
+    if each and not waived then
+        lines[#lines + 1] = GREY .. "Casting it asks how many, and checks for that many.|r"
     end
     if waived then lines[#lines + 1] = GREY .. "Components are not checked (Customize, Spells).|r" end
     return lines

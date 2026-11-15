@@ -12,9 +12,19 @@ local BLADES = R.WEAPON_DAMAGE
 --     hours     how long it lasts, in whole hours (0: under an hour); a rest that long ends it
 --     conc      true if it ends with the caster's concentration
 --     own       true if it is always on the caster: no need to ask who it is for
+--     cast      the option a casting from the sheet switches on, without asking
 --     { label, resist = {}, immune = {}, conditionImmune = {} }, ...   one entry, or
 --               the options the caster chooses between (label names the option)
 -- }
+-- An option can also carry (Data/SpellWardRolls.lua has the spells that do):
+--     roll      { 1, 4 }: dice taken off damage when it is taken (Actions/WardDamage.lua)
+--     reduce    the damage types those dice work on; all of them when left out
+--     perTurn   true if that works once a turn; once = true if it works a single time
+--     owed      dice of that size lost again afterwards, one at the end of each turn
+--     guard     true for the caster's side of a bond: they take what the other takes
+--     byHand    true for protection someone else casts on you: put on the sheet and
+--               switched under Customize, Defense, and kept there when it is off
+--     effects   what the passive adds while it is on; text = what it does, in words
 R.SPELL_WARDS = {
     ["Protection from Poison"] = { hours = 1, { resist = { "poison" } } },
     ["Protection from Energy"] = { hours = 1, conc = true,

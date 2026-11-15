@@ -7,11 +7,11 @@
 --   cost      what it must be worth at least, in copper
 --   consumed  true when the casting uses it up
 --   qty       how many are needed (1 unless stated)
---   each      "target", "corpse": one is needed for each; the sheet counts one
+--   each      "target", "corpse": one is needed for each; casting asks how many
 --   accept    [base name] = true: the things that will do, when worth enough
 --
--- Left out: components that are a weapon (it is on the weapon list, not carried here),
--- a couple of coins, or a class resource.
+-- Components that are a weapon or a couple of coins are added by
+-- Data/SpellComponentKinds.lua. Left out: a class resource.
 local _, ns = ...
 local R = ns.Rules
 

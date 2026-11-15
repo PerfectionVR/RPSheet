@@ -7,14 +7,15 @@ local R = ns.Rules
 local RPSheet = ns.addon
 
 -- What the damage comes to for this character, and the steps that changed it in words.
-function RPSheet:AdjustDamage(amount, damageType, reduction)
+-- `why` names what the reduction comes from, when that is worth saying.
+function RPSheet:AdjustDamage(amount, damageType, reduction, why)
     local defenses, notes, final = self:Defenses(), {}, amount
     if damageType and defenses.immune[damageType] then
         return 0, { ("none of it gets through (immunity: %s)"):format(defenses.immune[damageType]) }
     end
     if (reduction or 0) > 0 then
         final = math.max(0, final - reduction)
-        notes[#notes + 1] = ("reduced by %d to %d"):format(reduction, final)
+        notes[#notes + 1] = ("reduced by %d to %d%s"):format(reduction, final, (why and why ~= "") and (" (" .. why .. ")") or "")
     end
     if damageType and defenses.resist[damageType] and final > 0 then
         final = math.floor(final / 2)
@@ -42,15 +43,16 @@ local function HurtWhileDown(state, damage, max)
 end
 
 -- `damageType` is one of Rules.DAMAGE_TYPES or nil for damage without a type;
--- `reduction` is taken off before anything else.
-function RPSheet:TakeDamage(amount, damageType, reduction)
+-- `reduction` is taken off before anything else, and `why` says where it comes from.
+-- Actions/WardDamage.lua wraps this to roll the wards that take dice off the damage.
+function RPSheet:TakeDamage(amount, damageType, reduction, why)
     amount = math.floor(tonumber(amount) or 0)
     if amount <= 0 then
         self:Print("Give the damage as a number above 0, for example /sheet damage 14 fire.")
         return
     end
     local state, max = self:State(), self:MaxHP()
-    local final, notes = self:AdjustDamage(amount, damageType, reduction)
+    local final, notes = self:AdjustDamage(amount, damageType, reduction, why)
 
     local absorbed = math.min(state.tempHP or 0, final)
     if absorbed > 0 then
