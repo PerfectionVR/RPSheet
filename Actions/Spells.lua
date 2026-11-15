@@ -133,6 +133,8 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     self.busy = true
 
     local function finish()
+        -- The spellbook's prepared list is fixed from the first spell after a long rest.
+        if ns.HasSpellbook(self:Sheet()) then self:State().prepareClosed = true end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
         if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level

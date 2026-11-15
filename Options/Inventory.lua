@@ -59,6 +59,36 @@ local function Build(item)
             end,
         },
         desc = With({ type = "input", order = 7, width = "full", multiline = 2, name = "Note" }, self, "desc", true),
+        base = {
+            type = "select", order = 8, name = "Counts as", width = 1.4,
+            desc = "For a magic or named weapon, suit of armor or shield: the plain thing it is. Equipping the item then puts that armor on, raises the shield or readies the weapon under this item's name. Leave it at None for anything else, and for plain gear, which is known by its name.",
+            values = function()
+                local values = { [""] = "None" }
+                for _, name in ipairs(R.ITEM_NAMES["Armor and shields"]) do values[name] = name end
+                for _, name in ipairs(R.WEAPON_ORDER) do values[name] = name end
+                return values
+            end,
+            sorting = function()
+                local order = { "" }
+                for _, name in ipairs(R.ITEM_NAMES["Armor and shields"]) do order[#order + 1] = name end
+                for _, name in ipairs(R.WEAPON_ORDER) do order[#order + 1] = name end
+                return order
+            end,
+            get = function() return item.base end,
+            set = function(_, value)
+                -- Taken off as what it was, put back on as what it is now.
+                local worn = item.equipped
+                if worn then RPSheet:SetEquipped(item, false) end
+                item.base = value
+                if worn then RPSheet:SetEquipped(item, true) end
+                Opt.Changed()
+            end,
+        },
+        bonus = With({
+            type = "range", order = 9, min = 0, max = 3, step = 1, name = "Magic bonus",
+            desc = "Armor and shields add it to your Armor Class while equipped. A weapon gets it on its attack and damage rolls when the item is first equipped; after that it is set on the weapon, on the Weapons page.",
+            hidden = function() return ns.ItemSlot(item) == nil end,
+        }, self, "bonus"),
         magicHeader = { type = "header", order = 20, name = "Magic" },
         magic = With({ type = "toggle", order = 21, name = "Magic item" }, self, "magic"),
         rarity = With({
@@ -92,5 +122,5 @@ end
 Opt.lists.items = {
     extra = Opt.InventoryExtra,
     order = 5.5, title = "Inventory", noun = "item", template = R.TEMPLATES.item, build = Build,
-    help = "Your money and what you carry. Listed items are added and bought in the item browser; an item of your own is added here as an empty one to fill in. Equip armor, a shield or a basic weapon to wear or ready it; the Defense and Weapons pages can still set those directly.\n",
+    help = "Your money and what you carry. Listed items are added and bought in the item browser; an item of your own is added here as an empty one to fill in. Equip armor, a shield or a weapon to wear or ready it (a weapon of your own goes by its name); the Defense and Weapons pages can still set those directly.\n",
 }

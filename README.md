@@ -228,7 +228,8 @@ other ten still need that.
 - [ ] How often prepared spells may be swapped (any after a long rest, one per long
       rest, or one per level, by class)
 - [x] Copying a found spell into the book for 50 gp a level, taken from your coins
-- [ ] Preparing spells only after a long rest
+- [x] A spellbook's prepared spells changed only after a long rest (until the first
+      spell cast after it; the Customize page is free)
 - [x] Gold tracked on the sheet (see the inventory below)
 - [ ] Spell components with a price checked against, and taken from, the inventory
 
@@ -249,10 +250,12 @@ other ten still need that.
 - [x] Armor, shields and basic weapons in the inventory linked to Defense and Weapons:
       equipping one puts it on or readies it, putting it away undoes that
 - [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
-      situation; magic armor and weapons, and weapons of your own, equipped from the
-      inventory; the fixed starting gear
+      situation; the fixed starting gear
       packages of each class and background (the closet has no budget)
 - [x] Carrying more than you can holds your speed to 5 feet
+- [x] Magic and named armor, shields and weapons equipped from the inventory: an item
+      can count as a plain one and carry a magic bonus; a weapon of your own is
+      readied by an item of the same name
 - [ ] Mounts, vehicles and companion creatures
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on

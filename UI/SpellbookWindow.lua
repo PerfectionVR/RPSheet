@@ -105,7 +105,7 @@ function RPSheet:PopulateSpellbook()
         local _, maxPrepared = self:SpellLimits()
         local _, prepared = self:SpellCounts()
         UI.AddLabel(body, 1, ("Prepared %s%d of %d|r, from %d spells in the book."):format(UI.ACCENT, prepared, maxPrepared, #names),
-            nil, "Spellbook", "After a long rest you choose which spells of your book are prepared. Only prepared spells can be cast, except rituals, which can be cast straight from the book.\n\n" .. HELP)
+            nil, "Spellbook", "When you finish a long rest you choose which spells of your book are prepared; the list can be changed until you cast your first spell after it. Only prepared spells can be cast, except rituals, which can be cast straight from the book.\n\n" .. HELP)
         if #names == 0 then
             UI.AddLabel(body, 1, UI.GREY .. "The book is empty. Add spells under Customize, Spellbook (the cog above).|r")
         end

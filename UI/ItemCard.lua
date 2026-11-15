@@ -24,18 +24,26 @@ end
 function UI.ItemLines(self, name, item, classKey)
     local training = classKey and ns.ArmorTraining(classKey) or self:ArmorTraining()
     local known, lines = R.ITEMS[name], {}
-    local weapon, armor = R.WEAPONS[name], R.ARMOR_ITEMS[name]
+    -- A magic or named item is described by the plain thing it counts as.
+    local base = item and ns.ItemBase(item) or name
+    local weapon, armor = R.WEAPONS[base], R.ARMOR_ITEMS[base]
+    if base ~= name then lines[#lines + 1] = ("Counts as: %s."):format(base) end
     if weapon then
         lines[#lines + 1] = ("%s weapon: %s. Mastery: %s."):format(
-            weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(name), weapon.mastery)
-        if not ns.WeaponProficient(classKey or self:Sheet().class, name) then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
+            weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(base), weapon.mastery)
+        if not ns.WeaponProficient(classKey or self:Sheet().class, base) then lines[#lines + 1] = RED .. "You are not proficient with it.|r" end
     elseif armor then
         local kind = ns.ArmorKind(armor)
         lines[#lines + 1] = ArmorLine(R.ARMOR[armor], kind)
         if not training[kind] then lines[#lines + 1] = RED .. "You have no training with it.|r" end
-    elseif name == R.SHIELD_ITEM then
+    elseif base == R.SHIELD_ITEM then
         lines[#lines + 1] = ("+%d to Armor Class while equipped."):format(R.SHIELD_AC)
         if not training.shield then lines[#lines + 1] = RED .. "You have no training with shields.|r" end
+    end
+
+    if item and (item.bonus or 0) > 0 and (weapon or armor or base == R.SHIELD_ITEM) then
+        lines[#lines + 1] = UI.GREEN .. (weapon and ("+%d to attack and damage rolls with it."):format(item.bonus)
+            or ("+%d to Armor Class while equipped."):format(item.bonus)) .. "|r"
     end
 
     local rarity = item and item.rarity ~= "" and item.rarity or (known and known.rarity)

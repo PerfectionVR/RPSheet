@@ -142,6 +142,8 @@ function ns.NormalizeInventory(sheet, source)
         item.qty, item.cost = Whole(item.qty, 9999), Whole(item.cost, 99999999)
         if not R.RARITIES[item.rarity] then item.rarity = "" end
         if not R.ITEM_LIMITS[item.limit] then item.limit = "" end
+        if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM) then item.base = "" end
+        item.bonus = Whole(item.bonus, 3)
         for at = #item.effects, 1, -1 do
             if not R.EFFECT_TARGETS[item.effects[at].target] then table.remove(item.effects, at) end
         end

@@ -109,7 +109,7 @@ table.insert(Opt.rebuilders, function()
             desc = known.desc .. "\n\nTicked: prepared.",
             get = function() return RPSheet:PreparedSpell(name) ~= nil end,
             set = function(_, value)
-                if value then RPSheet:PrepareSpell(name) else RPSheet:UnprepareSpell(name) end
+                if value then RPSheet:PrepareSpell(name, true) else RPSheet:UnprepareSpell(name, true) end
                 Opt.Changed()
             end,
         }
@@ -117,7 +117,7 @@ table.insert(Opt.rebuilders, function()
             type = "execute", order = 10 + index + 0.5, width = 0.7, name = "Remove",
             desc = ("Takes %s out of the book, and off your prepared spells."):format(name),
             func = function()
-                RPSheet:UnprepareSpell(name)
+                RPSheet:UnprepareSpell(name, true)
                 ns.SpellbookRemove(Sheet(), name)
                 ns.ApplySpellChoices(Sheet()) -- a mastered or signature spell is open again
                 ns.RebuildOptions()
