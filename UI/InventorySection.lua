@@ -61,6 +61,8 @@ end
 function UI.InventorySection(self, body)
     local items = Util.Named(self:Sheet().items or {})
     UI.AddHeading(body, "Inventory")
+    UI.AddLabel(body, 1, UI.ACCENT .. "Browse items|r", function() self:ToggleItemBrowser() end, "Item browser",
+        "Opens a window with what you carry and every listed item as a block: what it is and does, with buttons to add, buy, equip and remove it.")
     UI.AddLabel(body, 1, "Coins  " .. ns.PurseText(self:Purse(), UI.ACCENT),
         function(button) self:CoinDialog(button == "RightButton") end, "Coins",
         ("Worth %s in all.\nPlatinum is 10 gold, gold is 10 silver, silver is 10 copper; an electrum piece is half a gold piece.\n\nLeft-click: add coins.\nRight-click: spend coins. Coins that fit the price are paid first, a larger one is broken for change when you run short of small ones, and you can't spend more than you have."):format(
@@ -79,7 +81,7 @@ function UI.InventorySection(self, body)
             over and RED or UI.ACCENT, Pounds(weight), capacity, over and (RED .. " over the limit|r") or "",
             UI.GREY, #items, #items == 1 and "item" or "items"),
         nil, "Carrying capacity",
-        ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought under Customize > Inventory."):format(
+        ("You can carry your Strength score times %d in pounds: %d lb. Fifty coins weigh a pound.%s\n\nItems are added and bought in the item browser (Browse items, above)."):format(
             R.CARRY_PER_STRENGTH[self:Sheet().size] or R.CARRY_PER_STRENGTH.M, capacity,
             over and ("\n\n" .. RED .. "You are carrying more than that. Hauling a load over your limit slows you to a speed of 5 feet.|r") or ""))
     for _, item in ipairs(items) do ItemRow(self, body, item) end

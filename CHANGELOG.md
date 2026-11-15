@@ -86,6 +86,10 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   prices and weights, see your load against your carrying capacity, and equip and
   attune magic items (three at most) whose bonuses are applied. Weapons can have a
   magic bonus, and the creation wizard asks for starting gold.
+- An item browser replaces the dropdowns for adding items: a window of its own with
+  a tab for what you carry and one per kind of item, a search box, and every item
+  as a block that says what it is and does, with Add, Buy, Equip and Remove buttons.
+  Open it with "Browse items" on the sheet's Items tab or under Customize > Inventory.
 - The sheet window can be minimized with the new button in its title bar (or under
   General): it shows only the title bar, opens while the mouse is over it and folds
   up again when the mouse leaves. It also can't be made narrower than 300 any more,
