@@ -64,17 +64,24 @@ local function CollectCosts(self, ability)
             -- The "Cast at" row picks a higher slot to pay with.
             if tracker.kind == "slot" and self.castLevel and self.castLevel > tracker.level then
                 for _, other in ipairs(self:GetTrackers()) do
-                    if other.kind == "slot" and other.level == self.castLevel then tracker = other end
+                    -- Of two kinds of slot of that level (Pact Magic beside the others), one with a use left.
+                    if other.kind == "slot" and other.level == self.castLevel
+                        and (tracker.level ~= self.castLevel or tracker.get() < action.amount) then
+                        tracker = other
+                    end
                 end
             end
             -- A spell slot that is used up can be paid with the lowest higher one left.
+            -- Pact Magic slots kept beside the others count too, at the same level or above.
             if tracker.kind == "slot" and tracker.get() < action.amount then
+                local empty, best = tracker, nil
                 for _, other in ipairs(self:GetTrackers()) do
-                    if other.kind == "slot" and other.level > tracker.level and other.get() >= action.amount then
-                        tracker = other
-                        break
+                    if other.kind == "slot" and other.label ~= empty.label and other.level >= empty.level
+                        and other.get() >= action.amount and (not best or other.level < best.level) then
+                        best = other
                     end
                 end
+                tracker = best or tracker
             end
             -- Used up, but another resource can pay for it (Psychic Veil, Rend Mind).
             local amount = action.amount
