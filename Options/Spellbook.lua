@@ -110,6 +110,7 @@ table.insert(Opt.rebuilders, function()
             get = function() return RPSheet:PreparedSpell(name) ~= nil end,
             set = function(_, value)
                 if value then RPSheet:PrepareSpell(name, true) else RPSheet:UnprepareSpell(name, true) end
+                ns.RebuildOptions() -- the spell's page under Spells has come or gone
                 Opt.Changed()
             end,
         }

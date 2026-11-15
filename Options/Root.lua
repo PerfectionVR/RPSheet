@@ -62,7 +62,12 @@ local function RebuildList(key, list)
             confirm = true,
             func = function()
                 ns.DismissAuto(Opt.Sheet(), entry)
-                table.remove(Opt.Sheet()[key], index)
+                -- By the entry itself, not its place: the list may have changed since
+                -- this page was built (a spell prepared or an item used on the sheet).
+                local entries = Opt.Sheet()[key]
+                for at = #entries, 1, -1 do
+                    if entries[at] == entry then table.remove(entries, at) end
+                end
                 ns.RebuildOptions()
                 Opt.Changed()
             end,

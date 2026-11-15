@@ -89,8 +89,10 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
     }
 end
 
--- A dropdown for each feature that offers options (four at most at one level).
-for index = 1, 4 do
+-- A dropdown for each feature that offers options. One level opens four at most, but
+-- looking at the choices again lists those of every class: as many as the Class and
+-- origin page shows, or the last ones could never be picked here.
+for index = 1, 6 do
     local function Feature() return L.OptionFeatures()[index] end
     args["option" .. index] = {
         type = "select", order = 11 + index / 10, width = "double",
