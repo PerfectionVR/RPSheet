@@ -74,9 +74,9 @@ R.TEMPLATES = {
     -- style: the character's Fighting Style applies to it; mastery: see Rules.MASTERIES
     -- base: the basic weapon it is (see Data/Weapons.lua), empty for the player's own;
     -- twoHands: a versatile weapon held in two hands; magic: a magic weapon's bonus
-    -- to its own attack and damage rolls
+    -- to its own attack and damage rolls; stowed: put away, so not on the sheet
     weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
-               base = "", twoHands = false, magic = 0 },
+               base = "", twoHands = false, magic = 0, stowed = false },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },

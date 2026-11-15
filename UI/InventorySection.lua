@@ -7,6 +7,11 @@ local Util = ns.Util
 
 local RED = "|cffff5555"
 local ATTUNE_HELP = ("Some magic items only work once you are attuned to them, which takes a short rest spent with the item. You can be attuned to %d items at a time."):format(R.ATTUNE_LIMIT)
+local SLOT_HELP = {
+    armor = "Equipping it puts the armor on; you wear one suit at a time.",
+    shield = "Equipping it raises the shield.",
+    weapon = "Equipping it readies the weapon: it joins the ones you swap between on the weapon row.",
+}
 local ITEM_HELP = "Left-click: equip it or put it away.\nShift-click: use one up."
 
 -- 12.5 -> "12.5", 12 -> "12"
@@ -29,6 +34,8 @@ local function ItemRow(self, body, item)
     local summary = R.ItemSummary(item.cost, item.weight)
     if summary ~= "" then lines[#lines + 1] = UI.GREY .. summary .. " each|r" end
     lines[#lines + 1] = "\n" .. ITEM_HELP
+    local slot = ns.ItemSlot(item)
+    if slot then lines[#lines + 1] = SLOT_HELP[slot] end
     if item.attune then
         lines[#lines + 1] = "Right-click: " .. (item.attuned and "end the attunement." or "attune to it.")
         lines[#lines + 1] = "\n" .. ATTUNE_HELP

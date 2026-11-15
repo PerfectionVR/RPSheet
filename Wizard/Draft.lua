@@ -34,8 +34,8 @@ function W.NewDraft()
         bonus = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 },
         alignment = "",
         fightingStyle = "",
-        armor = "NONE", shield = false,
-        weapon = "", -- the basic weapon to start with
+        closet = {}, -- starting gear taken: item name -> true (Wizard/Closet.lua)
+        worn = {},   -- the taken armor, shield and weapons that are equipped
         gold = 0,    -- gold pieces to start with
         -- A new character starts clean. What the player made by hand on the current one
         -- can be carried over, but only if they ask for it.
@@ -105,8 +105,6 @@ function W.StepProblem()
         end
     elseif draft.step == 4 then
         if draft.allegiance == "" then return "Choose an allegiance." end
-    elseif draft.step == 5 then
-        if not R.WEAPONS[draft.weapon] then return "Choose a main weapon." end
     elseif draft.step == 3 then
         if draft.scoreMethod == "POINTBUY" and W.PointsSpent() > R.POINTS then
             return ("You have spent %d of %d points."):format(W.PointsSpent(), R.POINTS)
@@ -135,7 +133,6 @@ function W.Finish()
     for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
     sheet.scoreMethod = draft.scoreMethod
     sheet.base, sheet.bonus = CopyTable(draft.base), CopyTable(draft.bonus)
-    sheet.armor, sheet.shield = draft.armor, draft.shield
     sheet.fightingStyle = W.NeedsFightingStyle() and draft.fightingStyle or ""
     for skill, picked in pairs(draft.classSkills) do
         if picked then sheet.skills[skill] = 1 end
@@ -147,14 +144,7 @@ function W.Finish()
         sheet.items, sheet.coins = old.items or {}, old.coins or sheet.coins
     end
     sheet.coins.gp = (sheet.coins.gp or 0) + (draft.gold or 0)
-    if R.WEAPONS[draft.weapon] then
-        -- With the ability modifiers the character will have, and its mastery if the
-        -- class has Weapon Mastery.
-        local function Modifier(stat)
-            return math.floor(((draft.base[stat] or 10) + (draft.bonus[stat] or 0) - 10) / 2)
-        end
-        table.insert(sheet.weapons, 1, ns.NewBasicWeapon(draft.weapon, Modifier, true, R.MASTERY_LIMITS[class.base] ~= nil))
-    end
+    W.FillInventory(sheet)
     ns.ApplyGrants(sheet)
     RPSheet:ReplaceSheet(sheet, draft.keepLists)
 end
