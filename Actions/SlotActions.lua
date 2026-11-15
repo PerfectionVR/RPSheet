@@ -120,6 +120,7 @@ local function FromPoints(self)
             -- Written straight to the state: the tracker's own limit is what is being passed.
             self:State().slots[level] = tracker.get() + 1
             self.castLevel = nil
+            if above then self:PopulateSoon() end -- the slot row counts up to one more now
         end,
     }
 end

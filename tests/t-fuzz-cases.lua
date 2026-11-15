@@ -10,6 +10,11 @@ local Z = FUZZ
 local only = rawget(_G, "ARG4")
 
 local CASES = {
+    -- A slot made from Sorcery Points above the usual number: the row read "5/4".
+    { name = "made slot above the usual", steps = {
+        { a = "make", seed = 1502097047, p = { ["#1"] = "FEAT", ["#2"] = "Poisoner", ["#3"] = "Lightning", alignment = "Lawful Neutral", allegiance = "ALLIANCE", background = "MERCHANT", backgroundGear = true, class = "EVOKER", classGear = false, classSkill1 = "skill11", classSkill2 = "skill9", closet = true, extras = 0, level = 7, plusOne = "INT", plusTwo = "CON", scores = "15 15 15 8 8 8", spec = "Preservation", species = "WORGEN", spread = false, subclass = "Draconic Sorcery" } },
+        { a = "ability", seed = 1446132986, p = { ability = "Font of Magic: points to slot", mode = "none" } },
+    } },
 }
 
 local played, problems = 0, 0
