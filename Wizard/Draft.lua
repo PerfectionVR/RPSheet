@@ -12,10 +12,17 @@ W.draft = nil -- set while the wizard is open
 
 -- The entries of a list the player made, leaving out what a class, subclass, species,
 -- background or level put there.
-local function OwnEntries(list)
+-- Species traits and the background's feat are put on a sheet without a mark of
+-- their own (Wizard/Grants.lua), so `origin`, the sheet they came with, names them:
+-- they belong to that species and background, not to the player.
+local function OwnEntries(list, origin)
+    local given = {}
+    local species, background = origin and R.SPECIES[origin.species], origin and R.BACKGROUNDS[origin.background]
+    for _, trait in ipairs(species and species.traits or {}) do given[trait] = true end
+    if background then given[background.feat] = true end
     local own = {}
     for _, entry in ipairs(list) do
-        if (entry.auto or "") == "" then own[#own + 1] = entry end
+        if (entry.auto or "") == "" and not given[entry.name] then own[#own + 1] = entry end
     end
     return own
 end
@@ -26,7 +33,7 @@ function W.NewDraft()
     -- the character owns.
     local coins = 0
     for _, amount in pairs(current.coins or {}) do coins = coins + (tonumber(amount) or 0) end
-    local hasContent = #OwnEntries(current.abilities) + #OwnEntries(current.passives)
+    local hasContent = #OwnEntries(current.abilities) + #OwnEntries(current.passives, current)
         + #current.resources + #current.weapons + #current.spells
         + #(current.items or {}) + #(current.mounts or {}) + coins > 0
     return {
@@ -148,7 +155,7 @@ function W.Finish()
 
     if draft.keepLists then
         sheet.resources, sheet.weapons, sheet.spells = old.resources, old.weapons, old.spells
-        sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives)
+        sheet.abilities, sheet.passives = OwnEntries(old.abilities), OwnEntries(old.passives, old)
         sheet.items, sheet.coins = old.items or {}, old.coins or sheet.coins
         sheet.mounts = old.mounts or {}
     end

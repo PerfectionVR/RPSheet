@@ -25,7 +25,7 @@ function ns.ScrollReader(sheet, name)
     local best, reach
     for _, key in ipairs(ns.ClassKeys(sheet)) do
         local class = R.CLASSES[key]
-        if class and class.caster and OnList(class.base, name) then
+        if class and class.caster and R.OnClassSpellList(key, name) then
             local level = ns.ClassSpellLevel(class, ns.ClassLevel(sheet, key))
             if not reach or level > reach then best, reach = key, level end
         end

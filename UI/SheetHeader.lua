@@ -19,6 +19,10 @@ function UI.HeaderSection(self, body)
     self.rollModeLabel = UI.AddLabel(body, 1, "", function(button) self:CycleRollMode(button == "RightButton") end,
         "Next roll", "How your next d20 is rolled: normally, with advantage (two dice, the higher counts) or with disadvantage (the lower counts).\n\nLeft-click: switch between normal, advantage and disadvantage. It goes back to normal after one roll.\nRight-click: keep it for every roll until you change it, for a condition that lasts.\n\nHolding Shift or Ctrl while clicking a roll still works, and takes priority.")
 
+    -- A die or a number added to the next d20 (UI/SheetNextRoll.lua).
+    UI.NextRollSection(self, body)
+    self.nextRollAdded = true
+
     -- Only for a character with spell slots of more than one level.
     self.castLevelLabel = nil
     local slotLevels = 0

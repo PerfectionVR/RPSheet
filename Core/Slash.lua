@@ -15,7 +15,7 @@ local USAGE = {
     "/sheet rest - long rest",
     "/sheet short - short rest (also /sheet rest short)",
     "/sheet undo - take the last rest back",
-    "/sheet damage 14 fire - take damage of a type (the type can be left out)",
+    "/sheet damage 14 fire - take damage of a type (the type can be left out; add crit for a critical hit while at 0 hit points)",
     "/sheet heal 8 - regain hit points",
 }
 
