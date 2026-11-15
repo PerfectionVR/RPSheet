@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+- Spells already on a character follow corrections to the built-in spells; a spell
+  you changed yourself keeps what you set and offers "Use the built-in spell".
+- Death Knights and Demon Hunters have their own spell lists. A cantrip you have from
+  a feature or feat is no longer picked twice; Circle of the Stars gives Guidance. A
+  Monk chooses its tool in the level dialog; Inscription Adept needs one of its
+  three tools; your own spells can add dice per higher slot. When two classes
+  prepare the same spell each has its own entry, named with its class.
+- Items: a Makes tab in the item browser with every magic make of every weapon,
+  armor, shield and ammunition, to add or buy; every magic item has a recipe except
+  artifacts; recipes are learned per profession; potions stack; a Sell button; the
+  search reads descriptions and kinds and can search every tab; items you changed
+  stay yours while untouched ones follow corrections.
+- A mount carrying more than it can moves 5 feet; animals can be harnessed to a
+  drawn vehicle with a load.
+- Play: a critical hit at 0 hit points counts as two failed death saves; saves and
+  checks rolled by an ability follow the sheet's rules; Grappled and Frightened ask
+  whom you attack or whether your fear is in sight; "Don't ask again" on every roll
+  question, with switches under Customize > Proficiencies; while incapacitated you
+  can't attack, use abilities, cast or read scrolls, and a rage ends; a right-click
+  never does the left-click's job.
+- "Next roll" has rows to add or subtract a die (d4 to d12) or a number for your
+  next d20: Bless, Guidance, Bane, cover.
+- Beast forms count Rampage, Rock, Web, Cacophony and the new Ink Cloud.
+- Sharing: switched off it neither sends nor asks, and your group drops your copy;
+  stats catch up after an encounter that blocked addon messages; long announcements
+  are split into "(continued)" lines instead of cut.
+- Rests can be taken back with `/sheet undo` or a right-click on the rest row. New
+  commands: `/sheet short`, `/sheet tab <name>`, `/sheet items`, `/sheet level`.
+- The saved file no longer keeps an empty sheet for every character and profile seen.
+- The wizard's "carry over" no longer carries the old species' traits and background
+  feat, and shows for characters whose own things are only items, coins or mounts.
+- Fixes found by a random-play tester: slot rows reading "5/4" or "4/5" after
+  Font of Magic, a subclass's always-prepared spell listed twice, the death save row
+  staying after hit points came back, an inventory quantity of 0.
 - Rules data checked against the rules site by script, and corrected:
   - Spells: Searing, Thunderous, Wrathful and Banishing Smite, Sanctuary and Serpent
     Sting show the save they force; Earthquake asks for a Dexterity save; Finger of

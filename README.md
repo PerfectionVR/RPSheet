@@ -244,13 +244,20 @@ the Customize page that goes with it.
 | `/sheet config` | Opens the settings and character editor. |
 | `/sheet new` | Opens the creation wizard. Finishing it replaces the character; closing it changes nothing. |
 | `/sheet lock` | Locks or unlocks the sheet window. |
-| `/sheet rest` | Takes a long rest. |
+| `/sheet rest` or `/sheet rest long` | Takes a long rest. |
+| `/sheet short` or `/sheet rest short` | Takes a short rest. |
+| `/sheet undo` | Takes back the last rest, until your next roll, spell, damage or rest. |
+| `/sheet tab <name>` | Opens a tab of the sheet: actions, checks, skills, traits, items, trade (a unique start of the name is enough). |
+| `/sheet items` | Opens or closes the item browser. |
+| `/sheet level` | Opens the level dialog when a level can be taken. |
+| `/sheet help` | Lists the commands. |
 | `/sheet damage 14` | Takes 14 damage without a type. |
 | `/sheet damage 14 fire` | Takes 14 fire damage, with your resistances, vulnerabilities and immunities applied. The types are acid, bludgeoning, cold, fire, force, lightning, necrotic, piercing, poison, psychic, radiant, slashing and thunder. |
 | `/sheet damage 28 fire -5` | The same, with 5 taken off first (a ward, a reaction). |
+| `/sheet damage 14 crit` | A critical hit while you are at 0 hit points: two failed death saves. |
 | `/sheet heal 8` | Regains 8 hit points, up to your maximum. |
 
-Anything else after `/sheet` shows or hides the sheet.
+A word `/sheet` doesn't know lists the commands.
 
 ## How the rules are applied
 
