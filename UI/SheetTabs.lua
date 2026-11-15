@@ -1,24 +1,37 @@
--- The row of tabs under the top part of the sheet. The top part (hit points, rests,
+-- The strip of tabs under the top part of the sheet. The top part (hit points, rests,
 -- conditions, combat numbers, the weapon) is always there; the rest of the sheet is
--- split over the tabs and only the open one is drawn.
+-- split over the tabs and only the open one is drawn. A tab's look is in UI/Tab.lua.
 local _, ns = ...
 local UI = ns.UI
+local AceGUI = LibStub("AceGUI-3.0")
 
--- Adds the tab row and returns the open tab. `tabs` is a list of { name, tip, ... }.
+-- Adds the tab strip and returns the open tab. `tabs` is a list of { name, tip, ... }.
 -- The choice is kept per game character.
 function UI.AddTabBar(self, body, tabs)
-    local saved = self.db.char
+    local saved, theme = self.db.char, self.db.profile.theme
     local open = tabs[1]
     for _, tab in ipairs(tabs) do
         if tab.name == saved.sheetTab then open = tab end
     end
     UI.AddLabel(body, 1, " ") -- a blank line between the top part and the tabs
     for _, tab in ipairs(tabs) do
-        local text = tab == open and ("%s[%s]|r"):format(UI.ACCENT, tab.name) or (UI.GREY .. tab.name .. "|r")
-        UI.AddLabel(body, 1 / #tabs, text, function()
+        local button = AceGUI:Create("RPSheetTab")
+        button:SetStyle(theme, tab == open)
+        button:SetText(tab.name)
+        button:SetRelativeWidth(1 / #tabs)
+        button:SetCallback("OnClick", function()
+            if tab == open then return end
             saved.sheetTab = tab.name
             self:PopulateSoon()
-        end, tab.name, tab.tip)
+        end)
+        button:SetCallback("OnEnter", function(widget)
+            GameTooltip:SetOwner(widget.frame, "ANCHOR_TOP")
+            GameTooltip:AddLine(tab.name)
+            GameTooltip:AddLine(tab.tip, 1, 1, 1, true)
+            GameTooltip:Show()
+        end)
+        button:SetCallback("OnLeave", GameTooltip_Hide)
+        body:AddChild(button)
     end
     return open
 end

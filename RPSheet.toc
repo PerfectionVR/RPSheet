@@ -161,6 +161,7 @@ Actions\Damage.lua
 UI\WindowMinimize.lua
 UI\Window.lua
 UI\Bar.lua
+UI\Tab.lua
 UI\TermLabel.lua
 UI\Slider.lua
 UI\DialogBacking.lua
