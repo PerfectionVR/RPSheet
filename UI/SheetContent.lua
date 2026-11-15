@@ -143,4 +143,6 @@ function RPSheet:Refresh()
         self.deathLabel:SetText(("%sDeath saves: %d passed, %d failed - %s|r"):format(
             "|cffff5555", state.deathPass, state.deathFail, status))
     end
+    -- The death save row comes and goes with 0 hit points, whatever brought them there.
+    if (self.deathLabel ~= nil) ~= self:IsDown() then self:PopulateSoon() end
 end

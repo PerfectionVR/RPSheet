@@ -61,6 +61,14 @@ local CASES = {
         { a = "wild shape", seed = 1530802240, p = {} },
         { a = "short rest", seed = 1787215230, p = {} },
     } },
+    -- Down at 0 hit points, then healed by an ability: the death save row stayed.
+    { name = "death save row after an ability heals", steps = {
+        { a = "make", seed = 490778005, p = { alignment = "Lawful Evil", allegiance = "ALLIANCE", background = "GUARD", backgroundGear = true, class = "WARRIOR", classGear = false, classSkill1 = "skill18", classSkill2 = "skill11", closet = true, extras = 0, gearChoicebackground1 = "Playing Cards", level = 3, lineage = "Mulgore Tauren", plusOne = "STR", plusTwo = "WIS", scores = "15 15 13 10 8 8", spec = "Arms", species = "TAUREN", spread = false, subclass = "Champion" } },
+        { a = "damage", seed = 957245857, p = { amount = "400", type = "lightning" } },
+        { a = "ability", seed = 185821877, p = { ability = "Second Wind", mode = "none" } },
+    }, check = function()
+        if RPSheet:IsDown() then return "the case didn't heal the character" end
+    end },
 }
 
 local played, problems = 0, 0
