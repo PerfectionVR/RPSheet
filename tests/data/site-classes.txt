@@ -1,0 +1,981 @@
+CLASS|Death Knight|WoW|Paladin|XPHB|hero
+hd|10
+primary|str+cha
+saves|wis,cha
+armor|light,medium,heavy,shield
+weapons|simple,martial
+tools|
+skills|2|athletics,insight,intimidation,medicine,persuasion,religion
+caster|artificer|cha|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:P|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Channel Divinity|0,0,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=
+subclassTitle|Death Knight Subclass
+SP|0|prepared|2|rune strike@1@daily
+SP|0|prepared|5|find steed@1@daily
+L1|Death Coil@WoW;Spellcasting;Weapon Mastery
+L2|Fighting Style[Blessed Warrior];Runic Smite@WoW
+L3|Channel Divinity;Death Knight Subclass@WoW*
+L4|Ability Score Improvement
+L5|Extra Attack;Faithful Steed@WoW[Ghostly Stride (Undead Only; Recharges After a Long Rest)]
+L6|Aura of Protection
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Abjure Foes
+L10|Aura of Courage
+L11|Runic Strikes@WoW
+L12|Ability Score Improvement
+L13|
+L14|Improved Death Coil@WoW
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|
+L18|Aura Expansion
+L19|Epic Boon
+L20|Subclass Feature*
+
+CLASS|Demon Hunter|WoW|Ranger|XPHB|hero
+hd|10
+primary|dex+wis
+saves|str,dex
+armor|light,medium,shield
+weapons|simple,martial
+tools|
+skills|3|animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+caster|artificer|wis|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:R|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Favored Enemy|2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=1:animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+subclassTitle|Demon Hunter Subclass
+SP|0|prepared|1|hunter's mark
+L1|Spellcasting@WoW;Favored Enemy;Weapon Mastery
+L2|Deft Explorer@WoW[Expertise/Languages];Fighting Style@WoW[Druidic Warrior/Void Warrior]
+L3|Demon Hunter Subclass@WoW*
+L4|Ability Score Improvement
+L5|Extra Attack
+L6|Roving
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Expertise
+L10|Tireless[Temporary Hit Points/Decrease Exhaustion]
+L11|Subclass Feature*
+L12|Ability Score Improvement
+L13|Relentless Hunter
+L14|Nature's Veil
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|Precise Hunter
+L18|Improved Spectral Sight@WoW
+L19|Epic Boon
+L20|Foe Slayer
+
+CLASS|Druid|WoW|Druid|XPHB|
+hd|8
+primary|wis
+saves|int,wis
+armor|light,shield
+weapons|simple
+tools|Herbalism Kit
+skills|2|arcana,animal handling,insight,medicine,nature,perception,religion,survival
+caster|full|wis|change=restLong
+cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+col|Wild Shape|0,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4
+col|Cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=light,shield|weapons=|tools=|skills=
+subclassTitle|Druid Subclass
+SP|0|prepared|1|speak with animals
+SP|0|prepared|2|find familiar
+L1|Druidic;Primal Order;Spellcasting
+L2|Wild Companion;Wild Shape[Number of Uses/Known Forms/T:Beast Shapes/Rules While Shape-Shifted(Temporary Hit Points/Game Statistics/No Spellcasting/Objects)]
+L3|Druid Subclass*
+L4|Ability Score Improvement
+L5|Wild Resurgence
+L6|Subclass Feature*
+L7|Elemental Fury
+L8|Ability Score Improvement
+L9|
+L10|Subclass Feature*
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|Improved Elemental Fury[Potent Spellcasting/Primal Strike]
+L16|Ability Score Improvement
+L17|
+L18|Beast Spells
+L19|Epic Boon
+L20|Archdruid[Evergreen Wild Shape/Nature Magician/Longevity]
+
+CLASS|Evoker|WoW|Sorcerer|XPHB|hero
+hd|6
+primary|cha
+saves|con,cha
+armor|
+weapons|simple
+tools|
+skills|2|arcana,deception,insight,intimidation,persuasion,religion
+caster|full|cha|change=level
+cantrips|4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6
+prepared|2,4,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+optprog|Metamagic|MM|{2:2,10:4,17:6}
+col|Sorcery Points|0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+col|Cantrips|4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6
+col|Prepared Spells|2,4,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Evoker Subclass
+L1|Spellcasting;Innate Sorcery
+L2|Font of Magic[Converting Spell Slots to Sorcery Points/Creating Spell Slots(T:Creating Spell Slots)];Metamagic;Metamagic Options[Careful Spell/Distant Spell/Empowered Spell/Extended Spell/Heightened Spell/Quickened Spell/Seeking Spell/Subtle Spell/Transmuted Spell/Twinned Spell]
+L3|Sorcerer Subclass*
+L4|Ability Score Improvement
+L5|Sorcerous Restoration
+L6|Subclass Feature*
+L7|Sorcery Incarnate
+L8|Ability Score Improvement
+L9|
+L10|Metamagic
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|
+L16|Ability Score Improvement
+L17|Metamagic
+L18|Subclass Feature*
+L19|Epic Boon
+L20|Arcane Apotheosis
+
+CLASS|Hunter|WoW|Ranger|XPHB|
+hd|10
+primary|dex+wis
+saves|str,dex
+armor|light,medium,shield
+weapons|simple,martial
+tools|
+skills|3|animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+caster|artificer|wis|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:R|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Favored Enemy|2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=1:animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+subclassTitle|Hunter Subclass
+SP|0|prepared|1|hunter's mark
+L1|Spellcasting;Favored Enemy;Weapon Mastery
+L2|Deft Explorer[Expertise/Languages];Fighting Style[Druidic Warrior]
+L3|Ranger Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack
+L6|Roving;Pet Specialization@WoW[Cunning/Ferocity/Tenacity]
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Expertise
+L10|Tireless[Temporary Hit Points/Decrease Exhaustion]
+L11|Subclass Feature*
+L12|Ability Score Improvement
+L13|Relentless Hunter
+L14|Nature's Veil
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|Precise Hunter
+L18|Feral Senses
+L19|Epic Boon
+L20|Foe Slayer
+
+CLASS|Mage|WoW|Wizard|XPHB|
+hd|6
+primary|int
+saves|int,wis
+armor|
+weapons|simple
+tools|
+skills|2|arcana,history,insight,investigation,medicine,nature,religion
+caster|full|int|change=restLong
+cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25
+spellbook|6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+featprog|Epic Boon|EB|{19:1}
+col|Cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Mage Subclass
+L1|Spellcasting;Ritual Adept;Arcane Recovery
+L2|Scholar
+L3|Wizard Subclass*
+L4|Ability Score Improvement
+L5|Memorize Spell
+L6|Subclass Feature*
+L7|
+L8|Ability Score Improvement
+L9|
+L10|Subclass Feature*
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|
+L16|Ability Score Improvement
+L17|
+L18|Spell Mastery
+L19|Epic Boon
+L20|Signature Spells
+
+CLASS|Monk|WoW|Monk|XPHB|
+hd|8
+primary|dex+wis
+saves|str,dex
+armor|
+weapons|simple,Martial weapons that have the Light property
+tools|Choose one type of Artisan's Tools or Musical Instrument
+skills|2|acrobatics,athletics,history,insight,religion,stealth
+caster|||change=
+featprog|Epic Boon|EB|{19:1}
+col|Martial Arts|1d6,1d6,1d6,1d6,1d8,1d8,1d8,1d8,1d8,1d8,1d10,1d10,1d10,1d10,1d10,1d10,1d12,1d12,1d12,1d12
+col|Focus Points|0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+col|Unarmored Movement|+0,+10,+10,+10,+10,+15,+15,+15,+15,+20,+20,+20,+20,+25,+25,+25,+25,+30,+30,+30
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Monk Subclass
+L1|Martial Arts;Unarmored Defense
+L2|Monk's Focus;Unarmored Movement;Uncanny Metabolism
+L3|Deflect Attacks;Monk Subclass*
+L4|Ability Score Improvement;Slow Fall
+L5|Extra Attack;Stunning Strike
+L6|Empowered Strikes;Subclass Feature*
+L7|Evasion
+L8|Ability Score Improvement
+L9|Acrobatic Movement
+L10|Heightened Focus[Flurry of Blows/Patient Defense/Step of the Wind];Self-Restoration
+L11|Subclass Feature*
+L12|Ability Score Improvement
+L13|Deflect Energy
+L14|Disciplined Survivor
+L15|Perfect Focus
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|Superior Defense
+L19|Epic Boon
+L20|Body and Mind
+
+CLASS|Paladin|WoW|Paladin|XPHB|
+hd|10
+primary|str+cha
+saves|wis,cha
+armor|light,medium,heavy,shield
+weapons|simple,martial
+tools|
+skills|2|athletics,insight,intimidation,medicine,persuasion,religion
+caster|artificer|cha|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:P|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Channel Divinity|0,0,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=
+subclassTitle|Paladin Subclass
+SP|0|prepared|2|divine smite
+SP|0|prepared|5|find steed
+L1|Lay on Hands;Spellcasting;Weapon Mastery
+L2|Fighting Style[Blessed Warrior];Paladin's Smite
+L3|Channel Divinity;Paladin Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack;Faithful Steed
+L6|Aura of Protection
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Abjure Foes
+L10|Aura of Courage
+L11|Radiant Strikes
+L12|Ability Score Improvement
+L13|
+L14|Restoring Touch
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|
+L18|Aura Expansion
+L19|Epic Boon
+L20|Subclass Feature*
+
+CLASS|Priest|WoW|Cleric|XPHB|
+hd|8
+primary|wis
+saves|wis,cha
+armor|light,medium,shield
+weapons|simple
+tools|
+skills|2|history,insight,medicine,persuasion,religion
+caster|full|wis|change=restLong
+cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+col|Channel Divinity|0,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4
+col|Cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=light,medium,shield|weapons=|tools=|skills=
+subclassTitle|Priest Subclass
+L1|Spellcasting;Divine Order
+L2|Channel Divinity
+L3|Cleric Subclass*
+L4|Ability Score Improvement
+L5|Sear Undead
+L6|Subclass Feature*
+L7|Blessed Strikes
+L8|Ability Score Improvement
+L9|
+L10|Divine Intervention
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Improved Blessed Strikes[Divine Strike/Potent Spellcasting]
+L15|
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|
+L19|Epic Boon
+L20|Greater Divine Intervention
+
+CLASS|Rogue|WoW|Rogue|XPHB|
+hd|8
+primary|dex
+saves|dex,int
+armor|light
+weapons|simple,Martial weapons that have the Finesse or Light property
+tools|Thieves' Tools
+skills|4|acrobatics,athletics,deception,insight,intimidation,investigation,perception,persuasion,sleight of hand,stealth
+caster|||change=
+mastery|{1:2}
+featprog|Epic Boon|EB|{19:1}
+col|Sneak Attack|1d6,1d6,2d6,2d6,3d6,3d6,4d6,4d6,5d6,5d6,6d6,6d6,7d6,7d6,8d6,8d6,9d6,9d6,10d6,10d6
+mc|req=null|armor=light|weapons=|tools=Thieves' Tools|skills=1:acrobatics,athletics,deception,insight,intimidation,investigation,perception,persuasion,sleight of hand,stealth
+subclassTitle|Rogue Subclass
+L1|Expertise;Sneak Attack;Thieves' Cant;Weapon Mastery
+L2|Cunning Action
+L3|Rogue Subclass*;Steady Aim
+L4|Ability Score Improvement
+L5|Cunning Strike;Uncanny Dodge
+L6|Expertise
+L7|Evasion;Reliable Talent
+L8|Ability Score Improvement
+L9|Subclass Feature*
+L10|Ability Score Improvement
+L11|Improved Cunning Strike
+L12|Ability Score Improvement
+L13|Subclass Feature*
+L14|Devious Strikes
+L15|Slippery Mind
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|Elusive
+L19|Epic Boon
+L20|Stroke of Luck
+
+CLASS|Shaman|WoW|Barbarian|XPHB|
+hd|12
+primary|str
+saves|str,con
+armor|light,medium,shield
+weapons|simple,martial
+tools|
+skills|2|animal handling,athletics,intimidation,nature,perception,survival
+caster|||change=
+mastery|{1:2,4:3,10:4}
+featprog|Epic Boon|EB|{19:1}
+col|Rages|2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6
+col|Rage Damage|+2,+2,+2,+2,+2,+2,+2,+2,+3,+3,+3,+3,+3,+3,+3,+4,+4,+4,+4,+4
+col|Weapon Mastery|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+mc|req=null|armor=shield|weapons=martial|tools=|skills=
+subclassTitle|Shaman Subclass
+L1|Rage[Damage Resistance/Rage Damage/Strength Advantage/No Concentration or Spells/Duration];Unarmored Defense;Weapon Mastery
+L2|Danger Sense;Reckless Attack
+L3|Shaman Subclass@WoW*;Totems@WoW[Earthbind Totem/Primal Knowledge Totem/Tremor Totem/Wind Rush Totem]
+L4|Ability Score Improvement
+L5|Extra Attack;Fast Movement
+L6|Subclass Feature*
+L7|Feral Instinct;Instinctive Pounce
+L8|Ability Score Improvement
+L9|Brutal Strike[Forceful Blow/Hamstring Blow]
+L10|Subclass Feature*
+L11|Relentless Rage
+L12|Ability Score Improvement
+L13|Improved Brutal Strike[Staggering Blow/Sundering Blow]
+L14|Subclass Feature*
+L15|Persistent Rage
+L16|Ability Score Improvement
+L17|Improved Brutal Strike
+L18|Indomitable Might
+L19|Epic Boon
+L20|Primal Champion
+
+CLASS|Warlock|WoW|Warlock|XPHB|
+hd|8
+primary|cha
+saves|wis,cha
+armor|light
+weapons|simple
+tools|
+skills|2|arcana,deception,history,intimidation,investigation,nature,religion
+caster|pact|cha|change=level
+cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+prepared|2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15
+arcanum|{11:{6:1},13:{7:1},15:{8:1},17:{9:1}}
+featprog|Epic Boon|EB|{19:1}
+optprog|Eldritch Invocations|EI|1,3,3,3,5,5,6,6,7,7,7,8,8,8,9,9,9,10,10,10
+col|Invocations|1,3,3,3,5,5,6,6,7,7,7,8,8,8,9,9,9,10,10,10
+col|Cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Prepared Spells|2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15
+col|Spell Slots|1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4
+col|Slot Level|1,1,2,2,3,3,4,4,5,5,5,5,5,5,5,5,5,5,5,5
+mc|req=null|armor=light|weapons=|tools=|skills=
+subclassTitle|Warlock Subclass
+SP|0|prepared|9|contact other plane
+L1|Eldritch Invocations[Prerequisites/Replacing and Gaining Invocations];Pact Magic;Eldritch Invocation Options[Agonizing Blast(Repeatable)/Armor of Shadows/Ascendant Step/Call of the Void(Quick Attack/Your Spell Attack/Shadow Shield)/Curse of Corruption/Devil's Sight/Devouring Blade/Eldritch Mind/Eldritch Smite/Eldritch Spear(Repeatable)/Expendable Minions/Fiendish Vigor/Gaze of Two Minds/Gift of the Depths/Gift of the Protectors/Health Funnel/Investment of the Chain Master(Aerial or Aquatic/Quick Attack/Necrotic or Radiant Damage/Your Save DC/Resistance)/Legion Summoning/Lessons of the First Ones(Repeatable)/Lifedrinker/Mask of Many Faces/Master Demonologist/Master of Myriad Forms/Misty Visions/One with Shadows/Otherworldly Leap/Pact of the Blade/Pact of the Chain/Pact of the Legion/Pact of the Tome(Cantrips and Rituals/Spellcasting Focus)/Repelling Blast(Repeatable)/Thirsting Blade/Visions of Distant Realms/Whispers of the Grave/Witch Sight]
+L2|Magical Cunning
+L3|Warlock Subclass*
+L4|Ability Score Improvement
+L5|
+L6|Subclass Feature*
+L7|
+L8|Ability Score Improvement
+L9|Contact Patron
+L10|Subclass Feature*
+L11|Mystic Arcanum
+L12|Ability Score Improvement
+L13|Mystic Arcanum
+L14|Subclass Feature*
+L15|Mystic Arcanum
+L16|Ability Score Improvement
+L17|Mystic Arcanum
+L18|
+L19|Epic Boon
+L20|Eldritch Master
+
+CLASS|Warrior|WoW|Fighter|XPHB|
+hd|10
+primary|str or dex
+saves|str,con
+armor|light,medium,heavy,shield
+weapons|simple,martial
+tools|
+skills|2|acrobatics,animal handling,athletics,history,insight,intimidation,persuasion,perception,survival
+caster|||change=
+mastery|{1:3,4:4,10:5,16:6}
+featprog|Fighting Style|FS|{1:1}
+featprog|Epic Boon|EB|{19:1}
+col|Second Wind|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Weapon Mastery|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=
+subclassTitle|Warrior Subclass
+L1|Fighting Style;Second Wind;Weapon Mastery
+L2|Action Surge;Tactical Mind
+L3|Fighter Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack;Tactical Shift
+L6|Ability Score Improvement
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Indomitable;Tactical Master
+L10|Subclass Feature*
+L11|Two Extra Attacks
+L12|Ability Score Improvement
+L13|Indomitable;Studied Attacks
+L14|Ability Score Improvement
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|Action Surge;Indomitable
+L18|Subclass Feature*
+L19|Epic Boon
+L20|Three Extra Attacks
+
+CLASS|Barbarian|XPHB||
+hd|12
+primary|str
+saves|str,con
+armor|light,medium,shield
+weapons|simple,martial
+tools|
+skills|2|animal handling,athletics,intimidation,nature,perception,survival
+caster|||change=
+mastery|{1:2,4:3,10:4}
+featprog|Epic Boon|EB|{19:1}
+col|Rages|2,2,3,3,3,4,4,4,4,4,4,5,5,5,5,5,6,6,6,6
+col|Rage Damage|+2,+2,+2,+2,+2,+2,+2,+2,+3,+3,+3,+3,+3,+3,+3,+4,+4,+4,+4,+4
+col|Weapon Mastery|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+mc|req=null|armor=shield|weapons=martial|tools=|skills=
+subclassTitle|Barbarian Subclass
+L1|Rage[Damage Resistance/Rage Damage/Strength Advantage/No Concentration or Spells/Duration];Unarmored Defense;Weapon Mastery
+L2|Danger Sense;Reckless Attack
+L3|Barbarian Subclass*;Primal Knowledge
+L4|Ability Score Improvement
+L5|Extra Attack;Fast Movement
+L6|Subclass Feature*
+L7|Feral Instinct;Instinctive Pounce
+L8|Ability Score Improvement
+L9|Brutal Strike[Forceful Blow/Hamstring Blow]
+L10|Subclass Feature*
+L11|Relentless Rage
+L12|Ability Score Improvement
+L13|Improved Brutal Strike[Staggering Blow/Sundering Blow]
+L14|Subclass Feature*
+L15|Persistent Rage
+L16|Ability Score Improvement
+L17|Improved Brutal Strike
+L18|Indomitable Might
+L19|Epic Boon
+L20|Primal Champion
+
+CLASS|Bard|XPHB||
+hd|8
+primary|cha
+saves|dex,cha
+armor|light
+weapons|simple
+tools|Choose three Musical Instrument
+skills|3|any
+caster|full|cha|change=level
+cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+col|Bardic Die|1d6,1d6,1d6,1d6,1d8,1d8,1d8,1d8,1d8,1d10,1d10,1d10,1d10,1d10,1d12,1d12,1d12,1d12,1d12,1d12
+col|Cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=light|weapons=|tools=Choose one Musical Instrument|skills=1:athletics,acrobatics,sleight of hand,stealth,arcana,history,investigation,nature,religion,animal handling,insight,medicine,perception,survival,deception,intimidation,performance,persuasion
+subclassTitle|Bard Subclass
+SP|0|prepared|20|power word heal;power word kill
+SP|0|expanded|10|all:level=1;2;3;4;5|class=Cleric;Druid;Wizard
+SP|0|expanded|s6|all:level=6|class=Cleric;Druid;Wizard
+SP|0|expanded|s7|all:level=7|class=Cleric;Druid;Wizard
+SP|0|expanded|s8|all:level=8|class=Cleric;Druid;Wizard
+SP|0|expanded|s9|all:level=9|class=Cleric;Druid;Wizard
+L1|Bardic Inspiration[Using Bardic Inspiration/Number of Uses/At Higher Levels];Spellcasting
+L2|Expertise;Jack of All Trades
+L3|Bard Subclass*
+L4|Ability Score Improvement
+L5|Font of Inspiration
+L6|Subclass Feature*
+L7|Countercharm
+L8|Ability Score Improvement
+L9|Expertise
+L10|Magical Secrets
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|
+L16|Ability Score Improvement
+L17|
+L18|Superior Inspiration
+L19|Epic Boon
+L20|Words of Creation
+
+CLASS|Cleric|XPHB||
+hd|8
+primary|wis
+saves|wis,cha
+armor|light,medium,shield
+weapons|simple
+tools|
+skills|2|history,insight,medicine,persuasion,religion
+caster|full|wis|change=restLong
+cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+col|Channel Divinity|0,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,4,4,4
+col|Cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=light,medium,shield|weapons=|tools=|skills=
+subclassTitle|Cleric Subclass
+L1|Spellcasting;Divine Order
+L2|Channel Divinity
+L3|Cleric Subclass*
+L4|Ability Score Improvement
+L5|Sear Undead
+L6|Subclass Feature*
+L7|Blessed Strikes
+L8|Ability Score Improvement
+L9|
+L10|Divine Intervention
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Improved Blessed Strikes[Divine Strike/Potent Spellcasting]
+L15|
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|
+L19|Epic Boon
+L20|Greater Divine Intervention
+
+CLASS|Druid|XPHB||
+hd|8
+primary|wis
+saves|int,wis
+armor|light,shield
+weapons|simple
+tools|Herbalism Kit
+skills|2|arcana,animal handling,insight,medicine,nature,perception,religion,survival
+caster|full|wis|change=restLong
+cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+col|Wild Shape|0,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,4,4,4,4
+col|Cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=light,shield|weapons=|tools=|skills=
+subclassTitle|Druid Subclass
+SP|0|prepared|1|speak with animals
+SP|0|prepared|2|find familiar
+L1|Druidic;Primal Order;Spellcasting
+L2|Wild Companion;Wild Shape[Number of Uses/Known Forms/T:Beast Shapes/Rules While Shape-Shifted(Temporary Hit Points/Game Statistics/No Spellcasting/Objects)]
+L3|Druid Subclass*
+L4|Ability Score Improvement
+L5|Wild Resurgence
+L6|Subclass Feature*
+L7|Elemental Fury
+L8|Ability Score Improvement
+L9|
+L10|Subclass Feature*
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|Improved Elemental Fury[Potent Spellcasting/Primal Strike]
+L16|Ability Score Improvement
+L17|
+L18|Beast Spells
+L19|Epic Boon
+L20|Archdruid[Evergreen Wild Shape/Nature Magician/Longevity]
+
+CLASS|Fighter|XPHB||
+hd|10
+primary|str or dex
+saves|str,con
+armor|light,medium,heavy,shield
+weapons|simple,martial
+tools|
+skills|2|acrobatics,animal handling,athletics,history,insight,intimidation,persuasion,perception,survival
+caster|||change=
+mastery|{1:3,4:4,10:5,16:6}
+featprog|Fighting Style|FS|{1:1}
+featprog|Epic Boon|EB|{19:1}
+col|Second Wind|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Weapon Mastery|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=
+subclassTitle|Fighter Subclass
+L1|Fighting Style;Second Wind;Weapon Mastery
+L2|Action Surge;Tactical Mind
+L3|Fighter Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack;Tactical Shift
+L6|Ability Score Improvement
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Indomitable;Tactical Master
+L10|Subclass Feature*
+L11|Two Extra Attacks
+L12|Ability Score Improvement
+L13|Indomitable;Studied Attacks
+L14|Ability Score Improvement
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|Action Surge;Indomitable
+L18|Subclass Feature*
+L19|Epic Boon
+L20|Three Extra Attacks
+
+CLASS|Monk|XPHB||
+hd|8
+primary|dex+wis
+saves|str,dex
+armor|
+weapons|simple,Martial weapons that have the Light property
+tools|Choose one type of Artisan's Tools or Musical Instrument
+skills|2|acrobatics,athletics,history,insight,religion,stealth
+caster|||change=
+featprog|Epic Boon|EB|{19:1}
+col|Martial Arts|1d6,1d6,1d6,1d6,1d8,1d8,1d8,1d8,1d8,1d8,1d10,1d10,1d10,1d10,1d10,1d10,1d12,1d12,1d12,1d12
+col|Focus Points|0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+col|Unarmored Movement|+0,+10,+10,+10,+10,+15,+15,+15,+15,+20,+20,+20,+20,+25,+25,+25,+25,+30,+30,+30
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Monk Subclass
+L1|Martial Arts;Unarmored Defense
+L2|Monk's Focus;Unarmored Movement;Uncanny Metabolism
+L3|Deflect Attacks;Monk Subclass*
+L4|Ability Score Improvement;Slow Fall
+L5|Extra Attack;Stunning Strike
+L6|Empowered Strikes;Subclass Feature*
+L7|Evasion
+L8|Ability Score Improvement
+L9|Acrobatic Movement
+L10|Heightened Focus[Flurry of Blows/Patient Defense/Step of the Wind];Self-Restoration
+L11|Subclass Feature*
+L12|Ability Score Improvement
+L13|Deflect Energy
+L14|Disciplined Survivor
+L15|Perfect Focus
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|Superior Defense
+L19|Epic Boon
+L20|Body and Mind
+
+CLASS|Paladin|XPHB||
+hd|10
+primary|str+cha
+saves|wis,cha
+armor|light,medium,heavy,shield
+weapons|simple,martial
+tools|
+skills|2|athletics,insight,intimidation,medicine,persuasion,religion
+caster|artificer|cha|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:P|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Channel Divinity|0,0,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=
+subclassTitle|Paladin Subclass
+SP|0|prepared|2|divine smite
+SP|0|prepared|5|find steed
+L1|Lay on Hands;Spellcasting;Weapon Mastery
+L2|Fighting Style[Blessed Warrior];Paladin's Smite
+L3|Channel Divinity;Paladin Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack;Faithful Steed
+L6|Aura of Protection
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Abjure Foes
+L10|Aura of Courage
+L11|Radiant Strikes
+L12|Ability Score Improvement
+L13|
+L14|Restoring Touch
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|
+L18|Aura Expansion
+L19|Epic Boon
+L20|Subclass Feature*
+
+CLASS|Ranger|XPHB||
+hd|10
+primary|dex+wis
+saves|str,dex
+armor|light,medium,shield
+weapons|simple,martial
+tools|
+skills|3|animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+caster|artificer|wis|change=restLong
+prepared|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+mastery|{1:2}
+featprog|Fighting Style|FS,FS:R|{2:1}
+featprog|Epic Boon|EB|{19:1}
+col|Favored Enemy|2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6
+col|Prepared Spells|2,3,4,5,6,6,7,7,9,9,10,10,11,11,12,12,14,14,15,15
+slots|2,2,3,3,42,42,43,43,432,432,433,433,4331,4331,4332,4332,43331,43331,43332,43332
+mc|req=null|armor=light,medium,shield|weapons=martial|tools=|skills=1:animal handling,athletics,insight,investigation,nature,perception,stealth,survival
+subclassTitle|Ranger Subclass
+SP|0|prepared|1|hunter's mark
+L1|Spellcasting;Favored Enemy;Weapon Mastery
+L2|Deft Explorer[Expertise/Languages];Fighting Style[Druidic Warrior]
+L3|Ranger Subclass*
+L4|Ability Score Improvement
+L5|Extra Attack
+L6|Roving;Pet Specialization@WoW[Cunning/Ferocity/Tenacity]
+L7|Subclass Feature*
+L8|Ability Score Improvement
+L9|Expertise
+L10|Tireless[Temporary Hit Points/Decrease Exhaustion]
+L11|Subclass Feature*
+L12|Ability Score Improvement
+L13|Relentless Hunter
+L14|Nature's Veil
+L15|Subclass Feature*
+L16|Ability Score Improvement
+L17|Precise Hunter
+L18|Feral Senses
+L19|Epic Boon
+L20|Foe Slayer
+
+CLASS|Rogue|XPHB||
+hd|8
+primary|dex
+saves|dex,int
+armor|light
+weapons|simple,Martial weapons that have the Finesse or Light property
+tools|Thieves' Tools
+skills|4|acrobatics,athletics,deception,insight,intimidation,investigation,perception,persuasion,sleight of hand,stealth
+caster|||change=
+mastery|{1:2}
+featprog|Epic Boon|EB|{19:1}
+col|Sneak Attack|1d6,1d6,2d6,2d6,3d6,3d6,4d6,4d6,5d6,5d6,6d6,6d6,7d6,7d6,8d6,8d6,9d6,9d6,10d6,10d6
+mc|req=null|armor=light|weapons=|tools=Thieves' Tools|skills=1:acrobatics,athletics,deception,insight,intimidation,investigation,perception,persuasion,sleight of hand,stealth
+subclassTitle|Rogue Subclass
+L1|Expertise;Sneak Attack;Thieves' Cant;Weapon Mastery
+L2|Cunning Action
+L3|Rogue Subclass*;Steady Aim
+L4|Ability Score Improvement
+L5|Cunning Strike;Uncanny Dodge
+L6|Expertise
+L7|Evasion;Reliable Talent
+L8|Ability Score Improvement
+L9|Subclass Feature*
+L10|Ability Score Improvement
+L11|Improved Cunning Strike
+L12|Ability Score Improvement
+L13|Subclass Feature*
+L14|Devious Strikes
+L15|Slippery Mind
+L16|Ability Score Improvement
+L17|Subclass Feature*
+L18|Elusive
+L19|Epic Boon
+L20|Stroke of Luck
+
+CLASS|Sorcerer|XPHB||
+hd|6
+primary|cha
+saves|con,cha
+armor|
+weapons|simple
+tools|
+skills|2|arcana,deception,insight,intimidation,persuasion,religion
+caster|full|cha|change=level
+cantrips|4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6
+prepared|2,4,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+featprog|Epic Boon|EB|{19:1}
+optprog|Metamagic|MM|{2:2,10:4,17:6}
+col|Sorcery Points|0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+col|Cantrips|4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,6,6,6,6,6
+col|Prepared Spells|2,4,6,7,9,10,11,12,14,15,16,16,17,17,18,18,19,20,21,22
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Sorcerer Subclass
+L1|Spellcasting;Innate Sorcery
+L2|Font of Magic[Converting Spell Slots to Sorcery Points/Creating Spell Slots(T:Creating Spell Slots)];Metamagic;Metamagic Options[Careful Spell/Distant Spell/Empowered Spell/Extended Spell/Heightened Spell/Quickened Spell/Seeking Spell/Subtle Spell/Transmuted Spell/Twinned Spell]
+L3|Sorcerer Subclass*
+L4|Ability Score Improvement
+L5|Sorcerous Restoration
+L6|Subclass Feature*
+L7|Sorcery Incarnate
+L8|Ability Score Improvement
+L9|
+L10|Metamagic
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|
+L16|Ability Score Improvement
+L17|Metamagic
+L18|Subclass Feature*
+L19|Epic Boon
+L20|Arcane Apotheosis
+
+CLASS|Warlock|XPHB||
+hd|8
+primary|cha
+saves|wis,cha
+armor|light
+weapons|simple
+tools|
+skills|2|arcana,deception,history,intimidation,investigation,nature,religion
+caster|pact|cha|change=level
+cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+prepared|2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15
+arcanum|{11:{6:1},13:{7:1},15:{8:1},17:{9:1}}
+featprog|Epic Boon|EB|{19:1}
+optprog|Eldritch Invocations|EI|1,3,3,3,5,5,6,6,7,7,7,8,8,8,9,9,9,10,10,10
+col|Invocations|1,3,3,3,5,5,6,6,7,7,7,8,8,8,9,9,9,10,10,10
+col|Cantrips|2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4
+col|Prepared Spells|2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15
+col|Spell Slots|1,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4
+col|Slot Level|1,1,2,2,3,3,4,4,5,5,5,5,5,5,5,5,5,5,5,5
+mc|req=null|armor=light|weapons=|tools=|skills=
+subclassTitle|Warlock Subclass
+SP|0|prepared|9|contact other plane
+L1|Eldritch Invocations[Prerequisites/Replacing and Gaining Invocations];Pact Magic;Eldritch Invocation Options[Agonizing Blast(Repeatable)/Armor of Shadows/Ascendant Step/Call of the Void(Quick Attack/Your Spell Attack/Shadow Shield)/Curse of Corruption/Devil's Sight/Devouring Blade/Eldritch Mind/Eldritch Smite/Eldritch Spear(Repeatable)/Expendable Minions/Fiendish Vigor/Gaze of Two Minds/Gift of the Depths/Gift of the Protectors/Health Funnel/Investment of the Chain Master(Aerial or Aquatic/Quick Attack/Necrotic or Radiant Damage/Your Save DC/Resistance)/Legion Summoning/Lessons of the First Ones(Repeatable)/Lifedrinker/Mask of Many Faces/Master Demonologist/Master of Myriad Forms/Misty Visions/One with Shadows/Otherworldly Leap/Pact of the Blade/Pact of the Chain/Pact of the Legion/Pact of the Tome(Cantrips and Rituals/Spellcasting Focus)/Repelling Blast(Repeatable)/Thirsting Blade/Visions of Distant Realms/Whispers of the Grave/Witch Sight]
+L2|Magical Cunning
+L3|Warlock Subclass*
+L4|Ability Score Improvement
+L5|
+L6|Subclass Feature*
+L7|
+L8|Ability Score Improvement
+L9|Contact Patron
+L10|Subclass Feature*
+L11|Mystic Arcanum
+L12|Ability Score Improvement
+L13|Mystic Arcanum
+L14|Subclass Feature*
+L15|Mystic Arcanum
+L16|Ability Score Improvement
+L17|Mystic Arcanum
+L18|
+L19|Epic Boon
+L20|Eldritch Master
+
+CLASS|Wizard|XPHB||
+hd|6
+primary|int
+saves|int,wis
+armor|
+weapons|simple
+tools|
+skills|2|arcana,history,insight,investigation,medicine,nature,religion
+caster|full|int|change=restLong
+cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+prepared|4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25
+spellbook|6,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+featprog|Epic Boon|EB|{19:1}
+col|Cantrips|3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5
+col|Prepared Spells|4,5,6,7,9,10,11,12,14,15,16,16,17,18,19,21,22,23,24,25
+slots|2,3,42,43,432,433,4331,4332,43331,43332,433321,433321,4333211,4333211,43332111,43332111,433321111,433331111,433332111,433332211
+mc|req=null|armor=|weapons=|tools=|skills=
+subclassTitle|Wizard Subclass
+L1|Spellcasting;Ritual Adept;Arcane Recovery
+L2|Scholar
+L3|Wizard Subclass*
+L4|Ability Score Improvement
+L5|Memorize Spell
+L6|Subclass Feature*
+L7|
+L8|Ability Score Improvement
+L9|
+L10|Subclass Feature*
+L11|
+L12|Ability Score Improvement
+L13|
+L14|Subclass Feature*
+L15|
+L16|Ability Score Improvement
+L17|
+L18|Spell Mastery
+L19|Epic Boon
+L20|Signature Spells

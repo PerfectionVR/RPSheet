@@ -44,5 +44,12 @@ end
 -- Filled by the Subclass*.lua files that follow, one per class.
 R.SUBCLASS_FEATURES = {}
 
+-- Marks any feature as bringing always-prepared spells: { {level, "names"}, ... }, or
+-- a function of the sheet that gives such a list.
+local function Prepared(list, feature)
+    feature.prepared = list
+    return feature
+end
+
 -- What those files share.
-ns.SubclassKit = { AlwaysPrepared = AlwaysPrepared }
+ns.SubclassKit = { AlwaysPrepared = AlwaysPrepared, Prepared = Prepared }

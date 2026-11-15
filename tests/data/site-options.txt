@@ -1,0 +1,70 @@
+OPT|EI|Agonizing Blast|XPHB|2|||
+OPT|MV:B|Ambush|XPHB|||1|Superiority Die
+OPT|EI|Armor of Shadows|XPHB||||
+OPT|EI|Ascendant Step|XPHB|5|||
+OPT|MV:B|Bait and Switch|XPHB|||1|Superiority Die
+OPT|MV:B|Battle Shout|WoW|||1|Superiority Die
+OPT|EI|Call of the Void|WoW|5|pact of the legion||
+OPT|MM|Careful Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Commander's Strike|XPHB|||1|Superiority Die
+OPT|MV:B|Commanding Presence|XPHB|||1|Superiority Die
+OPT|EI|Curse of Corruption|WoW|2|||
+OPT|MV:B|Demoralizing Shout|WoW|||1|Superiority Die
+OPT|EI|Devil's Sight|XPHB|2|||
+OPT|EI|Devouring Blade|XPHB|12|thirsting blade||
+OPT|MV:B|Disarming Attack|XPHB|||1|Superiority Die
+OPT|MM|Distant Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Distracting Strike|XPHB|||1|Superiority Die
+OPT|EI|Eldritch Mind|XPHB||||
+OPT|EI|Eldritch Smite|XPHB|5|pact of the blade||
+OPT|EI|Eldritch Spear|XPHB|2|||
+OPT|MM|Empowered Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Evasive Footwork|XPHB|||1|Superiority Die
+OPT|EI|Expendable Minions|WoW|9|||
+OPT|MM|Extended Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Feinting Attack|XPHB|||1|Superiority Die
+OPT|EI|Fiendish Vigor|XPHB|2|||
+OPT|EI|Gaze of Two Minds|XPHB|5|||
+OPT|EI|Gift of the Depths|XPHB|5|||
+OPT|EI|Gift of the Protectors|XPHB|9|pact of the tome||
+OPT|MV:B|Goading Attack|XPHB|||1|Superiority Die
+OPT|EI|Health Funnel|WoW|2|||
+OPT|MM|Heightened Spell|XPHB|||2|Sorcery Point
+OPT|MV:B|Heroic Leap|WoW|||1|Superiority Die
+OPT|EI|Investment of the Chain Master|XPHB|5|pact of the chain||
+OPT|EI|Legion Summoning|WoW|9|pact of the legion||
+OPT|EI|Lessons of the First Ones|XPHB|2|||
+OPT|EI|Lifedrinker|XPHB|9|pact of the blade||
+OPT|MV:B|Lunging Attack|XPHB|||1|Superiority Die
+OPT|MV:B|Maneuvering Attack|XPHB|||1|Superiority Die
+OPT|EI|Mask of Many Faces|XPHB|2|||
+OPT|EI|Master Demonologist|WoW|5|||
+OPT|EI|Master of Myriad Forms|XPHB|5|||
+OPT|MV:B|Menacing Attack|XPHB|||1|Superiority Die
+OPT|EI|Misty Visions|XPHB|2|||
+OPT|MV:B|Mortal Strike|WoW|||1|Superiority Die
+OPT|EI|One with Shadows|XPHB|5|||
+OPT|EI|Otherworldly Leap|XPHB|2|||
+OPT|EI|Pact of the Blade|XPHB||||
+OPT|EI|Pact of the Chain|XPHB||||
+OPT|EI|Pact of the Legion|WoW||||
+OPT|EI|Pact of the Tome|XPHB||||
+OPT|MV:B|Parry|XPHB|||1|Superiority Die
+OPT|MV:B|Precision Attack|XPHB|||1|Superiority Die
+OPT|MV:B|Pushing Attack|XPHB|||1|Superiority Die
+OPT|MM|Quickened Spell|XPHB|||2|Sorcery Point
+OPT|MV:B|Rally|XPHB|||1|Superiority Die
+OPT|EI|Repelling Blast|XPHB|2|||
+OPT|MV:B|Riposte|XPHB|||1|Superiority Die
+OPT|MM|Seeking Spell|XPHB|||1|Sorcery Point
+OPT|MM|Subtle Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Sweeping Attack|XPHB|||1|Superiority Die
+OPT|MV:B|Tactical Assessment|XPHB|||1|Superiority Die
+OPT|EI|Thirsting Blade|XPHB|5|pact of the blade||
+OPT|MM|Transmuted Spell|XPHB|||1|Sorcery Point
+OPT|MV:B|Trip Attack|XPHB|||1|Superiority Die
+OPT|MM|Twinned Spell|XPHB|||1|Sorcery Point
+OPT|EI|Visions of Distant Realms|XPHB|9|||
+OPT|MV:B|Warding Maneuver|WoW|||1|Superiority Die
+OPT|EI|Whispers of the Grave|XPHB|7|||
+OPT|EI|Witch Sight|XPHB|15|||

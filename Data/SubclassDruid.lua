@@ -4,19 +4,28 @@ local R = ns.Rules
 local Kit = ns.FeatureKit
 local AtLevel, Passive, Ability, Limited = Kit.AtLevel, Kit.Passive, Kit.Ability, Kit.Limited
 local Spend, SwitchOn, Dice, Roll, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Kit.Roll, Kit.Bonus
-local AlwaysPrepared = ns.SubclassKit.AlwaysPrepared
+local AlwaysPrepared, Prepared = ns.SubclassKit.AlwaysPrepared, ns.SubclassKit.Prepared
 local F = R.SUBCLASS_FEATURES
 
 -- The damage type a Circle of the Land druid resists, by the land chosen (Nature's Ward).
 local LAND_WARD = { Arid = { "fire" }, Polar = { "cold" }, Temperate = { "lightning" }, Tropical = { "poison" } }
 
+-- The spells of each kind of land, always prepared while that land is the one chosen.
+local LAND_SPELLS = {
+    Arid = { { 3, "Blur, Burning Hands, Fire Bolt" }, { 5, "Fireball" }, { 7, "Blight" }, { 9, "Wall of Stone" } },
+    Polar = { { 3, "Fog Cloud, Hold Person, Ray of Frost" }, { 5, "Sleet Storm" }, { 7, "Ice Storm" }, { 9, "Cone of Cold" } },
+    Temperate = { { 3, "Misty Step, Shocking Grasp, Sleep" }, { 5, "Lightning Bolt" }, { 7, "Freedom of Movement" }, { 9, "Tree Stride" } },
+    Tropical = { { 3, "Acid Splash, Ray of Sickness, Web" }, { 5, "Stinking Cloud" }, { 7, "Polymorph" }, { 9, "Insect Plague" } },
+}
+
 F["Circle of the Land"] = {
-    Kit.Choice(3, "Circle of the Land Spells", "After each long rest you choose a kind of land and have its spells prepared for your level.", {
+    Prepared(function(sheet) return LAND_SPELLS[(sheet.featureOptions or {})["Circle of the Land Spells"]] end,
+    Kit.Choice(3, "Circle of the Land Spells", "After each long rest you choose a kind of land and have its spells prepared for your level: they are put on your spell list.", {
         Kit.Option("Arid", "Level 3: Blur, Burning Hands, Fire Bolt. Level 5: Fireball. Level 7: Blight. Level 9: Wall of Stone. Nature's Ward: resistance to fire."),
         Kit.Option("Polar", "Level 3: Fog Cloud, Hold Person, Ray of Frost. Level 5: Sleet Storm. Level 7: Ice Storm. Level 9: Cone of Cold. Nature's Ward: resistance to cold."),
         Kit.Option("Temperate", "Level 3: Misty Step, Shocking Grasp, Sleep. Level 5: Lightning Bolt. Level 7: Freedom of Movement. Level 9: Tree Stride. Nature's Ward: resistance to lightning."),
         Kit.Option("Tropical", "Level 3: Acid Splash, Ray of Sickness, Web. Level 5: Stinking Cloud. Level 7: Polymorph. Level 9: Insect Plague. Nature's Ward: resistance to poison."),
-    }),
+    })),
     Ability(3, "Land's Aid", function(_, sheet)
         return ("Magic action, a point within 60 feet. Creatures you choose in a 10-foot sphere take the first roll as necrotic damage, half on a successful Constitution save, DC %d. One creature you choose there is healed by the second roll."):format(Kit.DC(sheet, "WIS"))
     end, function(level)
@@ -72,8 +81,9 @@ F["Circle of the Moon"] = {
         { Dice(2, 10) }),
 }
 F["Circle of the Stars"] = {
-    Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
-        { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) }),
+    -- (Guidance is left to the cantrip picks: a druid who already chose it would have it twice)
+    Prepared({ { 3, "Guiding Bolt" } }, Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
+        { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) })),
     Ability(3, "Starry Form", "Bonus action. For 10 minutes you become starry in place of a beast form, and choose a constellation: Archer, Chalice or Dragon. From level 10 you can change it at the start of each turn.",
         function(level) return level >= 14 and { Spend("Wild Shape"), SwitchOn("Full of Stars") } or { Spend("Wild Shape") } end),
     Ability(3, "Archer", "Starry Form, Archer constellation. When you take the form, and as a bonus action after: a luminous arrow at a creature within 60 feet.",

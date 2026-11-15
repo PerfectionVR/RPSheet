@@ -1,0 +1,301 @@
+SUB|Death Knight|WoW|Ebon Blade|Oath of the Ebon Blade|WoW||
+SP|Blood|prepared|3|death grip;vampiric blood
+SP|Blood|prepared|5|death and decay;spiritual weapon
+SP|Blood|prepared|9|summon undead;leeching strike
+SP|Blood|prepared|13|freedom of movement;evard's black tentacles
+SP|Blood|prepared|17|circle of power;bonestorm
+SP|Frost|prepared|3|death grip;chains of ice
+SP|Frost|prepared|5|death and decay;frostscythe
+SP|Frost|prepared|9|summon undead;remorseless winter
+SP|Frost|prepared|13|freedom of movement;ice storm
+SP|Frost|prepared|17|circle of power;cone of cold
+SP|Unholy|prepared|3|death grip;scourge strike
+SP|Unholy|prepared|5|death and decay;ray of enfeeblement
+SP|Unholy|prepared|9|summon undead;bestow curse
+SP|Unholy|prepared|13|freedom of movement;blight
+SP|Unholy|prepared|17|circle of power;contagion
+L3|Oath of the Ebon Blade Spells@WoW[T:Oath of the Ebon Blade Spells];Runeforging@WoW[Blood/Frost/Unholy];Runic Power@WoW[Blood/Frost/Unholy]
+L7|Aura of Deathly Endurance@WoW
+L15|Runic Mastery@WoW[Blood/Frost/Unholy]
+L20|Aspect of the Horsemen@WoW[Generate Runic Power/Runeforging]
+
+SUB|Demon Hunter|WoW|Demon Hunter|Demon Hunter|WoW||
+SP|Devourer|prepared|3|throw glaive;consume soul
+SP|Devourer|prepared|5|sigil of flame;misty step
+SP|Devourer|prepared|9|metamorphosis;soul reap
+SP|Devourer|prepared|13|chaos nova;collapsing star
+SP|Devourer|prepared|17|destructive wave;steel wind strike
+SP|Devourer|innate|3|feather fall@1@resource;jump@1@resource
+SP|Devourer|innate|11|throw glaive@1@resource;counterspell@2@resource
+SP|Havoc|prepared|3|throw glaive;fel rush
+SP|Havoc|prepared|5|sigil of flame;eye beam
+SP|Havoc|prepared|9|metamorphosis;blink
+SP|Havoc|prepared|13|chaos nova;fire shield
+SP|Havoc|prepared|17|destructive wave;conjure volley
+SP|Havoc|innate|3|feather fall@1@resource;jump@1@resource
+SP|Havoc|innate|11|throw glaive@1@resource;counterspell@2@resource
+SP|Vengeance|prepared|3|throw glaive;infernal strike
+SP|Vengeance|prepared|5|sigil of flame;fiery brand
+SP|Vengeance|prepared|9|metamorphosis;demon spikes
+SP|Vengeance|prepared|13|chaos nova;banishment
+SP|Vengeance|prepared|17|destructive wave;sigil of chains
+SP|Vengeance|innate|3|feather fall@1@resource;jump@1@resource
+SP|Vengeance|innate|11|throw glaive@1@resource;counterspell@2@resource
+L3|Demon Hunter Spells@WoW[T:Demon Hunter Spells];Soul Fragments@WoW[Using Soul Fragments/Regaining Soul Fragments];Spectral Sight@WoW
+L7|Torment@WoW[Aura of Pain/Chaos Strike]
+L11|Illidari Knowledge@WoW
+L15|Soul Shatter@WoW
+
+SUB|Druid|WoW|Land|Circle of the Land|WoW||
+SP|Arid Land|prepared|3|blur;burning hands;fire bolt
+SP|Arid Land|prepared|5|fireball
+SP|Arid Land|prepared|7|blight
+SP|Arid Land|prepared|9|wall of stone
+SP|Polar Land|prepared|3|fog cloud;hold person;ray of frost
+SP|Polar Land|prepared|5|sleet storm
+SP|Polar Land|prepared|7|ice storm
+SP|Polar Land|prepared|9|cone of cold
+SP|Temperate Land|prepared|3|misty step;shocking grasp;sleep
+SP|Temperate Land|prepared|5|lightning bolt
+SP|Temperate Land|prepared|7|freedom of movement
+SP|Temperate Land|prepared|9|tree stride
+SP|Tropical Land|prepared|3|acid splash;ray of sickness;web
+SP|Tropical Land|prepared|5|stinking cloud
+SP|Tropical Land|prepared|7|polymorph
+SP|Tropical Land|prepared|9|insect plague
+L3|Circle of the Land Spells[T:Arid Land/T:Polar Land/T:Temperate Land/T:Tropical Land];Land's Aid
+L6|Natural Recovery
+L10|Nature's Ward[T:Nature's Ward]
+L14|Nature's Sanctuary
+
+SUB|Druid|WoW|Moon|Circle of the Moon|WoW||
+SP|0|prepared|3|cure wounds;moonbeam;starry wisp
+SP|0|prepared|5|conjure animals
+SP|0|prepared|7|fount of moonlight
+SP|0|prepared|9|mass cure wounds
+L3|Circle of the Moon Spells[T:Circle of the Moon Spells];Circle Forms[Challenge Rating/Armor Class/Temporary Hit Points]
+L6|Improved Circle Forms[Lunar Radiance/Increased Toughness]
+L10|Moonlight Step
+L14|Lunar Form[Improved Lunar Radiance/Shared Moonlight]
+
+SUB|Druid|WoW|Stars|Circle of the Stars|WoW||
+SP|0|prepared|3|guiding bolt
+SP|0|known|3|guidance
+L3|Star Map[T:Star Map];Starry Form
+L6|Cosmic Omen[Weal (even)/Woe (odd)]
+L10|Twinkling Constellations
+L14|Full of Stars
+
+SUB|Evoker|WoW|Draconic|Draconic Sorcery|WoW||
+SP|Augmentation|prepared|3|chromatic orb;dragon's breath;ebon might;eruption
+SP|Augmentation|prepared|5|fly;blistering scales
+SP|Augmentation|prepared|7|arcane eye;upheaval
+SP|Augmentation|prepared|9|summon dragon;breath of eons
+SP|Devastation|prepared|3|chromatic orb;dragon's breath;azure strike;scorching ray
+SP|Devastation|prepared|5|fly;fireball
+SP|Devastation|prepared|7|arcane eye;emberstorm
+SP|Devastation|prepared|9|summon dragon;shattering star
+SP|Preservation|prepared|3|chromatic orb;dragon's breath;dream breath;living flame
+SP|Preservation|prepared|5|fly;emerald blossom
+SP|Preservation|prepared|7|arcane eye;time dilation
+SP|Preservation|prepared|9|summon dragon;dream flight
+L3|Draconic Resilience;Evoker Spells@WoW[T:Evoker Spells]
+L6|Elemental Affinity
+L14|Dragon Wings
+L18|Dragon Companion
+
+SUB|Hunter|WoW|Beast Master|Beast Master|WoW||
+L3|Primal Companion[The Beast in Combat/Restoring or Replacing the Beast]
+L7|Exceptional Training
+L11|Bestial Fury
+L15|Share Spells
+
+SUB|Hunter|WoW|Hunter|Hunter|WoW||
+L3|Hunter's Prey[Colossus Slayer/Horde Breaker];Hunter's Lore
+L7|Defensive Tactics[Escape the Horde/Multiattack Defense]
+L11|Superior Hunter's Prey
+L15|Superior Hunter's Defense
+
+SUB|Mage|WoW|Evoker|Evoker|WoW||
+SP|0|known|3|choose:level=0;1;2|class=Wizard|school=V;choose:level=0;1;2|class=Wizard|school=V
+SP|0|known|5|choose:level=0;1;2;3|class=Wizard|school=V
+SP|0|known|7|choose:level=0;1;2;3;4|class=Wizard|school=V
+SP|0|known|9|choose:level=0;1;2;3;4;5|class=Wizard|school=V
+SP|0|known|11|choose:level=0;1;2;3;4;5;6|class=Wizard|school=V
+SP|0|known|13|choose:level=0;1;2;3;4;5;6;7|class=Wizard|school=V
+SP|0|known|15|choose:level=0;1;2;3;4;5;6;7;8|class=Wizard|school=V
+SP|0|known|17|choose:level=0;1;2;3;4;5;6;7;8;9|class=Wizard|school=V
+L3|Evocation Savant;Potent Cantrip
+L6|Sculpt Spells
+L10|Empowered Evocation
+L14|Overchannel
+
+SUB|Monk|WoW|Mercy|Warrior of Mercy|WoW||
+L3|Hand of Harm;Hand of Healing;Implements of Mercy
+L6|Physician's Touch[Hand of Harm/Hand of Healing]
+L11|Flurry of Healing and Harm
+L17|Hand of Ultimate Mercy
+
+SUB|Monk|WoW|Mystic Brews|Warrior of Mystic Brews|WoW||
+L3|Bonus Proficiencies@WoW;Drunken Technique@WoW
+L6|Tipsy Sway@WoW;Mystic Brew@WoW[Drinking a Magical Beverage(Cinnamon Dragon/Heavenly Spirit/Refreshing Dip)]
+L11|Wizened Brewer@WoW[Blue Lightning/Drunkard's Luck/Stumbling Monk]
+L17|Master Brewer@WoW;Intoxicated Frenzy@WoW
+
+SUB|Monk|WoW|Open Hand|Warrior of the Open Hand|WoW||
+L3|Open Hand Technique[Addle/Push/Topple]
+L6|Wholeness of Body
+L11|Fleet Step
+L17|Quivering Palm
+
+SUB|Paladin|WoW|Devotion|Oath of Devotion|WoW||
+SP|0|prepared|3|protection from evil and good;shield of faith
+SP|0|prepared|5|aid;zone of truth
+SP|0|prepared|9|beacon of hope;dispel magic
+SP|0|prepared|13|freedom of movement;guardian of faith
+SP|0|prepared|17|commune;flame strike
+L3|Oath of Devotion Spells[T:Oath of Devotion Spells];Sacred Weapon
+L7|Aura of Devotion
+L15|Smite of Protection
+L20|Holy Nimbus[Holy Ward/Radiant Damage/Sunlight]
+
+SUB|Paladin|WoW|Holy|Oath of the Holy|WoW||
+SP|0|prepared|3|cure wounds;healing word
+SP|0|prepared|5|lesser restoration;prayer of healing
+SP|0|prepared|9|dispel magic;mass healing word
+SP|0|prepared|13|aura of life;death ward
+SP|0|prepared|17|greater restoration;mass cure wounds
+L3|Oath of the Holy Spells@WoW[T:Oath of the Holy Spells];Beacon of Light@WoW
+L7|Lightbringer's Aura@WoW
+L15|Infusion of Light@WoW
+L20|Holy Deliverance@WoW[Healing Power/Sunlight]
+
+SUB|Paladin|WoW|Vengeance|Oath of Vengeance|WoW||
+SP|0|prepared|3|bane;hunter's mark
+SP|0|prepared|5|hold person;misty step
+SP|0|prepared|9|haste;protection from energy
+SP|0|prepared|13|banishment;dimension door
+SP|0|prepared|17|hold monster;scrying
+L3|Oath of Vengeance Spells[T:Oath of Vengeance Spells];Vow of Enmity
+L7|Relentless Avenger
+L15|Soul of Vengeance
+L20|Avenging Angel[Flight/Frightful Aura]
+
+SUB|Priest|WoW|Discipline|Discipline Domain|WoW||
+SP|0|prepared|3|arcane vigor;guiding bolt;magic weapon;shield of faith
+SP|0|prepared|5|prayer of mending;protection from energy
+SP|0|prepared|7|guardian of faith;stoneskin
+SP|0|prepared|9|circle of power;destructive wave
+L3|Discipline Spells@WoW[T:Discipline Domain Spells];Holy Bolt@WoW;Atonement@WoW
+L6|Luminous Barrier@WoW
+L17|Ultimate Penitence@WoW[Ascending Step/Ascending Volley]
+
+SUB|Priest|WoW|Life|Life Domain|WoW||
+SP|0|prepared|3|aid;bless;cure wounds;lesser restoration
+SP|0|prepared|5|mass healing word;revivify
+SP|0|prepared|7|aura of life;death ward
+SP|0|prepared|9|greater restoration;mass cure wounds
+L3|Life Domain Spells[T:Life Domain Spells];Disciple of Life;Preserve Life
+L6|Blessed Healer
+L17|Supreme Healing
+
+SUB|Priest|WoW|Shadow|Shadow Domain|WoW||
+SP|0|prepared|3|crown of madness;dissonant whispers;mind spike;shadow word: pain
+SP|0|prepared|5|summon undead;vampiric touch
+SP|0|prepared|7|evard's black tentacles;psychic horror
+SP|0|prepared|9|dominate person;void eruption
+L3|Shadow Spells@WoW[T:Shadow Domain Spells];Shadowform@WoW[Shadow Stealth/Void Empowerment];Devouring Plague@WoW
+L6|Dispersion@WoW
+L17|Vampiric Embrace@WoW
+
+SUB|Priest|WoW|War|War Domain|WoW||
+SP|0|prepared|3|guiding bolt;magic weapon;shield of faith;spiritual weapon
+SP|0|prepared|5|crusader's mantle;spirit guardians
+SP|0|prepared|7|fire shield;freedom of movement
+SP|0|prepared|9|hold monster;steel wind strike
+L3|War Domain Spells[T:War Domain Spells];War Priest;Guided Strike
+L6|War God's Blessing
+L17|Avatar of Battle
+
+SUB|Rogue|WoW|Assassin|Assassin|WoW||
+L3|Assassinate[Initiative/Surprising Strikes];Assassin's Tools
+L9|Infiltration Expertise[Masterful Mimicry/Roving Aim]
+L13|Envenom Weapons
+L17|Death Strike
+
+SUB|Rogue|WoW|Soulknife|Soulknife|WoW||
+col|Die Size|0,0,D6,D6,D8,D8,D8,D8,D8,D8,D10,D10,D10,D10,D10,D10,D12,D12,D12,D12
+col|Number|0,0,4,4,6,6,6,6,8,8,8,8,10,10,10,10,12,12,12,12
+L3|Psionic Power[T:Soulknife Energy Dice];Psychic Blades
+L9|Soul Blades
+L13|Psychic Veil
+L17|Rend Mind
+
+SUB|Rogue|WoW|Swashbuckler|Swashbuckler|WoW||
+L3|Fancy Footwork@WoW;Rakish Audacity@WoW
+L9|Panache@WoW[Goad (Cost: 1d6)/Awe (Cost: 3d6)]
+L13|Dashing Strikes@WoW[Invigorate (Cost: 2d6)/Parrying Stance (Cost: 2d6)]
+L17|Master Duelist@WoW
+
+SUB|Shaman|WoW|Berserker|Path of the Berserker|WoW||
+L3|Frenzy
+L6|Mindless Rage
+L10|Retaliation
+L14|Intimidating Presence
+
+SUB|Shaman|WoW|Elements|Path of the Elements|WoW||
+SP|0|known|6|elementalism
+SP|0|innate|6|daylight@1@resource;water walk@1@resource;wind wall@1@resource
+L3|Raging Elements@WoW[Icefury/Lava Burst/Lightning Bolt]
+L6|Echo of the Elements@WoW
+L10|Primordial Bond@WoW
+L14|Elemental Overload@WoW[Icefury/Lava Burst/Lightning Bolt]
+
+SUB|Shaman|WoW|Spiritual Guardian|Path of the Spiritual Guardian|WoW||
+SP|0|innate|10|augury@1@rest;clairvoyance@1@rest
+L3|Spiritual Protectors@WoW[Distract/Hinder/Strike]
+L6|Spirit Shield@WoW
+L10|Consult the Spirits@WoW
+L14|Spirits' Fury@WoW
+
+SUB|Shaman|WoW|World Tree|Path of the World Tree|WoW||
+L3|Vitality of the Tree[Vitality Surge/Life-Giving Force]
+L6|Branches of the Tree
+L10|Battering Roots
+L14|Travel Along the Tree
+
+SUB|Warlock|WoW|Fiend|Fiend Patron|WoW||
+SP|0|prepared|3|burning hands;command;scorching ray;suggestion
+SP|0|prepared|5|fireball;stinking cloud
+SP|0|prepared|7|fire shield;wall of fire
+SP|0|prepared|9|geas;insect plague
+L3|Fiend Spells[T:Fiend Spells];Dark One's Blessing
+L6|Dark One's Own Luck
+L10|Fiendish Resilience
+L14|Hurl Through Hell
+
+SUB|Warlock|WoW|Great Old One|Great Old One Patron|WoW||
+SP|0|prepared|3|detect thoughts;dissonant whispers;phantasmal force;tasha's hideous laughter
+SP|0|prepared|5|clairvoyance;hunger of hadar
+SP|0|prepared|7|confusion;summon aberration
+SP|0|prepared|9|modify memory;telekinesis
+SP|0|innate|10|hex
+L3|Great Old One Spells[T:Great Old One Spells];Awakened Mind;Psychic Spells
+L6|Clairvoyant Combatant
+L10|Eldritch Hex;Thought Shield
+L14|Create Thrall
+
+SUB|Warrior|WoW|Battle Master|Battle Master|WoW||
+optprog|Maneuvers|MV:B|{3:3,7:5,10:7,15:9}
+L3|Combat Superiority[Maneuvers/Superiority Dice/Saving Throws];Student of War;Maneuver Options[Ambush/Bait and Switch/Battle Shout/Commander's Strike/Commanding Presence/Demoralizing Shout/Disarming Attack/Distracting Strike/Evasive Footwork/Feinting Attack/Goading Attack/Heroic Leap/Lunging Attack/Maneuvering Attack/Menacing Attack/Mortal Strike/Parry/Precision Attack/Pushing Attack/Rally/Riposte/Sweeping Attack/Tactical Assessment/Trip Attack/Warding Maneuver]
+L7|Know Your Enemy
+L10|Improved Combat Superiority
+L15|Relentless
+L18|Ultimate Combat Superiority
+
+SUB|Warrior|WoW|Champion|Champion|WoW||
+L3|Improved Critical;Remarkable Athlete
+L7|Additional Fighting Style
+L10|Heroic Warrior
+L15|Superior Critical
+L18|Survivor[Defy Death/Heroic Rally]
