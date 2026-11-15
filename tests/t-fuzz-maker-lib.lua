@@ -61,7 +61,16 @@ local function Sweep()
         end
     end
     if clicks > 0 then return clicks end
-    for _, row in ipairs(Z.Shuffle(rows)) do
+    -- A case can say which tick boxes it wants (p.tick = "Starry Wisp, Guidance"):
+    -- those come first, the rest in any order.
+    local order, first = Z.Shuffle(rows), {}
+    local wanted = "," .. tostring(Z.step.p.tick or ""):gsub("%s*,%s*", ",") .. ","
+    for _, row in ipairs(order) do
+        local plain = F.Plain(row.name or ""):gsub("%s*%(.*$", "")
+        if row.kind == "toggle" and wanted:find("," .. plain .. ",", 1, true) then first[#first + 1] = row end
+    end
+    for _, row in ipairs(order) do first[#first + 1] = row end
+    for _, row in ipairs(first) do
         -- (an earlier click of this pass may have changed what the row shows)
         local option, path = row.option, row.path
         if not Z.Member(option, "hidden", path) and not Z.Member(option, "disabled", path) then
