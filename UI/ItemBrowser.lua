@@ -216,7 +216,9 @@ function RPSheet:PopulateItemBrowser()
         AddCard(self, body, matching[index], first)
     end
     if #matching == 0 then
-        UI.AddLabel(body, 1, UI.GREY .. (search ~= "" and "Nothing here matches your search." or source.empty) .. "|r")
+        -- `source.empty` is what the first tab says; another tab that is empty says so itself.
+        local nothing = (search ~= "" and "Nothing here matches your search.") or (first and source.empty) or "Nothing is listed in this tab."
+        UI.AddLabel(body, 1, UI.GREY .. nothing .. "|r")
     end
     Pages.AddControls(body, from, to, #matching, Turn)
     body:ResumeLayout()

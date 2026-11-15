@@ -56,7 +56,7 @@ local function Rebuild(self, body)
     -- still empty has no height, and the rows below it would be placed on top of it.
     self:Refresh()
     body:ResumeLayout()
-    body:DoLayout()
+    UI.SetOut(body)
 end
 
 function RPSheet:Populate()

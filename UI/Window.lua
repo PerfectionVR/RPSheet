@@ -204,6 +204,12 @@ local function Constructor()
     sizer:SetScript("OnMouseUp", function()
         frame:StopMovingOrSizing()
         SaveStatus(widget)
+        -- Set the rows out once more at the final size. While the window is dragged a row
+        -- is placed by the height it had a step earlier, so a row whose text wrapped
+        -- differently on the last step would be left lying over the next one.
+        for _, child in ipairs(widget.children) do
+            if child.DoLayout then ns.UI.SetOut(child) end
+        end
     end)
     widget.sizer = sizer
     widget.sizerTexture = sizer:CreateTexture(nil, "OVERLAY")

@@ -62,6 +62,9 @@ local function RebuildList(key, list)
             confirm = true,
             func = function()
                 ns.DismissAuto(Opt.Sheet(), entry)
+                -- A carried item that is worn or in hand is put away first: its armor
+                -- would stay on and its weapon readied, with no item left to undo it.
+                if key == "items" and entry.equipped then ns.addon:SetEquipped(entry, false) end
                 -- By the entry itself, not its place: the list may have changed since
                 -- this page was built (a spell prepared or an item used on the sheet).
                 local entries = Opt.Sheet()[key]
