@@ -273,6 +273,16 @@ UI\MountBrowser.lua
 UI\ScribeTab.lua
 UI\CraftBrowser.lua
 UI\ProfessionSection.lua
+UI\SheetHeader.lua
+UI\SheetTrackers.lua
+UI\SheetConditions.lua
+UI\SheetCombat.lua
+UI\SheetChecks.lua
+UI\SheetAbilities.lua
+UI\SheetSpells.lua
+UI\SheetPassives.lua
+UI\SheetSkills.lua
+UI\SheetOrigin.lua
 UI\SheetTabs.lua
 UI\SheetContent.lua
 UI\Minimap.lua
