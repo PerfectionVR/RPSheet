@@ -10,3 +10,5 @@ local FORCE = {
     "Consume Soul", "Eye Beam", "Soul Reap", "Chaos Nova", "Collapsing Star", "Sigil of Chains",
 }
 for _, name in ipairs(FORCE) do R.SPELL_DAMAGE[name] = "force" end
+-- A core spell whose line of facts leaves the type out.
+R.SPELL_DAMAGE["Symbol"] = "necrotic"

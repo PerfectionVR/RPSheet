@@ -241,7 +241,7 @@ Wall of Fire|4|V|DEX|5d8|fire|120 ft|c|1d8|DSW
 Animate Objects|5|T||||120 ft|c||SW
 Antilife Shell|5|A||||Self, 10-ft emanation|c||D
 Awaken|5|T||||Touch|||D
-Banishing Smite|5|C||5d10|force|Self|c||P
+Banishing Smite|5|C|CHA|5d10|force|Self|c||P
 Bigby's Hand|5|V|ATTACK|5d8||120 ft|c|2d8|SW
 Circle of Power|5|A||||Self, 30-ft emanation|c||CWP
 Cloudkill|5|C|CON|5d8|poison|120 ft|c|1d8|SW
@@ -290,7 +290,7 @@ Arcane Gate|6|C||||500 ft|c||SKW
 Blade Barrier|6|V|DEX|6d10|force|90 ft|c||C
 Chain Lightning|6|V|DEX|10d8|lightning|150 ft|||SW
 Circle of Death|6|N|CON|8d8|necrotic|150 ft||2d8|SKW
-Conjure Fey|6|C||3d12|psychic|60 ft|c|1d12|D
+Conjure Fey|6|C|ATTACK|3d12|psychic|60 ft|c|1d12|D
 Contingency|6|A||||Self|||W
 Create Undead|6|N||||10 ft|||CKW
 Disintegrate|6|T|DEX|10d6|force|60 ft||3d6|SW
@@ -346,10 +346,10 @@ Antimagic Field|8|A||||Self, 10-ft emanation|c||CW
 Antipathy/Sympathy|8|E|WIS|||60 ft|||DW
 Befuddlement|8|E|INT|10d12|psychic|150 ft|||DKW
 Clone|8|N||||Touch|||W
-Control Weather|8|T||||Self, 5-ft sphere|c||CDW
+Control Weather|8|T||||Self, 5-mi sphere|c||CDW
 Demiplane|8|C||||60 ft|||SKW
 Dominate Monster|8|E|WIS|||60 ft|c||SKW
-Earthquake|8|T|CON|12d6|bludgeoning|500 ft|c||CDS
+Earthquake|8|T|DEX|12d6|bludgeoning|500 ft|c||CDS
 Glibness|8|E||||Self|||K
 Holy Aura|8|A|CON|||Self, 30-ft emanation|c||C
 Incendiary Cloud|8|C|DEX|10d8|fire|150 ft|c||DSW
@@ -379,7 +379,7 @@ Wish|9|C||||Self|||SW
 
 -- The summary shown for a spell, put together from its facts.
 local function Summary(school, how, dice, kind, range, flags, up, level)
-    local parts = { SCHOOLS[school] or "Spell", "Range " .. range:gsub(" ft", " feet"):gsub("-ft", "-foot"):gsub(" mi$", " miles"):gsub("^1 miles", "1 mile") }
+    local parts = { SCHOOLS[school] or "Spell", "Range " .. range:gsub(" ft", " feet"):gsub("-ft", "-foot"):gsub("-mi ", "-mile "):gsub(" mi$", " miles"):gsub("^1 miles", "1 mile") }
     if how == "ATTACK" then
         parts[#parts + 1] = "Spell attack"
     elseif how ~= "" then
@@ -447,5 +447,7 @@ Set("Scorching Ray", { hits = 3, hitsUp = 1, desc = "Evocation. Range 120 feet. 
 Set("Flurry", { hits = 3, count = 3, desc = "Three shards of ice at one target or several, each with its own spell attack; one more shard for each slot level above 3rd. The sheet rolls them all. A critical hit restrains the target." })
 Set("Azure Strike", { hits = 2, desc = "Rays of force at up to two targets, each with its own spell attack; the sheet rolls both. A hit also slows the target by 10 feet." })
 Set("Magic Missile", { up = 1, desc = "Three darts that always hit, each dealing 1d4 + 1 force damage to a creature within 120 feet. One more dart for each slot level above 1st. The sheet rolls every dart and adds the 1 for each." })
+-- Attacks that add the spellcasting modifier to their damage.
+for _, name in ipairs({ "Conjure Fey", "Flame Blade", "Mordenkainen's Sword", "Spiritual Weapon" }) do Set(name, { addMod = true }) end
 -- Spells with a fixed number on top of their dice (the number is in Data/SlotGrowth.lua).
 Set("False Life", { count = 2, sides = 4, dice = "TEMPHP", desc = "Necromancy. Range Self. You gain 2d4 + 4 temporary hit points, and 5 more for each slot level above 1st; the sheet rolls and sets them." })

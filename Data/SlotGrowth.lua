@@ -49,6 +49,8 @@ G["Arcane Vigor"] = { Amount(2, 1, "hit dice you may roll: %d") }
 G["False Life"] = { flat = 4, flatUp = 5, refresh = true }
 G["Magic Missile"] = { flat = 3, flatUp = 1, refresh = true } -- 1 for each dart
 G["Disintegrate"] = { flat = 40 }
+G["Finger of Death"] = { flat = 30 }
+G["Regenerate"] = { flat = 15 }
 
 -- A longer duration or a larger area --------------------------------------
 G["Animal Messenger"] = { Amount(24, 48, "hours it lasts: %d") }
@@ -98,6 +100,7 @@ G["Create Undead"] = { at = {
 -- A second part with its own dice -----------------------------------------
 -- Rolled along with the spell:
 G["Ice Knife"] = { also = { count = 2, sides = 6, up = 1, kind = "DAMAGE", word = "cold damage in the burst" } }
+G["Ice Storm"] = { also = { count = 4, sides = 6, kind = "DAMAGE", word = "cold damage" } }
 G["Flame Strike"] = { also = { count = 5, sides = 6, up = 1, kind = "DAMAGE", word = "radiant damage" } }
 G["Jallarzi's Storm of Radiance"] = { also = { count = 2, sides = 10, up = 1, kind = "DAMAGE", word = "thunder damage" } }
 G["Lightning Arrow"] = { also = { count = 2, sides = 8, up = 1, kind = "DAMAGE", word = "lightning damage to those nearby" } }

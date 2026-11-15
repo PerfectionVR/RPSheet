@@ -1,0 +1,57 @@
+# Spells a class or subclass gives (the rules site's additionalSpells of the XPHB and
+# WoW classes and subclasses; the Wizard subclasses' free choices are left out).
+# kind|class|class source|subclass|subclass source|option (rune, land, specialization)|
+#   "prepared|known|innate <class level>:spell,spell" parts with ; between them
+subclass|Barbarian|XPHB|Path of the Wild Heart|XPHB||innate 3:beast sense,speak with animals;innate 10:commune with nature
+subclass|Barbarian|XPHB|Path of the Elements|WoW||known 6:elementalism;innate 6:daylight,water walk,wind wall
+subclass|Barbarian|XPHB|Path of the Spiritual Guardian|WoW||innate 10:augury,clairvoyance
+class|Bard|XPHB||||prepared 20:power word heal,power word kill
+subclass|Bard|XPHB|College of Glamour|XPHB||prepared 3:charm person,mirror image;prepared 6:command;innate 6:command
+subclass|Cleric|XPHB|Life Domain|XPHB||prepared 3:aid,bless,cure wounds,lesser restoration;prepared 5:mass healing word,revivify;prepared 7:aura of life,death ward;prepared 9:greater restoration,mass cure wounds
+subclass|Cleric|XPHB|Light Domain|XPHB||prepared 3:burning hands,faerie fire,scorching ray,see invisibility;prepared 5:daylight,fireball;prepared 7:arcane eye,wall of fire;prepared 9:flame strike,scrying
+subclass|Cleric|XPHB|Trickery Domain|XPHB||prepared 3:charm person,disguise self,invisibility,pass without trace;prepared 5:hypnotic pattern,nondetection;prepared 7:confusion,dimension door;prepared 9:dominate person,modify memory
+subclass|Cleric|XPHB|War Domain|XPHB||prepared 3:guiding bolt,magic weapon,shield of faith,spiritual weapon;prepared 5:crusader's mantle,spirit guardians;prepared 7:fire shield,freedom of movement;prepared 9:hold monster,steel wind strike
+subclass|Cleric|XPHB|Discipline Domain|WoW||prepared 3:arcane vigor,guiding bolt,magic weapon,shield of faith;prepared 5:prayer of mending,protection from energy;prepared 7:guardian of faith,stoneskin;prepared 9:circle of power,destructive wave
+subclass|Cleric|XPHB|Shadow Domain|WoW||prepared 3:crown of madness,dissonant whispers,mind spike,shadow word: pain;prepared 5:summon undead,vampiric touch;prepared 7:evard's black tentacles,psychic horror;prepared 9:dominate person,void eruption
+class|Death Knight|WoW||||prepared 2:rune strike;prepared 5:find steed
+subclass|Death Knight|WoW|Oath of the Ebon Blade|WoW|Blood|prepared 3:death grip,vampiric blood;prepared 5:death and decay,spiritual weapon;prepared 9:summon undead,leeching strike;prepared 13:freedom of movement,evard's black tentacles;prepared 17:circle of power,bonestorm
+subclass|Death Knight|WoW|Oath of the Ebon Blade|WoW|Frost|prepared 3:death grip,chains of ice;prepared 5:death and decay,frostscythe;prepared 9:summon undead,remorseless winter;prepared 13:freedom of movement,ice storm;prepared 17:circle of power,cone of cold
+subclass|Death Knight|WoW|Oath of the Ebon Blade|WoW|Unholy|prepared 3:death grip,scourge strike;prepared 5:death and decay,ray of enfeeblement;prepared 9:summon undead,bestow curse;prepared 13:freedom of movement,blight;prepared 17:circle of power,contagion
+subclass|Demon Hunter|WoW|Demon Hunter|WoW|Devourer|prepared 3:throw glaive,consume soul;prepared 5:sigil of flame,misty step;prepared 9:metamorphosis,soul reap;prepared 13:chaos nova,collapsing star;prepared 17:destructive wave,steel wind strike;innate 3:feather fall,jump;innate 11:throw glaive,counterspell
+subclass|Demon Hunter|WoW|Demon Hunter|WoW|Havoc|prepared 3:throw glaive,fel rush;prepared 5:sigil of flame,eye beam;prepared 9:metamorphosis,blink;prepared 13:chaos nova,fire shield;prepared 17:destructive wave,conjure volley;innate 3:feather fall,jump;innate 11:throw glaive,counterspell
+subclass|Demon Hunter|WoW|Demon Hunter|WoW|Vengeance|prepared 3:throw glaive,infernal strike;prepared 5:sigil of flame,fiery brand;prepared 9:metamorphosis,demon spikes;prepared 13:chaos nova,banishment;prepared 17:destructive wave,sigil of chains;innate 3:feather fall,jump;innate 11:throw glaive,counterspell
+class|Druid|XPHB||||prepared 1:speak with animals;prepared 2:find familiar
+subclass|Druid|XPHB|Circle of the Land|XPHB|Arid Land|prepared 3:blur,burning hands,fire bolt;prepared 5:fireball;prepared 7:blight;prepared 9:wall of stone
+subclass|Druid|XPHB|Circle of the Land|XPHB|Polar Land|prepared 3:fog cloud,hold person,ray of frost;prepared 5:sleet storm;prepared 7:ice storm;prepared 9:cone of cold
+subclass|Druid|XPHB|Circle of the Land|XPHB|Temperate Land|prepared 3:misty step,shocking grasp,sleep;prepared 5:lightning bolt;prepared 7:freedom of movement;prepared 9:tree stride
+subclass|Druid|XPHB|Circle of the Land|XPHB|Tropical Land|prepared 3:acid splash,ray of sickness,web;prepared 5:stinking cloud;prepared 7:polymorph;prepared 9:insect plague
+subclass|Druid|XPHB|Circle of the Moon|XPHB||prepared 3:cure wounds,moonbeam,starry wisp;prepared 5:conjure animals;prepared 7:fount of moonlight;prepared 9:mass cure wounds
+subclass|Druid|XPHB|Circle of the Sea|XPHB||prepared 3:fog cloud,gust of wind,ray of frost,shatter,thunderwave;prepared 5:lightning bolt,water breathing;prepared 7:control water,ice storm;prepared 9:conjure elemental,hold monster
+subclass|Druid|XPHB|Circle of the Stars|XPHB||prepared 3:guiding bolt;known 3:guidance
+subclass|Evoker|WoW|Draconic Sorcery|WoW|Augmentation|prepared 3:chromatic orb,dragon's breath,ebon might,eruption;prepared 5:fly,blistering scales;prepared 7:arcane eye,upheaval;prepared 9:summon dragon,breath of eons
+subclass|Evoker|WoW|Draconic Sorcery|WoW|Devastation|prepared 3:chromatic orb,dragon's breath,azure strike,scorching ray;prepared 5:fly,fireball;prepared 7:arcane eye,emberstorm;prepared 9:summon dragon,shattering star
+subclass|Evoker|WoW|Draconic Sorcery|WoW|Preservation|prepared 3:chromatic orb,dragon's breath,dream breath,living flame;prepared 5:fly,emerald blossom;prepared 7:arcane eye,time dilation;prepared 9:summon dragon,dream flight
+subclass|Fighter|XPHB|Psi Warrior|XPHB||innate 18:telekinesis
+subclass|Monk|XPHB|Warrior of Shadow|XPHB||known 3:minor illusion;innate 3:darkness
+subclass|Monk|XPHB|Warrior of the Elements|XPHB||known 3:elementalism
+class|Paladin|XPHB||||prepared 2:divine smite;prepared 5:find steed
+subclass|Paladin|XPHB|Oath of Devotion|XPHB||prepared 3:protection from evil and good,shield of faith;prepared 5:aid,zone of truth;prepared 9:beacon of hope,dispel magic;prepared 13:freedom of movement,guardian of faith;prepared 17:commune,flame strike
+subclass|Paladin|XPHB|Oath of Glory|XPHB||prepared 3:guiding bolt,heroism;prepared 5:enhance ability,magic weapon;prepared 9:haste,protection from energy;prepared 13:compulsion,freedom of movement;prepared 17:legend lore,yolande's regal presence
+subclass|Paladin|XPHB|Oath of the Ancients|XPHB||prepared 3:ensnaring strike,speak with animals;prepared 5:misty step,moonbeam;prepared 9:plant growth,protection from energy;prepared 13:ice storm,stoneskin;prepared 17:commune with nature,tree stride
+subclass|Paladin|XPHB|Oath of Vengeance|XPHB||prepared 3:bane,hunter's mark;prepared 5:hold person,misty step;prepared 9:haste,protection from energy;prepared 13:banishment,dimension door;prepared 17:hold monster,scrying
+subclass|Paladin|XPHB|Oath of the Holy|WoW||prepared 3:cure wounds,healing word;prepared 5:lesser restoration,prayer of healing;prepared 9:dispel magic,mass healing word;prepared 13:aura of life,death ward;prepared 17:greater restoration,mass cure wounds
+class|Ranger|XPHB||||prepared 1:hunter's mark
+subclass|Ranger|XPHB|Fey Wanderer|XPHB||known 3:charm person;known 5:misty step;known 9:summon fey;known 13:dimension door;known 17:mislead
+subclass|Ranger|XPHB|Gloom Stalker|XPHB||prepared 3:disguise self;prepared 5:rope trick;prepared 9:fear;prepared 13:greater invisibility;prepared 17:seeming
+subclass|Rogue|XPHB|Arcane Trickster|XPHB||known 3:mage hand
+subclass|Sorcerer|XPHB|Aberrant Sorcery|XPHB||prepared 3:arms of hadar,calm emotions,detect thoughts,dissonant whispers,mind sliver;prepared 5:hunger of hadar,sending;prepared 7:evard's black tentacles,summon aberration;prepared 9:rary's telepathic bond,telekinesis
+subclass|Sorcerer|XPHB|Clockwork Sorcery|XPHB||prepared 3:aid,alarm,lesser restoration,protection from evil and good;prepared 5:dispel magic,protection from energy;prepared 7:freedom of movement,summon construct;prepared 9:greater restoration,wall of force
+subclass|Sorcerer|XPHB|Draconic Sorcery|XPHB||prepared 3:alter self,chromatic orb,command,dragon's breath;prepared 5:fear,fly;prepared 7:arcane eye,charm monster;prepared 9:legend lore,summon dragon
+class|Warlock|XPHB||||prepared 9:contact other plane
+subclass|Warlock|XPHB|Archfey Patron|XPHB||prepared 3:calm emotions,faerie fire,misty step,phantasmal force,sleep;prepared 5:blink,plant growth;prepared 7:dominate beast,greater invisibility;prepared 9:dominate person,seeming;innate _:misty step
+subclass|Warlock|XPHB|Celestial Patron|XPHB||prepared 3:aid,cure wounds,guiding bolt,lesser restoration;prepared 5:daylight,revivify;prepared 7:guardian of faith,wall of fire;prepared 9:greater restoration,summon celestial;known 1:sacred flame,light
+subclass|Warlock|XPHB|Fiend Patron|XPHB||prepared 3:burning hands,command,scorching ray,suggestion;prepared 5:fireball,stinking cloud;prepared 7:fire shield,wall of fire;prepared 9:geas,insect plague
+subclass|Warlock|XPHB|Great Old One Patron|XPHB||prepared 3:detect thoughts,dissonant whispers,phantasmal force,tasha's hideous laughter;prepared 5:clairvoyance,hunger of hadar;prepared 7:confusion,summon aberration;prepared 9:modify memory,telekinesis;innate 10:hex
+subclass|Wizard|XPHB|Abjurer|XPHB||prepared 10:counterspell,dispel magic
+subclass|Wizard|XPHB|Diviner|XPHB||innate 10:see invisibility
+subclass|Wizard|XPHB|Illusionist|XPHB||prepared 6:summon beast,summon fey;known 3:minor illusion

@@ -32,7 +32,7 @@ local CONC = { concentration = true }
 
 -- Cantrips
 Spell("Acid Splash", 0, "DEX", { 1, 6 }, "Creatures in a 5-foot sphere within 60 feet take acid damage unless they pass the save.")
-Spell("Blade Ward", 0, nil, nil, "Reaction when a creature you can see attacks you: it subtracts 1d4 from the attack roll.")
+Spell("Blade Ward", 0, nil, nil, "For up to a minute, a creature that makes an attack roll against you subtracts 1d4 from it.", CONC)
 Spell("Chill Touch", 0, "ATTACK", { 1, 10 }, "Melee spell attack. Necrotic damage, and the target can't regain hit points until the end of your next turn.")
 Spell("Dancing Lights", 0, nil, nil, "Four floating lights within 120 feet that you can move as a bonus action.", CONC)
 Spell("Druidcraft", 0, nil, nil, "A small nature effect: predict the weather, make a flower bloom, a harmless sensory effect, or light or snuff a small flame.")
@@ -63,6 +63,7 @@ Spell("Thorn Whip", 0, "ATTACK", { 1, 6 }, "Melee spell attack with 30-foot reac
 Spell("Thunderclap", 0, "CON", { 1, 6 }, "Each creature within 5 feet of you takes thunder damage unless it passes the save.")
 Spell("Toll the Dead", 0, "WIS", { 1, 8 }, "Necrotic damage to a creature within 60 feet. Use d12s if it is already missing hit points.")
 Spell("True Strike", 0, nil, nil, "Make one weapon attack using your spellcasting ability; it can deal radiant damage, and deals extra at higher levels.")
+Spell("Vicious Mockery", 0, "WIS", { 1, 6 }, "Psychic damage to a creature within 60 feet that can see or hear you, and it has disadvantage on its next attack roll before the end of its next turn.")
 Spell("Word of Radiance", 0, "CON", { 1, 6 }, "Each creature of your choice within 5 feet takes radiant damage unless it passes the save.")
 
 -- 1st level
@@ -101,17 +102,17 @@ Spell("Mage Armor", 1, nil, nil, "A willing creature without armor has an AC of 
 Spell("Magic Missile", 1, nil, { 3, 4 }, "Three darts that always hit, each dealing 1d4 + 1 force damage to a creature within 120 feet. Add 3 to the total rolled.")
 Spell("Protection from Evil and Good", 1, nil, nil, "A creature you touch is protected against aberrations, celestials, elementals, fey, fiends and undead.", CONC)
 Spell("Ray of Sickness", 1, "ATTACK", { 2, 8 }, "Poison damage to a creature within 60 feet, and it is poisoned until the end of your next turn.")
-Spell("Sanctuary", 1, nil, nil, "Creatures must pass a Wisdom save to attack the creature you ward, until it attacks or casts on an enemy.")
-Spell("Searing Smite", 1, nil, { 1, 6 }, "After a weapon hit: extra fire damage, and the target burns each turn until it passes a Constitution save.")
+Spell("Sanctuary", 1, "WIS", nil, "Creatures must pass a Wisdom save to attack the creature you ward, until it attacks or casts on an enemy.")
+Spell("Searing Smite", 1, "CON", { 1, 6 }, "After a weapon hit: extra fire damage, and the target burns each turn until it passes a Constitution save.")
 Spell("Shield", 1, nil, nil, "Reaction when you are hit: +5 AC until your next turn, including against that attack, and Magic Missile can't hurt you.")
 Spell("Shield of Faith", 1, nil, nil, "A creature within 60 feet gains +2 AC for up to 10 minutes.", CONC)
 Spell("Sleep", 1, "WIS", nil, "Creatures in a 5-foot sphere within 60 feet that fail grow drowsy, and fall asleep if they fail again.", CONC)
 Spell("Speak with Animals", 1, nil, nil, "For 10 minutes you can understand and speak with beasts.")
 Spell("Tasha's Hideous Laughter", 1, "WIS", nil, "A creature within 30 feet that fails falls prone laughing and can't act, repeating the save each turn.", CONC)
-Spell("Thunderous Smite", 1, nil, { 2, 6 }, "After a weapon hit: extra thunder damage, and the target is pushed 10 feet and knocked prone unless it passes a Strength save.")
+Spell("Thunderous Smite", 1, "STR", { 2, 6 }, "After a weapon hit: extra thunder damage, and the target is pushed 10 feet and knocked prone unless it passes a Strength save.")
 Spell("Thunderwave", 1, "CON", { 2, 8 }, "Thunder damage to each creature in a 15-foot cube from you, pushing it 10 feet; half and no push on a success.")
 Spell("Witch Bolt", 1, "ATTACK", { 2, 12 }, "Lightning damage to a creature within 60 feet. On later turns a bonus action deals 1d12 more while you concentrate.", CONC)
-Spell("Wrathful Smite", 1, nil, { 1, 6 }, "After a weapon hit: extra necrotic damage, and the target is frightened of you if it fails a Wisdom save.")
+Spell("Wrathful Smite", 1, "WIS", { 1, 6 }, "After a weapon hit: extra necrotic damage, and the target is frightened of you if it fails a Wisdom save.")
 
 -- Cantrips known as { {level, cantrips}, ... } and spells prepared at each level,
 -- by Player's Handbook class.
@@ -154,15 +155,15 @@ R.SPELL_LISTS = {
     },
     Sorcerer = {
         "Acid Splash", "Blade Ward", "Chill Touch", "Dancing Lights", "Elementalism", "Fire Bolt", "Friends", "Light", "Mage Hand",
-        "Mending", "Message", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp", "Sorcerous Burst",
-        "Thunderclap", "True Strike",
+        "Mending", "Message", "Mind Sliver", "Minor Illusion", "Poison Spray", "Prestidigitation", "Ray of Frost", "Shocking Grasp",
+        "Sorcerous Burst", "Thunderclap", "True Strike",
         "Burning Hands", "Charm Person", "Chromatic Orb", "Detect Magic", "Feather Fall", "Fog Cloud", "Ice Knife", "Jump", "Mage Armor",
         "Magic Missile", "Ray of Sickness", "Shield", "Sleep", "Thunderwave", "Witch Bolt",
     },
     Warlock = {
         "Blade Ward", "Chill Touch", "Eldritch Blast", "Friends", "Mage Hand", "Mind Sliver", "Minor Illusion", "Poison Spray",
         "Prestidigitation", "Thunderclap", "Toll the Dead", "True Strike",
-        "Armor of Agathys", "Arms of Hadar", "Bane", "Charm Person", "Command", "Detect Magic", "Dissonant Whispers", "Hellish Rebuke",
+        "Armor of Agathys", "Arms of Hadar", "Bane", "Charm Person", "Detect Magic", "Hellish Rebuke",
         "Hex", "Protection from Evil and Good", "Speak with Animals", "Tasha's Hideous Laughter", "Witch Bolt",
     },
     Wizard = {
