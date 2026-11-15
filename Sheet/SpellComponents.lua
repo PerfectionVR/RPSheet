@@ -66,7 +66,10 @@ end
 
 -- Takes what the casting uses up out of the inventory and the purse. Returns the
 -- names of what was taken.
-function RPSheet:SpendComponents(spell, pick)
+-- `slotLevel` is the slot the spell was cast with: some parts take more with a
+-- higher one (part.upQty more for each level above the spell's own, as far as the
+-- character has them; the part's own number is what MissingComponents asks for).
+function RPSheet:SpendComponents(spell, pick, slotLevel)
     local targets = type(pick) == "table" and pick.targets or nil
     local taken, dropped = {}, false
     for _, part in ipairs(self:SpellComponents(spell) or {}) do
@@ -74,6 +77,10 @@ function RPSheet:SpendComponents(spell, pick)
         if part.coins and need > 0 then
             if self:SpendCoins(part.coins * need, spell.name) then taken[#taken + 1] = ns.CoinText(part.coins * need) end
         elseif part.ammo then
+            if need > 0 and part.upQty and slotLevel and slotLevel > (spell.level or 0) then
+                local more = part.upQty * (slotLevel - spell.level)
+                need = need + math.min(more, math.max(0, self:AmmoCount(part) - need))
+            end
             local pieces = need > 0 and self:TakeAmmo(part, need) or 0
             if pieces > 0 then
                 taken[#taken + 1] = ("%d %s"):format(pieces, part.words)

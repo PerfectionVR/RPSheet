@@ -246,6 +246,18 @@ Section("reading: beyond your own casting", function()
     RPSheet:State().exhaustion = 0
 end)
 
+Section("reading: a Warlock's Mystic Arcanum counts", function()
+    -- Pact Magic stops at 5th level; Mystic Arcanum casts 6th at Warlock 11, up to 9th at 17.
+    local sheet = Build("WARLOCK", "Fiend Patron", 10)
+    local _, reach = ns.ScrollReader(sheet, "Hex")
+    Eq(reach, 5, "a Warlock 10 reaches 5th")
+    for _, case in ipairs({ { 11, 6 }, { 13, 7 }, { 15, 8 }, { 17, 9 } }) do
+        sheet = Build("WARLOCK", "Fiend Patron", case[1])
+        _, reach = ns.ScrollReader(sheet, "Hex")
+        Eq(reach, case[2], ("a Warlock %d reaches %s level"):format(case[1], R.ORDINALS[case[2]]))
+    end
+end)
+
 Section("reading: several classes and prepared spells", function()
     -- A Warlock 5 / Mage 3: Fireball is a Mage spell of 3rd level; the Mage part reaches
     -- 2nd, but a Fiend's Warlock keeps it prepared, and the Warlock reaches 3rd.

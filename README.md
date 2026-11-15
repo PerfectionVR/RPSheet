@@ -607,20 +607,19 @@ Small gaps left in what is built. None is planned; say so if one matters to you.
   Knight, Hunter with Demon Hunter) can't be combined: by the rules they are one
   class with different subclasses. Weapon Mastery picks from several classes add
   up, which is one reading of a rule tables disagree on.
-- **Spells**: Cordon of Arrows takes four pieces whatever the slot; a weapon of your
-  own needs a worth set before it serves as a component; a Warlock's Mystic Arcanum
-  levels don't count when a scroll asks what you can cast.
-- **Items**: the variant control covers bonus, adamantine, mithral, silvered and
-  resistance makes only, and adds without buying; an inventory item is only
-  refreshed from the catalogue when it has no effects and an untouched note.
-- **Companions and mounts**: carrying capacities the rules don't list are worked out
+- **Spells**: a weapon of your own needs a worth set before it serves as a spell
+  component.
+- **Items**: an item saved before your edits were recorded is only refreshed from
+  the item lists when it has no effects and an untouched note; newer ones follow the
+  lists unless you changed them. Plain gear has no descriptions, so the item
+  browser's search finds it by name and kind only.
+- **Mounts**: a rider's own weight counts only once it is entered under Customize >
+  Mounts and companions; carrying capacities the rules don't list are worked out
   from Strength and marked as estimates.
 - **Professions**: the time to build a vehicle is the usual crafting rate, since the
   rules give none.
-- **Conditions**: disadvantage that depends on the target (Grappled) or on line of
-  sight (Frightened) is not told apart; saves rolled from an ability's own save step
-  don't ask what they are against.
-- **Wild Shape**: a Giant Hyena's once-a-day Rampage is not counted.
+- **Conditions**: disadvantage that depends on the target (Grappled) or on whether
+  you can see what frightens you is asked with each roll, not tracked.
 
 ## Bundled libraries
 
