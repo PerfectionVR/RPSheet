@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+- Rules data checked against the rules site by script, and corrected:
+  - Spells: Searing, Thunderous, Wrathful and Banishing Smite, Sanctuary and Serpent
+    Sting show the save they force; Earthquake asks for a Dexterity save; Finger of
+    Death adds 30 and Regenerate 15; Ice Storm also rolls its cold damage; Flame
+    Blade, Spiritual Weapon, Mordenkainen's Sword and Conjure Fey add your
+    spellcasting modifier; Blade Ward needs concentration. Spells already on a sheet
+    need adding again for the new save or modifier.
+  - Spell lists: Priests can prepare Blur, Levitate, Haste, Summon Undead, Dominate
+    Person and Dominate Monster and learn Mind Sliver; Mages can write Create Food
+    and Water, Flame Strike and Heroes' Feast into the spellbook; Command and
+    Dissonant Whispers are no longer on the Warlock's own list.
+  - Always-prepared spells now appear on the spell list: Hunter's Mark (Hunter,
+    Demon Hunter), Speak with Animals (Druid), Guiding Bolt (Circle of the Stars),
+    the chosen land's spells (Circle of the Land), Rune Strike (Death Knight) and
+    Contact Other Plane (Warlock).
+  - Classes, species, backgrounds, feats, weapons, armor, prices, mounts and beasts
+    all matched; nothing to correct.
+- 57 more magic items, among them Azeroth's Hearthstone, Judgment Armor and Crown of
+  the Ogre King and seven artifacts (Ashbringer, Doomhammer, Frostmourne, the Helm of
+  Domination, Shalamayne, Sulfuras, the Twin Blades of Azzinoth); food and drink,
+  single bullets and needles, iron spikes and fourteen poisons in the gear list.
+- Sharing with your group:
+  - A character made before Total RP 3 was installed is on your profile at the first
+    login with it, instead of a blank sheet and the wizard.
+  - After a reload in a group you see everyone's stats again without hovering them.
+  - Far fewer messages are sent: only when something others see has changed.
+  - A profile without a character no longer shows an empty Stats block in tooltips.
+  - Announcements with a "|" or a line break in a name, and long lines with accented
+    letters, are no longer refused by chat; item and spell links are no longer
+    broken when their name is also a rules term.
+- `/sheet` with a word it doesn't know lists the commands; `/sheet help` lists them.
+- The creation wizard is offered after combat when the first login was in combat.
+- The sheet rebuilds and the level dialog opens faster for characters with many
+  abilities, spells or classes.
 - Fixes found by running every part of the addon in a test environment:
   - Levelling: an Epic Boon that raises a score above 20 no longer marks earlier
     improvements as needing a new choice; taking a level with the suggested subclass

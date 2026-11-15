@@ -580,7 +580,9 @@ other ten still need that.
 
 **Addon**
 
-- [ ] Syncing tested between two players
+- [ ] Syncing confirmed in game by two players. It is simulated with two and three
+      players in `tests/t-sync-*.lua`; the in-game script is in
+      [docs/MANUAL-CHECKS.md](docs/MANUAL-CHECKS.md)
 - [x] The creation wizard and level dialog drawn in the sheet's theme: frame, title,
       headings, text and buttons
 - [x] Themed tick boxes, sliders, dropdowns, typing boxes and scroll bars; the
