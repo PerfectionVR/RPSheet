@@ -76,7 +76,10 @@ R.TEMPLATES = {
     -- twoHands: a versatile weapon held in two hands; magic: a magic weapon's bonus
     -- to its own attack and damage rolls; stowed: put away, so not on the sheet
     weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
-               base = "", twoHands = false, magic = 0, stowed = false },
+               base = "", twoHands = false, magic = 0, stowed = false,
+               -- For a weapon of the player's own (no base): whether it is a ranged one, and
+               -- what it is worth in copper, for a spell that needs a weapon as a component.
+               ranged = false, cost = 0 },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },

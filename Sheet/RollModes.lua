@@ -57,7 +57,8 @@ function RPSheet:DisadvantageFrom(label)
     end
     if label == "Stealth" and not self:Form() then
         local armor = R.ARMOR[self:Sheet().armor]
-        if armor and armor.stealth then return "armor" end
+        -- Mithral armor is quiet (Sheet/ItemVariants.lua).
+        if armor and armor.stealth and not ns.ArmorWaives(self:Sheet(), "noStealth") then return "armor" end
     end
 end
 
@@ -108,6 +109,7 @@ end
 function RPSheet:ArmorSpeedPenalty()
     if self:Form() then return 0 end
     local armor = R.ARMOR[self:Sheet().armor]
+    if ns.ArmorWaives(self:Sheet(), "noStrength") then return 0 end -- mithral asks for none
     return (armor and armor.minStr and self:Score("STR") < armor.minStr) and 10 or 0
 end
 

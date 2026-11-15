@@ -89,6 +89,10 @@ local function Build(item)
             desc = "Armor and shields add it to your Armor Class while equipped. A weapon gets it on its attack and damage rolls when the item is first equipped; after that it is set on the weapon, on the Weapons page.",
             hidden = function() return ns.ItemSlot(item) == nil end,
         }, self, "bonus"),
+        scribed = With({
+            type = "toggle", order = 9.5, name = "Written by you", hidden = function() return ns.ScrollSpell(item) == nil end,
+            desc = "A scroll you wrote casts with your own spell save DC and spell attack bonus. One that was found or bought casts with the fixed numbers of a scroll of its level.",
+        }, self, "scribed"),
         magicHeader = { type = "header", order = 20, name = "Magic" },
         magic = With({ type = "toggle", order = 21, name = "Magic item" }, self, "magic"),
         rarity = With({

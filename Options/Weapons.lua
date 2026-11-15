@@ -44,6 +44,21 @@ local function Build(weapon)
                 return not (data and data.versatile)
             end,
         }, self, "twoHands"),
+        ranged = With({
+            type = "toggle", order = 4.6, name = "Ranged weapon",
+            desc = "Tick for a bow, a gun or the like; leave it for a melee weapon. Some spells need a melee weapon as a component.",
+            hidden = function() return IsBasic(weapon) or weapon.heal end,
+        }, self, "ranged"),
+        worth = {
+            type = "input", order = 4.7, width = 0.8, name = "Worth",
+            desc = "What the weapon is worth, written like 5 gp 3 sp. A spell that needs a weapon as a component asks for one worth a few coins at least, so a weapon without a worth (claws, a bite) doesn't serve.",
+            hidden = function() return IsBasic(weapon) or weapon.heal end,
+            get = function() return (weapon.cost or 0) > 0 and ns.CoinText(weapon.cost) or "" end,
+            set = function(_, value)
+                weapon.cost = ns.ParseCoins(value) or 0
+                Opt.Changed()
+            end,
+        },
         custom = {
             type = "execute", order = 9, name = "Make it my own",
             desc = "Turns this into a weapon of your own, so its dice can be changed. It keeps its numbers but loses its properties.",
@@ -51,6 +66,10 @@ local function Build(weapon)
             func = function()
                 local _, sides = RPSheet:WeaponDice(weapon)
                 weapon.stat = RPSheet:WeaponStat(weapon) -- the ability it was using
+                -- It stays the kind of weapon it was, worth what that one costs.
+                local data, listed = ns.WeaponData(weapon), R.ITEMS[weapon.base]
+                weapon.ranged = data ~= nil and data.ranged == true
+                if (weapon.cost or 0) == 0 then weapon.cost = listed and listed.cost or 0 end
                 weapon.sides, weapon.base, weapon.twoHands = sides, "", false
                 Opt.Changed()
             end,

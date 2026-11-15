@@ -23,4 +23,5 @@ function Opt.InventoryExtra(args)
         desc = "Opens the item browser: what you carry and every listed item as a block, with what it is and does and buttons to add, buy, equip and remove it.",
         func = function() RPSheet:ToggleItemBrowser() end,
     }
+    Opt.VariantArgs(args, 0.6) -- a magic make of a plain armor or weapon (Options/InventoryVariant.lua)
 end

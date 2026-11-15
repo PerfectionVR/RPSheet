@@ -56,6 +56,8 @@ function UI.ItemLines(self, name, item, classKey)
     end
     local desc = item and item.desc ~= "" and item.desc or (known and known.desc)
     if desc and desc ~= "" then lines[#lines + 1] = desc end
+    -- A spell scroll says whose numbers it casts with and whether this character can read it.
+    for _, line in ipairs(item and not classKey and self:ScrollHelp(item) or {}) do lines[#lines + 1] = UI.GREY .. line .. "|r" end
     for _, effect in ipairs(item and item.effects or (known and known.effects) or {}) do
         lines[#lines + 1] = UI.GREEN .. self:EffectText(effect) .. "|r"
     end

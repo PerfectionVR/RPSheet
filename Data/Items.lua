@@ -17,6 +17,8 @@ R.TEMPLATES.item = {
     attune = false,    -- needs attunement before its magic works
     attuned = false,
     limit = "",        -- "UNARMORED": its effects stop in armor or with a shield (Sheet/Limits.lua)
+    variant = "",      -- the magic make of a plain armor or weapon it is (Data/ItemVariants.lua)
+    scribed = false,   -- a spell scroll this character wrote itself (Actions/Scrolls.lua)
     effects = {},
 }
 
@@ -34,6 +36,19 @@ R.RARITY_COLORS = {
 }
 for _, rarity in ipairs(R.RARITY_ORDER) do
     if rarity ~= "" then R.RARITIES[rarity] = rarity end
+end
+
+-- What a magic item is worth by how rare it is, in copper; an artifact has no price.
+-- One that is used up is worth half, and one made from a priced thing (a suit of
+-- armor, a weapon) is worth that thing's price on top.
+R.MAGIC_VALUES = {
+    Common = 10000, Uncommon = 40000, Rare = 400000, ["Very rare"] = 4000000, Legendary = 20000000,
+}
+function R.MagicItemValue(rarity, consumable, base)
+    local value = R.MAGIC_VALUES[rarity] or 0
+    if value == 0 then return 0 end
+    if consumable then value = value / 2 end
+    return math.floor(value + (base and R.ITEMS[base] and R.ITEMS[base].cost or 0))
 end
 
 R.ITEM_LIMITS = { [""] = "Always", UNARMORED = "Only without armor and shield", NOHEAVY = "Not in heavy armor" }
@@ -64,7 +79,9 @@ function R.AddGear(kind, list)
     end
 end
 
--- A magic item. `extra` can carry weight, cost, attune (true) and limit.
+-- A magic item. `extra` can carry weight, cost, attune (true) and limit. One without
+-- a cost of its own is priced by its rarity once every list has loaded and the ones
+-- that are used up are known (Data/MagicItemPrices.lua).
 function R.AddMagicItem(name, rarity, desc, effects, extra)
     local entry = { cost = 0, weight = 0, rarity = rarity, desc = desc, effects = effects or {} }
     for key, value in pairs(extra or {}) do entry[key] = value end
