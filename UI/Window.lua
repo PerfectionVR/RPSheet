@@ -1,11 +1,13 @@
 -- "RPSheetWindow": a plain AceGUI container whose look is entirely set by a theme
 -- (see Themes.lua). Movable by its title bar, resizable from the bottom-right corner,
+-- minimizable to its title bar (WindowMinimize.lua),
 -- and it remembers size and position in a status table like AceGUI's own Window.
 local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetWindow", 1
 
 local TITLE_HEIGHT, PADDING = 22, 8
+local MIN_WIDTH, MIN_HEIGHT = 300, 200 -- narrower than this and the rows and tabs wrap
 local LOCK_ICON = "Interface\\PetBattles\\PetBattle-LockIcon"
 local EDIT_ICON = "Interface\\Buttons\\UI-OptionsButton"
 
@@ -38,7 +40,8 @@ end
 
 local function SaveStatus(self)
     local frame, status = self.frame, self.status or self.localstatus
-    status.width, status.height = frame:GetWidth(), frame:GetHeight()
+    -- A folded window keeps the height it opens to.
+    status.width, status.height = frame:GetWidth(), self.collapsed and self.fullHeight or frame:GetHeight()
     status.top, status.left = frame:GetTop(), frame:GetLeft()
 end
 
@@ -67,8 +70,9 @@ local methods = {
 
     ApplyStatus = function(self)
         local frame, status = self.frame, self.status or self.localstatus
-        self:SetWidth(status.width or 280)
-        self:SetHeight(status.height or 480)
+        self:SetCollapsed(false)
+        self:SetWidth(math.max(MIN_WIDTH, status.width or MIN_WIDTH))
+        self:SetHeight(math.max(MIN_HEIGHT, status.height or 480))
         frame:ClearAllPoints()
         if status.top and status.left then
             frame:SetPoint("TOP", UIParent, "BOTTOM", 0, status.top)
@@ -95,7 +99,7 @@ local methods = {
         self.locked = locked
         self.titleBar:EnableMouse(not locked)
         self.frame:EnableMouse(not locked)
-        self.sizer:SetShown(not locked)
+        self.sizer:SetShown(not locked and not self.collapsed)
         -- One padlock: solid while locked, faded while unlocked.
         self.lockButton.icon:SetAlpha(locked and 1 or 0.35)
     end,
@@ -113,6 +117,7 @@ local methods = {
         self.closeText:SetTextColor(accent[1], accent[2], accent[3])
         self.lockButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
         self.editButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
+        self.minimizeButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
         self.sizerTexture:SetVertexColor(accent[1], accent[2], accent[3])
     end,
 }
@@ -127,7 +132,7 @@ local function Constructor()
     frame:SetClampedToScreen(true)
     frame:SetMovable(true)
     frame:SetResizable(true)
-    frame:SetResizeBounds(220, 200)
+    frame:SetResizeBounds(MIN_WIDTH, MIN_HEIGHT)
     frame:EnableMouse(true)
     frame:Hide()
 
@@ -156,7 +161,7 @@ local function Constructor()
 
     widget.titleText = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     widget.titleText:SetPoint("LEFT", PADDING, 0)
-    widget.titleText:SetPoint("RIGHT", -TITLE_HEIGHT * 3, 0)
+    widget.titleText:SetPoint("RIGHT", -TITLE_HEIGHT * 4, 0)
     widget.titleText:SetJustifyH("LEFT")
     widget.titleText:SetWordWrap(false)
 
@@ -183,6 +188,13 @@ local function Constructor()
         return "Edit character", "Stats, armor, weapons, abilities, passives and appearance."
     end)
 
+    widget.minimizeButton = TitleButton(widget, 3, "Interface\\Buttons\\UI-MinusButton-Up", "OnMinimizeClick", function(self)
+        if self.minimized then
+            return "Keep window open", "The window is minimized: it shows only its title bar and opens while the mouse is over it. Click to keep it open."
+        end
+        return "Minimize window", "Folds the window up to its title bar. It opens while the mouse is over it and folds up again when the mouse leaves."
+    end)
+
     -- Resize grip
     local sizer = CreateFrame("Frame", nil, frame)
     sizer:SetSize(14, 14)
@@ -204,6 +216,7 @@ local function Constructor()
     content.obj = widget
     widget.content = content
 
+    ns.AttachMinimize(widget, TITLE_HEIGHT + 2)
     return AceGUI:RegisterAsContainer(widget)
 end
 

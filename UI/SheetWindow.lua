@@ -16,6 +16,7 @@ function RPSheet:BuildWindow()
     window:SetLayout("Fill")
     window:SetTheme(theme)
     window:SetCallback("OnLockClick", function() self:ToggleLock() end)
+    window:SetCallback("OnMinimizeClick", function() self:ToggleMinimized() end)
     window:SetCallback("OnEditClick", function() AceConfigDialog:Open(ADDON) end)
     window:SetCallback("OnClose", function() saved.shown = false end)
     window:SetCallback("OnShow", function() saved.shown = true; self:Refresh() end)
@@ -28,6 +29,7 @@ function RPSheet:BuildWindow()
 
     self:Populate()
     self:ApplyLock()
+    window:SetMinimized(self.db.profile.minimized)
     if not saved.shown then window:Hide() end
 end
 
@@ -47,6 +49,12 @@ function RPSheet:ToggleLock()
     self:Refresh()
 end
 
+-- Minimized: only the title bar shows until the mouse is over the window.
+function RPSheet:ToggleMinimized()
+    self.db.profile.minimized = not self.db.profile.minimized
+    self.window:SetMinimized(self.db.profile.minimized)
+end
+
 -- Re-skins the window after a theme change (see Themes.lua).
 function RPSheet:ApplyTheme()
     local theme = self.db.profile.theme
@@ -61,6 +69,7 @@ function RPSheet:SettingsChanged()
     if not self.window then return end
     self.window:SetStatusTable(self.db.profile.window)
     self:ApplyLock()
+    self.window:SetMinimized(self.db.profile.minimized)
     self:SetMinimapIconShown(not self.db.profile.minimap.hide)
     self:ApplyTheme()
 end

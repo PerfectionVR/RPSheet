@@ -158,6 +158,7 @@ Actions\DeathSaves.lua
 Actions\Damage.lua
 
 # The sheet window
+UI\WindowMinimize.lua
 UI\Window.lua
 UI\Bar.lua
 UI\TermLabel.lua

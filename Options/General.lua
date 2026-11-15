@@ -63,6 +63,13 @@ Opt.tabs.general = {
             get = function() return Profile().locked end,
             set = function() RPSheet:ToggleLock() end,
         },
+        minimized = {
+            type = "toggle", order = 7.5, width = "full",
+            name = "Minimize the sheet window",
+            desc = "The window shows only its title bar. It opens while the mouse is over it and folds up again when the mouse leaves.",
+            get = function() return Profile().minimized end,
+            set = function() RPSheet:ToggleMinimized() end,
+        },
         minimap = {
             type = "toggle", order = 8, width = "full",
             name = "Show minimap icon",

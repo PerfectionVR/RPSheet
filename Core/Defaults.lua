@@ -9,6 +9,7 @@ ns.defaults = {
         tooltip = true,
         share = true,
         locked = false,
+        minimized = false, -- the sheet window is only its title bar until hovered
         minimap = { hide = false },
         themePreset = "DARK",
         theme = CopyTable(ns.Themes.DARK),
