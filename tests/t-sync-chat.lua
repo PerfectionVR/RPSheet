@@ -94,11 +94,11 @@ Section("long lines and text the chat refuses", function()
             sent = Say(anna, channel, ("a"):rep(shift) .. ("\240\159\152\128"):rep(100))
             Check(sent and #sent.text <= 255 and VALID_UTF8(sent.text), ("%s: four-byte characters, shift %d"):format(channel, shift))
         end
-        -- a long line of marked terms: cut wherever, it is still plain text
-        local sent = Say(anna, channel, "attacks with " .. (anna.ns.Mark("Greatsword") .. " and "):rep(30))
+        -- a long line of marked terms: it is still plain text, in as many messages as it takes
+        local sent, _, count = Say(anna, channel, "attacks with " .. (anna.ns.Mark("Greatsword") .. " and "):rep(30))
         Check(sent and #sent.text <= 255 and not sent.text:find("|", 1, true), channel .. ": a long line of terms")
-        local shown = Last(bert).text
-        Eq(Unlinked(shown), sent.text, channel .. ": the links change nothing else of a cut line")
+        local shown = bert.chat[#bert.chat - count + 1].text
+        Eq(Unlinked(shown), sent.text, channel .. ": the links change nothing else of a split line")
         -- what the player typed into a name
         sent = Say(anna, channel, "uses [Sword |cffff0000of|r Doom]\nand |Hitem:1|h[cheats]|h\tand ||more|n.")
         Check(sent and Plain(sent.text, 255), channel .. ": pipes and line breaks are left out: " .. tostring(sent and sent.text))
@@ -118,6 +118,88 @@ Section("long lines and text the chat refuses", function()
     Check(sent and #sent.text <= 255, "a name longer than a chat line")
     anna.addon.db.char.name = ""
     Eq(#world.violations, 0, "lines the game would have refused")
+    world:Advance(15) -- that was a lot of chat: let the addon channel's own throttle recover
+end)
+
+Section("a line too long for one message", function()
+    local MORE, ON = " ...", "(continued) "
+    -- The messages one announcement became, as the party sees them, and the line put together again.
+    local function Parts(channel, text)
+        local first, _, count = Say(anna, channel, text)
+        local list = {}
+        for i = #world.chatLog - count + 1, #world.chatLog do list[#list + 1] = world.chatLog[i].text end
+        local whole = {}
+        for i, part in ipairs(list) do
+            local label = ("%s, message %d of %d: "):format(channel, i, #list)
+            Check(#part <= 250 and VALID_UTF8(part) and Plain(part, 250), label .. "within the limit and plain: " .. part)
+            if channel ~= "EMOTE" then
+                Check(part:sub(1, 5) == "Anna ", label .. "starts with the name: " .. part)
+                part = part:sub(6)
+            end
+            if i > 1 then
+                Check(part:sub(1, #ON) == ON, label .. "is marked as the rest of a line: " .. part)
+                part = part:sub(#ON + 1)
+            end
+            if i < #list then
+                Check(part:sub(-#MORE) == MORE, label .. "says more follows: " .. part)
+                part = part:sub(1, -#MORE - 1)
+            end
+            -- no marked term is cut in two
+            local open, close = select(2, part:gsub("%[", "")), select(2, part:gsub("%]", ""))
+            Eq(open, close, label .. "brackets opened and closed")
+            whole[#whole + 1] = part
+        end
+        return list, whole
+    end
+    local attack = "attacks with [Greatsword of the Seven Storms] - to hit [advantage: 14, 6] 14 + 9 = 23, " ..
+        "damage 2d6 (4, 5) + 1d8 (7) [Divine Favor] + 2d6 (3, 3) [Sneak Attack] + 5 = 27 slashing, mastery [Graze]: " ..
+        "a miss still deals 5 damage; the target is [Frightened] until the end of its next turn. " ..
+        "On a hit the wielder may move 10 feet without provoking - total 27"
+    Check(#attack > 250, "the line is too long for one message")
+    for _, channel in ipairs({ "EMOTE", "PARTY" }) do
+        local list, whole = Parts(channel, attack)
+        Eq(#list, 2, channel .. ": messages for a line of " .. #attack .. " bytes")
+        Eq(table.concat(whole, " "), attack, channel .. ": nothing is lost")
+        Check(list[#list]:find("total 27", 1, true), channel .. ": the result at the end arrives")
+        -- what the party sees of the second message: still a line of ours, its terms linked
+        local shown = bert.chat[#bert.chat].text
+        Eq(Unlinked(shown), list[#list], channel .. ": the links change nothing else")
+        Check(#Links(shown) >= 1, channel .. ": the terms of the second message are links")
+        -- a player's own ability in the rest of the line can be asked about too
+        list = Parts(channel, "uses [My Own Trick] - " .. ("and then some more of it, "):rep(9) .. "ending with [Another Trick Of Mine] for 12")
+        shown = bert.chat[#bert.chat].text
+        Check(shown:find("addon:rpsheet:Anna-Realm:Another Trick Of Mine", 1, true), channel .. ": an own term after the break is a link: " .. shown)
+    end
+    -- breaks fall between parts where there are any, between words otherwise
+    local list = Parts("PARTY", ("first part of the line, "):rep(8) .. "and a result - " .. ("second part "):rep(9) .. "= 19")
+    Check(list[1]:sub(-#"a result" - #MORE) == "a result" .. MORE, "a dash is the best place: " .. list[1])
+    list = Parts("PARTY", ("word "):rep(70) .. "= 19")
+    Check(list[1]:sub(-#"word" - #MORE) == "word" .. MORE and list[2]:find(ON .. "word", 1, true), "between words: " .. list[1])
+    -- terms back to back: never inside one
+    for shift = 0, 12 do
+        Parts("EMOTE", ("x"):rep(shift) .. " " .. ("[Term With Words] "):rep(20) .. "= 7")
+    end
+    -- accented letters where the break falls, with no space anywhere near
+    for shift = 0, 5 do
+        list = Parts("EMOTE", ("a"):rep(shift) .. ("\195\169"):rep(200) .. " = 7")
+        Check(#list == 2 and list[2]:find("= 7", 1, true), ("accented letters, shift %d: %d messages"):format(shift, #list))
+    end
+    -- three messages, and the end of a line that would take more than four
+    list = Parts("PARTY", ("some words, "):rep(55) .. "total 99")
+    Check(#list == 3 and list[3]:find("total 99", 1, true), "a line of 670 bytes takes three messages, got " .. #list)
+    local first, _, count = Say(anna, "EMOTE", ("some words, "):rep(200) .. "total 99")
+    Eq(count, 4, "an endless line stops at four messages")
+    Check(world.chatLog[#world.chatLog].text:sub(-3) == "..." and #world.chatLog[#world.chatLog].text <= 250, "and its last one is cut")
+    -- a line that fits is one message, to the byte
+    for length = 244, 252 do
+        local _, _, sent = Say(anna, "EMOTE", ("x"):rep(length - 5) .. " = 19")
+        Eq(sent, length <= 250 and 1 or 2, "messages for an emote of " .. length .. " bytes")
+    end
+    -- shown to the player alone, a long line stays one line
+    local _, printed, sent = Say(anna, "SELF", attack)
+    Check(sent == 0 and printed:find("total 27", 1, true) and not printed:find(ON, 1, true), "self only is not split")
+    Eq(#world.violations, 0, "lines the game would have refused")
+    world:Advance(20)
 end)
 
 Section("what play really announces", function()

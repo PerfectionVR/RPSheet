@@ -98,7 +98,7 @@ function RPSheet:Refresh()
     self:QueueBroadcast()
     local state = self:State()
     self.window:SetTitle(self:GetCharacterName())
-    self.channelLabel:SetText(("Announce to: %s%s|r"):format(UI.ACCENT, ns.CHANNEL_LABEL[self.db.profile.channel]))
+    self.channelLabel:SetText(("Announce to: %s%s|r"):format(UI.ACCENT, ns.ChannelLabel(self.db.profile.channel)))
     if self.rollModeLabel then
         local mode = self.rollMode
         local text = (mode == "ADV" and "|cff80ff80Advantage|r") or (mode == "DIS" and "|cffff5555Disadvantage|r") or (UI.ACCENT .. "Normal|r")

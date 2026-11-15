@@ -160,6 +160,7 @@ Sheet\LevelStore.lua
 Sheet\LevelMigrate.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
+Sheet\Blank.lua
 Sheet\Derived.lua
 Sheet\DerivedScores.lua
 Sheet\DerivedEffects.lua
@@ -248,6 +249,7 @@ Sheet\LevelUp.lua
 Sheet\PassCache.lua
 
 # Things the character does
+Actions\AnnounceSplit.lua
 Actions\Announce.lua
 Actions\Dice.lua
 Actions\Weapons.lua
@@ -268,6 +270,7 @@ Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
+Actions\RestUndo.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua
 Actions\WardDamage.lua
@@ -335,6 +338,10 @@ UI\SheetContent.lua
 UI\Minimap.lua
 
 Integrations\TRP3Tooltip.lua
+Integrations\SyncPayload.lua
+Integrations\SyncSend.lua
+Integrations\SyncReceive.lua
+Integrations\SyncTerms.lua
 Integrations\Sync.lua
 Integrations\ChatLinks.lua
 
@@ -407,4 +414,5 @@ Options\Appearance.lua
 Options\Transfer.lua
 Options\Root.lua
 
+Core\Slash.lua
 Core\Startup.lua

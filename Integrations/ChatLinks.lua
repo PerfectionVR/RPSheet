@@ -67,7 +67,9 @@ end
 -- Turning marked terms into links
 ---------------------------------------------------------------------------
 -- Lines the addon itself announces start with one of these after the character's name.
-local OURS = { "rolls %[", "attacks with %[", "uses %[", "casts %[", "is now %[", "is no longer %[" }
+-- The rest of a line that took more than one message starts with the mark of that
+-- (Actions/AnnounceSplit.lua).
+local OURS = { "rolls %[", "attacks with %[", "uses %[", "casts %[", "is now %[", "is no longer %[", "%(continued%) " }
 
 -- Links every marked term in `text` that the rules data knows; in a line that reads
 -- like one of ours, the others too (a player's own ability can be asked about).

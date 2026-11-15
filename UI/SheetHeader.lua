@@ -30,8 +30,15 @@ function UI.HeaderSection(self, body)
             "Cast at", "The slot your next spell uses. Normally the lowest free slot that fits. Click to pick a higher level: spells that grow with the slot roll more dice. It goes back to the lowest after one spell.")
     end
 
-    UI.AddLabel(body, 0.5, UI.ACCENT .. "Short rest|r", function() self:ShortRest() end,
-        "Short rest", "Gives back what recharges on a short rest. To heal, click the Hit Dice bar.")
-    UI.AddLabel(body, 0.5, UI.ACCENT .. "Long rest|r", function() self:LongRest() end,
-        "Long rest", "Restores HP, hit dice, class resources, your own resources and spell slots.")
+    -- A rest happens at one click; a right-click takes the last one back (Actions/RestUndo.lua).
+    local UNDO = "\n\nRight-click: take the last rest back. That works until your next roll, spell, damage or rest."
+    local function Rest(rest)
+        return function(button)
+            if button == "RightButton" then self:UndoRest() else rest(self) end
+        end
+    end
+    UI.AddLabel(body, 0.5, UI.ACCENT .. "Short rest|r", Rest(self.ShortRest),
+        "Short rest", "Gives back what recharges on a short rest. To heal, click the Hit Dice bar." .. UNDO)
+    UI.AddLabel(body, 0.5, UI.ACCENT .. "Long rest|r", Rest(self.LongRest),
+        "Long rest", "Restores HP, hit dice, class resources, your own resources and spell slots." .. UNDO)
 end

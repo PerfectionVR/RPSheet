@@ -14,7 +14,8 @@ rest is grouped by window and can be done in any order.
 - Switch on Lua errors so nothing fails silently: `/console scriptErrors 1`, then `/reload`.
 - Have one other addon with an Ace3 settings window installed (for section J), and
   Total RP 3 for section L.
-- Section M needs a second player with RP Sheet, in your party.
+- Section M needs a second player with RP Sheet, in your party; some of its lines also a
+  third player, the other faction, another realm, or the released version 0.6.0.
 - A spellcaster of level 5 or higher shows the most. The example character
   (settings > General > Load example character) is enough for sections A to C.
 
@@ -78,7 +79,7 @@ rest is grouped by window and can be done in any order.
 - [ ] D7. Hover a link ([Vex], a skill, a spell, a condition). *A tooltip with what the term means and "Click to see how your number is worked out."*
 - [ ] D8. Click your own link. *The breakdown of that number is printed for you alone.*
 - [ ] D9. Post an item link and a `[text in brackets]` of your own in party chat. *The item link still works; brackets the rules don't know stay plain text.*
-- [ ] D10. Make an announcement longer than a chat line (a spell with many notes). *It is cut with "..." and still sent; no error from the game.*
+- [ ] D10. Make an announcement longer than a chat line (a spell with many notes). *It is sent as two or more lines: the first ends in "...", the next starts with "(continued)", the break falls between parts of the line and the result at the end is there; no error from the game.*
 - [ ] D11. Roll during combat in a dungeon or raid encounter. *Either it works, or the line is shown to you with "the game blocks addon chat messages right now"; no error.*
 
 ## E. Item browser, stable, crafting
@@ -166,24 +167,66 @@ bars are all readable in that theme; nothing is white on light or dark on dark.*
 
 ## M. Two players
 
-Two players, A and B, both with RP Sheet and Total RP 3, same faction, sharing on.
+Two players, A and B, both with RP Sheet and Total RP 3, same faction and realm, sharing
+on, unless a line says otherwise. Lines that need a third player, another realm, the
+other faction or an older version say so; skip the ones you can't set up.
 
-- [ ] M1. Not grouped. B hovers over A. *Within a moment B's Total RP 3 tooltip of A gains the "Stats" section with A's numbers.*
-- [ ] M2. A loses 5 hit points; B hovers A again within half a minute, then after it. *B sees the old value at first (A is only asked again after 30 seconds), then the new one.*
-- [ ] M3. A and B form a party. A loses hit points. *About two seconds later B's tooltip of A shows the new value without B asking.*
-- [ ] M4. A ticks a condition and raises exhaustion. *B's tooltip of A lists them.*
-- [ ] M5. A takes a long rest with the sheet window closed. *B still sees A's full hit points.*
-- [ ] M6. A announces a skill check to Party. *B sees the line with the terms as links, and A's `/roll`.*
-- [ ] M7. B hovers a term in A's line. *The term's meaning and "Click to ask A's sheet about it."*
-- [ ] M8. B clicks it. *B's chat: "Asking A's sheet about ...", then "A - ..." with A's breakdown. A sees nothing.*
-- [ ] M9. A unticks "Share my stats". A changes hit points; B reloads and hovers A. *B sees no Stats section for A (B reloads first because what was received is kept until then).*
-- [ ] M10. With A's sharing off, B clicks a term in A's line. *B sees "Asking A's sheet about ..." and then nothing more.*
-- [ ] M11. With A's sharing off, A hovers B. *A still sees B's stats.*
-- [ ] M12. A third player without the addon reads A's announcement. *Plain text with the terms in square brackets, nothing odd.*
+Stats in the tooltip:
+
+- [ ] M1. Not grouped. B hovers A, then targets A. *Within a moment B's Total RP 3 tooltip of A gains the "Stats" section with A's numbers, once (never two "Stats" titles).*
+- [ ] M2. A loses 5 hit points; B hovers A again within half a minute, then after it. *B sees the old value at first and nothing is asked again (A is only asked once per 30 seconds), then the new one.*
+- [ ] M3. A and B form a party. A loses hit points, ticks a condition, raises exhaustion, switches weapon. *About two seconds after each change B's tooltip of A shows it without B asking.*
+- [ ] M4. B keeps the mouse on A while A changes hit points. *The open tooltip updates in place; the Stats section is still there once.*
+- [ ] M5. A takes a long rest with the sheet window closed. *B sees A's full hit points.*
+- [ ] M6. B types `/reload` while grouped and doesn't hover anyone. *Within about five seconds B has A's stats again (hover to look), and A has B's.*
+- [ ] M7. B logs out and in again (not a reload) into the same group. *The same: stats both ways within a few seconds.*
+- [ ] M8. A third player C with the addon joins the party. *C gets A's and B's stats and they get C's, without hovering.*
+- [ ] M9. Convert the party to a raid. *Stats keep arriving after the next change; no error for anyone.*
+- [ ] M10. Many clicks on the sheet for a few minutes in the raid (rolls, damage, healing, conditions). *No disconnect, no "throttled" errors, and the others' tooltips end up on the last values.*
+
+Realms and factions:
+
+- [ ] M11. A and B from different realms, one of them a realm with a space or an apostrophe in its name. *Stats arrive both ways, grouped and by hovering.*
+- [ ] M12. Two characters with the same name on two realms, both in A's group. *A's tooltips show each one's own stats, never the other's.*
 - [ ] M13. A and B of different factions, in one party. *The code expects stats to arrive through the party, and nothing to be asked by hovering outside one. Note what really happens.*
+
+Sharing switched off:
+
+- [ ] M14. In a party, A unticks "Share my stats". *B's tooltip of A loses its Stats section at once, without a reload; A's tooltip of B has none either.*
+- [ ] M15. With A's sharing off: A changes hit points, hovers and targets B; B hovers A. *Nothing arrives either way; neither tooltip has a Stats section; no error.*
+- [ ] M16. With A's sharing off, B clicks a term in A's announcement. *B sees "Asking A's sheet about ..." and a few seconds later "A's sheet didn't answer."*
+- [ ] M17. A ticks "Share my stats" again. *Within a few seconds both tooltips have their Stats sections back, without hovering first.*
+
+Total RP 3 profiles:
+
+- [ ] M18. A switches Total RP 3 profile during play with the sheet window closed, to a profile with another character. *B's tooltip of A shows the other character after a few seconds.*
+- [ ] M19. A switches to a profile without a character. *The wizard is offered to A once (not again on switching back and forth); B's tooltip of A has no Stats section.*
+- [ ] M20. A character made without Total RP 3; then Total RP 3 is enabled and A logs in. *The character is on the profile at the first login, no wizard is offered, and B sees its stats.*
+- [ ] M21. Total RP 3's tooltip options, one at a time: show the profile only, hide in combat, cropped text blocks. *The Stats section is below the OOC block or absent with the tooltip, never doubled and never in the middle of another block.*
+
+Announcements and terms:
+
+- [ ] M22. A announces a skill check on Emote, then Party, then Raid. *B sees the line with the terms as coloured links each time, and A's `/roll`.*
+- [ ] M23. B hovers a term in A's line. *The term's rule text and "Click to ask A's sheet about it."*
+- [ ] M24. B clicks it. *B's chat: "Asking A's sheet about ...", then "A - ..." with the breakdown from A's sheet. A sees nothing.*
+- [ ] M25. A player of the other faction clicks a term in A's emote. *"Asking A's sheet about ..." and then "A's sheet didn't answer."*
+- [ ] M26. Someone posts an item link and a spell link in the same chat, next to a line of the addon. *Both links still open their own tooltips; neither is turned into one of ours.*
+- [ ] M27. A, with an accented letter in the character's name, announces a very long line (an attack with many dice and notes) on Emote and on Party. *It arrives as two or three messages, the first ending in "...", the next starting with "(continued)"; no letter is broken, every term is a whole link, the result at the end is there.*
+- [ ] M28. A third player without the addon reads A's announcements. *Plain text with the terms in square brackets, nothing odd.*
+- [ ] M29. A takes a long rest on Party, then types `/sheet undo`. *B reads "finishes a long rest." and then "takes back the long rest: ..."; B's tooltip of A is back on the hit points from before the rest.*
+
+Blocked messages and versions:
+
+- [ ] M30. Both enter an instance or encounter where the game blocks addon messages; A rolls and changes hit points. *No errors; A's announcements are shown to A alone with "the game blocks addon chat messages right now"; B's tooltip stays on the old values.*
+- [ ] M31. The block ends (the encounter is over) and A does nothing. *Within about ten seconds B's tooltip of A is on A's current values.*
+- [ ] M32. A on this version, B on the released 0.6.0. *Stats arrive both ways, by hovering and in a party; when A switches sharing off, B keeps the last copy until B reloads.*
 
 ## N. Odds and ends
 
 - [ ] N1. `/sheet`, `/sheet config`, `/sheet new`, `/sheet lock`, `/sheet rest`, `/sheet damage 14 fire`, `/sheet damage 28 fire -5`, `/sheet heal 8`, and each with `/rpsheet`. *Each does what the README's table says; `/sheet damage 5 banana` names the valid types.*
+- [ ] N1a. `/sheet short`, `/sheet rest short`, `/sheet tab items` (and each other tab, also while the sheet is hidden), `/sheet items`, `/sheet level`, `/sheet help`. *A short rest; the sheet shows with that tab open; the item browser shows or hides; the level dialog opens (or a line says why not); the help lists every command.*
+- [ ] N1b. Take a long rest by mistake, then `/sheet undo`; rest again, and right-click "Long rest" instead. *Hit points, slots, resources and conditions are as before the rest and one line says so on the announce channel; after a roll, a spell or damage the undo says there is nothing to take back.*
+- [ ] N1c. Hover the cog in the sheet's title bar. *The tooltip says "Settings" and names what the settings window holds.*
+- [ ] N1d. Log in on a character or Total RP 3 profile without a sheet, close the wizard with the window's own close button, log out, and look at `WTF/Account/<name>/SavedVariables/RPSheetDB.lua`. *No entry under `sheets` for that key; the entries of characters that exist are untouched.*
 - [ ] N2. Log in while in combat on a fresh profile. *The wizard is not opened in combat.*
 - [ ] N3. Open and use the sheet during combat. *Clicks, rolls and the settings window work; no "action blocked" message.*

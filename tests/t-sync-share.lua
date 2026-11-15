@@ -143,7 +143,7 @@ end)
 Section("sharing switched off", function()
     local before = #world.wire
     anna.addon.db.profile.share = false
-    anna.addon:QueueBroadcast() -- what the setting's switch does
+    anna.addon:QueueBroadcast() -- (the switch itself, and what it tells the group: t-sync-switch.lua)
     anna.addon:TakeDamage(2)
     world:Advance(5)
     Eq(world:Traffic(anna, before), 0, "messages from a client with sharing off")

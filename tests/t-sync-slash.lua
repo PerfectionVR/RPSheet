@@ -108,6 +108,95 @@ Section("damage and healing", function()
     Heal("/sheet heal 4", 0, 4, "is back up")
 end)
 
+Section("short rest, undo, tab, items, level", function()
+    -- rests
+    local wind
+    for _, tracker in ipairs(addon:GetTrackers()) do if tracker.label == "Second Wind" then wind = tracker end end
+    for _, line in ipairs({ "/sheet short", "/sheet SHORT", "/sheet rest short", "/sheet  rest   short ", "/rpsheet short" }) do
+        addon:State().hp = 5
+        wind.set(0)
+        local text, toggled = Run(line)
+        Check(text:find("finishes a short rest", 1, true) and toggled == 0, ("\"%s\" is a short rest: %s"):format(line, text))
+        Check(wind.get() > 0 and HP() == 5, ("\"%s\": what a short rest gives back, and no hit points"):format(line))
+    end
+    addon:State().hp = 5
+    local text = Run("/sheet rest long")
+    Check(text:find("finishes a long rest", 1, true) and HP() == MAX, "\"/sheet rest long\" is a long rest")
+    text = Run("/sheet undo")
+    Check(text:find("takes back the long rest", 1, true) and HP() == 5, "\"/sheet undo\" takes it back: " .. text)
+    text = Run("/sheet UNDO")
+    Check(text:find("no rest to take back", 1, true) and HP() == 5, "and says so when there is nothing to take back: " .. text)
+
+    -- tabs: every name the sheet has, in any case, and the start of one
+    local source = io.open(ARG1 .. "/UI/SheetContent.lua", "rb"):read("*a")
+    local names = {}
+    for name in source:match("local TABS = (%b{})"):gmatch("{ name = \"(%a+)\"") do names[#names + 1] = name end
+    Check(#names >= 6, "the sheet's tabs were found in UI/SheetContent.lua: " .. table.concat(names, " "))
+    local populated = 0
+    local populate = addon.Populate
+    addon.Populate = function(this) populated = populated + 1; return populate(this) end
+    for _, name in ipairs(names) do
+        for _, typed in ipairs({ name, name:lower(), name:upper(), name:lower():sub(1, 4) }) do
+            addon.db.char.sheetTab = "none"
+            local before = populated
+            local shown, toggled = Run("/sheet tab " .. typed)
+            Eq(addon.db.char.sheetTab, name, ("\"/sheet tab %s\" opens the tab"):format(typed))
+            Check(populated > before and toggled == 0 and shown == "", ("\"/sheet tab %s\" redraws the sheet and says nothing: %s"):format(typed, shown))
+        end
+    end
+    local usage = Run("/sheet help")
+    for _, name in ipairs(names) do Check(usage:find(name:lower(), 1, true), "the help names the tab " .. name) end
+    -- shown when it was hidden
+    local shows = 0
+    addon.window = setmetatable({ frame = { IsShown = function() return false end }, Show = function() shows = shows + 1 end },
+        { __index = function() return function() end end })
+    Run("/sheet tab items")
+    Eq(shows, 1, "a hidden sheet is shown for the tab")
+    addon.window.frame.IsShown = function() return true end
+    Run("/sheet tab trade")
+    Eq(shows, 1, "one that is open is left open")
+    addon.db.char.sheetTab = "Actions"
+    for _, line in ipairs({ "/sheet tab", "/sheet tab nothing", "/sheet tab x", "/sheet tab tra", "/sheet tab t" }) do
+        local shown = Run(line)
+        Check(shown:find("Which tab?", 1, true) and shown:find("Actions, Checks", 1, true), ("\"%s\" names the tabs: %s"):format(line, shown))
+        Eq(addon.db.char.sheetTab, "Actions", ("\"%s\" leaves the tab"):format(line))
+    end
+    addon.Populate = populate
+
+    -- the item browser
+    local browser = 0
+    addon.ToggleItemBrowser = function() browser = browser + 1 end
+    for _, line in ipairs({ "/sheet items", "/sheet ITEMS", "/rpsheet items " }) do Run(line) end
+    Eq(browser, 3, "\"/sheet items\" shows or hides the item browser")
+
+    -- the level dialog
+    local asked = {}
+    local open = anna.ns.OpenLevelDialog
+    anna.ns.OpenLevelDialog = function(...) asked[#asked + 1] = { n = select("#", ...), ... } end
+    text = Run("/sheet level")
+    Eq(#asked, 1, "\"/sheet level\" opens the level dialog: " .. text)
+    Eq(addon:Sheet().level, 5, "and takes no level by itself")
+    addon:Sheet().level = anna.ns.Rules.MAX_LEVEL
+    text = Run("/sheet level")
+    Check(#asked == 1 and text:find("highest level", 1, true), "at the highest level it says so: " .. text)
+    addon:Sheet().level = 5
+    local class = addon:Sheet().class
+    addon:Sheet().class = ""
+    text = Run("/sheet level")
+    Check(#asked == 1 and text:find("/sheet new", 1, true), "without a character it points to the wizard: " .. text)
+    addon:Sheet().class = class
+    anna.ns.OpenLevelDialog = open
+    Run("/sheet level")
+    world:Advance(1)
+    Check(anna.opened.RPSheetLevel == true and anna.ns.LevelDialog.draft ~= nil, "the real dialog opens for the next level")
+    anna.opened, anna.ns.LevelDialog.draft = {}, nil
+
+    -- all of them are in the help
+    for _, piece in ipairs({ "/sheet short", "/sheet rest short", "/sheet undo", "/sheet tab", "/sheet items", "/sheet level", "/sheet rest - long rest" }) do
+        Check(usage:find(piece, 1, true), "the help lists " .. piece)
+    end
+end)
+
 Section("words it doesn't know", function()
     for _, line in ipairs({ "/sheet help", "/sheet confg", "/sheet config now", "/sheet rest now", "/sheet lock please", "/sheet new character",
         "/sheet damages 5", "/sheet 5", "/sheet ?", "/sheet -", "/sheet d\195\164mage 5", "/sheet |cffff0000config|r", "/sheet |Hitem:1|h[x]|h",
