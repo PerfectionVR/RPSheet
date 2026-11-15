@@ -257,6 +257,16 @@ Options\Character.lua
 Options\Multiclass.lua
 Options\MulticlassPage.lua
 Options\FeatChoices.lua
+Options\LevelDialogState.lua
+Options\LevelDialogCounts.lua
+Options\LevelDialogCheck.lua
+Options\LevelDialogGains.lua
+Options\LevelDialogClass.lua
+Options\LevelDialogFeat.lua
+Options\LevelDialogPoints.lua
+Options\LevelDialogSkills.lua
+Options\LevelDialogPicks.lua
+Options\LevelDialogApply.lua
 Options\LevelDialog.lua
 Options\RenownPerks.lua
 Options\Origin.lua
