@@ -175,6 +175,7 @@ UI\PetSection.lua
 UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemBrowser.lua
+UI\ItemBrowserSheet.lua
 UI\SheetTabs.lua
 UI\SheetContent.lua
 UI\Minimap.lua
@@ -188,6 +189,7 @@ Options\Common.lua
 Wizard\Grants.lua
 Wizard\Draft.lua
 Wizard\Closet.lua
+Wizard\ClosetBrowser.lua
 Wizard\Pages.lua
 Wizard\Dialog.lua
 Options\General.lua

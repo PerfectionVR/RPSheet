@@ -99,10 +99,11 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   always shown; Actions (abilities, spells, companion), Checks (ability checks and
   saving throws), Skills (with tools), Traits (passives, languages, renown) and
   Items (coins and inventory) are tabs. The open tab is remembered.
-- The creation wizard has a starting closet in place of the single main weapon:
-  open a drawer (weapons, armor, packs, focuses, gear, tools), take as many things as
-  you like, and tick which armor, shield and weapons you have equipped. Everything
-  taken goes into the inventory.
+- The creation wizard has a starting closet in place of the single main weapon. It
+  opens as the item browser: every weapon, suit of armor and piece of gear is a
+  block that says what it does, with Take, Put back and Equip buttons. Take as many
+  things as you like, more than one of each too; everything taken goes into the
+  inventory.
 - Equipping armor, a shield or a basic weapon in the inventory now does something:
   the armor counts for your Armor Class (one suit at a time), the shield is raised,
   and the weapon joins the ones on the weapon row. Putting it away takes it off the
