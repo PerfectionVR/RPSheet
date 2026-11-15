@@ -25,6 +25,8 @@ function RPSheet:LongRest()
     local state = self:State()
     EndFormAfter(self, 8)
     self:EndBenefits() -- no spell benefit outlasts a rest
+    self:EndWards(8)         -- nor a protective spell of 8 hours or less,
+    self:EndWards(nil, true) -- nor one that hangs on concentration
     self:ClampState(true) -- also makes first-use-free abilities free again
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
@@ -47,6 +49,8 @@ function RPSheet:ShortRest()
         self:ClampState()
         self:PopulateSoon()
     end
+    -- A protective spell of an hour or less has run out.
+    if #self:EndWards(1) > 0 then self:PopulateSoon() end
     local regained = {}
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.short then

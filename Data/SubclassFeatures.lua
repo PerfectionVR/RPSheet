@@ -474,7 +474,7 @@ R.SUBCLASS_FEATURES = {
         Ability(6, "Cinnamon Dragon", function(_, sheet)
             return ("Brew. Magic action: toxic flames in a 30-foot cone. Fire damage and poisoned until the end of its next turn; half damage only on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
         end, function(level) return { Dice(4, Kit.MartialDie(level)) } end),
-        Passive(6, "Heavenly Spirit", "Brew. Resistance to two of cold, necrotic, psychic and radiant damage, your choice.", nil, true),
+        Passive(6, "Heavenly Spirit", "Brew. Resistance to two of cold, necrotic, psychic and radiant damage, your choice: switching this on asks which two.", nil, true),
         Ability(6, "Refreshing Dip", "Brew. Whenever you regain hit points, spend a die from the pool to regain that much more. The pool is your Wisdom modifier plus half your level, and is full again with each new brew, so after every rest.",
             function(level) return { Spend("Refreshing Dip Dice"), Dice(1, Kit.MartialDie(level), "", "SELFHEAL") } end),
         Passive(6, "Tipsy Sway", "You can stand up from prone for 5 feet of movement."),

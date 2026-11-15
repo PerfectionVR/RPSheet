@@ -54,6 +54,12 @@ function RPSheet:FormSkill(name)
     return false
 end
 
+-- The bonus the beast the character has become has in a skill by itself, or nil.
+function RPSheet:FormSkillBonus(name)
+    local form = self:Form()
+    return form and form.skillBonus and form.skillBonus[name]
+end
+
 -- The hit points of a Beast Master's companion, as a bar (data in Data/Pets.lua).
 function ns.PetPools(sheet)
     if sheet.subclass ~= "Beast Master" or sheet.level < 3 then return {} end

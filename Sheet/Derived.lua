@@ -197,8 +197,10 @@ end
 function RPSheet:SkillMod(skill)
     local rank = self:Sheet().skills[skill.name] or 0
     if rank == 0 and self:FormSkill(skill.name) then rank = 1 end
-    return self:Mod(skill.stat) + rank * self:ProficiencyBonus()
+    local own = self:Mod(skill.stat) + rank * self:ProficiencyBonus()
         + self:Bonus("SKILL:" .. skill.name) + self:Bonus("SKILLS") + self:Bonus("CHECKS")
+    -- In a beast form the beast's own bonus is used where it is the higher one.
+    return math.max(own, self:FormSkillBonus(skill.name) or own)
 end
 
 function RPSheet:PassivePerception()

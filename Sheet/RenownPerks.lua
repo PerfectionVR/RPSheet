@@ -11,7 +11,7 @@ local PREFIX = "renown:"
 -- that the sheet can apply, lowest tier first.
 local function EachGrant(sheet, visit)
     for _, faction in ipairs(R.ALL_FACTIONS) do
-        local score, perks = tonumber(sheet.renown[faction]) or 0, R.FACTION_PERKS[faction]
+        local score, perks = ns.RenownScore(sheet, faction), R.FACTION_PERKS[faction]
         for index = #R.RENOWN_TIERS, 1, -1 do
             local need, tier = R.RENOWN_TIERS[index][1], R.RENOWN_TIERS[index][2]
             local perk = perks and perks[tier]

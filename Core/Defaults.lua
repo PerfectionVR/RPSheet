@@ -54,6 +54,7 @@ ns.defaults = {
                     renown = {},    -- [faction] = score
                     renownTraining = {}, -- [faction] = language, tool or skill its trainers taught (Sheet/RenownTraining.lua)
                     renownGranted = {},  -- [faction] = the language or skill that pick added
+                    stronghold = "",     -- the faction whose lands the character's stronghold stands in (Sheet/RenownRules.lua)
                     extraLanguages = 0, -- languages granted by features, on top of the usual three
                     asi = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 }, -- points from level-ups
                     background = "", alignment = "",
@@ -76,6 +77,7 @@ ns.defaults = {
                     items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
+                    defensePicks = {},   -- [passive name] = { damage types chosen for its resistance } (Sheet/DefensePicks.lua)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")
                     petMastery = false,  -- the companion's family is one of the Weapon Mastery picks (Sheet/Pet.lua)
                     tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
