@@ -6,20 +6,30 @@ local RPSheet = ns.addon
 local Util = ns.Util
 local RollText = ns.RollText
 
--- The lowest spell slot of at least `level` that still has a use, or nil.
+-- The lowest spell slot of at least `level` that still has a use, or nil. Pact Magic
+-- slots kept beside the others come later in the list, so the whole list is looked at.
 local function FindSlot(self, level)
+    local best
     for _, tracker in ipairs(self:GetTrackers()) do
-        if tracker.kind == "slot" and tracker.level >= level and (tracker.get() or 0) > 0 then
-            return tracker
+        if tracker.kind == "slot" and tracker.level >= level and (tracker.get() or 0) > 0
+            and (not best or tracker.level < best.level) then
+            best = tracker
         end
     end
+    return best
 end
 
 -- The slot levels the character has, lowest first.
 local function SlotLevels(self)
-    local levels = {}
-    for level, count in pairs(self:SpellSlots()) do
-        if count > 0 then levels[#levels + 1] = level end
+    local levels, seen = {}, {}
+    -- Pact Magic slots kept beside the shared ones can be of a level those don't reach.
+    for _, slots in ipairs({ self:SpellSlots(), self:PactSlots() }) do
+        for level, count in pairs(slots) do
+            if count > 0 and not seen[level] then
+                seen[level] = true
+                levels[#levels + 1] = level
+            end
+        end
     end
     table.sort(levels)
     return levels

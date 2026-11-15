@@ -124,7 +124,7 @@ end
 function RPSheet:OnCommReceived(_, message, distribution, sender)
     if type(sender) ~= "string" or (issecretvalue and issecretvalue(sender)) then return end
     if not sender:find("-", 1, true) then
-        sender = sender .. "-" .. GetNormalizedRealmName()
+        sender = sender .. "-" .. (GetNormalizedRealmName() or "") -- the realm isn't known for a moment after login
     end
     if sender == FullName("player") then return end
 

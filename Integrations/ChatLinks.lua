@@ -145,8 +145,10 @@ local function OnClick(link)
 end
 
 function ns.EnableChatLinks()
+    -- The game has moved this function; without either, the terms simply stay plain text.
+    local addFilter = (ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter) or ChatFrame_AddMessageEventFilter
     for _, event in ipairs({ "CHAT_MSG_EMOTE", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER" }) do
-        ChatFrame_AddMessageEventFilter(event, Filter)
+        if addFilter then addFilter(event, Filter) end
     end
     for index = 1, NUM_CHAT_WINDOWS or 10 do
         local frame = _G["ChatFrame" .. index]
