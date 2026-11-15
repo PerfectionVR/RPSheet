@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- Fixes found by running every part of the addon in a test environment:
+  - Levelling: an Epic Boon that raises a score above 20 no longer marks earlier
+    improvements as needing a new choice; taking a level with the suggested subclass
+    no longer leaves you short of prepared spells; hit points from a level's choice
+    are added to your current hit points; a Mage without any of Scholar's skills is
+    no longer asked for an expertise pick nobody can make; expertise left over from
+    another class can be unticked; "Next level in" starts at your first class.
+  - Spells: a scroll does everything its spell does and is only used up once the
+    spell is cast; Magical Cunning restores Pact slots for a multiclass Warlock, who
+    also spends the lowest slot that fits; Warding Bond ends at 0 hit points; in a
+    beast form a Circle of the Moon druid casts only the circle's spells.
+  - Unarmored Defense counts once: with two classes that have it, the first decides.
+  - Items: money typed as "1.5 gp" is refused instead of misread; putting away a
+    plain weapon no longer puts away a named one of the same kind; an item without a
+    price can't be bought for nothing; deleting or selling something you wear takes
+    it off; starting gear of a class or background you changed goes back.
+  - Windows: the last tab or button no longer drops onto a row of its own at some
+    widths; rows no longer end up on top of each other after a rebuild or resize;
+    deleting an entry under Customize can no longer remove a different one; the
+    minimize button works on the spellbook and prepared-spells windows.
+  - New and imported characters no longer inherit the previous one's temporary hit
+    points or rest marks; importing keeps the features you deleted.
 - Saving throws ask what they are against when a trait, feat, blessing, item or
   companion gives you advantage against it, and roll with advantage when you pick
   it; Shift-click skips the question. Gnomish Cunning, War Caster and Eldritch Mind

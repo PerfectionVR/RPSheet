@@ -98,6 +98,7 @@ local classPage = Page(1, {
         set = function(_, value)
             local draft = W.draft
             draft.class = value
+            W.DropStaleGear() -- the old class's starting gear goes back (Wizard/StartingGear.lua)
             draft.subclass, draft.spec, draft.classSkills = "", "", {}
             draft.fightingStyle, draft.fightingStyle2 = "", "" -- the styles on offer differ by class
             W.DropExtra(value) -- it can't be one of the other classes as well
@@ -293,6 +294,7 @@ local originPage = Page(2, {
         get = function() return W.draft.background end,
         set = function(_, value)
             W.draft.background = value
+            W.DropStaleGear() -- the old background's starting gear goes back
             -- The points belong to the old background's abilities; place them again.
             for _, stat in ipairs(R.STATS) do W.draft.bonus[stat] = 0 end
         end,

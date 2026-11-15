@@ -53,8 +53,9 @@ local function Build(item)
             hidden = function() return item.cost <= 0 end,
             disabled = function() return item.qty <= 0 end,
             func = function()
-                item.qty = item.qty - 1
                 RPSheet:AddCoins(math.floor(item.cost / 2), "sold " .. item.name)
+                RPSheet:DropItem(item) -- the last one takes the entry with it, and comes off first
+                ns.RebuildOptions()
                 Opt.Changed()
             end,
         },

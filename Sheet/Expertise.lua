@@ -69,7 +69,17 @@ function ns.ExpertiseLimit(sheet)
             end
         end
     end)
-    return count, (not anySkill and count > 0) and allowed or nil
+    local limited = (not anySkill and count > 0) and allowed or nil
+    -- Picks held to a set of skills can't outnumber the ones of that set the character
+    -- is proficient in: otherwise a choice is asked for that nothing can answer.
+    if limited then
+        local open = 0
+        for skill in pairs(limited) do
+            if (sheet.skills[skill] or 0) >= 1 then open = open + 1 end
+        end
+        count = math.min(count, open)
+    end
+    return count, count > 0 and limited or nil
 end
 
 function ns.ExpertiseKnown(sheet)
