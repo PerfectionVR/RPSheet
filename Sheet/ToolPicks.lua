@@ -9,9 +9,17 @@ local KEY = R.TOOL_PICK_LIST
 
 -- "class" or "background" when one of those already names the tool, or nil.
 function ns.ToolGranted(sheet, name)
+    sheet = sheet.viewOf or sheet -- the whole character, when asked about one class of it
     local class = R.CLASSES[sheet.class]
     for _, tool in ipairs(class and R.CLASS_TOOLS[class.base] or {}) do
         if tool == name then return "class" end
+    end
+    -- A class taken after the first brings only the tools named for that (Data/Multiclass.lua).
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        for _, tool in ipairs(gained and gained.tools or {}) do
+            if tool == name then return "class" end
+        end
     end
     if R.BACKGROUND_TOOLS[sheet.background] == name then return "background" end
 end
@@ -20,7 +28,7 @@ end
 function ns.ToolPicked(sheet, name)
     local picks = sheet.picks and sheet.picks[KEY]
     return picks ~= nil and picks[name] == true and R.PICK_LISTS[KEY].items[name] ~= nil
-        and ns.PickLimit(KEY, sheet.class, sheet.level, sheet.subclass) > 0
+        and ns.SheetPickLimit(sheet, KEY) > 0
 end
 
 -- A kind the character is proficient with from elsewhere can't be picked as well.
@@ -31,7 +39,7 @@ end
 -- Keeps the pick apart from the other sources of the same tool.
 function ns.ApplyToolPicks(sheet)
     local picks = sheet.picks[KEY]
-    if type(picks) ~= "table" or ns.PickLimit(KEY, sheet.class, sheet.level, sheet.subclass) == 0 then return end
+    if type(picks) ~= "table" or ns.SheetPickLimit(sheet, KEY) == 0 then return end
     for name in pairs(picks) do
         if ns.ToolGranted(sheet, name) then
             -- The class or background gives it now: the pick is open again.

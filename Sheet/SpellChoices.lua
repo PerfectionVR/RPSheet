@@ -25,7 +25,7 @@ function ns.SpellChoice(sheet, name)
     for _, key in ipairs(R.SPELL_CHOICE_ORDER) do
         local picks = sheet.picks[key]
         if type(picks) == "table" and picks[name] == true and R.PICK_LISTS[key].items[name]
-            and ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then
+            and ns.SheetPickLimit(sheet, key) > 0 then
             local how = R.SPELL_CHOICES[key]
             -- A spell that left the spellbook since is no longer mastered.
             if not how.book or ns.InSpellbook(sheet, name) then return how end
@@ -41,7 +41,7 @@ function ns.ApplySpellChoices(sheet)
     local wanted = {}
     for _, key in ipairs(R.SPELL_CHOICE_ORDER) do
         local picks, how = sheet.picks[key], R.SPELL_CHOICES[key]
-        if type(picks) == "table" and ns.PickLimit(key, sheet.class, sheet.level, sheet.subclass) > 0 then
+        if type(picks) == "table" and ns.SheetPickLimit(sheet, key) > 0 then
             for name in pairs(picks) do
                 local auto = PREFIX .. name
                 -- Gone from the spellbook, or deleted from the spell list by the player.

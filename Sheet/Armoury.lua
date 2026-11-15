@@ -19,6 +19,19 @@ function ns.WeaponProficient(classKey, name)
     return text:find("martial") ~= nil
 end
 
+-- The same for a whole character: a class taken after the first can add the martial
+-- weapons (Data/Multiclass.lua), never more.
+function ns.SheetWeaponProficient(sheet, name)
+    if ns.WeaponProficient(sheet.class, name) then return true end
+    local weapon = R.WEAPONS[name]
+    if not weapon or weapon.category == "SIMPLE" then return false end
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        if gained and gained.martial then return true end
+    end
+    return false
+end
+
 -- Basic weapons a class is proficient with, in the usual order.
 function ns.ProficientWeapons(classKey)
     local names = {}
@@ -86,7 +99,7 @@ function RPSheet:WeaponDice(weapon)
     -- Martial Arts: a monk weapon rolls the Martial Arts die when that is the larger one.
     local sheet = self:Sheet()
     if data and count == 1 and not data.ranged and (data.category == "SIMPLE" or data.props.L) and ns.HasFeature(sheet, "Martial Arts") and ns.Unarmored(sheet) then
-        sides = math.max(sides, ns.FeatureKit.MartialDie(sheet.level))
+        sides = math.max(sides, ns.FeatureKit.MartialDie((ns.BaseView(sheet, "Monk") or sheet).level))
     end
     return count, sides
 end

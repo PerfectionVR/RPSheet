@@ -10,6 +10,9 @@
 -- }
 -- sheet.asi (the total from level-ups, used for the scores) is worked out from these.
 -- A feat chosen here is a passive marked auto = "level:<n>".
+-- <n> is the level for a character of one class. With several classes it is the number
+-- of a level of one class (Sheet/ClassSlots.lua): a class gives its improvements at
+-- its own levels.
 local _, ns = ...
 local R = ns.Rules
 
@@ -32,10 +35,11 @@ function Levels.NewRecord(kind)
 end
 
 -- The choice a level asks for: "ASI" (an improvement or a feat), "BOON" (an Epic Boon
--- feat), or nil for a level without one.
-function Levels.Kind(sheet, level)
+-- feat), or nil for a level without one. It goes by the level of the class.
+function Levels.Kind(sheet, slot)
+    local key, level = ns.SlotClass(sheet, slot)
     if level == R.EPIC_BOON_LEVEL then return "BOON" end
-    local class = R.CLASSES[sheet.class]
+    local class = R.CLASSES[key]
     for _, list in ipairs({ R.ASI_LEVELS, class and class.asiLevels or {} }) do
         for _, improvement in ipairs(list) do
             if improvement == level then return "ASI" end
@@ -60,7 +64,7 @@ end
 -- An ability score as it stands without the points of `level`'s own choice.
 local function ScoreBefore(sheet, level, stat)
     local previous = Levels.Record(sheet, level)
-    local counted = previous and level <= sheet.level and previous.asi[stat] or 0
+    local counted = previous and ns.HasSlot(sheet, level) and previous.asi[stat] or 0
     return (sheet.base[stat] or 0) + (sheet.bonus[stat] or 0) + (sheet.asi[stat] or 0) - counted
 end
 
@@ -91,10 +95,10 @@ function Levels.FeatBlock(sheet, level, name)
         end
         if not met then return ("needs %s 13 or higher"):format(table.concat(names, " or ")) end
     end
-    if feat.needTraining and not ns.ArmorTraining(sheet.class, sheet.passives)[feat.needTraining] then
+    if feat.needTraining and not ns.SheetArmorTraining(sheet)[feat.needTraining] then
         return feat.needTraining == "shield" and "needs shield training" or ("needs %s armor training"):format(feat.needTraining)
     end
-    if feat.needCaster and not (R.CLASSES[sheet.class] and R.CLASSES[sheet.class].caster) then
+    if feat.needCaster and not ns.CasterView(sheet) then
         return "needs a spellcasting class"
     end
 end
@@ -130,7 +134,7 @@ function Levels.Problem(sheet, level, record)
     -- Scores stop at 20; an Epic Boon can take one to 30.
     local cap = kind == "BOON" and R.BOON_MAX_SCORE or R.MAX_SCORE
     local previous = Levels.Record(sheet, level)
-    local counted = previous and level <= sheet.level
+    local counted = previous and ns.HasSlot(sheet, level)
     for _, stat in ipairs(R.STATS) do
         local add = record.asi[stat] or 0
         if add > 0 then
@@ -146,7 +150,7 @@ end
 -- Levels the character has reached whose choice is still open, lowest first.
 function Levels.Pending(sheet)
     local pending = {}
-    for level = 1, sheet.level do
+    for _, level in ipairs(ns.LevelSlots(sheet)) do
         if Levels.Kind(sheet, level) then
             local record = Levels.Record(sheet, level)
             if not record or Levels.Problem(sheet, level, record) then pending[#pending + 1] = level end
@@ -173,7 +177,7 @@ end
 function Levels.Recompute(sheet)
     for _, stat in ipairs(R.STATS) do sheet.asi[stat] = 0 end
     for level, record in pairs(sheet.levels or NO_RECORDS) do
-        if level <= sheet.level then
+        if ns.HasSlot(sheet, level) then
             for _, stat in ipairs(R.STATS) do
                 sheet.asi[stat] = sheet.asi[stat] + (record.asi[stat] or 0)
             end
@@ -210,7 +214,7 @@ function Levels.Set(sheet, level, record)
             sheet.passives[#sheet.passives + 1] = passive
         end
         passive.name = record.feat
-        passive.desc = record.featDesc ~= "" and record.featDesc or ("Feat taken at level %d."):format(level)
+        passive.desc = record.featDesc ~= "" and record.featDesc or ("Feat taken at %s."):format(ns.SlotLabel(sheet, level))
         -- Effects are set when the feat is picked; after that they are the player's to edit.
         if changed then passive.effects = CopyTable(known and known.effects or {}) end
         if known and known.save then
@@ -229,7 +233,7 @@ end
 -- Forgets the choices of levels the character no longer has, and their feats.
 function Levels.Trim(sheet)
     for level in pairs(sheet.levels) do
-        if level > sheet.level then
+        if not ns.HasSlot(sheet, level) then
             local _, index = FeatPassive(sheet, level)
             if index then table.remove(sheet.passives, index) end
             TakeBackSave(sheet, level)
@@ -274,7 +278,7 @@ end
 function Levels.Clean(source)
     if type(source) ~= "table" then return end
     local clean = {}
-    for level = 1, R.MAX_LEVEL do
+    for _, level in ipairs(ns.AllLevelSlots()) do
         local record = source[level]
         if type(record) == "table" then
             local copy = Levels.NewRecord("ASI")

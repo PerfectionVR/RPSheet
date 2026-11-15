@@ -121,6 +121,10 @@ function ns.NormalizeState(state)
     if type(sheet.stronghold) ~= "string" then sheet.stronghold = "" end
     if type(sheet.asi) ~= "table" then sheet.asi = {} end
     for _, stat in ipairs(R.STATS) do sheet.asi[stat] = tonumber(sheet.asi[stat]) or 0 end
+    -- Classes taken after the first, and what only a character with several keeps.
+    ns.NormalizeClasses(sheet)
+    if type(state.pactSlots) ~= "table" then state.pactSlots = {} end
+    if type(state.hitDiceMore) ~= "table" then state.hitDiceMore = {} end
     -- Choices are kept per level (see Sheet/Levels.lua); the totals follow from them.
     ns.Levels.Migrate(sheet)
     ns.Levels.Recompute(sheet)

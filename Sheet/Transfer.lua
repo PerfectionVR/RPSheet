@@ -100,6 +100,9 @@ local function CleanSheet(source)
     end
     -- Absent in strings from older versions: the totals above are then spread over levels.
     sheet.levels = ns.Levels.Clean(source.levels)
+    -- Classes taken after the first (Sheet/Classes.lua).
+    sheet.classes = ns.CleanClasses(source.classes)
+    ns.NormalizeClasses(sheet)
     if type(source.skills) == "table" then
         for _, skill in ipairs(R.SKILLS) do
             local rank = tonumber(source.skills[skill.name])
@@ -259,6 +262,7 @@ end
 function RPSheet:DescribeSheet(sheet)
     local class, species = R.CLASSES[sheet.class], R.SPECIES[sheet.species]
     local parts = { ("Level %d %s"):format(sheet.level, class and class.name or "character without a class") }
+    if ns.IsMulticlass(sheet) then parts[1] = ns.ClassLine(sheet) end
     if species then parts[#parts + 1] = species.name end
     parts[#parts + 1] = ("%d abilities, %d passives"):format(#sheet.abilities, #sheet.passives)
     return table.concat(parts, ", ")

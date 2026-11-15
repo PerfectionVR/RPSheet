@@ -6,7 +6,11 @@ local R = ns.Rules
 
 local PREFIX = "cantrip:"
 
-function ns.ApplySpellPicks(sheet)
+-- The cantrips of one class: `sheet` is a character of one class, or a view of one
+-- class of a character with several. That one's spells name their class, and the
+-- cantrips its other classes picked are left alone.
+local function ApplyFor(sheet)
+    local foreign, tag = ns.ForeignPicks(sheet, R.CANTRIP_LISTS), ns.SpellTag(sheet)
     local class = R.CLASSES[sheet.class]
     local key = class and R.CANTRIP_LISTS[class.base]
     local limit = key and ns.PickLimit(key, sheet.class, sheet.level) or 0
@@ -35,8 +39,13 @@ function ns.ApplySpellPicks(sheet)
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
             -- Put there by an earlier pick: it stays only while it is still picked.
-            if picks[spell.name] then have[spell.name] = true else table.remove(sheet.spells, index) end
-        elseif spell.level == 0 and not spell.free and items[spell.name] then
+            if picks[spell.name] then
+                have[spell.name] = true
+                if tag then spell.class = tag end
+            elseif not foreign[spell.name] then
+                table.remove(sheet.spells, index)
+            end
+        elseif spell.level == 0 and not spell.free and items[spell.name] and ns.SpellIsOf(spell, tag) then
             -- Added by hand before cantrips were picked: it counts as a pick while
             -- there is room for one.
             if picks[spell.name] or count < limit then
@@ -45,6 +54,7 @@ function ns.ApplySpellPicks(sheet)
                     count = count + 1
                 end
                 spell.auto = PREFIX .. spell.name
+                if tag then spell.class = tag end
             end
             have[spell.name] = true
         end
@@ -58,6 +68,11 @@ function ns.ApplySpellPicks(sheet)
     for _, name in ipairs(names) do
         local spell = CopyTable(R.SPELLS[name])
         spell.auto = PREFIX .. name
+        spell.class = tag
         sheet.spells[#sheet.spells + 1] = spell
     end
+end
+
+function ns.ApplySpellPicks(sheet)
+    ns.ForEachClass(sheet, ApplyFor)
 end

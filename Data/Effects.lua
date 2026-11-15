@@ -123,6 +123,7 @@ R.TEMPLATES.spell = {
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
     free = false,              -- doesn't count against cantrips known or spells prepared
     auto = "",                 -- "prepared:<name>" for a spell a subclass put there
+    class = "",                -- the class it belongs to, for a character with several (Sheet/ClassSpells.lua)
     up = 0,                    -- dice added for each slot level above the spell's own
     time = "ACTION",           -- what casting takes: ACTION, BONUS, REACTION or LONG
     material = 0,              -- price in gold of a component it needs; consumed = used up

@@ -37,6 +37,7 @@ Core\Codec.lua
 Data\Rules.lua
 Data\DamageTypes.lua
 Data\Classes.lua
+Data\Multiclass.lua
 Data\SpecGuide.lua
 Data\Species.lua
 Data\Backgrounds.lua
@@ -115,6 +116,13 @@ UI\Themes.lua
 Core\Defaults.lua
 
 # The character sheet: saved data and the numbers worked out from it
+Sheet\Classes.lua
+Sheet\ClassViews.lua
+Sheet\ClassSlots.lua
+Sheet\ClassSpells.lua
+Sheet\ClassHitDice.lua
+Sheet\MulticlassSlots.lua
+Sheet\ClassRules.lua
 Sheet\Levels.lua
 Sheet\Migration.lua
 Sheet\Storage.lua
@@ -246,6 +254,8 @@ Wizard\Pages.lua
 Wizard\Dialog.lua
 Options\General.lua
 Options\Character.lua
+Options\Multiclass.lua
+Options\MulticlassPage.lua
 Options\FeatChoices.lua
 Options\LevelDialog.lua
 Options\RenownPerks.lua

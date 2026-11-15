@@ -13,10 +13,14 @@ local RPSheet = ns.addon
 
 -- The class's rule ("LEVEL", "REST" or "REST_ONE") and the key of its list of
 -- prepared spells; nothing for a class that doesn't prepare from its class list.
+-- Of several classes the first that prepares this way is the one: its view is the
+-- third thing returned (the sheet itself for a character of one class).
 function ns.PrepareRule(sheet)
-    local class = R.CLASSES[sheet.class]
-    local key = class and R.PREPARED_LISTS[class.base]
-    if key and ns.PickLimit(key, sheet.class, sheet.level) > 0 then return R.PREPARE_RULES[class.base], key end
+    for _, view in ipairs(ns.ClassViews(sheet)) do
+        local class = R.CLASSES[view.class]
+        local key = class and R.PREPARED_LISTS[class.base]
+        if key and ns.PickLimit(key, view.class, view.level) > 0 then return R.PREPARE_RULES[class.base], key, view end
+    end
 end
 
 -- True if the character changes prepared spells from its class list after a long rest.
@@ -33,12 +37,12 @@ end
 -- The spells the character could have prepared right now, in the list's order: the
 -- prepared ones and those of a level it has slots for that aren't always prepared.
 function ns.PreparedChoices(sheet)
-    local rule, key = ns.PrepareRule(sheet)
+    local rule, key, view = ns.PrepareRule(sheet)
     local names = {}
     if not rule then return names end
     local list, picks = R.PICK_LISTS[key], sheet.picks[key] or {}
     for _, name in ipairs(list.order) do
-        if picks[name] or not ns.PickBlocked(key, name, sheet.level, picks, sheet.subclass, sheet) then
+        if picks[name] or not ns.PickBlocked(key, name, view.level, picks, view.subclass, view) then
             names[#names + 1] = name
         end
     end
@@ -49,7 +53,7 @@ end
 -- allows it right now. Returns true when the list changed; says why when it didn't.
 function RPSheet:ChangePrepared(name)
     local sheet, state = self:Sheet(), self:State()
-    local rule, key = ns.PrepareRule(sheet)
+    local rule, key, view = ns.PrepareRule(sheet)
     if rule ~= "REST" and rule ~= "REST_ONE" then return false end
     local list = R.PICK_LISTS[key]
     if not list.items[name] then return false end
@@ -73,12 +77,12 @@ function RPSheet:ChangePrepared(name)
         end
         picks[name] = nil
     else
-        local why = ns.PickBlocked(key, name, sheet.level, picks, sheet.subclass, sheet)
+        local why = ns.PickBlocked(key, name, view.level, picks, view.subclass, view)
         if why then
             self:Print(("%s can't be prepared: %s."):format(name, why))
             return false
         end
-        local limit = ns.PickLimit(key, sheet.class, sheet.level)
+        local limit = ns.PickLimit(key, view.class, view.level)
         if ns.PicksKnown(sheet, key) >= limit then
             self:Print(("You can prepare %d spells. Put one away first."):format(limit))
             return false

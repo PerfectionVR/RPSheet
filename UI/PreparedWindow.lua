@@ -93,7 +93,7 @@ function RPSheet:PopulatePrepared()
     else
         local picks = sheet.picks[key] or {}
         UI.AddLabel(body, 1, ("Prepared %s%d of %d|r. %s"):format(UI.ACCENT, ns.PicksKnown(sheet, key),
-            ns.PickLimit(key, sheet.class, sheet.level), self:PrepareStatus()),
+            ns.SheetPickLimit(sheet, key, true), self:PrepareStatus()),
             nil, "Prepared spells", RULES[rule] .. " The sheet keeps no clock: the list can be changed from a long rest until you cast your first spell after it. Spells that are always prepared are not listed here.\n\n" .. HELP)
         -- The core spells and the spells of Azeroth each under their own heading, by level.
         local section, level

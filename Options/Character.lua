@@ -131,14 +131,34 @@ local function Summary()
             lines[#lines + 1] = ("%sYou have a Fighting Style to choose, under Customize, Class and origin.|r"):format(Opt.RED)
         end
     end
-    if class and sheet.level >= R.SUBCLASS_LEVEL and sheet.subclass == "" then
-        lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
+    -- Each class picks its subclass at its own level 3.
+    for _, view in ipairs(ns.ClassViews(sheet)) do
+        if class and view.level >= R.SUBCLASS_LEVEL and view.subclass == "" then
+            if view.viewOf then
+                lines[#lines + 1] = ("%sYour %s can choose a subclass from level %d of that class.|r"):format(Opt.RED, R.CLASSES[view.class].name, R.SUBCLASS_LEVEL)
+            else
+                lines[#lines + 1] = ("%sYou can choose a subclass from level %d.|r"):format(Opt.RED, R.SUBCLASS_LEVEL)
+            end
+        end
+    end
+    -- The classes taken after the first, and what the rules say about the mix.
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local other = R.CLASSES[key]
+        lines[#lines + 1] = ("%s (level %d) uses the %s class: %s d%d. As a later class it gave %s, and no saving throws."):format(
+            other.name, ns.ClassLevel(sheet, key), other.base, ns.Term("Hit die", "hit die"), other.hitDie, ns.MulticlassGains(key))
+    end
+    for _, warning in ipairs(ns.MulticlassWarnings(sheet)) do
+        lines[#lines + 1] = Opt.RED .. warning .. "|r"
     end
     if ns.OpenClassChoices(sheet) then
         lines[#lines + 1] = ("%sYour class or feats have choices to make: use \"Class and feat choices\" below.|r"):format(Opt.RED)
     end
     local pending = Levels.Pending(sheet)
-    if #pending > 0 then
+    if #pending > 0 and ns.IsMulticlass(sheet) then
+        local names = {}
+        for _, slot in ipairs(pending) do names[#names + 1] = ns.SlotLabel(sheet, slot) end
+        lines[#lines + 1] = ("%sA choice is waiting for %s. See Level choices below.|r"):format(Opt.RED, table.concat(names, ", "))
+    elseif #pending > 0 then
         lines[#lines + 1] = ("%sA choice is waiting for level %s. See Level choices below.|r"):format(Opt.RED, table.concat(pending, ", "))
     end
     return table.concat(lines, "\n") .. "\n"
@@ -175,7 +195,7 @@ Opt.custom.identity = {
         subclassLater = {
             type = "description", order = 5,
             name = function() return ("%sBy the rules a subclass is chosen at level %d; its features start then.|r\n"):format(Opt.RED, R.SUBCLASS_LEVEL) end,
-            hidden = function() return Sheet().level >= R.SUBCLASS_LEVEL or Sheet().subclass == "" end,
+            hidden = function() return ns.ClassLevel(Sheet(), Sheet().class) >= R.SUBCLASS_LEVEL or Sheet().subclass == "" end,
         },
         subclass = ClassList({
             type = "select", order = 5, name = "Subclass",
@@ -279,25 +299,29 @@ Opt.tabs.character = {
         classChoices = {
             type = "execute", order = 3.3,
             name = function()
-                local limit = ns.ManeuverLimit(Sheet().subclass, Sheet().level)
+                local limit = ns.SheetManeuverLimit(Sheet())
                 if limit > 0 then return ("Maneuvers (%d of %d)"):format(ns.ManeuversKnown(Sheet()), limit) end
                 return "Class and feat choices"
             end,
             desc = "The choices your class, subclass and feats give you at this level, such as a Battle Master's maneuvers or the spells of Magic Initiate.",
             hidden = function()
                 local sheet = Sheet()
-                return NoCharacter() or (ns.ManeuverLimit(sheet.subclass, sheet.level) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
+                return NoCharacter() or (ns.SheetManeuverLimit(sheet) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
                     and #ns.OptionFeatures(sheet) == 0 and not ns.HasPickList(sheet)
                     and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0 and not ns.HasFeatChoices(sheet))
             end,
-            func = function() ns.OpenLevelDialog(Sheet().level) end,
+            -- The dialog of the first class's latest level shows every class's choices.
+            func = function()
+                local sheet = Sheet()
+                ns.OpenLevelDialog(ns.LevelSlot(sheet, sheet.class, ns.ClassLevel(sheet, sheet.class)))
+            end,
         },
         choicesHeader = { type = "header", order = 14, name = "Level choices", hidden = NoCharacter },
         choicesHelp = {
             type = "description", order = 15,
             hidden = NoCharacter,
             name = function()
-                for level = 1, Sheet().level do
+                for _, level in ipairs(ns.LevelSlots(Sheet())) do
                     if Levels.Kind(Sheet(), level) then
                         return "What you chose at the levels that offer an Ability Score Improvement, a feat or an Epic Boon. Click one to change it.\n"
                     end
@@ -325,17 +349,19 @@ table.insert(Opt.rebuilders, function()
     for key in pairs(args) do
         if key:find("^levelChoice") then args[key] = nil end
     end
-    for level = 1, Sheet().level do
+    for _, level in ipairs(ns.LevelSlots(Sheet())) do
         if Levels.Kind(Sheet(), level) then
             args["levelChoice" .. level] = {
                 type = "execute", order = 15 + level / 100, width = "double",
                 name = function()
                     local sheet = Sheet()
                     local record = Levels.Record(sheet, level)
+                    -- With several classes the level is one of a class: "Mage level 4".
+                    local label = ns.IsMulticlass(sheet) and ns.SlotLabel(sheet, level) or ("Level %d"):format(level)
                     if not record or Levels.Problem(sheet, level, record) then
-                        return ("%sLevel %d: choose|r"):format(Opt.RED, level)
+                        return ("%s%s: choose|r"):format(Opt.RED, label)
                     end
-                    return ("Level %d: %s"):format(level, Levels.Describe(record))
+                    return ("%s: %s"):format(label, Levels.Describe(record))
                 end,
                 func = function() ns.OpenLevelDialog(level) end,
             }

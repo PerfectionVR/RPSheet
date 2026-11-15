@@ -19,7 +19,7 @@ function ns.PickSwapsUsed(group, before, picks, like)
         if list.swapGroup == group then
             local now = picks[key] or NONE
             for name in pairs(before[key] or NONE) do
-                if list.items[name] and not now[name] and not (list.blocked and list.blocked(like, name)) then
+                if list.items[name] and not now[name] and not (list.blocked and list.blocked(ns.ListView(like, key), name)) then
                     used = used + 1
                 end
             end

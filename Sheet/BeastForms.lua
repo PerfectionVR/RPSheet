@@ -37,6 +37,7 @@ end
 
 function ns.ApplyBeastForms(sheet)
     local wanted, known = {}, {}
+    sheet = ns.ListView(sheet, "forms") -- the forms go by the level in the class that has them
     if ns.PickLimit("forms", sheet.class, sheet.level) > 0 then
         for name in pairs(sheet.picks.forms or {}) do
             if R.BEASTS[name] then known[#known + 1] = name end

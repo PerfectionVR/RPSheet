@@ -94,7 +94,9 @@ end
 
 -- Save DC of a feature: 8 + ability modifier + proficiency bonus.
 function Kit.DC(sheet, stat)
-    return 8 + Kit.Mod(sheet, stat) + Kit.Prof(sheet.level)
+    -- The proficiency bonus follows the whole character's level (a view of one class
+    -- of several carries it as characterLevel).
+    return 8 + Kit.Mod(sheet, stat) + Kit.Prof(sheet.characterLevel or sheet.level)
 end
 
 function Kit.Spend(resource, amount)

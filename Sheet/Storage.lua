@@ -76,6 +76,8 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     if not keepResourceValues then wipe(state.res) end
     wipe(state.pool)
     wipe(state.slots)
+    if type(state.pactSlots) == "table" then wipe(state.pactSlots) end
+    if type(state.hitDiceMore) == "table" then wipe(state.hitDiceMore) end
     state.conditions, state.exhaustion = {}, 0
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version

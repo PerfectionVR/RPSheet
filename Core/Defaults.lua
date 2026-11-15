@@ -41,12 +41,18 @@ ns.defaults = {
                 res = {},   -- custom resources, by name
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level
+                pactSlots = {},   -- a Warlock's slots, when another class's slots are kept beside them (Sheet/MulticlassSlots.lua)
+                hitDiceMore = {}, -- [die size] = Hit Dice left of the classes whose die differs from the first class's
                 freeUsed = {}, -- [ability name] = true: its free first use since a long rest is gone
                 spellUsed = {}, -- [spell name] = true: its one casting without a slot is gone until a rest (Actions/SpellChoices.lua)
                 sheet = {
                     version = 2,
                     level = 1,
                     class = "", subclass = "", spec = "",
+                    -- Classes taken after the first: [class key] = { level, subclass, spec, skill }.
+                    -- `level` above is the whole character's (Sheet/Classes.lua).
+                    classes = {},
+                    lastClass = "", -- the class the last level was taken in, for going back a level
                     fightingStyle = "", fightingStyle2 = "", -- see Rules.FIGHTING_STYLES
                     species = "", lineage = "", size = "M",
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL

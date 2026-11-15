@@ -57,8 +57,19 @@ function ns.ArmorChoices(training, current)
     return values, order
 end
 
+-- The same for a whole character: the first class's training, and the smaller part a
+-- class taken later adds (Data/Multiclass.lua).
+function ns.SheetArmorTraining(sheet)
+    local training = ns.ArmorTraining(sheet.class, sheet.passives)
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        for _, kind in ipairs(gained and gained.armor or {}) do training[kind] = true end
+    end
+    return training
+end
+
 function RPSheet:ArmorTraining()
-    return ns.ArmorTraining(self:Sheet().class, self:Sheet().passives)
+    return ns.SheetArmorTraining(self:Sheet())
 end
 
 ---------------------------------------------------------------------------
@@ -66,11 +77,17 @@ end
 ---------------------------------------------------------------------------
 -- How many weapons the character can use the mastery of: what the class's feature
 -- allows, and one for each feat that unlocks a kind of weapon (Weapon Master).
+-- The feature of several classes doesn't add up: the class that allows the most counts.
 function RPSheet:MasteryLimit()
     local class = self:ClassData()
     local _, fromFeats = ns.FeatMasteryWeapons(self:Sheet())
     if not class or not self:HasWeaponMastery() then return fromFeats end
-    return (ns.FeatureKit.AtLevel(self:Level(), R.MASTERY_LIMITS[class.base] or {}) or 0) + fromFeats
+    local most = 0
+    for _, view in ipairs(ns.ClassViews(self:Sheet())) do
+        local base = R.CLASSES[view.class].base
+        most = math.max(most, ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
+    end
+    return most + fromFeats
 end
 
 -- How many weapons have a mastery set. A companion's family picked for its strike
@@ -99,7 +116,23 @@ end
 ---------------------------------------------------------------------------
 -- Cantrips known, spells prepared, and the highest spell level the character has
 -- slots for. All zero for a class that doesn't cast.
-function RPSheet:SpellLimits()
+-- With several classes each one has limits of its own, by its own level: `classKey`
+-- asks for one class, and without it the classes are added up (the highest spell
+-- level is then the highest any of them can prepare).
+function RPSheet:SpellLimits(classKey)
+    local sheet = self:Sheet()
+    if ns.IsMulticlass(sheet) then
+        local cantrips, prepared, highest = 0, 0, 0
+        for _, view in ipairs(ns.ClassViews(sheet)) do
+            local class = R.CLASSES[view.class]
+            if class and class.caster and (not classKey or classKey == view.class) then
+                cantrips = cantrips + (ns.FeatureKit.AtLevel(view.level, R.CANTRIPS_KNOWN[class.base] or {}) or 0)
+                prepared = prepared + ((R.SPELLS_PREPARED[class.base] or {})[view.level] or 0)
+                highest = math.max(highest, ns.ClassSpellLevel(class, view.level))
+            end
+        end
+        return cantrips, prepared, highest
+    end
     local class = self:ClassData()
     if not class or not class.caster then return 0, 0, 0 end
     local level = self:Level()
@@ -112,10 +145,13 @@ end
 
 -- How many cantrips and prepared spells are on the sheet. Spells marked as not
 -- counting (always prepared, from a lineage or a feat) are left out; so is `except`.
-function RPSheet:SpellCounts(except)
+-- `classKey` counts only the spells of one class of a character with several.
+function RPSheet:SpellCounts(except, classKey)
     local cantrips, prepared = 0, 0
-    for _, spell in ipairs(self:Sheet().spells) do
-        if spell ~= except and not spell.free and spell.name ~= "" then
+    local sheet = self:Sheet()
+    for _, spell in ipairs(sheet.spells) do
+        local counted = not classKey or ns.SpellClass(sheet, spell) == classKey
+        if spell ~= except and not spell.free and spell.name ~= "" and counted then
             if spell.level == 0 then cantrips = cantrips + 1 else prepared = prepared + 1 end
         end
     end
@@ -123,9 +159,9 @@ function RPSheet:SpellCounts(except)
 end
 
 -- True if one more spell of this level would still fit.
-function RPSheet:SpellFits(level, except)
-    local maxCantrips, maxPrepared, highest = self:SpellLimits()
-    local cantrips, prepared = self:SpellCounts(except)
+function RPSheet:SpellFits(level, except, classKey)
+    local maxCantrips, maxPrepared, highest = self:SpellLimits(classKey)
+    local cantrips, prepared = self:SpellCounts(except, classKey)
     if level == 0 then return cantrips < maxCantrips end
     return level <= highest and prepared < maxPrepared
 end

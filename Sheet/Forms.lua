@@ -18,7 +18,7 @@ function RPSheet:FormBlocksSpell(spell)
     local form = self:Form()
     if not form then return end
     local sheet = self:Sheet()
-    if sheet.subclass == "Circle of the Moon" and (spell.auto or ""):find("^prepared:") then return end
+    if ns.HasSubclass(sheet, "Circle of the Moon") and (spell.auto or ""):find("^prepared:") then return end
     if ns.HasFeature(sheet, "Beast Spells") then
         if (spell.material or 0) > 0 or spell.consumed then
             return ("%s needs a component with a price, which can't be used in %s."):format(spell.name, form.beast and "a beast form" or form.name)
@@ -62,6 +62,7 @@ end
 
 -- The hit points of a Beast Master's companion, as a bar (data in Data/Pets.lua).
 function ns.PetPools(sheet)
-    if sheet.subclass ~= "Beast Master" or sheet.level < 3 then return {} end
-    return { { name = "Pet HP", max = R.PetHP(sheet, sheet.level) } }
+    local view = ns.SubclassView(sheet, "Beast Master") -- its level in that class counts
+    if not view or view.level < 3 then return {} end
+    return { { name = "Pet HP", max = R.PetHP(view, view.level) } }
 end

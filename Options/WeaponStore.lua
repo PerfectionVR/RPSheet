@@ -39,11 +39,11 @@ function Opt.StoredWeaponPicker(args)
         desc = "The weapons you saved to your armoury, on this or another character. Adding one puts a copy on this character; the stored weapon stays as it is.",
         hidden = NoStore,
         values = function()
-            local class, values = Opt.Sheet().class, {}
+            local sheet, values = Opt.Sheet(), {}
             for _, weapon in ipairs(RPSheet:StoredWeapons()) do
                 local data = ns.WeaponData(weapon)
                 values[weapon.name] = ("%s - %s%s"):format(weapon.name, ns.StoredWeaponSummary(weapon),
-                    (data and not ns.WeaponProficient(class, data.name)) and " |cffff5555(not proficient)|r" or "")
+                    (data and not ns.SheetWeaponProficient(sheet, data.name)) and " |cffff5555(not proficient)|r" or "")
             end
             return values
         end,

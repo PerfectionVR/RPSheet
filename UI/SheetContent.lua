@@ -66,7 +66,7 @@ local function TrackerSection(self, body)
         if IsShiftKeyDown() then
             tracker.set(tracker.reset)
         elseif tracker.kind == "hitdice" and button == "LeftButton" then
-            self:SpendHitDie()
+            self:SpendHitDie(tracker)
             return
         else
             tracker.set(tracker.get() + (button == "LeftButton" and 1 or -1))

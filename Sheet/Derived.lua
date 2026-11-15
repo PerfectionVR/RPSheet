@@ -147,34 +147,44 @@ end
 ---------------------------------------------------------------------------
 -- Level 1 takes the full hit die; each later level takes the average, rounded up.
 function RPSheet:MaxHP()
-    local class = self:ClassData()
-    local die = class and class.hitDie or R.DEFAULT_HIT_DIE
     local level = self:Level()
     -- A beast form's Constitution doesn't change the hit points.
-    local total = die + (level - 1) * (die / 2 + 1) + level * self:OwnMod("CON")
+    -- Each class's levels count with that class's die (Sheet/ClassHitDice.lua).
+    local total = ns.DiceHitPoints(self:Sheet()) + level * self:OwnMod("CON")
     return math.max(1, total + self:Bonus("HP") + self:Sheet().hpAdjust)
 end
 
+-- Unarmored Defense: without armor, a class adds an ability modifier to Armor Class;
+-- a Monk's stops working with a shield. Only one way of working out Armor Class
+-- counts at a time, so of several classes the best one is used.
+function RPSheet:UnarmoredDefense()
+    local sheet, best, stat = self:Sheet(), nil, nil
+    if sheet.armor ~= "NONE" then return 0 end
+    for _, key in ipairs(ns.ClassKeys(sheet)) do
+        local class = R.CLASSES[key]
+        if class.unarmored and (class.unarmoredShield or not sheet.shield) then
+            local bonus = self:Mod(class.unarmored)
+            if not best or bonus > best then best, stat = bonus, class.unarmored end
+        end
+    end
+    return best or 0, stat
+end
+
 function RPSheet:AC()
-    local sheet, class = self:Sheet(), self:ClassData()
+    local sheet = self:Sheet()
     -- A beast form has an Armor Class of its own; armor and shield don't count.
     local form = self:Form()
     if form then
         local ac = form.ac + (form.acStat and self:Mod(form.acStat) or 0)
         -- A Circle of the Moon druid's beast forms have at least 13 + Wisdom.
-        if form.beast and sheet.subclass == "Circle of the Moon" then ac = math.max(ac, 13 + self:Mod("WIS")) end
+        if form.beast and ns.HasSubclass(sheet, "Circle of the Moon") then ac = math.max(ac, 13 + self:Mod("WIS")) end
         return ac + self:Bonus("AC")
     end
     local armor = R.ARMOR[sheet.armor]
     local dex = self:Mod("DEX")
     if armor.dexCap then dex = math.min(dex, armor.dexCap) end
     local ac = armor.ac + dex
-    if sheet.armor == "NONE" and class and class.unarmored then
-        -- Unarmored Defense; a Monk's stops working with a shield.
-        if class.unarmoredShield or not sheet.shield then
-            ac = ac + self:Mod(class.unarmored)
-        end
-    end
+    ac = ac + (self:UnarmoredDefense())
     if sheet.shield then ac = ac + R.SHIELD_AC end
     ac = ac + self:WornBonus() -- magic armor and shield
     return ac + self:Bonus("AC") + self:StyleAC()
@@ -236,13 +246,18 @@ end
 ---------------------------------------------------------------------------
 -- Spellcasting ability: the sheet's override, else the class's. Nil for non-casters.
 -- A `spell` a feat put on the list uses the ability that goes with the feat
--- (Sheet/FeatSpells.lua), whatever the class.
+-- (Sheet/FeatSpells.lua), whatever the class. With several classes a spell is cast
+-- with the ability of the class it belongs to (spell.class, Sheet/ClassSpells.lua);
+-- the override is for the first class's spells and those that name no class.
 function RPSheet:CastStat(spell)
     local sheet, class = self:Sheet(), self:ClassData()
     local own = spell and ns.FeatSpellStat(sheet, spell)
     if own then return own end
+    local key = ns.SpellClass(sheet, spell)
+    if key and key ~= sheet.class and spell and spell.class == key then return R.CLASSES[key].cast end
     if R.STAT_NAMES[sheet.castStat] then return sheet.castStat end
-    return class and class.cast
+    if class and class.cast then return class.cast end
+    return key and R.CLASSES[key].cast
 end
 
 function RPSheet:SpellDC(spell)
@@ -255,20 +270,11 @@ function RPSheet:SpellAttack(spell)
     return stat and (self:ProficiencyBonus() + self:Mod(stat) + self:Bonus("SPELLATK"))
 end
 
--- Spell slots as { [spell level] = number }.
+-- Spell slots as { [spell level] = number }: the class's own, or the slots the
+-- character's spellcasting classes share (Sheet/MulticlassSlots.lua). Pact Magic slots
+-- kept beside those are RPSheet:PactSlots().
 function RPSheet:SpellSlots()
-    local class, level = self:ClassData(), self:Level()
-    local slots = {}
-    if not class or not class.caster then return slots end
-    if class.caster == "FULL" then
-        for spellLevel, count in ipairs(R.FULL_SLOTS[level]) do slots[spellLevel] = count end
-    elseif class.caster == "HALF" then
-        for spellLevel, count in ipairs(R.FULL_SLOTS[math.ceil(level / 2)]) do slots[spellLevel] = count end
-    elseif class.caster == "PACT" then
-        local pact = R.PACT_SLOTS[level]
-        slots[pact[2]] = pact[1]
-    end
-    return slots
+    return (ns.SheetSlots(self:Sheet()))
 end
 
 ---------------------------------------------------------------------------

@@ -24,13 +24,17 @@ ns.SLOT_ACTION_TEXT = {
 local function Slots(self)
     local slots = {}
     for _, tracker in ipairs(self:GetTrackers()) do
-        if tracker.kind == "slot" then slots[tracker.level] = tracker end
+        -- Pact Magic slots kept beside the others are not part of this.
+        if tracker.kind == "slot" and not tracker.pact then slots[tracker.level] = tracker end
     end
     return slots
 end
 
 local function Recover(self)
-    local slots, budget, gains, texts = Slots(self), math.ceil(self:Level() / 2), {}, {}
+    -- Half the level in the class that recovers slots, for a character with several.
+    local sheet = self:Sheet()
+    local recovering = ns.BaseView(sheet, "Wizard") or ns.BaseView(sheet, "Druid") or sheet
+    local slots, budget, gains, texts = Slots(self), math.ceil(recovering.level / 2), {}, {}
     -- The highest spent slots that fit come back first.
     for level = HIGHEST, 1, -1 do
         local tracker = slots[level]

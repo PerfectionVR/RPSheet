@@ -6,26 +6,27 @@ local R = ns.Rules
 
 local PREFIX = "prepared:"
 
--- { [auto key] = spell name } for the levels the character has reached.
+-- { [auto key] = spell name } for the levels the character has reached, each class by
+-- its own level, and { [spell name] = class key } for the class that prepares it when
+-- the character has several.
 local function Wanted(sheet)
-    local wanted = {}
-    if not R.CLASSES[sheet.class] then return wanted end
-    for level = 1, sheet.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
-            -- A list, or a function of the sheet for one that follows the specialization.
-            local prepared = feature.prepared
-            if type(prepared) == "function" then prepared = prepared(sheet) end
-            for _, step in ipairs(prepared or {}) do
-                if sheet.level >= step[1] then
-                    for name in step[2]:gmatch("[^,]+") do
-                        name = strtrim(name)
-                        if R.SPELLS[name] and not sheet.dismissed[PREFIX .. name] then wanted[PREFIX .. name] = name end
+    local wanted, from = {}, {}
+    ns.EachGainedFeature(sheet, function(feature, view)
+        -- A list, or a function of the sheet for one that follows the specialization.
+        local prepared = feature.prepared
+        if type(prepared) == "function" then prepared = prepared(view) end
+        for _, step in ipairs(prepared or {}) do
+            if view.level >= step[1] then
+                for name in step[2]:gmatch("[^,]+") do
+                    name = strtrim(name)
+                    if R.SPELLS[name] and not sheet.dismissed[PREFIX .. name] then
+                        wanted[PREFIX .. name], from[name] = name, ns.SpellTag(view)
                     end
                 end
             end
         end
-    end
-    return wanted
+    end)
+    return wanted, from
 end
 
 -- { [spell name] = true } for the same spells. `sheet` may be a stand-in with another
@@ -62,13 +63,18 @@ function ns.ApplyPreparedSpells(sheet)
             spell.up = known.up
         end
     end
-    local wanted = Wanted(sheet)
+    local wanted, from = Wanted(sheet)
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
-            if wanted[auto] then have[spell.name] = true else table.remove(sheet.spells, index) end
+            if wanted[auto] then
+                have[spell.name] = true
+                if from[spell.name] then spell.class = from[spell.name] end
+            else
+                table.remove(sheet.spells, index)
+            end
         else
             have[spell.name] = true
         end
@@ -84,6 +90,7 @@ function ns.ApplyPreparedSpells(sheet)
     for _, name in ipairs(names) do
         local spell = CopyTable(R.SPELLS[name])
         spell.free, spell.auto = true, PREFIX .. name
+        spell.class = from[name] -- the class that prepares it, for a character with several
         sheet.spells[#sheet.spells + 1] = spell
     end
 end
