@@ -112,6 +112,9 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     -- say the prepared spells and mastery picks were already changed since a rest.
     state.tempHP, state.deathPass, state.deathFail, state.growing = 0, 0, 0, {}
     state.prepareClosed, state.prepareSwap, state.cantripSwap, state.petMasteryChanged = nil, nil, nil, nil
+    -- The questions the character before had stopped (Actions/RollQuestions.lua), its
+    -- used-up beast actions and a scroll's spell it had running.
+    state.quiet, state.beastUsed, state.growingScrolls, state.scrollSpells = nil, nil, nil, nil
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
     ns.ApplyLineageSpells(sheet)

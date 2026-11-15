@@ -27,6 +27,52 @@ local function RollStep(self, action)
     return label, mod
 end
 
+-- The label a ROLL step goes by in the roll rules (Sheet/RollModes.lua), such as
+-- "attack" or "CON save", and a second one for an attack made with Strength. Nil for
+-- a roll the rules can't place: a check or save without an ability.
+local function RollLabel(action)
+    if action.kind == "ATTACK" then return "attack", action.stat == "STR" and "STR attack" or nil end
+    if action.kind == "SPELL" then return "spell attack" end
+    if not R.STAT_NAMES[action.stat] then return end
+    return action.stat .. (action.kind == "SAVE" and " save" or " check")
+end
+
+-- True for an ability that only rolls the character's own saving throw: no action,
+-- so it is still there for a character that can't act.
+local function OwnSaveOnly(ability)
+    local saves = 0
+    for _, action in ipairs(ability.actions) do
+        if action.type ~= "ROLL" or action.kind ~= "SAVE" then return false end
+        saves = saves + 1
+    end
+    return saves > 0
+end
+
+-- Asks what the ability's rolls need to know (Actions/RollQuestions.lua), each kind
+-- of roll once, then calls go(answers) with what was said by label.
+local function AskRolls(self, ability, mode, go)
+    local labels, found = {}, {}
+    for _, action in ipairs(ability.actions) do
+        local label, also = nil, nil
+        if action.type == "ROLL" then label, also = RollLabel(action) end
+        if label and found[label] == nil then
+            found[label] = false
+            labels[#labels + 1] = { label, also }
+        end
+    end
+    local function ask(index)
+        local entry = labels[index]
+        if not entry then return go(found) end
+        -- A save that fails without a roll has nothing to ask.
+        if self:AutoFail(entry[1]) then return ask(index + 1) end
+        self:AskRoll(entry[1], mode, entry[2], function(answers)
+            found[entry[1]] = answers
+            ask(index + 1)
+        end)
+    end
+    ask(1)
+end
+
 -- Applies the steps that don't roll anything. Returns true if a passive was switched.
 local function ApplyChanges(self, ability, costs)
     local switched = false
@@ -71,3 +117,4 @@ local function ApplyChanges(self, ability, costs)
 end
 
 ns.AbilityKit.RollStep, ns.AbilityKit.ApplyChanges = RollStep, ApplyChanges
+ns.AbilityKit.RollLabel, ns.AbilityKit.OwnSaveOnly, ns.AbilityKit.AskRolls = RollLabel, OwnSaveOnly, AskRolls

@@ -109,9 +109,16 @@ end
 ---------------------------------------------------------------------------
 ns.RollText = {}
 
--- e.g. "Stealth: 14 + 5 = 19", or with a note "Stealth: 14 [advantage: 14, 6] + 5 = 19"
-function ns.RollText.Check(label, d20, mod, note)
-    local text = ("%s: %d%s %s %d = %d"):format(label, d20, note or "", mod >= 0 and "+" or "-", math.abs(mod), d20 + mod)
+-- e.g. "Stealth: 14 + 5 = 19", or with a note "Stealth: 14 [advantage: 14, 6] + 5 = 19".
+-- `extra` is what the "Next roll" bonus added to this roll (Actions/NextRollBonus.lua):
+-- { value = 3, text = "1d4" }, shown as "Stealth: 14 + 5 + 3 [1d4] = 22".
+function ns.RollText.Check(label, d20, mod, note, extra)
+    local more, total = "", d20 + mod
+    if extra then
+        more = (" %s %d [%s]"):format(extra.value >= 0 and "+" or "-", math.abs(extra.value), extra.text)
+        total = total + extra.value
+    end
+    local text = ("%s: %d%s %s %d%s = %d"):format(label, d20, note or "", mod >= 0 and "+" or "-", math.abs(mod), more, total)
     if d20 == 20 then
         text = text .. " (NATURAL 20!)"
     elseif d20 == 1 then
@@ -137,26 +144,30 @@ end
 -- A feature that gives advantage on this roll applies by itself; with disadvantage
 -- chosen on top, the two cancel out.
 -- `about` is what a saving throw is against, when that brings advantage; false when
--- the player was asked and it is nothing the sheet knows of (Actions/SaveAdvantages.lua).
-function RPSheet:RollCheck(label, mod, mode, about)
+-- it is nothing the sheet knows of. Left out, the sheet asks what it needs to know
+-- about the roll first (Actions/RollQuestions.lua), and the menu rolls.
+function RPSheet:RollCheck(label, mod, mode, about, answers)
     local failed = self:AutoFail(label)
     if failed then
         self:Announce(("fails the %s without a roll (%s)."):format(ns.Mark(label), ns.Mark(failed)))
         return
     end
+    if not answers then
+        return self:AskRoll(label, mode, nil, function(found) self:RollCheck(label, mod, mode, found.about, found) end,
+            about ~= nil and { about = about } or nil)
+    end
     -- Features, conditions and armor can give advantage or disadvantage by themselves.
-    if about == nil and self:AskSaveAbout(label, mod, mode) then return end -- the menu rolls
-    mode = self:ResolveMode(label, mode, nil, about and true or nil)
+    mode = self:ResolveMode(label, mode, nil, nil, answers)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
     -- It covers checks with a tool you are proficient with too.
     local proficient = (self:Sheet().skills[label] or 0) >= 1 or (ns.Rules.TOOLS[label] and self:ToolSource(label) ~= nil)
     local reliable = proficient and self:FeatureFlag("reliable")
-    self:RollD20(mode, function(d20, note)
+    self:RollTest(mode, function(d20, note, extra)
         if reliable and d20 < 10 then
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
-        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note))
+        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra))
     end)
 end
 

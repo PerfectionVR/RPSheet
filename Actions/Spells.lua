@@ -96,9 +96,11 @@ end
 
 -- `mode` is "ADV" or "DIS" for the spell attack roll. `ritual` casts a ritual spell
 -- without a slot. `benefit` is the pick for a spell that offers a choice of benefits;
--- without it the spell asks first (see Sheet/Metamorphosis.lua).
-function RPSheet:CastSpell(spell, mode, ritual, benefit)
+-- without it the spell asks first (see Sheet/Metamorphosis.lua). `answers` is what
+-- the player was asked about its attack roll (Actions/RollQuestions.lua).
+function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
     if self.busy or self:IsRolling() then return end
+    if self:CantAct("cast " .. spell.name) then return end
     -- A beast form can't cast (see Sheet/Forms.lua).
     local blocked = self:FormBlocksSpell(spell)
     if blocked then
@@ -109,6 +111,11 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     local scroll = spell.fromScroll ~= nil
     -- A spell with a growing die that is already running rolls its next turn instead.
     if not scroll and self:GrowingSpellClick(spell, ritual) then return end
+    -- Asked for as a ritual (a right-click) but it isn't one: nothing is cast.
+    if ritual and (scroll or not spell.ritual or spell.level <= 0) then
+        self:Print(("%s is not a ritual: a right-click casts a spell as a ritual, without a slot."):format(spell.name))
+        return
+    end
     -- A component with a price has to be carried, for a ritual too (Sheet/SpellComponents.lua).
     -- For a spell that needs it once per target, `benefit` says how many (Sheet/ComponentTargets.lua).
     local missing = self:MissingComponents(spell, benefit)
@@ -144,6 +151,11 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     local benefits = not benefit and self:SpellBenefits(spell, slot and slot.level)
     if benefits and self:AskBenefit(spell, benefits, function(pick) self:CastSpell(spell, mode, ritual, pick) end) then
         return
+    end
+
+    -- What the attack roll needs to know is asked last, with nothing spent yet.
+    if spell.kind == "ATTACK" and not answers then
+        return self:AskRoll("spell attack", mode, nil, function(found) self:CastSpell(spell, mode, ritual, benefit, found) end)
     end
 
     local word, bonus = ns.DiceWord(spell.dice)
@@ -226,13 +238,13 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
 
     if spell.kind == "ATTACK" then
         -- A feature that gives advantage on spell attacks (Innate Sorcery) applies by itself.
-        mode = self:ResolveMode("spell attack", mode) -- conditions count too
+        mode = self:ResolveMode("spell attack", mode, nil, nil, answers) -- conditions count too
         -- A spell of several rays, beams or shards rolls each attack in turn.
         local hits = self:SpellHits(spell, slot)
         local function attack(index)
-            self:RollD20(mode, function(d20, note)
+            self:RollTest(mode, function(d20, note, extra)
                 local label = hits > 1 and ("attack %d"):format(index) or "spell attack"
-                parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack(spell) or 0, note)
+                parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack(spell) or 0, note, extra)
                 rollDice(d20 == 20, function()
                     if index < hits then attack(index + 1) else finishWithSecondRoll() end
                 end)

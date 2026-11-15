@@ -19,12 +19,21 @@ local function Owned(self)
     for _, item in ipairs(sheet.items or NONE) do
         if item.name ~= "" and self:ItemActive(item) then owned[item.name] = true end
     end
-    for name, picked in pairs(sheet.picks and sheet.picks.invocations or NONE) do
-        if picked then owned[name] = true end
+    for _, list in ipairs({ "invocations", "metamagic" }) do
+        for name, picked in pairs(sheet.picks and sheet.picks[list] or NONE) do
+            if picked then owned[name] = true end
+        end
     end
     local _, companion = self:CompanionGift()
     if companion then owned[(companion.family or "") .. " companion"] = true end
     return owned
+end
+
+-- True when the character has what the entry names, and it may be in effect.
+local function Has(self, owned, entry)
+    if not entry.spent then return owned[entry.from] == true end
+    local tracker = self:FindTracker(entry.spent)
+    return tracker ~= nil and (tracker.get() or 0) < tracker.max
 end
 
 local function Covers(entry, stat)
@@ -44,7 +53,7 @@ function RPSheet:SaveAdvantages(label)
     if not stat then return always, asked end
     local owned = Owned(self)
     for _, entry in ipairs(R.SAVE_ADVANTAGES) do
-        if owned[entry.from] and not entry.concentration and Covers(entry, stat) then
+        if Has(self, owned, entry) and not entry.concentration and Covers(entry, stat) then
             if not entry.about then always[#always + 1] = entry end
             for _, about in ipairs(entry.about or NONE) do
                 asked[#asked + 1] = { about = about, from = entry.from }
@@ -54,12 +63,24 @@ function RPSheet:SaveAdvantages(label)
     return always, asked
 end
 
--- What gives advantage on the save to keep concentrating: its name, or nil.
+-- What gives advantage on the save to keep concentrating on any spell: its name, or nil.
 function RPSheet:ConcentrationAdvantage()
     local owned = Owned(self)
     for _, entry in ipairs(R.SAVE_ADVANTAGES) do
-        if entry.concentration and owned[entry.from] then return entry.from end
+        if entry.concentration and not entry.about and Has(self, owned, entry) then return entry.from end
     end
+end
+
+-- What gives it for some spells only, as { about = "a spell you extended", from =
+-- "Extended Spell" }: the sheet asks when it rolls that save.
+function RPSheet:ConcentrationChoices()
+    local owned, choices = Owned(self), {}
+    for _, entry in ipairs(R.SAVE_ADVANTAGES) do
+        if entry.concentration and entry.about and Has(self, owned, entry) then
+            for _, about in ipairs(entry.about) do choices[#choices + 1] = { about = about, from = entry.from } end
+        end
+    end
+    return choices
 end
 
 -- Lines for a saving throw's tooltip, such as "Advantage against being Charmed (Fey
@@ -68,11 +89,16 @@ function RPSheet:SaveAdvantageText(stat)
     local always, asked = self:SaveAdvantages(stat .. " save")
     local lines = {}
     for _, entry in ipairs(always) do lines[#lines + 1] = ("Advantage (%s)."):format(entry.from) end
+    -- A character that has stopped the question (Actions/RollQuestions.lua) rolls it by hand.
+    local how = self:RollQuiet("about") and "Shift-click when it applies" or "the sheet asks when you roll"
     for _, entry in ipairs(asked) do
-        lines[#lines + 1] = ("Advantage against %s (%s): the sheet asks when you roll."):format(entry.about, entry.from)
+        lines[#lines + 1] = ("Advantage against %s (%s): %s."):format(entry.about, entry.from, how)
     end
     if stat == "CON" and self:ConcentrationAdvantage() then
         lines[#lines + 1] = ("Advantage to keep concentrating (%s)."):format(self:ConcentrationAdvantage())
+    end
+    for _, choice in ipairs(stat == "CON" and self:ConcentrationChoices() or NONE) do
+        lines[#lines + 1] = ("Advantage to keep concentrating on %s (%s): the sheet asks when damage calls for that save."):format(choice.about, choice.from)
     end
     return #lines > 0 and table.concat(lines, "\n") or nil
 end

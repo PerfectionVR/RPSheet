@@ -57,6 +57,7 @@ function RPSheet:ToggleCondition(name)
     if conditions[name] and INCAPACITATES[name] then
         self:EndConcentration(name:lower())
         self:LeaveForms(name:lower()) -- a Wild Shape form ends too
+        self:EndForIncapacitated(name) -- and a rage and the like (Actions/Incapacitated.lua)
     end
     self:QueueBroadcast()
     self:PopulateSoon()
@@ -90,16 +91,19 @@ end
 
 -- The Constitution save to keep a spell after taking damage: DC 10, or half the damage
 -- if that is higher, 30 at most. A failure ends the concentration.
-function RPSheet:RollConcentration(damage)
+-- `sure` says whether an advantage that only counts for some spells applies (a spell
+-- that was extended): left out, the sheet asks first (Actions/SaveAdvantages.lua).
+function RPSheet:RollConcentration(damage, sure)
     local dc = math.min(30, math.max(10, math.floor(damage / 2)))
     if self.busy or self:IsRolling() then
         self:Print(("You took %d damage while concentrating: roll a Constitution save, DC %d, to keep the spell."):format(damage, dc))
         return
     end
+    if sure == nil and self:AskConcentration(damage) then return end -- the menu rolls
     local mod = self:SaveMod("CON")
     self.busy = true
     -- War Caster and the like give advantage on this save alone (Sheet/SaveAdvantages.lua).
-    self:RollD20(self:ResolveMode("CON save", self:ConcentrationAdvantage() and "ADV" or nil), function(d20, note)
+    self:RollD20(self:ResolveMode("CON save", (sure or self:ConcentrationAdvantage()) and "ADV" or nil), function(d20, note)
         self.busy = false
         local kept = d20 + mod >= dc
         if not kept then

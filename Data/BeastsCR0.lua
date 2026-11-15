@@ -40,6 +40,7 @@ B["Lizard"] = { cr = 0, size = "Tiny", ac = 10, speed = 20, moves = "climbing 20
     attacks = { { "Bite", 2, 0, 4, 1, "piercing" } } }
 B["Octopus"] = { cr = 0, size = "Small", ac = 12, speed = 5, moves = "swimming 30 feet", str = 4, dex = 15, con = 11, senses = { Darkvision = 30 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 2, Stealth = 6 },
     note = N.water .. " It squeezes through gaps an inch wide at no cost. " .. N.ink,
+    extras = { R.BeastInk(5, "when a creature ends its turn within 5 feet of you") },
     attacks = { { "Tentacles", 4, 0, 4, 1, "bludgeoning" } } }
 B["Owl"] = { cr = 0, fly = true, size = "Tiny", ac = 11, speed = 5, moves = "flying 60 feet", str = 3, dex = 13, con = 8, senses = { Darkvision = 120 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 5, Stealth = 5 },
     note = N.flyby,

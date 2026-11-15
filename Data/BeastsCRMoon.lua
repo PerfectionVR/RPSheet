@@ -74,6 +74,7 @@ B["Triceratops"] = { cr = 5, size = "Huge", ac = 14, speed = 50, str = 22, dex =
 -- 6
 B["Giant Squid"] = { cr = 6, size = "Huge", ac = 12, speed = 5, moves = "swimming 80 feet", str = 23, dex = 14, con = 12, saves = { STR = 9, DEX = 5 }, senses = { Darkvision = 120 }, skills = { "Perception" }, bonus = { Perception = 6 },
     note = N.water .. " One Bite and one Tentacle with the Attack action. " .. N.ink,
+    extras = { R.BeastInk(15, "when you take damage") },
     attacks = { { "Bite", 9, 4, 10, 6, "piercing" },
         { "Tentacle", 9, 3, 8, 6, "bludgeoning", "A Huge or smaller target is grappled (DC 16 to escape) and can be pulled up to 10 feet straight toward you. Each of the two tentacles can hold one.", rider = "{Grappled} if Huge or smaller, escape DC 16; you can pull it 10 feet toward you", reach = 15 } } }
 B["Mammoth"] = { cr = 6, size = "Huge", ac = 13, speed = 50, str = 24, dex = 9, con = 21, saves = { STR = 10, CON = 8 }, senses = {}, skills = {},

@@ -28,9 +28,16 @@
 --                    rider = "{Prone} if Large or smaller"   what else a hit does, said
 --                      in the announcement; a term in braces is marked as one
 --                    follow = { label, when }   a row of its own for the same attack
---                      made as a follow-up (the bite a charge or a rampage gives) } }
+--                      made as a follow-up (the bite a charge or a rampage gives);
+--                      with day = true that follow-up is there once a day
+--                    recharge = 5   once used it is gone until a d6 rolled at the
+--                      start of a turn shows this much or more, or until a rest
+--                    day = true     once a day: a long rest brings it back } }
 --                An attack bonus of false is an action without an attack roll, such
 --                as one the target saves against; the note says how it works.
+--                The sheet counts the limited ones (Actions/BeastUses.lua).
+--     extras     { { name, what it does, rider = "...", day = true } }: what it can do
+--                besides attacking that has a limit to count, each a row of its own
 --     note       anything else worth knowing
 -- }
 -- BeastPicks adds level, moonLevel (Circle of the Moon) and desc to each.
@@ -48,12 +55,28 @@ R.BEAST_NOTES = {
     amphibious = "It breathes air and water.",
     swarm = "A swarm: it can share a space with other creatures, fits through any gap one of its animals fits through, and can't regain hit points or gain temporary hit points.",
     escape = "Bonus action: Disengage or Hide.",
-    ink = "Once a day it can release a cloud of ink as a reaction.",
+    ink = "Once a day it can release a cloud of ink as a reaction, which has a row of its own.",
     twice = "Two of these with the Attack action: click once for each.",
     wounded = "Advantage if the target is below its full hit points.",
     thinned = "While you are Bloodied, count only one of the two dice.",
-    recharge = "Once used, it comes back on a 6 on a d6 rolled at the start of your turn.",
 }
+
+-- An octopus's or squid's cloud of ink, for `extras`: a cube of `feet` feet, set off
+-- by `when`.
+function R.BeastInk(feet, when)
+    return { "Ink Cloud", ("Reaction, underwater, %s: ink fills a %d-foot cube around you, which is heavily obscured for a minute or until a current clears it, and you swim up to your swimming speed."):format(when, feet),
+        rider = ("Ink fills a %d-foot cube around them, heavily obscured for a minute, and they swim up to their swimming speed"):format(feet), day = true }
+end
+
+-- What an action's tooltip says about its limit (an attack, its follow-up or an extra).
+function R.BeastLimitNote(entry)
+    if entry.day then return " Once a day: a long rest brings it back." end
+    if entry.recharge then
+        return (" Once used, it comes back on a %s on a d6 rolled at the start of your turn: right-click the row to roll it. A rest brings it back too."):format(
+            entry.recharge >= 6 and "6" or ("%d or higher"):format(entry.recharge))
+    end
+    return ""
+end
 
 -- The name of the passive that marks a beast form as taken.
 function R.BeastFormPassive(name)

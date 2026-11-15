@@ -32,7 +32,8 @@ end
 
 -- Why a spell can't be cast in the form the character is in, or nil when it can.
 -- No spells in a form, except a Circle of the Moon druid's own circle spells, and from
--- level 18 (Beast Spells) any spell without a priced or consumed component.
+-- level 18 (Beast Spells) any spell without a priced or consumed component; one read
+-- from a scroll needs no components at all (Actions/Scrolls.lua).
 function RPSheet:FormBlocksSpell(spell)
     local form = self:Form()
     if not form then return end
@@ -40,7 +41,7 @@ function RPSheet:FormBlocksSpell(spell)
     if CircleSpell(sheet, spell) then return end
     if ns.HasFeature(sheet, "Beast Spells") then
         -- The listed spells go by the component data; a spell of the player's own by its fields.
-        if R.SPELL_COMPONENTS[spell.name] or (spell.material or 0) > 0 or spell.consumed then
+        if not spell.fromScroll and (R.SPELL_COMPONENTS[spell.name] or (spell.material or 0) > 0 or spell.consumed) then
             return ("%s needs a component with a price, which can't be used in %s."):format(spell.name, form.beast and "a beast form" or form.name)
         end
         return

@@ -103,7 +103,8 @@ Section("conditions and rolls", function()
     local function Mode(label, mode) return RPSheet:ResolveMode(label, mode) end
     -- what each condition does to the kinds of roll: A attack, S spell attack, C check (a skill), I initiative, D DEX save
     local expect = {
-        Blinded = { attack = "DIS" }, Charmed = {}, Deafened = {}, Grappled = {},
+        Blinded = { attack = "DIS" }, Charmed = {}, Deafened = {},
+        Grappled = { attack = "DIS" }, -- unless the sheet is told it is against the grappler (t-test-play-questions.lua)
         Frightened = { attack = "DIS", check = "DIS", initiative = "DIS" },
         Incapacitated = { initiative = "DIS" },
         Invisible = { attack = "ADV", initiative = "ADV" },
@@ -283,7 +284,7 @@ Section("saving throws: what is it against", function()
     MENU = false
     Eq(D20s(function() RPSheet:RollCheck("WIS save", mod) end), 0, "the menu comes before the roll")
     Check(MENU and MENU.title == "WIS save: what is it against?", "the menu's title")
-    Eq(MENU and #MENU.items, 2, "one row for Charmed and one for something else")
+    Eq(MENU and #MENU.items, 3, "one row for Charmed, one for something else, and the one to stop asking")
     Rolls(4, 16)
     Eq(D20s(function() Click(MENU, "being Charmed") end), 2, "against being Charmed: advantage")
     Said("rolls [WIS save] against being Charmed: 16 [advantage: 4, 16]", "the line says what it is against")
@@ -319,7 +320,7 @@ Section("saving throws: what is it against", function()
     entry.called, entry.loyalty = true, 10
     MENU = false
     RPSheet:RollCheck("WIS save", mod)
-    Eq(MENU and #MENU.items, 3, "a Dragonkin companion adds a row for Frightened")
+    Eq(MENU and #MENU.items, 4, "a Dragonkin companion adds a row for Frightened")
     Eq(D20s(function() Click(MENU, "being Frightened") end), 2, "advantage against being Frightened")
     -- without the game's menu: a line, and the roll goes on
     local keep = MenuUtil

@@ -43,7 +43,12 @@ function RPSheet:PetStrike(mode, how, again)
         -- Only a negative modifier still counts for a cleave's damage.
         flat = block.flat + math.min(0, self:Mod("WIS"))
     else
-        if how == "charge" and not block.charge then how = nil end
+        -- Asked for a charge (a right-click) by a beast that has none: no strike at all,
+        -- since a right-click never stands in for the left one.
+        if how == "charge" and not block.charge then
+            self:Print("Your companion has no charge: a right-click is for a beast of the land that ran 20 feet straight at its target. Left-click to strike.")
+            return
+        end
         if how == "charge" then
             riders[#riders + 1] = ("On a hit: %s if Large or smaller"):format(ns.Mark("Prone"))
         end

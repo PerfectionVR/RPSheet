@@ -8,16 +8,26 @@ local RollText = ns.RollText
 local CollectCosts = ns.AbilityKit.CollectCosts
 local RollStep = ns.AbilityKit.RollStep
 local ApplyChanges = ns.AbilityKit.ApplyChanges
+local RollLabel = ns.AbilityKit.RollLabel
 
 -- `mode` is "ADV" or "DIS" to roll the ability's d20s with advantage or disadvantage.
-function RPSheet:UseAbility(ability, mode)
+-- `answers` is what the player was asked about its rolls, by their label; without
+-- it the sheet asks first when it needs to, before anything is spent.
+function RPSheet:UseAbility(ability, mode, answers)
     -- One thing at a time: a roll that is still waiting for its result would be dropped.
     if self.busy or self:IsRolling() then return end
     -- A companion's strike rolls with its own numbers and riders (Actions/Pet.lua).
     if ns.PetAbility(self, ability, mode) then return end
+    -- No actions while incapacitated; a saving throw of the character's own still rolls.
+    if not ns.AbilityKit.OwnSaveOnly(ability) and self:CantAct("use " .. ability.name) then return end
+    -- A beast's action that is used up until it recharges or a rest (Actions/BeastUses.lua).
+    if self:BeastUseSpent(ability) then return end
 
     local costs, costTexts = CollectCosts(self, ability)
     if not costs then return end
+    if not answers then
+        return ns.AbilityKit.AskRolls(self, ability, mode, function(found) self:UseAbility(ability, mode, found) end)
+    end
     -- Steps that change spell slots are checked before anything is spent.
     local slotPlans = {}
     for _, action in ipairs(ability.actions) do
@@ -51,6 +61,7 @@ function RPSheet:UseAbility(ability, mode)
 
     local function finish()
         local switched = ApplyChanges(self, ability, costs)
+        self:TakeBeastUse(ability)
         if costs.slotLevel then self.castLevel = nil end
         for _, plan in ipairs(slotPlans) do
             plan.apply()
@@ -80,16 +91,23 @@ function RPSheet:UseAbility(ability, mode)
 
         if action.type == "ROLL" then
             local label, mod = RollStep(self, action)
-            local rollMode = mode
-            if action.kind == "ATTACK" then
-                rollMode = self:ResolveMode("attack", mode, action.stat == "STR" and "STR attack" or nil)
-            elseif action.kind == "SPELL" then
-                rollMode = self:ResolveMode("spell attack", mode)
+            -- The roll goes by the same rules as the sheet's own rows: what conditions
+            -- and features do to an attack, a check or a saving throw of that ability.
+            local rollMode, known, also = mode, RollLabel(action)
+            local told = known and answers[known]
+            if known then
+                local failed = self:AutoFail(known)
+                if failed then
+                    parts[#parts + 1] = ("%s: fails without a roll (%s)"):format(label, ns.Mark(failed))
+                    return step()
+                end
+                rollMode = self:ResolveMode(known, mode, also, nil, told or nil)
             end
-            self:RollD20(rollMode, function(d20, note)
+            if told and told.about then label = ("%s against %s"):format(label, told.about) end
+            self:RollTest(rollMode, function(d20, note, extra)
                 -- A widened critical range is for weapon and unarmed attacks, not spells.
                 if (action.kind == "ATTACK" and d20 >= self:CritFrom()) or (action.kind == "SPELL" and d20 == 20) then critical = true end
-                parts[#parts + 1] = RollText.Check(label, d20, mod, note)
+                parts[#parts + 1] = RollText.Check(label, d20, mod, note, extra)
                 step()
             end)
         elseif action.type == "DICE" then
