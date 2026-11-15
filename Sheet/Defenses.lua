@@ -86,6 +86,11 @@ function RPSheet:Defenses()
             end
         end
     end
+    -- Armor made to resist a damage type, while it is worn and attuned (Sheet/ItemVariants.lua).
+    for _, item in ipairs(sheet.items or {}) do
+        local made = ns.ItemDefenses(item)
+        if made and self:ItemActive(item) then Add(made, item.name) end
+    end
     -- Damage types picked for a feat.
     for _, instance in ipairs(ns.FeatInstances(sheet)) do
         if instance.passive and instance.passive.enabled then

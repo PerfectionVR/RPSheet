@@ -25,10 +25,10 @@ local function Summary()
     if sheet.shield and not training.shield then
         lines[#lines + 1] = ("%sYou have no training with shields: disadvantage on Strength and Dexterity rolls, and you can't cast spells.|r"):format(Opt.RED)
     end
-    if armor.minStr and RPSheet:Score("STR") < armor.minStr then
+    if armor.minStr and RPSheet:Score("STR") < armor.minStr and not ns.ArmorWaives(sheet, "noStrength") then
         lines[#lines + 1] = ("%s%s needs Strength %d, or your speed drops by 10 feet.|r"):format(Opt.RED, armor.name, armor.minStr)
     end
-    if armor.stealth then
+    if armor.stealth and not ns.ArmorWaives(sheet, "noStealth") then
         lines[#lines + 1] = ("%s gives disadvantage on Stealth checks."):format(armor.name)
     end
     if sheet.armor == "NONE" and class and class.unarmored then

@@ -49,16 +49,18 @@ function RPSheet:MissingComponents(spell, pick)
         if self:ComponentCount(part) < ns.ComponentNeed(part, targets) then
             missing[#missing + 1] = ns.ComponentText(part, targets)
             if part.weapon then
-                advice.weapon = "Ready such a weapon first. "
+                advice.weapon = "Ready such a weapon first; a weapon of your own needs its kind and worth set under Customize, Weapons. "
+            elseif part.ammo then
+                advice.ammo = "Arrows and bolts are under Weapons in the item browser. "
             elseif not part.coins then
                 advice.item = "Add or buy it in the item browser (Reagents); one worth more will do. "
             end
         end
     end
     if #missing == 0 then return nil end
-    return ("%s needs something you don't have%s: %s. %s%sA DM's ruling can switch this check off under Customize, Spells.")
+    return ("%s needs something you don't have%s: %s. %s%s%sA DM's ruling can switch this check off under Customize, Spells.")
         :format(spell.name, (targets or 1) > 1 and (" for %d targets"):format(targets) or "", table.concat(missing, "; "),
-            advice.item or "", advice.weapon or "")
+            advice.item or "", advice.ammo or "", advice.weapon or "")
 end
 
 -- Takes what the casting uses up out of the inventory and the purse. Returns the
@@ -70,6 +72,12 @@ function RPSheet:SpendComponents(spell, pick)
         local need = part.consumed and ns.ComponentNeed(part, targets) or 0
         if part.coins and need > 0 then
             if self:SpendCoins(part.coins * need, spell.name) then taken[#taken + 1] = ns.CoinText(part.coins * need) end
+        elseif part.ammo then
+            local pieces = need > 0 and self:TakeAmmo(part, need) or 0
+            if pieces > 0 then
+                taken[#taken + 1] = ("%d %s"):format(pieces, part.words)
+                dropped = true
+            end
         elseif not part.weapon then
             for _ = 1, need do
                 local item = self:CarriedComponent(part)
@@ -108,6 +116,7 @@ function RPSheet:ComponentHelp(spell)
             have = (" %sYou carry %s.|r"):format(enough and GREEN or RED, count == 0 and "none" or tostring(count))
         end
         lines[#lines + 1] = ("Needs %s%s.%s"):format(ns.ComponentText(part), part.consumed and ", used up by the casting" or ", which is kept", have)
+        if part.note and not waived then lines[#lines + 1] = GREY .. part.note .. "|r" end
         each = each or part.each ~= nil
     end
     if each and not waived then

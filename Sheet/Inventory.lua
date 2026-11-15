@@ -147,6 +147,8 @@ function ns.NormalizeInventory(sheet, source)
         if not R.ITEM_LIMITS[item.limit] then item.limit = "" end
         if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM) then item.base = "" end
         item.bonus = Whole(item.bonus, 3)
+        if not R.ITEM_VARIANT[item.variant] then item.variant = "" end
+        item.scribed = item.scribed == true
         for at = #item.effects, 1, -1 do
             local effect = item.effects[at]
             if not R.EFFECT_TARGETS[effect.target] then
@@ -156,4 +158,5 @@ function ns.NormalizeInventory(sheet, source)
             end
         end
     end
+    ns.RefreshItems(sheet) -- what the catalogue has learned since (Sheet/ItemUpkeep.lua)
 end

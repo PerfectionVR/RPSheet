@@ -48,7 +48,8 @@ end
 
 -- What `quantity` of a listed item costs this character right now, in copper; with a
 -- discount also the percent taken off and the faction giving it. Ordinary equipment
--- is covered, and magic items up to the rarity the standing reaches.
+-- is covered, and magic items up to the rarity the standing reaches (they are priced
+-- by their rarity, Data/MagicItemPrices.lua).
 function RPSheet:ItemBuyPrice(name, quantity)
     local known = R.ITEMS[name]
     return Reduced(self, ns.ItemPrice(name, quantity), function(top)

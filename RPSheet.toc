@@ -127,6 +127,8 @@ Data\MagicItemsCloth.lua
 Data\RecipesMagic.lua
 Data\RecipesVehicles.lua
 Data\Scrolls.lua
+Data\MagicItemPrices.lua
+Data\ItemVariants.lua
 
 UI\Themes.lua
 Core\Defaults.lua
@@ -157,8 +159,10 @@ Sheet\DefensePicks.lua
 Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
+Sheet\ItemUpkeep.lua
 Sheet\SpellComponents.lua
 Sheet\ComponentKinds.lua
+Sheet\ComponentAmmo.lua
 Sheet\ComponentTargets.lua
 Sheet\SetEffects.lua
 Sheet\Mounts.lua
@@ -174,6 +178,7 @@ Sheet\StyleEffects.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
 Sheet\Equipment.lua
+Sheet\ItemVariants.lua
 Sheet\Trackers.lua
 Sheet\Summary.lua
 Sheet\Explain.lua
@@ -199,6 +204,7 @@ Sheet\PrepareChanges.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\Scribing.lua
+Sheet\ScrollReading.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
 Sheet\RenownRules.lua
@@ -328,6 +334,7 @@ Options\Spells.lua
 Options\Spellbook.lua
 Options\Passives.lua
 Options\Coins.lua
+Options\InventoryVariant.lua
 Options\InventoryAdd.lua
 Options\Inventory.lua
 Options\Mounts.lua

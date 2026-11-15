@@ -4,7 +4,9 @@
 -- spell's resistances and immunities, so they show on the sheet and "Take damage"
 -- applies them. It goes when a rest outlasts the spell, when concentration ends for a
 -- spell that needs it, or when the player clicks it off. Protection someone else casts
--- on you (byHand) is put there under Customize, Defense and stays when it is off.
+-- on you is put there under Customize, Defense (Options/WardSwitches.lua): such a
+-- passive is marked byOther, and the caster's concentration is not yours to end. An
+-- option that is only ever cast by someone else (byHand) stays when it is off.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -43,9 +45,10 @@ end
 -- Writes what the data says onto a ward's passive.
 local function Fill(passive, ward, option, spell)
     passive.name = option.label and ("%s (%s)"):format(spell, option.label) or (spell .. " (spell)")
+    local ends = ward.hours >= 8 and "A rest doesn't end it unless it is as long as the spell. " or "A rest ends it. "
+    if ward.conc then ends = passive.byOther and "It ends with its caster's concentration, which the sheet can't see. " or "It ends with your concentration. " end
     passive.desc = option.desc or ("On while %s protects you: %s. %s%sClick to switch it off when the spell ends."):format(spell, ns.WardText(option),
-        ns.WardRollNote(option),
-        ward.conc and "It ends with your concentration. " or (ward.hours >= 8 and "A rest doesn't end it unless it is as long as the spell. " or "A rest ends it. "))
+        ns.WardRollNote(option), ends)
     passive.effects = option.effects and CopyTable(option.effects) or (type(passive.effects) == "table" and passive.effects or {})
     for _, field in ipairs(FIELDS) do
         passive[field] = option[field] and CopyTable(option[field]) or nil
@@ -53,7 +56,8 @@ local function Fill(passive, ward, option, spell)
 end
 
 -- Switches on the ward of a spell's option, in place of any other option of that spell.
-function RPSheet:StartWard(spell, index)
+-- `byOther` is true when someone else cast it on the character.
+function RPSheet:StartWard(spell, index, byOther)
     local ward, option = R.WardOf(R.WardKey(spell, index))
     if not ward then return end
     local passives, key, found = self:Sheet().passives, R.WardKey(spell, index), nil
@@ -72,6 +76,7 @@ function RPSheet:StartWard(spell, index)
         passives[#passives + 1] = found
     end
     found.enabled = true
+    found.byOther = byOther and true or nil
     found.owed = nil -- a new casting owes nothing yet (Actions/WardDamage.lua)
     Fill(found, ward, option, spell)
     return option
@@ -84,7 +89,9 @@ function RPSheet:EndWards(hours, concentration)
     local passives, ended = self:Sheet().passives, {}
     for at = #passives, 1, -1 do
         local ward, option = R.WardOf(passives[at].auto)
-        if ward and ((not hours and not concentration) or (hours and ward.hours <= hours) or (concentration and ward.conc)) then
+        -- Someone else's spell doesn't hang on this character's concentration.
+        local own = ward and ward.conc and not passives[at].byOther
+        if ward and ((not hours and not concentration) or (hours and ward.hours <= hours) or (concentration and own)) then
             if passives[at].enabled then ended[#ended + 1] = passives[at].name end
             -- Protection put there by hand is switched off and stays for the next time.
             if option.byHand then passives[at].enabled = false else table.remove(passives, at) end

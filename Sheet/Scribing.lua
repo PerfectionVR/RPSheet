@@ -109,15 +109,21 @@ function RPSheet:Scribe(spell, coinsOnly)
     if not paid then return false end
     self:SpendComponents(spell)
 
-    -- Scrolls of one spell stack, though they are magic items.
-    local item = self:CarriedItem(name)
+    -- Scrolls of one spell stack, though they are magic items; a scroll someone else
+    -- wrote casts differently and stays an entry of its own.
+    local item
+    for _, other in ipairs(self:Sheet().items) do
+        if other.name == name and other.scribed then item = other end
+    end
     if item then
         item.qty = item.qty + 1
     else
-        item = self:AddItem(name, 1)
+        item = ns.NewItem(name)
+        table.insert(self:Sheet().items, item)
         item.magic, item.rarity = true, R.SCROLL_RARITY[spell.level] or ""
+        item.scribed, item.cost = true, R.ScrollValue(spell.level)
         local kind = spell.level == 0 and "cantrip" or ((R.SPELL_LEVELS[spell.level] or "high level"):lower() .. " spell")
-        item.desc = ("A scroll of a %s, written by you: it casts with your own spell save DC and spell attack bonus, needs no components, and crumbles when read. Shift-click it to read it.\n%s"):format(
+        item.desc = ("A scroll of a %s, written by you: it casts with your own spell save DC and spell attack bonus, needs no components, and crumbles when read. Only someone with the spell on their spell list can read it. Shift-click it to read it.\n%s"):format(
             kind, spell.desc or "")
     end
     local days = self:ScribeDays(spell)
