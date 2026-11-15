@@ -1,12 +1,17 @@
 -- The item browser: a window of its own that shows items as blocks, each saying what
 -- it is and does, with buttons under it. What is listed and what the buttons do comes
 -- from a source: the character's inventory (UI/ItemBrowserSheet.lua) or the starting
--- closet of the creation wizard (Wizard/ClosetBrowser.lua).
+-- closet of the creation wizard (Wizard/ClosetBrowser.lua), or what the character's
+-- professions can make (UI/CraftBrowser.lua).
 --
 -- A source is a table of:
 --   title(self)            the window's title
 --   first                  { name, tip }: the tab for what was taken or is carried
---   kinds                  the other tabs, a list of { name, kind } (Rules.ITEM_NAMES)
+--   kinds                  the other tabs, a list of { name, kind } (Rules.ITEM_NAMES),
+--                          or a function(self) returning the list as it is now
+--   list(self, tab)        optional: the entries of such a tab, when they are not
+--                          simply every item of its kind
+--   notes(self, entry)     optional: lines added under what the block says
 --   standing(self)         the line above the tabs
 --   own(self)              entries for the first tab, a list of { name, item }
 --   find(self, name)       the carried entry of that name, or nil
@@ -68,6 +73,18 @@ function RPSheet:ShowItemBrowser(wanted)
     self:PopulateItemBrowser()
 end
 
+-- Shows the browser on a source at one of its tabs. Unlike ShowItemBrowser it never
+-- closes the window.
+function RPSheet:OpenItemBrowser(wanted, tab)
+    local shown = self.itemWindow and self.itemWindow.frame:IsShown()
+    if source ~= wanted or not shown then
+        if source == wanted then source = nil end -- or showing it again would be taken as closing it
+        self:ShowItemBrowser(wanted)
+    end
+    open = tab or open
+    self:PopulateItemBrowser()
+end
+
 -- Closes the browser if it is showing that source.
 function RPSheet:HideItemBrowser(shown)
     if self.itemWindow and source == shown then self.itemWindow:Hide() end
@@ -90,6 +107,7 @@ local function AddCard(self, body, entry, first)
     local marks = source.marks(self, entry)
     card:SetTitle(#marks > 0 and ("%s  |cffffffff(%s)|r"):format(entry.name, table.concat(marks, ", ")) or entry.name)
     local lines = source.lines and source.lines(self, entry) or UI.ItemLines(self, entry.name, entry.item, source.class(self))
+    for _, line in ipairs(source.notes and source.notes(self, entry) or {}) do lines[#lines + 1] = line end
     UI.AddLabel(card, 1, table.concat(lines, "\n"))
     source.buttons(self, card, entry, first)
     body:AddChild(card)
@@ -101,8 +119,13 @@ end
 
 local function AddTabs(self, body)
     local theme = self.db.profile.theme
-    local tabs = { source.first }
-    for _, tab in ipairs(source.kinds) do tabs[#tabs + 1] = tab end
+    local tabs, found = { source.first }, open == source.first
+    local kinds = type(source.kinds) == "function" and source.kinds(self) or source.kinds
+    for _, tab in ipairs(kinds) do
+        tabs[#tabs + 1] = tab
+        found = found or tab == open
+    end
+    if not found then open = source.first end -- its tab is gone
     for _, tab in ipairs(tabs) do
         local button = AceGUI:Create("RPSheetTab")
         button:SetStyle(theme, tab == open)
@@ -151,7 +174,9 @@ function RPSheet:PopulateItemBrowser()
 
     local first, shown = open == source.first, 0
     local entries = first and source.own(self) or {}
-    if not first then
+    if not first and source.list then
+        entries = source.list(self, open)
+    elseif not first then
         for _, name in ipairs(source.names and source.names(open.kind) or R.ITEM_NAMES[open.kind] or {}) do
             entries[#entries + 1] = { name = name, item = source.find(self, name) }
         end

@@ -411,6 +411,7 @@ local TABS = {
     { name = "Traits", tip = "Passives and traits, languages and renown.", PassiveSection, OriginSection },
     { name = "Items", tip = "Your coins and what you carry, and your mounts, vehicles and companion creatures.",
       UI.InventorySection, UI.MountSection },
+    { name = "Trade", tip = "Your professions: what you can make, gathering, and the materials you have.", UI.ProfessionSection },
 }
 
 ---------------------------------------------------------------------------

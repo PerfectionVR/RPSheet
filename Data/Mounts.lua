@@ -36,7 +36,7 @@ R.BARDING_COST, R.BARDING_WEIGHT = 4, 2 -- armor made for a mount: times the pri
 
 -- Saddles, feed and fuel are carried like any gear: name, price in copper, pounds.
 R.AddGear("Adventuring gear",
-    "Exotic Saddle|6000|40;Military Saddle|2000|30;Riding Saddle|1000|25;Feed|5|10;Fuel|100|10")
+    "Exotic Saddle|6000|40;Military Saddle|2000|30;Riding Saddle|1000|25;Feed|5|10")
 
 ---------------------------------------------------------------------------
 -- The catalogue

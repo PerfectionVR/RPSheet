@@ -212,6 +212,7 @@ local function CleanSheet(source)
     ns.NormalizeInventory(sheet, source) -- coins, and weights that are fractions
     sheet.mounts = CleanList(source.mounts, R.TEMPLATES.mount)
     ns.NormalizeMounts(sheet)
+    ns.NormalizeProfessions(sheet, source) -- gathered materials, fragments, learned recipes
     -- A spell's level and dice count may be 0, unlike the character level and other dice.
     for index, spell in ipairs(sheet.spells) do
         local original = source.spells[index]

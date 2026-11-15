@@ -96,6 +96,10 @@ ns.defaults = {
                     featureSkillGranted = {}, -- [feature name] = skill it made proficient
                     traitChoices = {}, -- [trait name] = the skill or feat picked for it
                     traitGranted = {}, -- [trait name] = skill it made proficient
+                    -- Professions (Sheet/Professions.lua fills in what is missing).
+                    materials = {}, -- [kind] = worth of gathered materials, in copper
+                    recipes = {},   -- [item name] = true: a recipe learned beyond the basic ones
+                    fragments = {}, -- { plain, magic, failedAt }: archaeology finds
                 },
             },
         },

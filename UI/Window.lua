@@ -7,7 +7,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetWindow", 1
 
 local TITLE_HEIGHT, PADDING = 22, 8
-local MIN_WIDTH, MIN_HEIGHT = 300, 200 -- narrower than this and the rows and tabs wrap
+local MIN_WIDTH, MIN_HEIGHT = 340, 200 -- narrower than this and the rows and tabs wrap
 local LOCK_ICON = "Interface\\PetBattles\\PetBattle-LockIcon"
 local EDIT_ICON = "Interface\\Buttons\\UI-OptionsButton"
 
