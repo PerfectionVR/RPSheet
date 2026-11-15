@@ -183,6 +183,10 @@ local function Blocked(sheet, store, instances, slot, value)
         for _, spell in ipairs(sheet.spells or NONE) do
             if spell.name == value and spell.level == 0 and not (spell.auto or ""):find("^feat:") then return true end
         end
+        -- Nor one picked as a class cantrip (in the level dialog: picked there).
+        for _, key in pairs(R.CANTRIP_LISTS) do
+            if type(sheet.picks) == "table" and type(sheet.picks[key]) == "table" and sheet.picks[key][value] then return true end
+        end
     end
     if choice.kind == "tool" then
         return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value)

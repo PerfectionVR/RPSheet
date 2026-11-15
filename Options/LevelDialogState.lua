@@ -66,5 +66,7 @@ end
 -- The character as this dialog would leave it, for a list whose options depend on
 -- other picks made here (spells that have to be in the spellbook).
 function L.Picking()
-    return setmetatable({ picks = L.draft.picks }, { __index = L.Like() })
+    -- The feat choices made here too: a cantrip taken through a feat in this dialog
+    -- isn't offered again as a class cantrip (ns.CantripsElsewhere).
+    return setmetatable({ picks = L.draft.picks, featChoices = L.draft.featChoices or L.Like().featChoices }, { __index = L.Like() })
 end

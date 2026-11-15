@@ -63,6 +63,11 @@ local classPage = Page(1, {
         type = "select", order = 4, name = "Subclass",
         desc = "Every class chooses its subclass at level 3, so this appears from that level.",
     }, "subclasses", "subclass", R.SUBCLASS_LEVEL),
+    subclassInfo = {
+        type = "description", order = 4.1, fontSize = "medium",
+        hidden = function() return not DraftClass() or W.FirstLevel() < R.SUBCLASS_LEVEL or (W.draft.subclass or "") == "" end,
+        name = function() return ns.SubclassSummary(W.draft.subclass) end,
+    },
     spec = (function()
         local option = ClassChoice({
             type = "select", order = 5, name = "Specialization",
