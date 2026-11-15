@@ -28,6 +28,9 @@ local CLOSET = {
     class = function() return W.draft.class end,
     find = function() return nil end, -- nothing is carried yet; the draft only counts
     gone = function() return W.draft == nil end,
+    -- The cog: the closet belongs to a character that doesn't exist yet, so there is
+    -- no page under Customize to open (and the active character's is not it).
+    options = function() RPSheet:Print("The starting closet has no settings: it only fills the new character's inventory.") end,
 }
 
 function CLOSET.standing()

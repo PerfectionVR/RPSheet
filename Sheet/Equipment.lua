@@ -29,15 +29,24 @@ function ns.ReadyWeapons(sheet)
     return ready
 end
 
+-- True when a sheet weapon goes with another carried item, one of the weapon's own
+-- name: a named magic longsword stays where it is when a plain longsword moves.
+local function OthersWeapon(sheet, weapon, item)
+    for _, other in ipairs(sheet.items) do
+        if other ~= item and other.name == weapon.name and other.name ~= item.name then return true end
+    end
+    return false
+end
+
 -- Readies or puts away the sheet's weapons that go with an item: the ones of its
--- name, and for a plain basic weapon the ones of that kind. A basic kind that isn't
--- on the sheet yet gets an entry when it is readied; a weapon of your own is only
--- found by its name.
+-- name, and for a plain basic weapon the ones of that kind that no other item
+-- claims. A basic kind that isn't on the sheet yet gets an entry when it is readied;
+-- a weapon of your own is only found by its name.
 local function ReadyWeapon(sheet, item, on, modifier, canMaster)
     local base, found = ns.ItemBase(item), false
     local plain = base == item.name
     for _, weapon in ipairs(sheet.weapons) do
-        if weapon.name == item.name or (plain and weapon.base == base) then
+        if weapon.name == item.name or (plain and weapon.base == base and not OthersWeapon(sheet, weapon, item)) then
             weapon.stowed, found = not on, true
         end
     end

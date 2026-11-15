@@ -43,7 +43,10 @@ local function Reduced(self, copper, covers)
     if not faction or copper <= 0 then return copper end
     local percent, top = ns.RenownDiscount(self:Sheet(), faction)
     if not covers(top) then return copper end
-    return math.floor(copper * (100 - percent) / 100 + 0.5), percent, faction
+    local reduced = math.floor(copper * (100 - percent) / 100 + 0.5)
+    -- A price too small to lose a whole copper is not called a discount.
+    if reduced >= copper then return copper end
+    return reduced, percent, faction
 end
 
 -- What `quantity` of a listed item costs this character right now, in copper; with a
