@@ -97,6 +97,12 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     end
     -- A spell with a growing die that is already running rolls its next turn instead.
     if self:GrowingSpellClick(spell, ritual) then return end
+    -- A component with a price has to be carried, for a ritual too (Sheet/SpellComponents.lua).
+    local missing = self:MissingComponents(spell)
+    if missing then
+        self:Print(missing)
+        return
+    end
 
     -- Cantrips are free; other spells use the lowest slot that fits.
     local slot
@@ -137,6 +143,8 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if ns.HasSpellbook(self:Sheet()) then self:State().prepareClosed = true end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
+        local used = self:SpendComponents(spell)
+        if #used > 0 then parts[#parts + 1] = "uses up " .. table.concat(used, ", ") end
         if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level
         self.castLevel = nil
         if R.GROWING_SPELLS[spell.name] then

@@ -105,6 +105,12 @@ end
 -- Extra controls on the Spells page, above the list.
 local function Extra(args)
     args.limits = { type = "description", order = 0.4, fontSize = "medium", name = Limits }
+    args.components = {
+        type = "toggle", order = 0.45, width = "full", name = "Check spell components",
+        desc = "Some spells need a component with a price, such as a diamond. While this is on, such a spell can only be cast when you carry the component, and a component the casting uses up is taken from your inventory. Switch it off when your DM rules otherwise.",
+        get = function() return not Opt.Sheet().componentsWaived end,
+        set = function(_, value) Opt.Sheet().componentsWaived = not value; Opt.Changed() end,
+    }
     args.known = {
         type = "select", order = 0.5, name = "Spells for your class", width = "double",
         desc = "The spells of your class up to the highest level you have slots for, with their dice and saves filled in. Any other spell can be added by hand. The counts above turn red when you go past what your class allows.",

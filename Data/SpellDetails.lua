@@ -34,7 +34,8 @@ end
 function R.SpellCastingNote(spell)
     local parts = {}
     if spell.time and spell.time ~= "ACTION" then parts[#parts + 1] = R.SPELL_TIMES[spell.time] .. "." end
-    if (spell.material or 0) > 0 then
+    -- A component the sheet checks for is described with what is carried (Sheet/SpellComponents.lua).
+    if (spell.material or 0) > 0 and not (R.SPELL_COMPONENTS and R.SPELL_COMPONENTS[spell.name]) then
         parts[#parts + 1] = ("Needs a component worth %d gold%s."):format(spell.material, spell.consumed and ", which the casting uses up" or "")
     end
     return #parts > 0 and table.concat(parts, " ") or nil

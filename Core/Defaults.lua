@@ -71,6 +71,7 @@ ns.defaults = {
                     abilities = {},
                     passives = {},
                     spells = {},
+                    componentsWaived = false, -- true: spells are cast without checking for their priced components (a DM ruling)
                     spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
                     coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
                     items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)

@@ -298,6 +298,7 @@ local function SpellSection(self, body)
         for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
         local casting = R.SpellCastingNote(spell)
         if casting then lines[#lines + 1] = casting end
+        for _, line in ipairs(self:ComponentHelp(spell)) do lines[#lines + 1] = line end
         if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
         if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
         if R.GROWING_SPELLS[spell.name] then
