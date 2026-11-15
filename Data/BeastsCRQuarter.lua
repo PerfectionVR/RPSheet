@@ -7,22 +7,22 @@ local B, N = R.BEASTS, R.BEAST_NOTES
 B["Blood Hawk"] = { cr = 1 / 8, fly = true, size = "Small", ac = 12, speed = 10, moves = "flying 60 feet", str = 6, dex = 14, con = 10, senses = {}, skills = { "Perception" }, bonus = { Perception = 6 },
     note = N.pack,
     attacks = { { "Beak", 4, 1, 4, 2, "piercing", "Against a Bloodied target the die is a d8.", alt = { "Bloodied target", 1, 8, 2 } } } }
-B["Camel"] = { cr = 1 / 8, size = "Large", ac = 10, speed = 50, str = 15, dex = 8, con = 17, senses = { Darkvision = 60 }, skills = {},
+B["Camel"] = { cr = 1 / 8, size = "Large", ac = 10, speed = 50, str = 15, dex = 8, con = 17, saves = { CON = 5 }, senses = { Darkvision = 60 }, skills = {},
     attacks = { { "Bite", 4, 1, 4, 2, "bludgeoning" } } }
 B["Giant Crab"] = { cr = 1 / 8, size = "Medium", ac = 15, speed = 30, moves = "swimming 30 feet", str = 13, dex = 13, con = 11, senses = { Blindsight = 30 }, skills = { "Stealth" }, bonus = { Stealth = 3 },
     note = N.amphibious,
     attacks = { { "Claw", 3, 1, 6, 1, "bludgeoning", "A Medium or smaller target is grappled (DC 11 to escape). Each of the two claws can hold one." } } }
-B["Giant Rat"] = { cr = 1 / 8, size = "Small", ac = 13, speed = 30, moves = "climbing 30 feet", str = 7, dex = 16, con = 11, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 2 },
+B["Giant Rat"] = { cr = 1 / 8, size = "Small", ac = 13, speed = 30, moves = "climbing 30 feet", str = 7, dex = 16, con = 11, saves = { DEX = 5 }, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 2 },
     note = N.pack,
     attacks = { { "Bite", 5, 1, 4, 3, "piercing" } } }
 B["Giant Weasel"] = { cr = 1 / 8, size = "Medium", ac = 13, speed = 40, moves = "climbing 30 feet", str = 11, dex = 17, con = 10, senses = { Darkvision = 60 }, skills = { "Acrobatics", "Perception", "Stealth" }, bonus = { Acrobatics = 5, Perception = 3, Stealth = 5 },
     attacks = { { "Bite", 5, 1, 4, 3, "piercing" } } }
 B["Mastiff"] = { cr = 1 / 8, size = "Medium", ac = 12, speed = 40, str = 13, dex = 14, con = 12, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 5 },
     attacks = { { "Bite", 3, 1, 6, 1, "piercing", "A Medium or smaller target is knocked prone." } } }
-B["Mule"] = { cr = 1 / 8, size = "Medium", ac = 10, speed = 40, str = 14, dex = 10, con = 13, senses = {}, skills = {},
+B["Mule"] = { cr = 1 / 8, size = "Medium", ac = 10, speed = 40, str = 14, dex = 10, con = 13, saves = { STR = 4 }, senses = {}, skills = {},
     note = "It carries as much as a creature one size larger.",
     attacks = { { "Hooves", 4, 1, 4, 2, "bludgeoning" } } }
-B["Pony"] = { cr = 1 / 8, size = "Medium", ac = 10, speed = 40, str = 15, dex = 10, con = 13, senses = {}, skills = {},
+B["Pony"] = { cr = 1 / 8, size = "Medium", ac = 10, speed = 40, str = 15, dex = 10, con = 13, saves = { STR = 4 }, senses = {}, skills = {},
     attacks = { { "Hooves", 4, 1, 4, 2, "bludgeoning" } } }
 B["Venomous Snake"] = { cr = 1 / 8, size = "Tiny", ac = 12, speed = 30, moves = "swimming 30 feet", str = 2, dex = 15, con = 11, senses = { Blindsight = 10 }, skills = {},
     attacks = { { "Bite", 4, 1, 4, 2, "piercing", plus = { 1, 6, "poison" } } } }
@@ -48,7 +48,7 @@ B["Giant Frog"] = { cr = 1 / 4, size = "Medium", ac = 11, speed = 30, moves = "s
     note = N.amphibious .. " It long jumps 20 feet and high jumps 10 feet, even from a standstill.",
     attacks = { { "Bite", 3, 1, 6, 2, "piercing", "A Medium or smaller target is grappled (DC 11 to escape)." },
         { "Swallow", false, 2, 4, 0, "acid", "You swallow a Small or smaller creature you are grappling: it is blinded and restrained inside, and you can't Bite. At the end of your next turn it takes the damage and, if it lives, is spat out prone." } } }
-B["Giant Lizard"] = { cr = 1 / 4, size = "Large", ac = 12, speed = 40, moves = "climbing 40 feet, also on ceilings", str = 15, dex = 12, con = 13, senses = { Darkvision = 60 }, skills = {},
+B["Giant Lizard"] = { cr = 1 / 4, size = "Large", ac = 12, speed = 40, moves = "climbing 40 feet, also on ceilings", str = 15, dex = 12, con = 13, saves = { DEX = 3 }, senses = { Darkvision = 60 }, skills = {},
     attacks = { { "Bite", 4, 1, 8, 2, "piercing" } } }
 B["Giant Venomous Snake"] = { cr = 1 / 4, size = "Medium", ac = 14, speed = 40, moves = "swimming 40 feet", str = 10, dex = 18, con = 13, senses = { Blindsight = 10 }, skills = { "Perception" }, bonus = { Perception = 2 },
     attacks = { { "Bite", 6, 1, 4, 4, "piercing", reach = 10, plus = { 1, 8, "poison" } } } }

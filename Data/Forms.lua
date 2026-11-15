@@ -11,6 +11,8 @@
 --     darkvision  feet; senses = { Blindsight = 10, ... } for a beast's own senses
 --     skills  skills the form is proficient in
 --     skillBonus  { Perception = 3 }: a beast's own bonus, used when it is higher
+--     saveBonus   { DEX = 4 }: saving throws a beast is proficient in, with its own
+--                 bonus, used when it is higher
 -- }
 local _, ns = ...
 local R = ns.Rules

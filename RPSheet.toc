@@ -85,6 +85,7 @@ Data\Gear.lua
 Data\GearArms.lua
 Data\MagicItems.lua
 Data\SpellComponents.lua
+Data\SpellComponentKinds.lua
 Data\MagicItemsSet.lua
 Data\MagicItemsSituational.lua
 Data\StartingGear.lua
@@ -109,6 +110,7 @@ Data\FactionPerksHorde.lua
 Data\FactionPerksOrders.lua
 Data\RenownRules.lua
 Data\SpellWards.lua
+Data\SpellWardRolls.lua
 Data\Professions.lua
 Data\Recipes.lua
 
@@ -142,6 +144,8 @@ Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
 Sheet\SpellComponents.lua
+Sheet\ComponentKinds.lua
+Sheet\ComponentTargets.lua
 Sheet\SetEffects.lua
 Sheet\Mounts.lua
 Sheet\MountStore.lua
@@ -201,6 +205,7 @@ Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua
+Actions\WardDamage.lua
 Actions\Gathering.lua
 Actions\Archaeology.lua
 Actions\Trade.lua
@@ -269,6 +274,7 @@ Options\Proficiencies.lua
 Options\Professions.lua
 Options\Defense.lua
 Options\DefensePicks.lua
+Options\WardSwitches.lua
 Options\Resources.lua
 Options\Weapons.lua
 Options\WeaponStore.lua

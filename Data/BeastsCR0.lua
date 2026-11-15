@@ -10,7 +10,7 @@ B["Badger"] = { cr = 0, size = "Tiny", ac = 11, speed = 20, moves = "burrowing 5
     attacks = { { "Bite", 2, 0, 4, 1, "piercing" } } }
 B["Bat"] = { cr = 0, fly = true, size = "Tiny", ac = 12, speed = 5, moves = "flying 30 feet", str = 2, dex = 15, con = 8, senses = { Blindsight = 60 }, skills = {},
     attacks = { { "Bite", 4, 0, 4, 1, "piercing" } } }
-B["Cat"] = { cr = 0, size = "Tiny", ac = 12, speed = 40, moves = "climbing 40 feet", str = 3, dex = 15, con = 10, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 3, Stealth = 4 },
+B["Cat"] = { cr = 0, size = "Tiny", ac = 12, speed = 40, moves = "climbing 40 feet", str = 3, dex = 15, con = 10, saves = { DEX = 4 }, senses = { Darkvision = 60 }, skills = { "Perception", "Stealth" }, bonus = { Perception = 3, Stealth = 4 },
     note = "Its jumps go by Dexterity instead of Strength.",
     attacks = { { "Scratch", 4, 0, 4, 1, "slashing" } } }
 B["Crab"] = { cr = 0, size = "Tiny", ac = 11, speed = 20, moves = "swimming 20 feet", str = 6, dex = 11, con = 12, senses = { Blindsight = 30 }, skills = { "Stealth" }, bonus = { Stealth = 2 },
@@ -27,7 +27,7 @@ B["Frog"] = { cr = 0, size = "Tiny", ac = 11, speed = 20, moves = "swimming 20 f
 B["Giant Fire Beetle"] = { cr = 0, size = "Small", ac = 13, speed = 30, moves = "climbing 30 feet", str = 8, dex = 10, con = 12, senses = { Blindsight = 30 }, skills = {},
     note = "It glows: bright light for 10 feet around it and dim light for 10 feet beyond.",
     attacks = { { "Bite", 1, 0, 4, 1, "fire" } } }
-B["Goat"] = { cr = 0, size = "Medium", ac = 10, speed = 40, moves = "climbing 30 feet", str = 11, dex = 10, con = 11, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 2 },
+B["Goat"] = { cr = 0, size = "Medium", ac = 10, speed = 40, moves = "climbing 30 feet", str = 11, dex = 10, con = 11, saves = { STR = 2 }, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 2 },
     attacks = { { "Ram", 2, 0, 4, 1, "bludgeoning", "After moving 20 feet straight at the target the damage is 1d4 instead.", alt = { "charge", 1, 4, 0 } } } }
 B["Hawk"] = { cr = 0, fly = true, size = "Tiny", ac = 13, speed = 10, moves = "flying 60 feet", str = 5, dex = 16, con = 8, senses = {}, skills = { "Perception" }, bonus = { Perception = 6 },
     attacks = { { "Talons", 5, 0, 4, 1, "slashing" } } }

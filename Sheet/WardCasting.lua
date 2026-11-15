@@ -26,7 +26,11 @@ function RPSheet:SpellBenefits(spell)
     end
     local picks = {}
     for index, option in ipairs(ward) do
-        picks[#picks + 1] = { ward = true, spell = spell.name, index = index, option = option }
+        -- A spell with a side for the caster switches that one on; the other side is
+        -- for the one it is cast on, who sets it by hand.
+        if not ward.cast or ward.cast == index then
+            picks[#picks + 1] = { ward = true, spell = spell.name, index = index, option = option }
+        end
     end
     return picks
 end
@@ -35,7 +39,7 @@ function RPSheet:AskBenefit(spell, benefits, onPick)
     if not (benefits[1] and benefits[1].ward) then return AskBenefit(self, spell, benefits, onPick) end
     local ward = R.SPELL_WARDS[spell.name]
     -- Always on the caster and nothing to choose: no question.
-    if ward.own and #benefits == 1 then
+    if (ward.own or ward.cast) and #benefits == 1 then
         onPick(benefits[1])
         return true
     end

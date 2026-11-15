@@ -98,7 +98,8 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     -- A spell with a growing die that is already running rolls its next turn instead.
     if self:GrowingSpellClick(spell, ritual) then return end
     -- A component with a price has to be carried, for a ritual too (Sheet/SpellComponents.lua).
-    local missing = self:MissingComponents(spell)
+    -- For a spell that needs it once per target, `benefit` says how many (Sheet/ComponentTargets.lua).
+    local missing = self:MissingComponents(spell, benefit)
     if missing then
         self:Print(missing)
         return
@@ -128,7 +129,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
     local moreDice = growth.dice
 
     -- Nothing is spent until the benefit is picked: the menu casts the spell again with it.
-    local benefits = not benefit and self:SpellBenefits(spell)
+    local benefits = not benefit and self:SpellBenefits(spell, slot and slot.level)
     if benefits and self:AskBenefit(spell, benefits, function(pick) self:CastSpell(spell, mode, ritual, pick) end) then
         return
     end
@@ -143,7 +144,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         if ns.PreparesAtRest(self:Sheet()) then self:State().prepareClosed = true end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
-        local used = self:SpendComponents(spell)
+        local used = self:SpendComponents(spell, benefit)
         if #used > 0 then parts[#parts + 1] = "uses up " .. table.concat(used, ", ") end
         if self.castLevel then self:PopulateSoon() end -- the tooltips spoke of that slot level
         self.castLevel = nil

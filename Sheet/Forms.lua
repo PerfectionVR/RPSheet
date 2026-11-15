@@ -20,7 +20,8 @@ function RPSheet:FormBlocksSpell(spell)
     local sheet = self:Sheet()
     if ns.HasSubclass(sheet, "Circle of the Moon") and (spell.auto or ""):find("^prepared:") then return end
     if ns.HasFeature(sheet, "Beast Spells") then
-        if (spell.material or 0) > 0 or spell.consumed then
+        -- The listed spells go by the component data; a spell of the player's own by its fields.
+        if R.SPELL_COMPONENTS[spell.name] or (spell.material or 0) > 0 or spell.consumed then
             return ("%s needs a component with a price, which can't be used in %s."):format(spell.name, form.beast and "a beast form" or form.name)
         end
         return
@@ -58,6 +59,13 @@ end
 function RPSheet:FormSkillBonus(name)
     local form = self:Form()
     return form and form.skillBonus and form.skillBonus[name]
+end
+
+-- The bonus the beast has in a saving throw by itself, or nil when it isn't
+-- proficient in it. The character is proficient in such a save while in the form.
+function RPSheet:FormSaveBonus(stat)
+    local form = self:Form()
+    return form and form.saveBonus and form.saveBonus[stat]
 end
 
 -- The hit points of a Beast Master's companion, as a bar (data in Data/Pets.lua).

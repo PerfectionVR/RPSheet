@@ -13,6 +13,8 @@
 --     skills     skills the beast is proficient in
 --     bonus      { Perception = 3 }: its own bonus in each of them, used in the form
 --                when it beats the character's (Sheet/Derived.lua)
+--     saves      { DEX = 4 }: the saving throws it is proficient in, with its own
+--                bonus, used the same way
 --     attacks    { { name, attack bonus, dice, sides, flat damage, damage type, note,
 --                    plus = { dice, sides, type }   more damage of another type
 --                    reach = feet                    when longer than 5 feet

@@ -219,8 +219,11 @@ end
 
 function RPSheet:SaveMod(stat)
     local mod = self:Mod(stat) + self:Bonus("SAVES") + self:Bonus("SAVE:" .. stat)
-    if self:Sheet().saves[stat] then mod = mod + self:ProficiencyBonus() end
-    return mod
+    -- A beast form adds the saves the beast is proficient in, and its own bonus is
+    -- used where it is the higher one.
+    local listed = self:FormSaveBonus(stat)
+    if self:Sheet().saves[stat] or listed then mod = mod + self:ProficiencyBonus() end
+    return math.max(mod, listed or mod)
 end
 
 -- Ability modifier, proficiency (doubled for expertise) and passive effects.

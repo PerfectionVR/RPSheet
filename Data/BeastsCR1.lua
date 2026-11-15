@@ -9,10 +9,10 @@ B["Ape"] = { cr = 1 / 2, size = "Medium", ac = 12, speed = 30, moves = "climbing
         { "Rock", 5, 2, 6, 3, "bludgeoning", N.recharge, ranged = "25/50" } } }
 B["Black Bear"] = { cr = 1 / 2, size = "Medium", ac = 11, speed = 30, moves = "climbing and swimming 30 feet", str = 15, dex = 12, con = 14, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 5 },
     attacks = { { "Rend", 4, 1, 6, 2, "slashing", N.twice } } }
-B["Crocodile"] = { cr = 1 / 2, size = "Large", ac = 12, speed = 20, moves = "swimming 30 feet", str = 15, dex = 10, con = 13, senses = {}, skills = { "Stealth" }, bonus = { Stealth = 2 },
+B["Crocodile"] = { cr = 1 / 2, size = "Large", ac = 12, speed = 20, moves = "swimming 30 feet", str = 15, dex = 10, con = 13, saves = { CON = 3 }, senses = {}, skills = { "Stealth" }, bonus = { Stealth = 2 },
     note = "It holds its breath for an hour.",
     attacks = { { "Bite", 4, 1, 8, 2, "piercing", "A Medium or smaller target is grappled (DC 12 to escape) and restrained while it is." } } }
-B["Giant Goat"] = { cr = 1 / 2, size = "Large", ac = 11, speed = 40, moves = "climbing 30 feet", str = 17, dex = 13, con = 12, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 3 },
+B["Giant Goat"] = { cr = 1 / 2, size = "Large", ac = 11, speed = 40, moves = "climbing 30 feet", str = 17, dex = 13, con = 12, saves = { STR = 5 }, senses = { Darkvision = 60 }, skills = { "Perception" }, bonus = { Perception = 3 },
     attacks = { { "Ram", 5, 1, 6, 3, "bludgeoning", "After moving 20 feet straight at a Large or smaller target: 2d4 more, and it is knocked prone.", alt = { "charge", 2, 4, extra = true } } } }
 B["Giant Seahorse"] = { cr = 1 / 2, size = "Large", ac = 14, speed = 5, moves = "swimming 40 feet", str = 15, dex = 12, con = 11, senses = {}, skills = {},
     note = N.water .. " Bonus action underwater: swim half its speed without provoking opportunity attacks.",
@@ -29,7 +29,7 @@ B["Reef Shark"] = { cr = 1 / 2, size = "Medium", ac = 12, speed = 5, moves = "sw
 B["Swarm of Insects"] = { cr = 1 / 2, size = "Medium", ac = 11, speed = 20, moves = "climbing 20 feet, also on ceilings (a swarm that flies 20 feet instead waits for level 8)", str = 3, dex = 13, con = 14, senses = { Blindsight = 30 }, skills = {},
     note = N.swarm,
     attacks = { { "Bites", 3, 2, 4, 1, "poison", N.thinned, alt = { "while Bloodied", 1, 4, 1 } } } }
-B["Warhorse"] = { cr = 1 / 2, size = "Large", ac = 11, speed = 60, str = 18, dex = 12, con = 13, senses = {}, skills = {},
+B["Warhorse"] = { cr = 1 / 2, size = "Large", ac = 11, speed = 60, str = 18, dex = 12, con = 13, saves = { WIS = 3 }, senses = {}, skills = {},
     attacks = { { "Hooves", 6, 2, 4, 4, "bludgeoning", "After moving 20 feet straight at a Large or smaller target: 2d4 more, and it is knocked prone.", alt = { "charge", 2, 4, extra = true } } } }
 
 -- 1

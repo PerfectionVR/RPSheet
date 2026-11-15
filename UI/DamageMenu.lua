@@ -13,6 +13,7 @@ local function BoxOf(dialog)
 end
 
 -- `request` is { heal = true } or { damageType = "fire" } (no type: an empty table).
+-- ward = false leaves the dice of a protective spell out; prompt = a question of its own.
 local function Apply(dialog, request)
     local box = BoxOf(dialog)
     local amount = tonumber(((box and box:GetText()) or ""):match("%d+")) or 0
@@ -20,7 +21,7 @@ local function Apply(dialog, request)
     if request.heal then
         RPSheet:Heal(amount)
     else
-        RPSheet:TakeDamage(amount, request.damageType)
+        RPSheet:TakeDamage(amount, request.damageType, nil, request.ward)
     end
 end
 
@@ -46,7 +47,9 @@ StaticPopupDialogs[POPUP] = {
 -- Asks for the amount, then heals or deals the damage.
 function RPSheet:AskAmount(request)
     local prompt = "How many hit points do you regain?"
-    if not request.heal then
+    if request.prompt then
+        prompt = request.prompt
+    elseif not request.heal then
         prompt = ("How much %sdamage do you take?\nType the amount as rolled: the sheet halves, doubles or ignores it as your resistances say."):format(
             request.damageType and (request.damageType .. " ") or "")
     end
@@ -78,6 +81,12 @@ function RPSheet:OpenDamageMenu(owner)
             root:CreateButton(label, function() self:AskAmount({ damageType = name }) end)
         end
         root:CreateButton("No type", function() self:AskAmount({}) end)
+        -- What the protective spells that are on call for (Actions/WardDamage.lua).
+        for _, extra in ipairs(self:DamageExtras()) do
+            root:CreateButton(extra.label, function()
+                if extra.run then extra.run() else self:AskAmount(extra.request) end
+            end)
+        end
     end)
 end
 
@@ -85,7 +94,7 @@ end
 function UI.AddDamageRows(addon, body)
     local label
     label = UI.AddLabel(body, 0.5, UI.ACCENT .. "Take damage|r", function() addon:OpenDamageMenu(label.frame) end,
-        "Take damage", "Pick the damage type, then type the amount as it was rolled. Immunity leaves nothing, resistance halves it (rounded down), vulnerability doubles it. Temporary HP is used up first, and a spell you concentrate on gets its saving throw.\n\nOr type /sheet damage 14 fire. To change HP without the rules, click the HP bar.")
+        "Take damage", "Pick the damage type, then type the amount as it was rolled. Immunity leaves nothing, resistance halves it (rounded down), vulnerability doubles it. Temporary HP is used up first, and a spell you concentrate on gets its saving throw. A spell on you that takes dice off the damage is rolled first; it has a row of its own for when it was already used this turn.\n\nOr type /sheet damage 14 fire. To change HP without the rules, click the HP bar.")
     UI.AddLabel(body, 0.5, UI.ACCENT .. "Heal|r", function() addon:AskAmount({ heal = true }) end,
         "Heal", "Type the hit points you regain. They stop at your maximum.\n\nOr type /sheet heal 8.")
 end
