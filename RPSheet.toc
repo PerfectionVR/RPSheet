@@ -247,9 +247,13 @@ Integrations\ChatLinks.lua
 Options\Common.lua
 Wizard\Grants.lua
 Wizard\Draft.lua
+Wizard\MoreClasses.lua
+Wizard\MoreClassRules.lua
 Wizard\Closet.lua
 Wizard\StartingGear.lua
+Wizard\GearChoices.lua
 Wizard\ClosetBrowser.lua
+Wizard\MoreClassesPage.lua
 Wizard\Pages.lua
 Wizard\Dialog.lua
 Options\General.lua

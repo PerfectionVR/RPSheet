@@ -2,7 +2,8 @@
 -- offers, or the background's (Data/StartingGear.lua). A set's items go into the closet
 -- and the starting gold becomes what is left over with it. The closet stays free for
 -- picking by hand. draft.gear[half] remembers what a button put there, so taking a set
--- again (after another class was chosen, say) swaps it instead of piling up.
+-- again (after another class was chosen, say) swaps it instead of piling up. What a set
+-- leaves to choose is picked in Wizard/GearChoices.lua and kept in the same record.
 local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
@@ -29,6 +30,12 @@ local function Taken(half)
     return record and record.key == key and record or nil
 end
 
+-- The record of a half's set that was taken and the set itself, or nil.
+function W.GearTaken(half)
+    local record = Taken(half)
+    if record then return record, (Offered(half)) end
+end
+
 -- Gold to start with: what is left over with a set that was taken, and for a half
 -- whose set wasn't, the gold it gives instead.
 local function GoldParts()
@@ -51,6 +58,7 @@ local function PutBack(half)
     local record = W.draft.gear[half]
     if not record then return end
     for name, count in pairs(record.items) do W.TakeItem(name, -count) end
+    for _, name in pairs(record.picks or {}) do W.TakeItem(name, -1) end -- what was chosen with it
     W.draft.gear[half] = nil
 end
 
@@ -67,10 +75,9 @@ function W.TakeGear(half)
         items[entry.name] = entry.count
         if R.ARMOR_ITEMS[entry.name] or entry.name == R.SHIELD_ITEM then W.WearItem(entry.name, true) end
     end
-    draft.gear[half] = { key = key, items = items, gold = set.gold }
+    draft.gear[half] = { key = key, items = items, gold = set.gold, picks = {} }
     local lines = { ("%sAdded from your %s:|r %s, and %d gp."):format(Opt.GREEN, HALVES[half], R.GearText(list), set.gold) }
     if set.note then lines[#lines + 1] = set.note end
-    if set.pick then lines[#lines + 1] = ("%sStill to pick in the closet:|r %s."):format(Opt.GOLD, set.pick) end
     lines[#lines + 1] = GoldLine()
     lines[#lines + 1] = "Armor and a shield are put on; open the closet to ready your weapons."
     draft.gearNote = table.concat(lines, "\n")
@@ -92,7 +99,8 @@ local function Preview(half)
     if not set then return ("Choose a %s first."):format(HALVES[half]) end
     local text = ("Puts in the closet: %s. Sets your gold to the %d gp left over with it, next to what the other half gives."):format(
         R.GearText(R.GearList(set)), set.gold)
-    if set.pick then text = text .. ("\n\nLeft for you to pick: %s."):format(set.pick) end
+    local open = W.GearChoiceText(set)
+    if open then text = text .. ("\n\nYou then choose %s, which goes in with it."):format(open) end
     return text .. "\n\nWhat you already took by hand stays. Taking the set again after a change swaps the old set for the new one."
 end
 
@@ -131,6 +139,7 @@ function W.AddGearArgs(args)
     args.gearNote = {
         type = "description", order = 2.15, fontSize = "medium",
         hidden = function() return (W.draft.gearNote or "") == "" end,
-        name = function() return (W.draft.gearNote or "") .. "\n" end,
+        name = function() return (W.draft.gearNote or "") .. W.GearOpenNote() .. "\n" end,
     }
+    W.AddGearChoiceArgs(args) -- what the taken sets leave to choose (Wizard/GearChoices.lua)
 end

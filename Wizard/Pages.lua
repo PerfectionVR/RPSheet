@@ -53,9 +53,9 @@ local function ClassSummary()
 end
 
 -- Dropdown of the chosen class's subclasses or specializations.
--- `minLevel` hides the choice until the character is of that level.
+-- `minLevel` hides the choice until the character has that level in its first class.
 local function ClassChoice(option, field, key, minLevel)
-    option.hidden = function() return not DraftClass() or (minLevel ~= nil and W.draft.level < minLevel) end
+    option.hidden = function() return not DraftClass() or (minLevel ~= nil and W.FirstLevel() < minLevel) end
     option.values = function() return (Opt.ListMap(DraftClass()[field], true)) end
     option.sorting = function() return (select(2, Opt.ListMap(DraftClass()[field], true))) end
     return Field(option, key)
@@ -99,6 +99,7 @@ local classPage = Page(1, {
             local draft = W.draft
             draft.class = value
             draft.subclass, draft.spec, draft.classSkills = "", "", {}
+            W.DropExtra(value) -- it can't be one of the other classes as well
             -- A hero class is its subclass: the choice is fixed from the start.
             if R.CLASSES[value].hero then draft.subclass = R.CLASSES[value].subclasses[1] end
             if R.CLASSES[value].hero and draft.level < R.HERO_START_LEVEL then
@@ -134,11 +135,11 @@ local classPage = Page(1, {
     end)(),
     specGuide = {
         type = "description", order = 5.2, fontSize = "medium",
-        hidden = function() return not W.draft or #R.SpecSuggestions(W.draft.class, W.draft.spec, W.draft.level, 1) == 0 end,
+        hidden = function() return not W.draft or #R.SpecSuggestions(W.draft.class, W.draft.spec, W.FirstLevel(), 1) == 0 end,
         name = function()
             local draft = W.draft
             if not draft then return "" end
-            local lines = R.SpecSuggestions(draft.class, draft.spec, draft.level, 1)
+            local lines = R.SpecSuggestions(draft.class, draft.spec, W.FirstLevel(), 1)
             return ("%sSuggested for %s|r\n%s\n"):format(GOLD, draft.spec, table.concat(lines, "\n"))
         end,
     },
@@ -151,19 +152,11 @@ local classPage = Page(1, {
             end
             return table.concat(lines, "\n\n")
         end,
-        -- Only for a class that has the feature by the chosen level.
-        hidden = function()
-            local draft = W.draft
-            if not draft or not DraftClass() then return true end
-            for level = 1, draft.level do
-                for _, feature in ipairs(ns.FeaturesGainedAt(draft.class, draft.subclass, level)) do
-                    if feature.name == ns.STYLE_FEATURES[1] then return false end
-                end
-            end
-            return true
-        end,
-        values = function() return (Opt.ListMap(ns.StyleChoices({ class = W.draft.class, passives = {} }, 1), true)) end,
-        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices({ class = W.draft.class, passives = {} }, 1), true))) end,
+        -- Only when one of the character's classes has the feature by its level; the
+        -- styles on offer are those of that class.
+        hidden = function() return not W.NeedsFightingStyle() end,
+        values = function() return (Opt.ListMap(ns.StyleChoices({ class = W.StyleClass() or W.draft.class, passives = {} }, 1), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices({ class = W.StyleClass() or W.draft.class, passives = {} }, 1), true))) end,
         get = function() return W.draft.fightingStyle end,
         set = function(_, value) W.draft.fightingStyle = value end,
     },
@@ -177,6 +170,7 @@ local classPage = Page(1, {
         hidden = function() return not DraftClass() end,
     },
 })
+W.AddMoreClassArgs(classPage.args) -- splitting the levels over more classes (Wizard/MoreClassesPage.lua)
 
 ---------------------------------------------------------------------------
 -- 2: Origin
@@ -221,6 +215,7 @@ local function DraftTraitOptions(name)
         for other, choice in pairs(draft.traitChoices) do
             if other ~= name then taken[choice] = true end
         end
+        for _, row in ipairs(W.Extras()) do taken[row.skill] = true end -- a later class's one skill
         local pool = trait.options
         if not pool then
             pool = {}

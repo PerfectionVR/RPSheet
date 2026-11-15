@@ -27,6 +27,7 @@ function W.NewDraft()
     return {
         step = 1,
         class = "", subclass = "", spec = "", level = 1, classSkills = {},
+        classes = {}, -- the classes taken beside the first (Wizard/MoreClasses.lua)
         species = "", lineage = "", size = "M", background = "", allegiance = "",
         traitChoices = {}, -- picks for species traits such as Skillful and Versatile
         scoreMethod = "POINTBUY",
@@ -66,18 +67,6 @@ function W.SkillsPicked()
     return count
 end
 
--- True if the draft's class has the Fighting Style feature by its level.
-function W.NeedsFightingStyle()
-    local draft = W.draft
-    if not draft or not R.CLASSES[draft.class] then return false end
-    for level = 1, draft.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(draft.class, draft.subclass, level)) do
-            if feature.name == ns.STYLE_FEATURES[1] then return true end
-        end
-    end
-    return false
-end
-
 -- Returns a message when the current step isn't complete, nil when it is.
 function W.StepProblem()
     local draft = W.draft
@@ -87,12 +76,14 @@ function W.StepProblem()
         if W.SkillsPicked() ~= class.skillCount then
             return ("Pick %d class skills."):format(class.skillCount)
         end
-        if draft.level >= R.SUBCLASS_LEVEL and #class.subclasses > 0 and draft.subclass == "" then
+        -- With other classes, the first class goes by its own level (Wizard/MoreClasses.lua).
+        if W.FirstLevel() >= R.SUBCLASS_LEVEL and #class.subclasses > 0 and draft.subclass == "" then
             return ("Choose a subclass: a character of level %d or higher has one."):format(R.SUBCLASS_LEVEL)
         end
         if W.NeedsFightingStyle() and draft.fightingStyle == "" then
             return "Choose a Fighting Style."
         end
+        return W.ExtrasProblem(1)
     elseif draft.step == 2 then
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
@@ -106,6 +97,7 @@ function W.StepProblem()
         for _, trait in ipairs(ns.TraitChoices(draft)) do
             if (draft.traitChoices[trait] or "") == "" then return ("Make your choice for %s."):format(trait) end
         end
+        return W.ExtrasProblem(2)
     elseif draft.step == 4 then
         if draft.allegiance == "" then return "Choose an allegiance." end
     elseif draft.step == 3 then
@@ -115,6 +107,8 @@ function W.StepProblem()
         if W.BonusSpent() ~= R.BONUS_TOTAL then
             return ("Place all %d background points: +2 and +1, or +1 on three abilities."):format(R.BONUS_TOTAL)
         end
+        -- Another class asks for 13 in its main abilities and in the first class's.
+        return W.ExtrasProblem(3)
     end
 end
 
@@ -126,11 +120,12 @@ function W.Finish()
     for _, key in ipairs(R.PICK_LIST_ORDER) do sheet.picks[key] = {} end
 
     -- A subclass picked before the level was lowered below 3 doesn't count.
-    local subclass = draft.level >= R.SUBCLASS_LEVEL and draft.subclass or ""
+    local subclass = W.FirstLevel() >= R.SUBCLASS_LEVEL and draft.subclass or ""
     -- A hero class is its subclass, fixed when the character is made.
     local class = R.CLASSES[draft.class]
     if class.hero then subclass = class.subclasses[1] end
     sheet.class, sheet.subclass, sheet.spec, sheet.level = draft.class, subclass, draft.spec, draft.level
+    W.ApplyExtras(sheet) -- the other classes; the level above is the whole character's
     sheet.species, sheet.size, sheet.background, sheet.alignment = draft.species, draft.size, draft.background, draft.alignment
     sheet.lineage, sheet.allegiance = draft.lineage, draft.allegiance
     for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
@@ -149,6 +144,7 @@ function W.Finish()
     end
     sheet.coins.gp = (sheet.coins.gp or 0) + (draft.gold or 0)
     W.FillInventory(sheet)
+    W.GrantGearTools(sheet) -- a tool chosen with a set of starting gear (Wizard/GearChoices.lua)
     ns.ApplyGrants(sheet)
     RPSheet:ReplaceSheet(sheet, draft.keepLists)
 end

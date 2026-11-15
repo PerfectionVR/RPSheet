@@ -54,7 +54,10 @@ local args = {
             -- A character made above level 3 has choices the wizard doesn't ask about.
             local pending = ns.Levels.Pending(RPSheet:Sheet())
             -- A subclass's own choices (a Battle Master's maneuvers) are asked for the current level.
-            if #pending == 0 and ns.OpenClassChoices(RPSheet:Sheet()) then pending = { RPSheet:Sheet().level } end
+            -- The first class's own level: the character's level, unless it has more classes.
+            if #pending == 0 and ns.OpenClassChoices(RPSheet:Sheet()) then
+                pending = { ns.ClassLevel(RPSheet:Sheet(), RPSheet:Sheet().class) }
+            end
             if #pending > 0 then
                 RPSheet:Print("At this level you have earlier level-up choices to make. They are asked one by one now, and stay available on the Character tab.")
                 ns.OpenLevelDialog(pending[1])

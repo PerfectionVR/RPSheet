@@ -94,7 +94,7 @@ function W.FillInventory(sheet)
         return math.floor(((draft.base[stat] or 10) + (draft.bonus[stat] or 0) - 10) / 2)
     end
     -- A class with Weapon Mastery sets the mastery of as many weapons as it may.
-    local limit = ns.FeatureKit.AtLevel(draft.level, R.MASTERY_LIMITS[R.CLASSES[draft.class].base] or {}) or 0
+    local limit = W.MasteryLimit()
     local function CanMaster()
         local used = 0
         for _, weapon in ipairs(sheet.weapons) do
