@@ -13,6 +13,8 @@ Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
   items each have a tab below.
 - **Item browser**: a window listing what you carry and every item of the rules as a
   block with its details and buttons to add, buy, equip and remove it.
+- **Multiclassing**, **professions and crafting**, **mounts, vehicles and companion
+  creatures**, **spell components** and **spell scrolls**, as the rules describe them.
 - **Minimize**: the sheet can fold up to its title bar and open only while hovered.
 - **Character sheet window** with HP, class resource and counter bars, AC, stats, skills,
   weapons, abilities and passives.
@@ -187,7 +189,7 @@ other ten still need that.
 - [x] Beast attacks whose damage depends on the situation (a charge, a Bloodied target,
       a thinned swarm) have a second row that rolls it; a beast's own skill bonuses
       are used where they beat yours
-- [ ] A beast's own saving throw bonuses where they beat the character's
+- [x] A beast's own saving throw proficiencies and bonuses where they beat yours
 - [x] Always-prepared subclass spells added to the spell list by themselves
 - [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
       added by themselves
@@ -198,7 +200,10 @@ other ten still need that.
 - [x] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
       chosen in the level dialog and cast without a slot as the rules allow
 - [x] Mystic Arcanum: one spell exchanged per level
-- [ ] Multiclassing
+- [x] Multiclassing: a level in another class from the Character tab or in the
+      creation wizard, with the ability scores it needs and its reduced training;
+      hit points, Hit Dice, features, resources, subclass, Fighting Style, prepared
+      spells and spell slots worked out class by class
 
 **Spells**
 
@@ -221,15 +226,17 @@ other ten still need that.
       as the class prepares; spells added by hand before count as picks
 - [x] How often prepared spells may be swapped, by class: one per level in the level
       dialog, or after a long rest (all, or one) in a window on the sheet
-- [ ] Reopening the level dialog for a level you already have does not hold to the
-      one-swap-per-level limits; cantrip swaps
+- [x] Reopening the level dialog for a level you already have only fills in what is
+      open: chosen spells and cantrips stay. One cantrip exchanged per level (a Mage
+      none)
 - [x] Copying a found spell into the book for 50 gp a level, taken from your coins
 - [x] A spellbook's prepared spells changed only after a long rest (until the first
       spell cast after it; the Customize page is free)
 - [x] Gold tracked on the sheet (see the inventory below)
 - [x] Spell components with a price checked against, and taken from, the inventory
-- [ ] Components that are a weapon (Conjure Barrage, Steel Wind Strike, True Strike) or
-      coins (Gentle Repose); components needed once per target are checked as one
+- [x] Components that are a weapon (True Strike, Steel Wind Strike, Conjure Barrage,
+      Conjure Volley) or coins (Gentle Repose, Detect Thoughts); components needed
+      once per target are asked for and taken per target
 
 **Character**
 
@@ -238,8 +245,9 @@ other ten still need that.
 - [x] Professions: they follow your tool proficiencies and your skill follows your
       proficiency bonus; gathering checks by region, materials, archaeology,
       disenchanting, and crafting listed items with tool, skill and cost checks
-- [ ] Crafting the magic items, spell scrolls and vehicles that are not in the item
-      lists; checking that you carry the tool, not only that you are proficient
+- [x] Crafting every magic item a profession's skill opens (over 300 more), scribing
+      and reading spell scrolls, building powered vehicles, and needing the tool in
+      your inventory
 - [x] An armoury for weapons of your own, kept between characters: save, add a copy,
       rename, delete, and share one as a text string
 - [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
@@ -255,16 +263,18 @@ other ten still need that.
       depends on the situation (the part that always holds is counted)
 - [x] The starting gear of each class and background, taken into the closet with one
       button
-- [ ] Swimming, climbing and flying speeds as numbers (items that give them only say
-      so); the choices inside a starting gear set are picked by hand
+- [x] Swimming, climbing and flying speeds as numbers next to Speed
+- [x] The choices inside a starting gear set picked from a dropdown in the wizard
 - [x] Carrying more than you can holds your speed to 5 feet
 - [x] Magic and named armor, shields and weapons equipped from the inventory: an item
       can count as a plain one and carry a magic bonus; a weapon of your own is
       readied by an item of the same name
 - [x] Mounts, vehicles and companion creatures: a stable to add and buy them, riding
       (the mount's speed on the Speed row), and companions with loyalty and gifts
-- [ ] Renown discounts on prices; companion gifts that are advantage or damage
-      reduction (text only); crafted and summoned mounts
+- [x] Renown discounts on prices: name the faction whose merchant is selling
+- [x] Companion gifts counted: advantage on death saves, 1d4 off psychic damage, a
+      swim speed
+- [x] Made and summoned mounts in the stable (carpets, figurines, summoned steeds)
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on
 - [x] Immunities, vulnerabilities and conditions you can't be put under, next to the
@@ -273,16 +283,15 @@ other ten still need that.
 - [x] Protection from spells cast on yourself (Stoneskin, Protection from Energy and
       others): switched on by the casting, ended by a rest, by concentration or by
       hand; Heavenly Spirit's damage types and Boon of the Night Spirit's resistance
-- [ ] Spell protection that rolls its reduction (Resistance, Time Dilation) or guards
-      someone else (Warding Bond)
+- [x] Spell protection that rolls its reduction (Resistance, Time Dilation) and
+      Warding Bond for both the caster and the one guarded
 - [x] The perks every faction gives at each renown tier, shown with the score
 - [x] Each faction's own renown perks, shown per tier; the sheet applies what it can
       (a language, tool or skill from the faction's trainers, and blessings)
 - [x] Renown gained by rule: a stronghold in a faction's lands, and the other factions
       of your side reaching a tier; renown with both the Explorers' League and the
       Reliquary is flagged
-- [ ] Renown by rule goes by the scores as they are now, not by the first time a tier
-      was reached
+- [x] Renown by rule remembers the highest tier each faction reached
 - [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
 - [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
       list, ability and spells, the skill of Keen Mind and Observant, Elemental
@@ -309,8 +318,38 @@ other ten still need that.
 - [ ] Syncing tested between two players
 - [x] The creation wizard and level dialog drawn in the sheet's theme: frame, title,
       headings, text and buttons
-- [ ] Themed checkbox, slider, dropdown and edit box art in those dialogs; the settings
-      window in the sheet's theme
+- [x] Themed tick boxes, sliders, dropdowns, typing boxes and scroll bars; the
+      settings window and the item browser in the sheet's theme
+
+## Known limits
+
+Small gaps left in what is built. None is planned; say so if one matters to you.
+
+- **No clock or turns** (waits for the combat items above): a beast form's hours,
+  Metamorphosis after its minute, spell durations, "once a turn" protection such as
+  Resistance, and temporary flight (Draconic Flight and the like) are ended or
+  switched by hand or by a rest.
+- **Multiclassing**: a Mage with Druid levels uses the Mage's budget for both recovery
+  features; two classes built on the same core class (Paladin with Death Knight,
+  Hunter with Demon Hunter) are refused; the weapon mastery limit is the highest of
+  the classes; the wizard takes at most three more classes, sets no specialization
+  for them and does not ask for a Champion's second Fighting Style.
+- **Levelling**: Metamagic, Invocations and maneuvers can be exchanged freely, not
+  one per level; a Mage's cantrip exchange after a long rest is done under
+  Customize.
+- **Spells**: Cordon of Arrows' ammunition is not checked; a weapon of your own
+  counts as any kind for a weapon component; Resistance or Time Dilation cast on you
+  by someone else has no switch (Warding Bond has); a scroll does not check that the
+  spell is on your list or within your level.
+- **Items**: magic items have no prices, so renown discounts don't reach them; named
+  armor and weapon variants (adamantine, mithral, resistance) are not listed; items
+  already in an inventory don't pick up effects added to the catalogue later.
+- **Companions and mounts**: the Dragonkin and Elemental gifts depend on what a save
+  is about and stay text; carrying capacities the rules don't list are worked out
+  from Strength.
+- **Professions**: gathering and disenchanting don't check that you carry the tool;
+  the time to build a vehicle is an estimate, since the rules give none.
+- **Wild Shape**: riders without damage (knocked prone on a charge) stay text.
 
 ## Bundled libraries
 

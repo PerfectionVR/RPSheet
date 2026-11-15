@@ -2,6 +2,37 @@
 
 ## Unreleased
 
+- Multiclassing: take your next level in another class from the Character tab, or
+  split a new character's levels over several classes in the creation wizard. The
+  sheet checks the ability scores the new class needs, gives its reduced training,
+  and works out hit points, Hit Dice, features, resources, Fighting Style, prepared
+  spells and spell slots class by class; each spell is cast with its own class's
+  ability. Customize has a "More classes" page.
+- Professions can make every magic item their skill opens (over 300 more, each with
+  a recipe), engineers can build powered vehicles, and you can scribe spell scrolls
+  of your own spells and read them with a shift-click. Making something needs the
+  tool in your inventory; "Check that you carry the tool" under Customize >
+  Professions switches that off.
+- Swim, Climb and Fly speeds appear next to Speed when your character has one.
+- "Buying from" at the top of the item browser and the stable names the faction
+  whose merchant is selling; from Honored on, prices drop.
+- A loyal undead companion gives advantage on death saves, a mechanical one rolls
+  1d4 off psychic damage, an aquatic one gives a swim speed. The stable has a
+  "Special" tab for flying carpets, figurines and summoned steeds.
+- Renown: your home faction keeps what it gained from another faction's tier when
+  that score later drops.
+- Spells that need a weapon in hand check your ready weapons; Gentle Repose takes its
+  coins; Astral Projection and Create Undead ask how many targets.
+- Resistance and Time Dilation on yourself are rolled by "Take damage". Warding Bond
+  works for the caster (a damage-menu row) and for the one guarded (Customize >
+  Defense).
+- In a Wild Shape form you use the beast's saving throws where they are better.
+- The level dialog, opened again for a level you already have, only fills in what is
+  open. One cantrip can be exchanged per level (a Mage none).
+- Creation wizard: choices inside a starting gear set (holy symbol, instrument,
+  tools, gaming set) are picked from a dropdown.
+- The settings window, tick boxes, sliders, dropdowns, typing boxes, scroll bars and
+  the item browser follow the sheet's theme.
 - New Trade tab for professions. Your professions follow your tool proficiencies and
   your skill follows your proficiency bonus. Roll gathering checks (herbalism,
   mining, skinning, fishing, archaeology) against the region you pick, keep what you
