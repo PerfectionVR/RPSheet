@@ -15,7 +15,7 @@ R.AddGear("Adventuring gear",
     .. "Manacles|200|6;Map|100|0;Map or Scroll Case|100|1;Mirror|500|0.5;Net|100|3;Oil|10|1;"
     .. "Paper|20|0;Parchment|10|0;Perfume|500|0;Pole|5|7;Portable Ram|400|35;Pouch|50|1;"
     .. "Quiver|100|1;Rations|50|2;Robe|100|4;Rope|100|5;Sack|1|0.5;Shovel|200|5;"
-    .. "Signal Whistle|5|0;Spyglass|100000|1;String|10|0;Tent|200|20;Tinderbox|50|1;Torch|1|1;"
+    .. "Signal Whistle|5|0;Spellbook|5000|3;Spyglass|100000|1;String|10|0;Tent|200|20;Tinderbox|50|1;Torch|1|1;"
     .. "Traveler's Clothes|200|4;Vial|100|0;Waterskin|20|5")
 
 -- A pack is bought and carried as one item; its weight is that of everything in it.

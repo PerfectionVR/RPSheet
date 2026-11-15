@@ -491,7 +491,7 @@ for index, stat in ipairs(R.STATS) do
     args["asi" .. stat] = Opt.Bounded({
         type = "range", order = 30 + index, min = 0, max = R.ASI_POINTS, step = 1,
         name = function()
-            return ("%s (%d)"):format(R.STAT_NAMES[stat], RPSheet:Score(stat))
+            return ("%s (%d)"):format(R.STAT_NAMES[stat], (RPSheet:NaturalScore(stat)))
         end,
         desc = ns.Glossary[stat],
         hidden = function() return not IsImprovement() end,
@@ -504,7 +504,7 @@ for index, stat in ipairs(R.STATS) do
         for _, other in ipairs(R.STATS) do placed = placed + (draft.record.asi[other] or 0) end
         local saved = Levels.Record(sheet, draft.level)
         local counted = saved and draft.level <= sheet.level and saved.asi[stat] or 0
-        local room = R.MAX_SCORE - (RPSheet:Score(stat) - counted)
+        local room = R.MAX_SCORE - (RPSheet:NaturalScore(stat) - counted) -- your own score: an item that sets it higher leaves the room as it is
         return 0, math.max(0, math.min(R.ASI_POINTS, mine + R.ASI_POINTS - placed, room))
     end)
 end

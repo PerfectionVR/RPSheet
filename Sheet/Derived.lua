@@ -24,9 +24,19 @@ end
 ---------------------------------------------------------------------------
 -- Ability scores
 ---------------------------------------------------------------------------
--- Starting score, plus the background's points, plus points from level-ups.
--- `own`: the character's own score, whatever form it is in.
+-- The score that counts: the character's own, or the number an item sets it to when
+-- that is higher (Sheet/SetEffects.lua).
 function RPSheet:Score(stat, own)
+    local score, used = self:NaturalScore(stat, own)
+    if not used then return score end
+    return math.max(score, self:EffectFloor("SCORE:" .. used) or 0)
+end
+
+-- Starting score, plus the background's points, plus points from level-ups: the score
+-- before anything worn sets it higher. Also returns the ability the score was taken
+-- from, or nothing when it is a beast form's fixed number.
+-- `own`: the character's own score, whatever form it is in.
+function RPSheet:NaturalScore(stat, own)
     local sheet = self:Sheet()
     -- In a beast form some abilities take the score of another.
     local form = not own and self:Form()
@@ -37,7 +47,7 @@ function RPSheet:Score(stat, own)
     -- A capstone feature can raise a score further, up to 25.
     local raised = sheet.featureScores and sheet.featureScores[stat]
     if raised then score = math.max(score, math.min(25, score + raised)) end
-    return score
+    return score, stat
 end
 
 -- Modifier of an ability; an empty or unknown ability counts as +0.
@@ -105,7 +115,8 @@ function RPSheet:Bonus(target)
         -- A passive that armor stops adds nothing (see Sheet/Limits.lua).
         if passive.enabled and passive.name ~= "" and not self:PassiveBlocked(passive) then
             for _, effect in ipairs(passive.effects) do
-                if effect.target == target then
+                -- Only effects that add; setting and multiplying is in Sheet/SetEffects.lua.
+                if effect.target == target and ns.EffectMode(effect) == "" then
                     total = total + self:EffectValue(effect)
                 end
             end
@@ -117,6 +128,10 @@ end
 
 -- e.g. "+3 +2x DEX to Armor Class (now +9)"
 function RPSheet:EffectText(effect)
+    -- An effect that sets or multiplies says the number it leads to.
+    local mode, name = ns.EffectMode(effect), R.EFFECT_TARGETS[effect.target] or effect.target
+    if mode == "MIN" then return ("%s set to %d, if that is higher"):format(name, effect.flat) end
+    if mode == "TIMES" then return ("%s multiplied by %d"):format(name, ns.EffectTimes(effect)) end
     local parts = {}
     if effect.flat ~= 0 then parts[#parts + 1] = Util.Signed(effect.flat) end
     if R.AMOUNT_SOURCES[effect.stat] and effect.stat ~= "" then
@@ -171,10 +186,10 @@ end
 
 function RPSheet:Speed()
     if self:Immobile() then return 0 end
-    local form = self:Form()
-    if form then return math.max(0, form.speed + self:Bonus("SPEED")) end
-    local species = self:SpeciesData()
-    local speed = math.max(0, (species and species.speed or 30) + self:Bonus("SPEED") - self:ArmorSpeedPenalty())
+    -- An item can set the speed everything is added to, or multiply the outcome.
+    local base, times = self:BaseSpeed(), self:EffectMultiplier("SPEED")
+    if self:Form() then return math.max(0, base + self:Bonus("SPEED")) * times end
+    local speed = math.max(0, base + self:Bonus("SPEED") - self:ArmorSpeedPenalty()) * times
     -- Hauling more than you can carry.
     if self:Overloaded() then speed = math.min(speed, R.OVERLOADED_SPEED) end
     return speed

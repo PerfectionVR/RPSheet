@@ -34,14 +34,14 @@ local function AddBonuses(self, parts, target)
     for _, passive in ipairs(self:Sheet().passives) do
         if passive.enabled and passive.name ~= "" and not self:PassiveBlocked(passive) then
             for _, effect in ipairs(passive.effects) do
-                if effect.target == target then Add(parts, passive.name, self:EffectValue(effect)) end
+                if effect.target == target and ns.EffectMode(effect) == "" then Add(parts, passive.name, self:EffectValue(effect)) end
             end
         end
     end
     for _, item in ipairs(self:Sheet().items or {}) do
         if self:ItemActive(item) then
             for _, effect in ipairs(item.effects) do
-                if effect.target == target then Add(parts, item.name, self:EffectValue(effect)) end
+                if effect.target == target and ns.EffectMode(effect) == "" then Add(parts, item.name, self:EffectValue(effect)) end
             end
         end
     end
@@ -60,9 +60,14 @@ local function Total(parts)
     return total
 end
 
--- The ability modifier always shows, even at +0.
+-- The ability modifier always shows, even at +0. A score that an item holds up says
+-- so: "Strength (19 from Gauntlets of Ogre Power)".
 local function Ability(self, parts, stat)
-    parts[#parts + 1] = { R.STAT_NAMES[stat] or "no ability", self:Mod(stat) }
+    local label = R.STAT_NAMES[stat] or "no ability"
+    local from, score
+    if R.STAT_NAMES[stat] then from, score = self:ScoreSetBy(stat) end
+    if from then label = ("%s (%d from %s)"):format(label, score, from) end
+    parts[#parts + 1] = { label, self:Mod(stat) }
 end
 
 local function Show(self, what, parts, prefix)
@@ -124,10 +129,16 @@ function RPSheet:ExplainSpeed()
         return
     end
     local species, form = self:SpeciesData(), self:Form()
-    local parts = { { species and species.name or "base", species and species.speed or 30 } }
-    if form then parts = { { form.name, form.speed } } end
+    -- An item can set the speed the rest is added to, or multiply the outcome (RPSheet:Speed).
+    local base, setBy, replaced = self:BaseSpeed()
+    local parts = { { form and form.name or species and species.name or "base", replaced or base } }
+    if setBy then Add(parts, ("%s (sets your speed to %d)"):format(setBy, base), base - replaced) end
     AddBonuses(self, parts, "SPEED")
-    Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty())
+    if not form then Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty()) end
+    local times, multiplier = self:EffectMultiplier("SPEED")
+    if times > 1 then
+        Add(parts, ("%s (speed times %d)"):format(multiplier, times), math.max(0, Total(parts)) * (times - 1))
+    end
     if not form and self:Overloaded() then
         Out(self, ("Speed |cffffd100%d ft|r: you carry %.1f lb., more than the %d lb. you can, which holds your speed to %d feet. Without the load: %s."):format(
             self:Speed(), self:CarriedWeight(), self:CarryCapacity(), R.OVERLOADED_SPEED, Join(parts)))
