@@ -118,14 +118,16 @@ function RPSheet:Refresh()
     for _, row in ipairs(self.trackerRows) do
         local tracker = row.tracker
         local value = tracker.get() or 0
+        -- A slot made above the usual number lifts the row's upper end while it lasts (Sheet/Trackers.lua).
+        local max = tracker.usual and math.max(tracker.usual, value) or tracker.max
         if row.bar then
-            local text = ("%s %d/%d"):format(tracker.label, value, tracker.max)
+            local text = ("%s %d/%d"):format(tracker.label, value, max)
             if tracker.kind == "hp" and state.tempHP > 0 then text = text .. (" (+%d)"):format(state.tempHP) end
-            row.widget:SetValue(value, tracker.max)
+            row.widget:SetValue(value, max)
             row.widget:SetText(text)
         else
             local short = tracker.label:gsub("%-level slot", "")
-            row.widget:SetText(("%s %s%d/%d|r"):format(short, UI.ACCENT, value, tracker.max))
+            row.widget:SetText(("%s %s%d/%d|r"):format(short, UI.ACCENT, value, max))
         end
     end
 
@@ -141,4 +143,6 @@ function RPSheet:Refresh()
         self.deathLabel:SetText(("%sDeath saves: %d passed, %d failed - %s|r"):format(
             "|cffff5555", state.deathPass, state.deathFail, status))
     end
+    -- The death save row comes and goes with 0 hit points, whatever brought them there.
+    if (self.deathLabel ~= nil) ~= self:IsDown() then self:PopulateSoon() end
 end

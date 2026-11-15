@@ -61,6 +61,7 @@ function RPSheet:LeaveForms(reason)
     if left then
         self:Announce(("returns to their own shape: %s."):format(reason))
         self:ClampState()
+        self:PopulateSoon() -- the sheet showed the form's numbers and attacks
     end
     return left
 end

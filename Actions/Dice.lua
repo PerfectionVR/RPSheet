@@ -15,6 +15,13 @@ function RPSheet:IsRolling()
     return pending ~= nil
 end
 
+-- A roll still on its way belongs to the character that asked for it: it is dropped
+-- when another character takes its place (RPSheet:ReplaceSheet, a profile switch).
+function RPSheet:ForgetRoll()
+    pending = nil
+    self.busy = false
+end
+
 -- Rolls one die and passes the result to `callback`. Ignored while another roll is waiting.
 function RPSheet:Roll(sides, callback)
     if self.db.profile.channel == "SELF" then

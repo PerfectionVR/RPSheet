@@ -43,13 +43,19 @@ function ns.ApplyPreparedSpells(sheet)
     -- Corrections to the listed spells reach the copies on the sheet first.
     ns.RefreshListedSpells(sheet)
     local wanted, from = Wanted(sheet)
+    -- A spell another source put on the list (a cantrip that was picked) is listed
+    -- once, whichever of the two came first.
+    local others = {}
+    for _, spell in ipairs(sheet.spells) do
+        if not (spell.auto or ""):find("^" .. PREFIX) then others[spell.name] = true end
+    end
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
-            if wanted[auto] then
-                have[spell.name] = true
+            if wanted[auto] and not others[wanted[auto]] then
+                have[wanted[auto]] = true -- (by the spell it stands for: the entry may have been renamed)
                 if from[spell.name] then spell.class = from[spell.name] end
             else
                 table.remove(sheet.spells, index)
