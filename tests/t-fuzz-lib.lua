@@ -96,10 +96,12 @@ function Z.Choose(key, list, label)
         end
     end
     if #names == 0 then Z.Skip() end
+    table.sort(names)
+    -- (drawn also when the step names its choice: what the step draws afterwards
+    -- must not depend on whether it is played for the first time)
+    local name = names[Z.rng:int(1, #names)]
     local wanted = step.p[key]
     if wanted ~= nil and byName[tostring(wanted)] ~= nil then return byName[tostring(wanted)], tostring(wanted) end
-    table.sort(names)
-    local name = names[Z.rng:int(1, #names)]
     step.p[key] = name
     return byName[name], name
 end
@@ -111,16 +113,16 @@ end
 function Z.Int(key, low, high)
     local step = Z.step
     if high < low then Z.Skip() end
+    local value = Z.rng:int(low, high)
     local wanted = tonumber(step.p[key])
     if wanted and wanted >= low and wanted <= high then return wanted end
-    local value = Z.rng:int(low, high)
     step.p[key] = value
     return value
 end
 function Z.Flip(key, p)
     local step = Z.step
-    if type(step.p[key]) == "boolean" then return step.p[key] end
     local value = Z.rng:chance(p or 0.5)
+    if type(step.p[key]) == "boolean" then return step.p[key] end
     step.p[key] = value
     return value
 end
@@ -336,8 +338,9 @@ function Z.Check(index, full, always)
 end
 
 -- Plays a scenario from a fresh world. `want`: stop at the first problem with this
--- signature (any problem when nil). Returns the problem and the index of its step.
-function Z.Replay(steps, want)
+-- signature (any problem when nil). `full` asks every invariant after every step.
+-- Returns the problem and the index of its step.
+function Z.Replay(steps, want, full)
     Z.trp3, Z.problems = false, {}
     Z.Reset(nil)
     Z.freeFrom = 0
@@ -346,7 +349,7 @@ function Z.Replay(steps, want)
     if want and want:find("^error: checks %(hidden") then always = "hover" end
     for index, step in ipairs(steps) do
         Z.RunStep(step)
-        Z.Check(index, index == #steps, always)
+        Z.Check(step.i or index, full or step.a == "final", always)
         for _, problem in ipairs(Z.problems) do
             if not want or Z.Signature(problem) == want then return problem, index end
         end
@@ -366,10 +369,12 @@ function Z.Play(seed, count, known)
     Z.freeFrom = master:chance(0.3) and 0 or master:int(math.floor(count / 3), count)
     local steps = {}
     local function Do(name, index)
-        local step = { a = name, p = {}, seed = master:int(1, 2000000000) }
-        local ran = Z.RunStep(step)
-        if ran then steps[#steps + 1] = step end
-        Z.Check(index, index == count)
+        -- (`i` is the step's place in the run: the costly checks go by it, and they
+        -- rebuild windows, so a replay has to ask them at the same steps)
+        local step = { a = name, p = {}, seed = master:int(1, 2000000000), i = index }
+        steps[#steps + 1] = step -- also when it gives up half way: what it did until then counts
+        Z.RunStep(step)
+        Z.Check(index, name == "final")
         local found
         for _, problem in ipairs(Z.problems) do
             if not found and not (known and known[Z.Signature(problem)]) then found = problem end
@@ -421,7 +426,7 @@ function Z.StepText(step)
         parts[#parts + 1] = ("%s = %s"):format(key:match("^[%a_][%w_]*$") and key or ("[%q]"):format(key),
             type(value) == "string" and ("%q"):format(value) or tostring(value))
     end
-    return ("{ a = %q, seed = %d, p = { %s } }"):format(step.a, step.seed or 1, table.concat(parts, ", "))
+    return ("{ a = %q, seed = %d,%s p = { %s } }"):format(step.a, step.seed or 1, step.i and (" i = " .. step.i .. ",") or "", table.concat(parts, ", "))
 end
 function Z.ScenarioText(steps)
     local lines = {}

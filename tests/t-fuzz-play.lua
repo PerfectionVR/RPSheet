@@ -53,7 +53,7 @@ if Arg(7) == "timing" or Arg(8) == "timing" then
     local names = {}
     for name in pairs(Z.timing) do names[#names + 1] = name end
     table.sort(names, function(a, b) return Z.timing[a][1] > Z.timing[b][1] end)
-    for index = 1, math.min(25, #names) do
+    for index = 1, #names do
         local entry = Z.timing[names[index]]
         print(("  %-28s %6.2fs %6d calls %7.2f ms each"):format(names[index], entry[1], entry[2], entry[1] / entry[2] * 1000))
     end

@@ -86,7 +86,7 @@ Action("search", { weight = 2, guard = function() return RPSheet.itemWindow ~= n
     F.Type(boxes[1].editbox, (Z.Choose("text", WORDS)), true)
 end })
 
-Action("menu", { weight = 30, guard = function() return F.menu ~= nil end, run = function()
+Action("menu", { weight = 150, guard = function() return F.menu ~= nil end, run = function()
     local rows = {}
     for _, row in ipairs(F.MenuRows()) do
         if Z.OddText(row.text) then Z.Report("text", "menu row: " .. Z.OddText(row.text)) end
@@ -97,7 +97,7 @@ Action("menu", { weight = 30, guard = function() return F.menu ~= nil end, run =
 end })
 
 local TYPED = { "", "0", "1", "3", "7", "12", "40", "250", "9999", "-5", "2.5", "lots", "12 gp", "5 5", " 8 ", "1e3", "007" }
-Action("popup", { weight = 30, guard = function() return F.popup ~= nil end, run = function()
+Action("popup", { weight = 90, guard = function() return F.popup ~= nil end, run = function()
     local dialog = F.popup
     if Z.OddText(F.PopupText() or "") then Z.Report("text", "popup: " .. Z.OddText(F.PopupText())) end
     local how = Z.Choose("how", { "accept", "accept", "accept", "enter", "cancel", "escape" })

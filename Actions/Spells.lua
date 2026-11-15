@@ -153,7 +153,10 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
 
     local function finish()
         -- The spellbook's prepared list is fixed from the first spell after a long rest.
-        if ns.PreparesAtRest(self:Sheet()) then self:State().prepareClosed = true end
+        if ns.PreparesAtRest(self:Sheet()) and not self:State().prepareClosed then
+            self:State().prepareClosed = true
+            self:PopulateSoon() -- the open spellbook or prepared-spells window says so
+        end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
         local used = self:SpendComponents(spell, benefit)

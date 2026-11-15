@@ -44,13 +44,23 @@ local CASES = {
     }, check = function()
         if FUZZ.cast ~= "Fireball" then return "the case didn't cast its spell (" .. tostring(FUZZ.cast) .. ")" end
     end },
+    -- The window for changing prepared spells open, then the first spell after a
+    -- rest is cast: the window went on saying the list could still be changed.
+    { name = "prepared window after the first spell", steps = {
+        { a = "make", seed = 3, p = { class = "DRUID", level = 10, extras = 0, tick = "Starry Wisp" } },
+        { a = "click", seed = 1528399239, p = { button = "LeftButton", keys = "", mark = false, row = "window: InteractiveLabel Change prepared spells" } },
+        { a = "cast", seed = 1070505899, p = { mode = "none", ritual = false, slotClicks = 6, spell = "Starry Wisp" } },
+    }, check = function()
+        if FUZZ.cast ~= "Starry Wisp" then return "the case didn't cast its spell (" .. tostring(FUZZ.cast) .. ")" end
+        if not RPSheet.preparedWindow or not RPSheet.preparedWindow.frame:IsShown() then return "the case didn't open the window" end
+    end },
 }
 
 local played, problems = 0, 0
 for _, case in ipairs(CASES) do
     if not only or case.name:find(only, 1, true) then
         played = played + 1
-        local problem, at = Z.Replay(case.steps)
+        local problem, at = Z.Replay(case.steps, nil, true)
         if problem then
             problems = problems + 1
             print(("PROBLEM %s: step %d (%s): %s: %s"):format(case.name, at, case.steps[at].a, problem.kind, problem.text))
