@@ -27,9 +27,9 @@ Add("Gentle Repose", { coins = 2, consumed = true })
 -- the bundle's price and weight, so an opened bundle has something to turn into.
 R.AddGear("Weapons and ammunition", "Arrow|5|0.05;Bolt|5|0.075")
 Add("Cordon of Arrows", {
-    ammo = true, qty = 4, consumed = true, words = "arrows or bolts",
+    ammo = true, qty = 4, upQty = 2, consumed = true, words = "arrows or bolts",
     kinds = { { bundle = "Arrows (20)", single = "Arrow" }, { bundle = "Bolts (20)", single = "Bolt" } },
-    note = "A bundle counts as its twenty pieces: loose pieces go first, then a bundle is opened and what is left of it stays with you as loose pieces. Magic ammunition doesn't count. The four planted pieces are taken off your list; put back any that are still in the ground when the spell ends, and take off the extra ones a higher slot plants.",
+    note = "A bundle counts as its twenty pieces: loose pieces go first, then a bundle is opened and what is left of it stays with you as loose pieces. Magic ammunition doesn't count. Four pieces are needed; a higher slot plants two more for each level above 2nd, as many of those as you carry. The planted pieces are taken off your list: put back any that are still in the ground when the spell ends.",
 })
 
 -- What a weapon part asks for, in words.

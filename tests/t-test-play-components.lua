@@ -174,6 +174,19 @@ Section("ammunition", function()
     magic.magic = true
     Check(RPSheet:MissingComponents(cordon) ~= nil, "magic ammunition is not counted")
     Eq(RPSheet:AmmoCount(R.SPELL_COMPONENTS["Cordon of Arrows"][1]), 0, "none counted")
+    -- a higher slot plants two more for each level above 2nd, as many as are carried
+    RPSheet:DropItem(magic)
+    Carry("Arrows (20)")
+    Refill()
+    RPSheet.castLevel = 3
+    Check(Cast(cordon), "cast with a 3rd-level slot")
+    Said("uses up 6 arrows or bolts", "a 3rd-level slot plants six")
+    Eq(Qty("Arrow"), 14, "fourteen are left")
+    while Qty("Arrow") > 5 do RPSheet:DropItem(RPSheet:CarriedItem("Arrow")) end
+    Refill()
+    RPSheet.castLevel = 3
+    Check(Cast(cordon), "five pieces are enough for a 3rd-level slot")
+    Said("uses up 5 arrows or bolts", "it plants the five there are")
 end)
 
 Section("once for each target", function()

@@ -18,6 +18,19 @@ local function OnList(base, name)
     return listed[base] ~= nil and listed[base][name] == true
 end
 
+-- The highest spell level a class casts at its level: its slots, and for a Warlock the
+-- Mystic Arcanum levels it has reached (a spell of 6th to 9th level cast once a day).
+local function Reach(class, level)
+    local reach = ns.ClassSpellLevel(class, level)
+    if class.base == "Warlock" then
+        for spellLevel = 6, 9 do
+            local list = R.PICK_LISTS["arcanum" .. spellLevel]
+            if list and list.known and level >= list.known[1][1] then reach = math.max(reach, spellLevel) end
+        end
+    end
+    return reach
+end
+
 -- The class the character reads a scroll of this spell as, and the highest spell
 -- level that class prepares at its level; nil when the spell is on none of its lists.
 -- Of several classes that have the spell, the one that reaches highest reads it.
@@ -26,7 +39,7 @@ function ns.ScrollReader(sheet, name)
     for _, key in ipairs(ns.ClassKeys(sheet)) do
         local class = R.CLASSES[key]
         if class and class.caster and R.OnClassSpellList(key, name) then
-            local level = ns.ClassSpellLevel(class, ns.ClassLevel(sheet, key))
+            local level = Reach(class, ns.ClassLevel(sheet, key))
             if not reach or level > reach then best, reach = key, level end
         end
     end
@@ -37,7 +50,7 @@ function ns.ScrollReader(sheet, name)
             if spell.name == name then
                 local key = ns.SpellClass(sheet, spell)
                 local class = key and R.CLASSES[key]
-                if class then return key, ns.ClassSpellLevel(class, ns.ClassLevel(sheet, key)) end
+                if class then return key, Reach(class, ns.ClassLevel(sheet, key)) end
             end
         end
     end

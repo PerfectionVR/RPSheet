@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Cordon of Arrows cast with a higher slot plants two more arrows or bolts for each
+  level above 2nd, as many as you carry.
+- A Warlock with Mystic Arcanum reads spell scrolls up to the arcanum's level without
+  a check (6th at Warlock level 11, up to 9th at 17).
 - A cantrip can no longer be taken twice in the level dialog, once as a class cantrip
   and once through Magic Initiate (True Strike for a Sage Mage, Guidance for an
   Acolyte Priest), whichever is picked first.

@@ -171,7 +171,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
         end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
-        local used = self:SpendComponents(spell, benefit)
+        local used = self:SpendComponents(spell, benefit, slot and slot.level)
         if #used > 0 then parts[#parts + 1] = "uses up " .. table.concat(used, ", ") end
         if scroll then
             self:ScrollWasCast(spell) -- the scroll crumbles now
