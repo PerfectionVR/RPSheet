@@ -27,7 +27,7 @@ local SHEET = {
         { name = "Weapons", kind = "Weapons and ammunition" }, { name = "Armor", kind = "Armor and shields" },
         { name = "Gear", kind = "Adventuring gear" }, { name = "Packs", kind = "Packs" },
         { name = "Focuses", kind = "Spellcasting focuses" }, { name = "Tools", kind = "Tools and instruments" },
-        { name = "Magic", kind = "Magic items" },
+        { name = "Reagents", kind = "Spell components" }, { name = "Magic", kind = "Magic items" },
     },
     empty = "You carry nothing yet. Open another tab to add or buy things.",
     title = function(self) return ("%s - Items"):format(self:GetCharacterName()) end,

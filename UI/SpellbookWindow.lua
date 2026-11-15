@@ -49,6 +49,7 @@ local function AddSpell(self, body, name)
     if spell.desc ~= "" then lines[#lines + 1] = spell.desc end
     local casting = R.SpellCastingNote(spell)
     if casting then lines[#lines + 1] = casting end
+    for _, line in ipairs(self:ComponentHelp(spell)) do lines[#lines + 1] = line end
     -- What a higher slot does for it (see Actions/SlotGrowth.lua).
     for _, line in ipairs(self:SlotGrowthHelp(spell)) do lines[#lines + 1] = line end
     -- A spell chosen for a class feature (mastered, signature) says so.
