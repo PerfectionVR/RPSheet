@@ -1,0 +1,189 @@
+# Checks to run in the game
+
+The automated tests run the addon's code outside the game and draw nothing (see
+[tests/README.md](../tests/README.md)). This list covers what they can't tell: what the
+windows look like, the game's own popups and menus, real `/roll` results, other addons,
+Total RP 3, and syncing between two players.
+
+Each line is one check: what to do, then what you should see. Tick it when it holds;
+write the number down when it doesn't. Section A is the most valuable ten minutes; the
+rest is grouped by window and can be done in any order.
+
+## Before you start
+
+- Switch on Lua errors so nothing fails silently: `/console scriptErrors 1`, then `/reload`.
+- Have one other addon with an Ace3 settings window installed (for section J), and
+  Total RP 3 for section L.
+- Section M needs a second player with RP Sheet, in your party.
+- A spellcaster of level 5 or higher shows the most. The example character
+  (settings > General > Load example character) is enough for sections A to C.
+
+## A. The first ten minutes
+
+- [ ] A1. Log in on a Total RP 3 profile (or character) that has no sheet. *After about three seconds the creation wizard opens by itself, with no error.*
+- [ ] A2. Look at the wizard before touching it. *Solid background in the theme's colour, the title "Step 1 of 5: Choose a class" on top, themed buttons; "Next" is grey and a red line says "Choose a class first."*
+- [ ] A3. Go through the five steps with any class at level 5 and press "Create character". *The wizard closes, chat says the character was created, and the level dialog opens for the first choice still open.*
+- [ ] A4. Make every choice the level dialogs ask for. *Each closes on "Take level" / "Save choice"; the next opens by itself; at the end no dialog is left and the sheet shows the character.*
+- [ ] A5. Look at the sheet at its default size. *Title bar with name and four buttons, the top part, six tabs on one row, no row lying over another, no text cut off.*
+- [ ] A6. Set "Announce to" to Emote and click a skill. *One `/roll` line (1-20) from the game, then an emote line such as "rolls [Stealth]: 14 + 5 = 19" with the total right.*
+- [ ] A7. Shift-click a skill, then Ctrl-click one. *Two `/roll` lines each; the announcement names both dice ("[advantage: 14, 6]") and uses the higher, then the lower.*
+- [ ] A8. Click the weapon row. *A d20 roll, then one `/roll` per damage die, then one line "attacks with [weapon] - to hit ..., damage ...".*
+- [ ] A9. Click "Take damage", pick a type, type 7, press Enter. *The game's menu of thirteen damage types plus "No type" opens at the cursor; the amount box has the focus; the HP bar drops by 7 and one line is announced.*
+- [ ] A10. Click the minus button in the title bar and move the mouse away. *The window folds to its title bar, which stays exactly where it was; hovering opens it; it folds again shortly after the mouse leaves.*
+- [ ] A11. Click the padlock, then try to drag the title bar and click the sheet's background. *The window doesn't move, the resize grip is gone, the padlock is solid, the click reaches the game world; a row on the sheet still reacts to a click.*
+- [ ] A12. Click the cog. *The settings window opens in the sheet's theme: solid background, themed tabs, buttons and text.*
+- [ ] A13. Close it and open another addon's Ace3 settings window. *That window looks stock: see-through, the game's own fonts, buttons, tick boxes and sliders.*
+- [ ] A14. Move and resize the sheet, then `/reload`. *The sheet comes back at the same place and size, on the same tab, with the same hit points and slots.*
+- [ ] A15. Play for two minutes: cast a spell, use an ability, take a short rest. *No Lua error at any point.*
+
+## B. The sheet window
+
+- [ ] B1. Drag the bottom-right corner to make the window as narrow as it goes. *It stops at a width where the six tabs still share one row and no row wraps onto the next.*
+- [ ] B2. Make it as wide as half the screen. *Rows stretch; the three-in-a-row numbers (Combat, Checks) and two-in-a-row rows (Skills, Passives) stay in their columns.*
+- [ ] B3. Resize slowly back and forth and let go. *After letting go no row lies over another, on every tab.*
+- [ ] B4. Make it short. *A themed scroll bar appears; the mouse wheel scrolls; the title bar stays put.*
+- [ ] B5. Open each of the six tabs in turn. *The open tab is marked, the others are not; each tab shows its sections; an empty one says "Nothing here yet."*
+- [ ] B6. Hover each tab. *A tooltip with the tab's name and what is on it.*
+- [ ] B7. Give an ability, a passive, a spell and an item very long names (Customize) and look at their rows at the narrowest width. *Names wrap inside their own row; the row below starts under them.*
+- [ ] B8. Hover a row with [?] and click the [?] itself, then the rest of the row. *The [?] prints the breakdown in your chat only; the rest of the row rolls.*
+- [ ] B9. Left-click and right-click "Next roll". *Normal, Advantage (green), Disadvantage (red); right-click adds "(every roll)"; after one roll an unlocked choice goes back to Normal.*
+- [ ] B10. Hover a passive, a spell and an item. *The tooltip stays on screen, wraps, and is readable against the game's tooltip background.*
+- [ ] B11. Drag the window to each screen edge. *It can't be dragged off screen.*
+- [ ] B12. With the window minimized, drag it by its title bar and resize it while it is open. *It stays open while the mouse button is down; afterwards it folds to the bar at the new place.*
+- [ ] B13. Minimize, then `/reload`. *Still minimized, and it opens to the height it had.*
+
+## C. Popups and menus of the game
+
+- [ ] C1. "Take damage" on a character with a resistance. *The resisted type is marked "(resisted)" in the menu; the announcement says "halved to".*
+- [ ] C2. In the amount box press Escape; open it again and click Cancel. *Nothing is taken either time.*
+- [ ] C3. Items tab: left-click "Coins", type `5 gp 3 sp`, Enter. *The purse grows by that; the box showed what you had.*
+- [ ] C4. Click "Conditions". *A menu of tick boxes at the cursor; each has a tooltip; ticking one announces "is now [Poisoned]." and the row lists it; ticking Unconscious ticks Prone with it.*
+- [ ] C5. On a character with advantage against something specific (for example a trait that helps against being Charmed), click the WIS save. *A menu "WIS save: what is it against?" with "Against being Charmed (advantage)" and "Something else"; the first rolls two dice, the second one.*
+- [ ] C6. Shift-click the same save. *No menu; two dice.*
+- [ ] C7. Cast Protection from Energy (or another protective spell with a choice). *A menu "...: who is it for?" with "Yourself: fire" and the like, and "Someone else"; picking yourself adds a passive and the Combat section lists the resistance.*
+- [ ] C8. Close that menu without picking. *No slot is spent and nothing is announced.*
+- [ ] C9. Cast a spell that needs its component once per target (Astral Projection, Create Undead). *A menu "...: how many ...s?"; a number your components don't cover is greyed with "(too few components)".*
+- [ ] C10. The other menus: a Demon Hunter casting Metamorphosis ("choose a benefit"), a passive that asks for damage types ("resist which damage?"), an enchanter's "Disenchant" on the Trade tab. *Each opens at the cursor, lists its choices, and the pick shows on the sheet.*
+- [ ] C11. Customize: press "Delete this ..." on an entry, and "Back to level" on the Character tab. *The game's confirmation popup; Cancel changes nothing.*
+- [ ] C12. Open any of these menus while the sheet is minimized. *The menu opens and works; the sheet may fold behind it without an error.*
+
+## D. Rolls and chat
+
+- [ ] D1. Announce to Party, in a party: click a check. *The roll shows as a `/roll` and the line goes to party chat with your character's name in front.*
+- [ ] D2. Announce to Party, not in a party (and Raid, not in a raid). *The line is shown to you alone and ends "(only you see this: you are not in a party)".*
+- [ ] D3. Announce to Self only. *No `/roll` line at all; the result is printed for you alone.*
+- [ ] D4. Cast a spell with many dice (8d6) on Emote. *Eight `/roll` lines, then one announcement with all eight values and the right sum; nothing is announced twice.*
+- [ ] D5. Click two rolls quickly one after the other. *The second waits or is ignored; no announcement mixes the two rolls.*
+- [ ] D6. Look at an announcement in chat. *Terms in square brackets are coloured links.*
+- [ ] D7. Hover a link ([Vex], a skill, a spell, a condition). *A tooltip with what the term means and "Click to see how your number is worked out."*
+- [ ] D8. Click your own link. *The breakdown of that number is printed for you alone.*
+- [ ] D9. Post an item link and a `[text in brackets]` of your own in party chat. *The item link still works; brackets the rules don't know stay plain text.*
+- [ ] D10. Make an announcement longer than a chat line (a spell with many notes). *It is cut with "..." and still sent; no error from the game.*
+- [ ] D11. Roll during combat in a dungeon or raid encounter. *Either it works, or the line is shown to you with "the game blocks addon chat messages right now"; no error.*
+
+## E. Item browser, stable, crafting
+
+- [ ] E1. Items tab > "Browse items". *A window above everything else of ours, in the theme: a line with money, weight and attunement, a row of nine tabs, a search box, blocks two to a row.*
+- [ ] E2. Open each tab. *The tabs stay on one row; each block has a title, readable text and its buttons on one row.*
+- [ ] E3. Open the Magic tab. *"Showing 1-24 of N" with Previous greyed, above and below the blocks; Next shows 25-48 and the view starts at the top.*
+- [ ] E4. Type part of a name in the search box and press Enter; then empty it and press Enter. *Only matching blocks from the whole tab; then everything again. No match says "Nothing here matches your search."*
+- [ ] E5. Make the browser as narrow and as wide as it goes. *Blocks stay two to a row; button rows don't wrap; text wraps inside its block.*
+- [ ] E6. With renown of Honored or better with a faction: click "Buying from". *It cycles through the factions; Buy buttons show the lower price.*
+- [ ] E7. Items tab > "Browse the stable". *The same window turns into the stable (title "... - Stable") with its own tabs.*
+- [ ] E8. Trade tab > "Make something" with a tool proficiency and the tool carried. *The crafting window: skill, money and materials on top, a tab per profession, each recipe with cost and time.*
+- [ ] E9. Click the cog of each of the three. *Settings open on Customize > Inventory, > Mounts and companions, > Professions.*
+- [ ] E10. In the creation wizard, step 5: "Open the closet". *The same window above the wizard with Take / Put back / Equip; what you take is counted on the wizard's page behind it.*
+- [ ] E11. Look at the search box, buttons and scroll bar. *All in the theme; after closing, another addon's AceGUI window looks stock.*
+
+## F. Spellbook and prepared spells
+
+- [ ] F1. Mage: Actions tab > "Open spellbook". *A themed window titled "... - Spellbook": prepared count, cantrips, then spells by level with the slots left; unprepared spells are grey; a right-click after a long rest prepares one or puts it away and the sheet's list follows.*
+- [ ] F2. Priest or Druid: "Change prepared spells". *A window "... - Prepared spells" with the count and every class spell; right-click swaps within the count.*
+- [ ] F3. Minimize, lock and resize both windows, then `/reload`. *Each keeps its own size and place; the cog opens the matching Customize page.*
+
+## G. The settings window
+
+- [ ] G1. Open every tab (Character, Customize, General, Appearance, Import / Export, Settings profiles). *Themed tabs with the open one marked; no stock-looking part among them.*
+- [ ] G2. Customize: click through every page in the tree on the left. *The tree is themed, the selected page is marked, each page fills in without an error, long pages scroll.*
+- [ ] G3. Look at tick boxes (Proficiencies). *Themed box and tick; disabled ones are visibly greyed; clicking one keeps the theme.*
+- [ ] G4. Look at sliders (Ability scores). *Themed track and handle; the handle moves in steps; a slider with nothing to choose is greyed.*
+- [ ] G5. Open dropdown lists (Class and origin). *The button and the opened list are themed and readable; a long list scrolls; picking closes it.*
+- [ ] G6. Type in a text box and a multi-line box (Import / Export). *Themed box, visible cursor and text; Ctrl+A and Ctrl+C work in the export box.*
+- [ ] G7. Use a colour swatch (Appearance). *The game's colour picker opens; the sheet and this window follow the colour as you change it.*
+- [ ] G8. Scroll a long page (Customize > Spells with many spells). *Themed scroll bar; content doesn't draw over the tabs or outside the window.*
+- [ ] G9. Game menu > Options > AddOns > RP Sheet. *The same pages inside the game's own panel, in the game's stock look, working.*
+
+## H. Wizard and level dialog on every theme
+
+For each preset: pick it under Appearance, open `/sheet new` and look at steps 1, 3 and 5,
+close with "Not now"; then press "Take level" on the Character tab and look at the
+dialog. *Frame, title, headings, text, buttons, tick boxes, sliders, dropdowns and scroll
+bars are all readable in that theme; nothing is white on light or dark on dark.*
+
+- [ ] H1. Dark.
+- [ ] H2. Parchment (the light one: dark text on a light background, no text shadow).
+- [ ] H3. Alliance.
+- [ ] H4. Horde.
+- [ ] H5. Fel.
+- [ ] H6. Void.
+- [ ] H7. Minimal (see-through): *the sheet is see-through, the dialogs still have a nearly solid background.*
+- [ ] H8. Change the theme while the settings window is open. *The settings window, the sheet and any open browser change at once.*
+- [ ] H9. Pick another font and a larger font size. *Sheet rows and dialog text grow without overlapping; buttons still fit their text.*
+
+## I. Wizard and level dialog, working
+
+- [ ] I1. Hover a highlighted word in a summary. *A tooltip with the explanation at the cursor.*
+- [ ] I2. Press Back and Next several times. *Choices are kept; the window doesn't flicker shut or reopen.*
+- [ ] I3. "Not now" on a fresh profile, then `/reload`. *The wizard doesn't open by itself again; `/sheet new` still opens it.*
+- [ ] I4. Open the wizard while the settings window is open. *The settings window closes; only one of the two is on screen.*
+- [ ] I5. Level dialog with spells to pick (a caster's level). *Core spells and the spells of Azeroth under separate headings, by level; the count in the red line follows the ticks; "Take level" lights up at exactly the right number.*
+- [ ] I6. Take a level from the settings window. *The dialog replaces the settings window, and the settings come back afterwards.*
+
+## J. Other addons stay as they are
+
+- [ ] J1. Open our settings, close them, open another addon's Ace3 settings. *Stock look in every part: frame, tabs, tree, buttons, tick boxes, sliders, dropdowns, text boxes, scroll bars.*
+- [ ] J2. Open the other addon's settings first, then ours, then theirs again. *Ours is themed each time, theirs stock each time.*
+- [ ] J3. Do the same after the creation wizard and after the level dialog. *Their window is stock.*
+- [ ] J4. Do the same after closing the item browser. *Their buttons, text boxes and groups are stock.*
+- [ ] J5. Close our settings with Escape and with its Close button, then open theirs. *Stock both ways, and no solid backing panel behind their window.*
+- [ ] J6. Open another addon's dropdown list right after ours was open. *Stock list.*
+
+## K. Minimap button
+
+- [ ] K1. Hover the dice icon at the minimap. *A tooltip with the three clicks.*
+- [ ] K2. Left-click, Shift-click, right-click it. *Show or hide the sheet; lock or unlock it; open the settings.*
+- [ ] K3. Drag it around the minimap, `/reload`. *It stays where you left it.*
+- [ ] K4. Untick "Show minimap icon" on the General tab, tick it again. *It goes and comes back without a reload.*
+
+## L. Total RP 3
+
+- [ ] L1. Hover your own character. *The Total RP 3 tooltip has a "Stats" section below the OOC block: summary, hit points and Armor Class, the six scores in two rows, the weapon, conditions.*
+- [ ] L2. Change hit points and hover again. *The new value.*
+- [ ] L3. Untick "Show stats in Total RP 3 tooltips". *The section is gone; Total RP 3's own tooltip is intact.*
+- [ ] L4. Switch Total RP 3 profile. *The sheet switches to that profile's character (or the wizard is offered for an empty one); switching back brings the first one back unchanged.*
+- [ ] L5. Settings > General. *"This sheet belongs to: Total RP 3 profile <name>"; "Announcing as" shows the profile's first name; unticking "Use my Total RP 3 name" changes it.*
+- [ ] L6. Disable Total RP 3 and log in. *No error; the sheet belongs to "this WoW character"; everything else works.*
+
+## M. Two players
+
+Two players, A and B, both with RP Sheet and Total RP 3, same faction, sharing on.
+
+- [ ] M1. Not grouped. B hovers over A. *Within a moment B's Total RP 3 tooltip of A gains the "Stats" section with A's numbers.*
+- [ ] M2. A loses 5 hit points; B hovers A again within half a minute, then after it. *B sees the old value at first (A is only asked again after 30 seconds), then the new one.*
+- [ ] M3. A and B form a party. A loses hit points. *About two seconds later B's tooltip of A shows the new value without B asking.*
+- [ ] M4. A ticks a condition and raises exhaustion. *B's tooltip of A lists them.*
+- [ ] M5. A takes a long rest with the sheet window closed. *B still sees A's full hit points.*
+- [ ] M6. A announces a skill check to Party. *B sees the line with the terms as links, and A's `/roll`.*
+- [ ] M7. B hovers a term in A's line. *The term's meaning and "Click to ask A's sheet about it."*
+- [ ] M8. B clicks it. *B's chat: "Asking A's sheet about ...", then "A - ..." with A's breakdown. A sees nothing.*
+- [ ] M9. A unticks "Share my stats". A changes hit points; B reloads and hovers A. *B sees no Stats section for A (B reloads first because what was received is kept until then).*
+- [ ] M10. With A's sharing off, B clicks a term in A's line. *B sees "Asking A's sheet about ..." and then nothing more.*
+- [ ] M11. With A's sharing off, A hovers B. *A still sees B's stats.*
+- [ ] M12. A third player without the addon reads A's announcement. *Plain text with the terms in square brackets, nothing odd.*
+- [ ] M13. A and B of different factions, in one party. *The code expects stats to arrive through the party, and nothing to be asked by hovering outside one. Note what really happens.*
+
+## N. Odds and ends
+
+- [ ] N1. `/sheet`, `/sheet config`, `/sheet new`, `/sheet lock`, `/sheet rest`, `/sheet damage 14 fire`, `/sheet damage 28 fire -5`, `/sheet heal 8`, and each with `/rpsheet`. *Each does what the README's table says; `/sheet damage 5 banana` names the valid types.*
+- [ ] N2. Log in while in combat on a fresh profile. *The wizard is not opened in combat.*
+- [ ] N3. Open and use the sheet during combat. *Clicks, rolls and the settings window work; no "action blocked" message.*
