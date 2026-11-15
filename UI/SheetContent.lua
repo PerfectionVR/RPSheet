@@ -171,7 +171,7 @@ local function CombatSection(self, body)
     Number("Initiative", Signed(self:Initiative()),
         function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,
         "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainInitiative() end)
-    Number("Speed", self:Speed() .. " ft", nil, "How far you can move on your turn.", function() self:ExplainSpeed() end)
+    Number("Speed", self:Speed() .. " ft" .. UI.RidingMark(self), nil, UI.SpeedTip(self), function() self:ExplainSpeed() end)
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
     Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)
@@ -409,7 +409,8 @@ local TABS = {
     { name = "Checks", tip = "Ability checks and saving throws.", CheckSection, SaveSection },
     { name = "Skills", tip = "Skills and tools.", SkillSection, ToolSection },
     { name = "Traits", tip = "Passives and traits, languages and renown.", PassiveSection, OriginSection },
-    { name = "Items", tip = "Your coins and what you carry.", UI.InventorySection },
+    { name = "Items", tip = "Your coins and what you carry, and your mounts, vehicles and companion creatures.",
+      UI.InventorySection, UI.MountSection },
 }
 
 ---------------------------------------------------------------------------

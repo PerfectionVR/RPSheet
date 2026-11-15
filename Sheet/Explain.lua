@@ -96,7 +96,10 @@ local function SkillParts(self, skill)
     Ability(self, parts, skill.stat)
     local rank = self:Sheet().skills[skill.name] or 0
     local form = self:Form()
-    if rank == 0 and self:FormSkill(skill.name) then
+    local gift = self:CompanionSkillRank(skill.name)
+    if gift > rank then
+        Add(parts, "expertise from your companion", gift * self:ProficiencyBonus())
+    elseif rank == 0 and self:FormSkill(skill.name) then
         Add(parts, ("proficiency (%s)"):format(form.name), self:ProficiencyBonus())
     else
         Add(parts, rank > 1 and "expertise" or "proficiency", rank * self:ProficiencyBonus())
@@ -138,12 +141,20 @@ function RPSheet:ExplainSpeed()
         Out(self, ("Speed |cffffd1000 ft|r: you are %s."):format(stuck))
         return
     end
+    local mount = self:RiddenMount()
+    if mount then
+        local feet, mode = ns.MountPace(mount)
+        Out(self, ("Speed |cffffd100%d ft|r: you are riding %s, and its speed counts in place of your own (%s%s). Your armor, your load and your exhaustion don't slow it. On foot your speed is %d ft."):format(
+            feet, mount.name, mode ~= "" and (mode == "fly" and "flying; it moves " or "swimming; it moves ") or "it moves ", ns.MountSpeeds(mount), self:Speed(true)))
+        return
+    end
     local species, form = self:SpeciesData(), self:Form()
     -- An item can set the speed the rest is added to, or multiply the outcome (RPSheet:Speed).
     local base, setBy, replaced = self:BaseSpeed()
     local parts = { { form and form.name or species and species.name or "base", replaced or base } }
     if setBy then Add(parts, ("%s (sets your speed to %d)"):format(setBy, base), base - replaced) end
     AddBonuses(self, parts, "SPEED")
+    Add(parts, "flying companion", self:CompanionSpeed())
     if not form then Add(parts, "armor too heavy for your Strength", -self:ArmorSpeedPenalty()) end
     local times, multiplier = self:EffectMultiplier("SPEED")
     if times > 1 then
