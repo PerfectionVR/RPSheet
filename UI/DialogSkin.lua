@@ -1,22 +1,22 @@
--- Draws the creation wizard and the level dialog in the sheet's theme. Both are windows
--- of the options library, built from parts it lends out and takes back for the next
--- window, which may be another addon's. So nothing here changes a part for good:
--- whatever is changed is remembered and put back the moment the part is handed back.
+-- Draws the settings window, the creation wizard and the level dialog in the sheet's
+-- theme. All three are windows of the options library, built from parts it lends out
+-- and takes back for the next window, which may be another addon's. So nothing here
+-- changes a part for good: whatever is changed is remembered and put back the moment
+-- the part is handed back.
 --
 -- This file finds the parts of an open window and does the remembering and undoing.
--- What each kind of part looks like is in DialogSkinWidgets.lua (controls),
--- DialogSkinButton.lua (buttons) and DialogSkinFrame.lua (the window itself).
-local ADDON, ns = ...
-local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+-- When a window is walked is in DialogSkinWalk.lua; what each kind of part looks like
+-- is in the other DialogSkin files.
+local _, ns = ...
 
 local Skin = { styles = {}, failed = {} }
 ns.DialogSkin = Skin
 
--- Only these two. The settings window swaps pages without being reopened, so its
--- parts could not be caught reliably.
-local OURS = { [ADDON .. "Wizard"] = true, [ADDON .. "Level"] = true }
-
 local records = {} -- part -> what to undo when it is handed back
+
+function Skin.Theme()
+    return ns.addon.db and ns.addon.db.profile.theme
+end
 
 -- The library calls a part's OnRelease when it takes the part back; ours runs first.
 local function Track(widget)
@@ -59,49 +59,71 @@ function Skin.Undo(widget, undo)
     record.undo[#record.undo + 1] = undo
 end
 
--- Styles a part, then the parts inside it. A kind of part that fails once is left
--- alone from then on: a plain window is better than an error.
-local function Walk(widget, theme, isRoot)
+-- Styles one part. A kind of part that fails once is left alone from then on: a plain
+-- window is better than an error.
+function Skin.Style(widget, theme)
     local kind = widget.type
     local style = kind and Skin.styles[kind]
-    if style and not Skin.failed[kind] then
-        local ok, problem = pcall(style, widget, theme)
-        if not ok then
-            Skin.failed[kind] = problem or true
-            Skin.Restore(widget)
-        end
+    if not style or Skin.failed[kind] then return end
+    local ok, problem = pcall(style, widget, theme)
+    if not ok then
+        Skin.failed[kind] = problem or true
+        Skin.Restore(widget)
     end
+end
+
+-- Styles a part again that is already styled, after the library changed its state.
+function Skin.Restyle(widget)
+    local theme = Skin.Theme()
+    if theme and records[widget] then Skin.Style(widget, theme) end
+end
+
+local function Then(widget, after, busy, ...)
+    if not busy[1] and records[widget] then
+        busy[1] = true
+        pcall(after, widget)
+        busy[1] = nil
+    end
+    return ...
+end
+
+-- Some parts redraw themselves long after the window was built (a tick that is
+-- clicked, a list that is scrolled). `after` runs each time the part's own function
+-- of that name has run, for as long as the part is ours; the function is put back
+-- as it was when the part is handed back.
+function Skin.After(widget, name, after)
+    local original = widget[name]
+    if type(original) ~= "function" or not Skin.First(widget, "method", name) then return end
+    local own, busy = rawget(widget, name), {}
+    local function wrapper(self, ...)
+        return Then(self, after, busy, original(self, ...))
+    end
+    widget[name] = wrapper
+    Skin.Undo(widget, function()
+        if rawget(widget, name) == wrapper then widget[name] = own end
+    end)
+end
+
+-- Styles a part, then the parts inside it. `pass` is { theme = the theme, only = the
+-- kinds to style (all when missing), still = true to leave the layout as it is }.
+function Skin.Walk(widget, pass, isRoot)
+    if not pass.only or pass.only[widget.type] then Skin.Style(widget, pass.theme) end
     local children = widget.children
     if type(children) ~= "table" then return end
     for _, child in ipairs(children) do
-        if type(child) == "table" then Walk(child, theme) end
+        if type(child) == "table" then Skin.Walk(child, pass) end
     end
     -- Another font takes another amount of room, so the parts are set out again,
-    -- innermost group first. The window itself keeps its size.
-    if not isRoot and type(widget.DoLayout) == "function" then
+    -- innermost group first. The part the walk started at keeps its size.
+    if not isRoot and not pass.still and type(widget.DoLayout) == "function" then
         pcall(widget.DoLayout, widget)
     end
 end
 
-function Skin.Apply(dialog)
-    local root = AceConfigDialog.OpenFrames[dialog]
-    local theme = ns.addon.db and ns.addon.db.profile.theme
+-- For a window of our own that is built from the library's parts (the item browser):
+-- styles the kinds in `only` among the parts inside `root`. They are handed back to
+-- the library like any others, so they are undone in the same way.
+function Skin.ApplyTo(root, theme, only)
     if type(root) ~= "table" or not theme then return end
-    Walk(root, theme, true)
-end
-
--- The library rebuilds a window's contents through Open, both when it is first shown
--- and after every change, and has finished building when Open returns.
-hooksecurefunc(AceConfigDialog, "Open", function(_, dialog, container)
-    if OURS[dialog] and type(container) ~= "table" then Skin.Apply(dialog) end
-end)
-
--- After a theme change: the open windows take the new look straight away.
-function ns.SkinOpenDialogs()
-    for dialog in pairs(OURS) do
-        if AceConfigDialog.OpenFrames[dialog] then
-            ns.AddDialogBacking(dialog)
-            Skin.Apply(dialog)
-        end
-    end
+    pcall(Skin.Walk, root, { theme = theme, only = only, still = true }, true)
 end

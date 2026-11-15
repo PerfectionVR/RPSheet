@@ -39,6 +39,7 @@ function Skin.Font(widget, text, color, theme)
         text:SetShadowOffset(1, -1)
         text:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)
     end
+    Skin.Recolor(widget, text, theme) -- colour words inside it: DialogSkinText.lua
 end
 
 -- Makes a piece of the library's or the game's art invisible.
@@ -110,23 +111,32 @@ local SIDES = {
     { "TOPLEFT", "BOTTOMLEFT" }, { "TOPRIGHT", "BOTTOMRIGHT" },
 }
 
--- A flat box over a frame, `inset` pixels inside it: a fill and a one pixel edge in
--- one colour. Returns the fill, for anchoring other things to.
-function Skin.Box(widget, holder, color, fillAlpha, edgeAlpha, inset)
+-- A flat box of our own on a frame: a fill and a one pixel edge. It covers `anchor`
+-- (the frame itself, or anything on it), `inset` pixels inside it: one number, or
+-- { left, right, top, bottom }. `key` tells apart several boxes on one frame.
+-- Returns the fill, for anchoring other things to.
+function Skin.BoxAt(widget, holder, key, anchor, inset, fill, edge)
     if not (holder and holder.CreateTexture) then return end
-    inset = inset or 0
-    local fill = Skin.Texture(widget, holder, "fill", "BACKGROUND")
-    fill:ClearAllPoints()
-    fill:SetPoint("TOPLEFT", inset, -inset)
-    fill:SetPoint("BOTTOMRIGHT", -inset, inset)
-    fill:SetColorTexture(color[1], color[2], color[3], fillAlpha)
+    local left, right, top, bottom = inset or 0, inset or 0, inset or 0, inset or 0
+    if type(inset) == "table" then left, right, top, bottom = inset[1], inset[2], inset[3], inset[4] end
+    local body = Skin.Texture(widget, holder, key .. "fill", "BACKGROUND")
+    body:ClearAllPoints()
+    body:SetPoint("TOPLEFT", anchor, "TOPLEFT", left, -top)
+    body:SetPoint("BOTTOMRIGHT", anchor, "BOTTOMRIGHT", -right, bottom)
+    body:SetColorTexture(fill[1], fill[2], fill[3], fill[4] or 1)
     for index, side in ipairs(SIDES) do
-        local edge = Skin.Texture(widget, holder, "edge" .. index, "BORDER")
-        edge:ClearAllPoints()
-        edge:SetPoint(side[1], fill, side[1])
-        edge:SetPoint(side[2], fill, side[2])
-        if side.flat then edge:SetHeight(1) else edge:SetWidth(1) end
-        edge:SetColorTexture(color[1], color[2], color[3], edgeAlpha)
+        local line = Skin.Texture(widget, holder, key .. "edge" .. index, "BORDER")
+        line:ClearAllPoints()
+        line:SetPoint(side[1], body, side[1])
+        line:SetPoint(side[2], body, side[2])
+        if side.flat then line:SetHeight(1) else line:SetWidth(1) end
+        line:SetColorTexture(edge[1], edge[2], edge[3], edge[4] or 1)
     end
-    return fill
+    return body
+end
+
+-- The same over a whole frame, fill and edge in one colour.
+function Skin.Box(widget, holder, color, fillAlpha, edgeAlpha, inset)
+    return Skin.BoxAt(widget, holder, "", holder, inset,
+        { color[1], color[2], color[3], fillAlpha }, { color[1], color[2], color[3], edgeAlpha })
 end
