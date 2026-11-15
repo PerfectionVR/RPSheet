@@ -103,6 +103,16 @@ Data\FeatureKit.lua
 Data\Traits.lua
 Data\Features.lua
 Data\SubclassFeatures.lua
+Data\SubclassShaman.lua
+Data\SubclassWarrior.lua
+Data\SubclassPaladin.lua
+Data\SubclassHunter.lua
+Data\SubclassRogue.lua
+Data\SubclassPriest.lua
+Data\SubclassDruid.lua
+Data\SubclassMonk.lua
+Data\SubclassEvoker.lua
+Data\SubclassWarlockMage.lua
 Data\ClassOverrides.lua
 Data\Metamorphosis.lua
 Data\Lineages.lua
