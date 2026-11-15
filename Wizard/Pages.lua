@@ -223,6 +223,8 @@ local function DraftTraitOptions(name)
     end
     return names
 end
+-- The step check asks whether a pick still stands (Wizard/Draft.lua).
+function W.TraitOptions(name) return DraftTraitOptions(name) end
 
 local function DraftTraitPicker(name, order)
     return {

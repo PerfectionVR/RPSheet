@@ -92,7 +92,15 @@ function W.StepProblem()
             end
         end
         for _, trait in ipairs(ns.TraitChoices(draft)) do
-            if (draft.traitChoices[trait] or "") == "" then return ("Make your choice for %s."):format(trait) end
+            local choice = draft.traitChoices[trait] or ""
+            if choice == "" then return ("Make your choice for %s."):format(trait) end
+            -- A pick made before the class skills or the background were changed may
+            -- now be something they give as well: it would be wasted.
+            local stands = false
+            for _, name in ipairs(W.TraitOptions(trait)) do stands = stands or name == choice end
+            if not stands then
+                return ("%s can't be your choice for %s any more: your class or background gives it already. Choose another."):format(choice, trait)
+            end
         end
         return W.ExtrasProblem(2)
     elseif draft.step == 4 then
