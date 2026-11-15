@@ -42,5 +42,5 @@ end
 
 -- Every way one of our windows gets opened or redrawn goes through this.
 hooksecurefunc(AceConfigDialog, "Open", function(_, appName)
-    if OURS[appName] then ns.AddDialogBacking(appName) end
+    if OURS[appName] then pcall(ns.AddDialogBacking, appName) end -- never an error into the library
 end)

@@ -105,11 +105,12 @@ function RPSheet:HideItemBrowser(shown)
     if self.itemWindow and source == shown then self.itemWindow:Hide() end
 end
 
--- A button under a block.
+-- A button under a block. It is a hair narrower than asked: buttons whose widths add
+-- up to the full row could otherwise be rounded past it, and the last one would wrap.
 function UI.AddItemButton(card, width, text, enabled, onClick)
     local button = AceGUI:Create("Button")
     button:SetText(text)
-    button:SetRelativeWidth(width)
+    button:SetRelativeWidth(width * 0.999)
     button:SetDisabled(not enabled)
     button:SetCallback("OnClick", onClick)
     card:AddChild(button)
@@ -146,7 +147,7 @@ local function AddTabs(self, body)
         local button = AceGUI:Create("RPSheetTab")
         button:SetStyle(theme, tab == open)
         button:SetText(tab.name)
-        button:SetRelativeWidth(1 / #tabs)
+        button:SetRelativeWidth(0.999 / #tabs) -- a hair under an even share: see UI/SheetTabs.lua
         button:SetCallback("OnClick", function()
             open = tab
             Later(self)
