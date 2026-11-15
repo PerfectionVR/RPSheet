@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.6.0
 
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the
 *D&D: World of Warcraft* book.
