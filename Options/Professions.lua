@@ -16,8 +16,10 @@ local function Standing()
     for _, key in ipairs(R.PROFESSION_ORDER) do
         local profession = R.PROFESSIONS[key]
         local can, lacks = RPSheet:CanPractise(profession)
-        local tool = RPSheet:ProfessionTool(profession)
-        lines[#lines + 1] = can and ("%s%s|r%s"):format(Opt.GREEN, profession.name, tool and (" with " .. tool) or "")
+        local tool = RPSheet:CraftTool(profession) or RPSheet:ProfessionTool(profession)
+        local missing = can and profession.kind == "make" and RPSheet:MissingTool(profession)
+        lines[#lines + 1] = can and ("%s%s|r%s%s"):format(Opt.GREEN, profession.name, tool and (" with " .. tool) or "",
+                missing and (" %s(%s)|r"):format(Opt.RED, missing) or "")
             or ("%s%s: needs %s|r"):format(GREY, profession.name, lacks)
     end
     lines[#lines + 1] = "\nA profession opens with proficiency in one of its tools (or, for archaeology, the History skill). Tick those on the Proficiencies page.\n"
@@ -26,16 +28,22 @@ end
 
 local args = {
     standing = { type = "description", order = 1, fontSize = "medium", name = Standing },
+    toolCheck = {
+        type = "toggle", order = 2, width = "full", name = "Check that you carry the tool",
+        desc = "Making something takes the tool in hand, not only knowing how to use it. While this is on, a profession only makes things when one of its tools you are proficient with is among your items. Switch it off when your DM rules otherwise.",
+        get = function() return Opt.Sheet().toolsWaived ~= true end,
+        set = function(_, value) Opt.Sheet().toolsWaived = not value; Opt.Changed() end,
+    },
     materialsHeader = { type = "header", order = 10, name = "Materials" },
     materialsHelp = {
         type = "description", order = 10.5,
-        name = "What you gathered, bought or found, as a worth per kind. Write it like 50 gp; a bare number is gold. Making something pays with fitting materials before coins.\n",
+        name = "What you gathered, bought or found, as a worth per kind. Write it like 50 gp; a bare number is gold. Making something pays with fitting materials before coins, unless you pick coins only in the crafting window.\n",
     },
     fragmentsHeader = { type = "header", order = 20, name = "Archaeology" },
     recipesHeader = { type = "header", order = 30, name = "Learned recipes" },
     recipesHelp = {
         type = "description", order = 30.5,
-        name = "Plain gear and the common, uncommon and rare magic arms, armor, potions and wands come with the skill. The recipes below are learned from a trainer, a find or a faction: tick the ones the DM has given you.\n",
+        name = "Plain gear, vehicles and the common, uncommon and rare magic arms, armor, potions, scrolls and wands come with the skill. The recipes below are learned from a trainer, a find or a faction: tick the ones the DM has given you. The crafting window has the same tick on each recipe.\n",
     },
 }
 

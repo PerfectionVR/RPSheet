@@ -9,6 +9,8 @@ local RPSheet = ns.addon
 -- Plain gear: half its price, a day per 10 gp of price. A magic item: by rarity,
 -- halved for one that is used up, plus the full price of what it is made from.
 function ns.CraftCost(name)
+    local vehicle = R.VEHICLE_RECIPES[name] -- built, not carried (Data/RecipesVehicles.lua)
+    if vehicle then return vehicle.cost, vehicle.days end
     local item = R.ITEMS[name]
     if not item.rarity then
         return math.floor(item.cost / 2), math.max(1, math.ceil(item.cost / R.CRAFT_COPPER_PER_DAY))
@@ -39,15 +41,19 @@ function RPSheet:RecipeKnown(recipe)
 end
 
 -- True when the character may make the recipe now. Otherwise false and why not.
-function RPSheet:CanCraft(profession, recipe)
+-- `coinsOnly` leaves the gathered materials out of what can pay.
+function RPSheet:CanCraft(profession, recipe, coinsOnly)
     local can, lacks = self:CanPractise(profession)
     if not can then return false, "you need " .. lacks end
+    local missing = self:MissingTool(profession) -- the tool in hand (Sheet/CraftTools.lua)
+    if missing then return false, missing end
     if self:ProfessionLevel() < recipe.level then
         return false, ("it takes %s skill (proficiency bonus +%d)"):format(R.PROFESSION_LEVELS[recipe.level].name:lower(), recipe.level)
     end
     if not self:RecipeKnown(recipe) then return false, "you haven't learned it" end
     local cost = ns.CraftCost(recipe.name)
-    if self:MaterialsFor(profession) + self:Coins() < cost then return false, "you can't pay for the materials" end
+    local funds = self:Coins() + (coinsOnly and 0 or self:MaterialsFor(profession))
+    if funds < cost then return false, coinsOnly and "your coins alone can't pay for the materials" or "you can't pay for the materials" end
     return true
 end
 
@@ -66,24 +72,28 @@ function RPSheet:LearnRecipe(name, known)
     if known then self:Print(("You now know how to make %s."):format(name)) end
 end
 
--- Makes one: pays the materials (gathered ones first, then coins) and adds the item.
--- True when it was made.
-function RPSheet:Craft(profession, recipe)
-    local can, why = self:CanCraft(profession, recipe)
+-- Makes one: pays the materials (gathered ones first, then coins; with `coinsOnly`
+-- coins alone) and adds the item, or for a vehicle the vehicle. True when it was made.
+function RPSheet:Craft(profession, recipe, coinsOnly)
+    local can, why = self:CanCraft(profession, recipe, coinsOnly)
     if not can then
         self:Print(("You can't make %s: %s."):format(recipe.name, why))
         return false
     end
     local name = recipe.name
-    if not self:PayWithMaterials(profession, ns.CraftCost(name), "making " .. name) then return false end
-    self:AddItem(name, 1)
+    local cost, reason = ns.CraftCost(name), "making " .. name
+    local paid
+    if coinsOnly then paid = self:SpendCoins(cost, reason) else paid = self:PayWithMaterials(profession, cost, reason) end
+    if not paid then return false end
+    if recipe.vehicle then self:AddMount(name) else self:AddItem(name, 1) end
     local days = self:CraftDays(profession, name)
-    local tool = self:ProfessionTool(profession)
+    local tool = self:CraftTool(profession) or self:ProfessionTool(profession)
     self:Announce(("makes %s with %s (%s of work)."):format(ns.Mark(name), tool or profession.name:lower(), ns.DaysText(days)))
     local notes = { ("%s of eight hours' work, which needn't follow one another. A helper proficient with the same tools halves it."):format(ns.DaysText(days)) }
     if R.RECIPE_OPEN[name] then
         notes[#notes + 1] = ("That is the magic alone: %s is bought or made apart."):format(R.RECIPE_OPEN[name])
     end
+    if recipe.vehicle then notes[#notes + 1] = "It stands with your mounts and vehicles." end
     self:Print(table.concat(notes, " "))
     return true
 end

@@ -106,6 +106,7 @@ ns.defaults = {
                     -- Professions (Sheet/Professions.lua fills in what is missing).
                     materials = {}, -- [kind] = worth of gathered materials, in copper
                     recipes = {},   -- [item name] = true: a recipe learned beyond the basic ones
+                    toolsWaived = false, -- true: things are made without checking that the tool is carried (a DM ruling)
                     fragments = {}, -- { plain, magic, failedAt }: archaeology finds
                 },
             },
