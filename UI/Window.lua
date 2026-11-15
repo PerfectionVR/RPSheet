@@ -185,7 +185,7 @@ local function Constructor()
         return "Lock window", "Stops the window from being moved or resized, and lets clicks on its title bar, background and edges through to the game. The rows stay clickable."
     end)
     widget.editButton = TitleButton(widget, 2, EDIT_ICON, "OnEditClick", function()
-        return "Edit character", "Stats, armor, weapons, abilities, passives and appearance."
+        return "Settings", "Your character and its levels, everything on the sheet under Customize, general settings, the window's look, import and export."
     end)
 
     widget.minimizeButton = TitleButton(widget, 3, "Interface\\Buttons\\UI-MinusButton-Up", "OnMinimizeClick", function(self)

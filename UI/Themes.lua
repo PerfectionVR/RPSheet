@@ -6,7 +6,8 @@ local _, ns = ...
 local LSM = LibStub("LibSharedMedia-3.0")
 
 -- Fonts and bar textures are named as in LibSharedMedia, so anything another addon
--- registers there can be picked too. These four fonts ship with the game.
+-- registers there can be picked too. The fonts the presets name ship with the game;
+-- this one is also what a theme without a font falls back to.
 local FRIZ = "Friz Quadrata TT"
 
 -- File path of a theme's font. Older saved themes stored the path itself.

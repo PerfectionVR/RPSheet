@@ -195,7 +195,7 @@ end)
 -- The cog
 ---------------------------------------------------------------------------
 Try("edit button", function()
-    Check("cog tooltip", TipTitle(window.editButton) == "Edit character")
+    Check("cog tooltip", TipTitle(window.editButton) == "Settings")
     F.Click(window.editButton)
     F.Settle()
     Check("the cog doesn't open the settings", AceConfigDialog.OpenFrames.RPSheet ~= nil)

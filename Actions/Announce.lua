@@ -5,10 +5,25 @@ local RPSheet = ns.addon
 ns.CHANNELS = { "EMOTE", "PARTY", "RAID", "SELF" }
 ns.CHANNEL_LABEL = { EMOTE = "Emote", PARTY = "Party", RAID = "Raid", SELF = "Self only" }
 
+local MAX_CHAT = 250 -- bytes of one chat message (the game takes 255)
+local MAX_PARTS = 4  -- messages one announcement may take
+local MAX_NAME = 60  -- bytes of the name in front of a party or raid line
+
+-- A saved channel that is none of ours (the saved settings edited by hand) counts as
+-- "Self only": nothing is sent anywhere, and the sheet says so.
+local function Known(channel)
+    return ns.CHANNEL_LABEL[channel] and channel or "SELF"
+end
+
+function ns.ChannelLabel(channel)
+    return ns.CHANNEL_LABEL[Known(channel)]
+end
+
 -- `text` reads as a continuation of the character's name: "rolls Stealth: 14 + 5 = 19".
 function RPSheet:Announce(text)
-    local channel = self.db.profile.channel
-    if not ns.CHANNEL_LABEL[channel] then channel = "SELF" end -- a saved value that is none of ours
+    local channel = Known(self.db.profile.channel)
+    -- A rest can be taken back until something else is announced (Actions/RestUndo.lua).
+    if ns.RestUndoExpire then ns.RestUndoExpire() end
     -- Names the player typed (the character, a weapon, an ability) can hold what chat
     -- refuses and what would read as a colour or link code: line breaks become spaces,
     -- the rest is left out.
@@ -33,10 +48,13 @@ function RPSheet:Announce(text)
         return
     end
     -- Emotes are already prefixed with the character's name by the game.
-    local msg = channel == "EMOTE" and text or (name .. " " .. text)
-    if #msg > 250 then msg = ns.Codec.Cut(msg, 247) .. "..." end -- (never half an accented letter)
+    local lead = channel == "EMOTE" and "" or (ns.Codec.Cut(name, MAX_NAME) .. " ")
     local send = C_ChatInfo.SendChatMessage or SendChatMessage
-    send(msg, channel)
+    -- A line too long for one message goes out as several (Actions/AnnounceSplit.lua),
+    -- each starting with the name like the first.
+    for _, part in ipairs(ns.SplitChat(text, MAX_CHAT - #lead, MAX_PARTS)) do
+        send(lead .. part, channel)
+    end
 end
 
 -- Switches to the next announce channel.

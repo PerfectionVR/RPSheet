@@ -13,7 +13,11 @@ ns.defaults = {
         minimap = { hide = false },
         themePreset = "DARK",
         theme = CopyTable(ns.Themes.DARK),
-        window = { width = 300, height = 560 },
+        -- Size and place of each window (the place is added when it is first moved).
+        window = { width = 340, height = 560 },          -- the sheet; 340 is as narrow as it goes (UI/Window.lua)
+        itemWindow = { width = 560, height = 520 },      -- item browser, stable, crafting (UI/ItemBrowser.lua)
+        spellbookWindow = { width = 340, height = 420 }, -- UI/SpellbookWindow.lua
+        preparedWindow = { width = 340, height = 420 },  -- UI/PreparedWindow.lua
     },
     -- Per WoW character.
     char = {

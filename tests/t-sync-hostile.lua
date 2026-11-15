@@ -223,7 +223,7 @@ Section("the wire: doubled, out of order, parts lost", function()
     world:Advance(3)
     Clean("doubled"); CheckCopy("doubled")
     Eq((vic.addon:GetCachedStats(mal.full) or {}).trackers[1][2], mal.addon:State().hp, "doubled: hit points")
-    -- two changes that arrive the wrong way round: the later arrival is what is kept
+    -- two changes that arrive the wrong way round: the newer one is what is kept
     local held
     world.tamper = function(message)
         if message.from ~= mal then return { message } end
@@ -235,6 +235,7 @@ Section("the wire: doubled, out of order, parts lost", function()
     mal.addon:TakeDamage(1); world:Advance(3)
     mal.addon:TakeDamage(1); world:Advance(3)
     Clean("out of order"); CheckCopy("out of order")
+    Eq((vic.addon:GetCachedStats(mal.full) or {}).trackers[1][2], mal.addon:State().hp, "out of order: the older one arriving last changes nothing")
     world.tamper = false
     mal.addon:TakeDamage(1); world:Advance(3)
     Eq((vic.addon:GetCachedStats(mal.full) or {}).trackers[1][2], mal.addon:State().hp, "the next change puts it right")

@@ -22,8 +22,13 @@ end
 
 function W.NewDraft()
     local current = RPSheet:Sheet()
+    -- Everything W.Finish carries over when asked to: what was made by hand, and what
+    -- the character owns.
+    local coins = 0
+    for _, amount in pairs(current.coins or {}) do coins = coins + (tonumber(amount) or 0) end
     local hasContent = #OwnEntries(current.abilities) + #OwnEntries(current.passives)
-        + #current.resources + #current.weapons + #current.spells > 0
+        + #current.resources + #current.weapons + #current.spells
+        + #(current.items or {}) + #(current.mounts or {}) + coins > 0
     return {
         step = 1,
         class = "", subclass = "", spec = "", level = 1, classSkills = {},

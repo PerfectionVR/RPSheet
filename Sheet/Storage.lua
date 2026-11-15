@@ -54,8 +54,13 @@ function RPSheet:UpdateSheetKey()
             { sheet = old.sheet, hp = old.hp, resource = old.resource, counter = old.counter, weapon = old.weapon, initialized = true },
             blank)
         old.sheet, old.hp, old.resource, old.counter, old.weapon = nil, nil, nil, nil, nil
-    elseif previous and previous:find("^char:") and key:find("^trp3:") and rawget(sheets, previous) and not rawget(sheets, key) then
-        -- Total RP 3 became available: the character's own sheet becomes the profile's sheet.
+    elseif previous and previous:find("^char:") and key:find("^trp3:")
+        and rawget(sheets, previous) and not ns.IsBlankState(rawget(sheets, previous))
+        and (not rawget(sheets, key) or ns.IsBlankState(rawget(sheets, key))) and not AnyProfileMade(sheets) then
+        -- Total RP 3 became available: the character's own sheet becomes the profile's
+        -- sheet. Like at a login (below) only while no profile has a character, and
+        -- whether or not a blank entry for the profile happens to be saved: those are
+        -- not kept (Sheet/Blank.lua).
         sheets[key] = Util.FillDefaults(rawget(sheets, previous), blank)
         sheets[previous] = nil
     elseif not previous and key:find("^trp3:") and not Made(rawget(sheets, key)) and Made(rawget(sheets, CharacterKey()))

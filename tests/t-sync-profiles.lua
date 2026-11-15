@@ -9,8 +9,9 @@ local WIZARD = "RPSheetWizard"
 local function Class(client) return client.addon:Sheet().class end
 local function Offered(client) return client.opened[WIZARD] == true and client.ns.Wizard.draft ~= nil end
 local function CloseWizard(client) client.opened[WIZARD] = nil; client.ns.Wizard.draft = nil end
--- The saved sheets that hold a character. (A key that was only looked at keeps a
--- blank entry of about a kilobyte: counted in BLANKS, and said at the end.)
+-- The saved sheets that hold a character. (After a reload the table read here is the
+-- one in use again, where the key being looked at has its blank entry for as long as
+-- the session lasts: counted in BLANKS. That none is written out: t-sync-blanks.lua.)
 local BLANKS = 0
 local function Keys(saved)
     local list = {}
@@ -270,5 +271,5 @@ Section("a sheet saved per character by an old version", function()
     world:CheckClean("old")
 end)
 
-print(("  (%d times a saved sheet was a blank one for a key that never got a character)"):format(BLANKS))
+print(("  (%d times the sheet in use was a blank one for a key that never got a character)"):format(BLANKS))
 Summary("t-sync-profiles")
