@@ -85,8 +85,11 @@ Invariant("twice", function()
         local seen = {}
         for _, entry in ipairs(sheet[field]) do
             if type(entry.auto) == "string" and entry.auto ~= "" then
-                if seen[entry.auto] then return ("two %s marked '%s' (%s)"):format(field, entry.auto, tostring(entry.name)) end
-                seen[entry.auto] = true
+                -- Two classes may each pick the same spell: one entry each, with the
+                -- same mark and its own class (Sheet/SpellPicks.lua, PreparedPicks.lua).
+                local id = field == "spells" and (entry.auto .. "/" .. tostring(entry.class or "")) or entry.auto
+                if seen[id] then return ("two %s marked '%s' (%s)"):format(field, id, tostring(entry.name)) end
+                seen[id] = true
             end
         end
     end
@@ -252,6 +255,10 @@ end
 -- The first difference between two dumps, or nil.
 function Z.Compare(a, b, path)
     path = path or ""
+    -- An empty table and nothing are the same to the saved data (a table made on
+    -- first use, such as state.scrollSpells, isn't there again until it is used).
+    local function Empty(value) return value == nil or (type(value) == "table" and next(value) == nil) end
+    if Empty(a) and Empty(b) then return end
     if type(a) ~= type(b) then return ("%s was %s and is %s"):format(path, tostring(a), tostring(b)) end
     if type(a) ~= "table" then
         if a ~= b then return ("%s was %s and is %s"):format(path, tostring(a), tostring(b)) end
