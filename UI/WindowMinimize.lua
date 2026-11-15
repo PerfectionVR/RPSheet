@@ -16,6 +16,13 @@ function ns.AttachMinimize(widget, barHeight)
     function widget:SetCollapsed(on)
         if (self.collapsed == true) == on then return end
         self.collapsed = on
+        -- Pin the top-left corner first. Dragging leaves the window anchored wherever
+        -- the game likes (often its middle), and it would fold towards that point.
+        local left, top = frame:GetLeft(), frame:GetTop()
+        if left and top then
+            frame:ClearAllPoints()
+            frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left, top)
+        end
         if on then
             self.fullHeight = frame:GetHeight()
             frame:SetHeight(barHeight)
