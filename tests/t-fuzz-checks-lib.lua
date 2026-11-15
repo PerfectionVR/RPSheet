@@ -26,9 +26,9 @@ end)
 Invariant("pools", function()
     for _, tracker in ipairs(RPSheet:GetTrackers()) do
         local value, max = tracker.get(), tracker.max
-        if not Whole(max) or max < 0 then return ("%s has a maximum of %s"):format(tostring(tracker.label), tostring(max)) end
+        if not Whole(max) or max < 0 then return ("'%s' has a maximum of %s"):format(tostring(tracker.label), tostring(max)) end
         if value ~= nil and (not Whole(value) or value < 0 or value > max) then
-            return ("%s holds %s of %d"):format(tostring(tracker.label), tostring(value), max)
+            return ("'%s' holds %s of %d"):format(tostring(tracker.label), tostring(value), max)
         end
     end
 end)
@@ -47,15 +47,15 @@ Invariant("items", function()
     local sheet = RPSheet:Sheet()
     local suits, shields = 0, 0
     for _, item in ipairs(sheet.items) do
-        if not Whole(item.qty) or item.qty < 1 then return ("%s in the inventory %s times"):format(tostring(item.name), tostring(item.qty)) end
+        if not Whole(item.qty) or item.qty < 1 then return ("'%s' is in the inventory %s times"):format(tostring(item.name), tostring(item.qty)) end
         local slot = ns.ItemSlot(item)
         if item.equipped and slot == "armor" then
             suits = suits + 1
             local key = R.ARMOR_ITEMS[ns.ItemBase(item)]
-            if sheet.armor ~= key then return ("%s is equipped but the sheet's armor is %s"):format(item.name, tostring(sheet.armor)) end
+            if sheet.armor ~= key then return ("'%s' is equipped but the sheet's armor is %s"):format(item.name, tostring(sheet.armor)) end
         elseif item.equipped and slot == "shield" then
             shields = shields + 1
-            if not sheet.shield then return item.name .. " is equipped but the sheet has no shield up" end
+            if not sheet.shield then return "'" .. item.name .. "' is equipped but the sheet has no shield up" end
         end
     end
     if suits > 1 then return suits .. " suits of armor are equipped" end
@@ -85,7 +85,7 @@ Invariant("twice", function()
         local seen = {}
         for _, entry in ipairs(sheet[field]) do
             if type(entry.auto) == "string" and entry.auto ~= "" then
-                if seen[entry.auto] then return ("two %s marked %s (%s)"):format(field, entry.auto, tostring(entry.name)) end
+                if seen[entry.auto] then return ("two %s marked '%s' (%s)"):format(field, entry.auto, tostring(entry.name)) end
                 seen[entry.auto] = true
             end
         end
@@ -95,7 +95,7 @@ Invariant("twice", function()
     for _, spell in ipairs(sheet.spells) do
         -- two classes may each prepare the same spell: the entries name their class
         local id = tostring(spell.name) .. "/" .. tostring(spell.class or "")
-        if seen[id] and spell.name ~= "" then return ("the spell %s is on the sheet twice"):format(id) end
+        if seen[id] and spell.name ~= "" then return ("the spell '%s' is on the sheet twice"):format(id) end
         seen[id] = true
     end
 end)
@@ -106,7 +106,7 @@ Invariant("limits", function()
     if Z.IsFree() or not R.CLASSES[sheet.class] then return end
     for _, key in ipairs(R.PICK_LIST_ORDER) do
         local limit, known = ns.SheetPickLimit(sheet, key), ns.PicksKnown(sheet, key)
-        if known > limit then return ("%s: %d picked, the limit is %d"):format(key, known, limit) end
+        if known > limit then return ("'%s': %d picked, the limit is %d"):format(key, known, limit) end
     end
     if ns.ManeuversKnown(sheet) > ns.SheetManeuverLimit(sheet) then return ("%d maneuvers, the limit is %d"):format(ns.ManeuversKnown(sheet), ns.SheetManeuverLimit(sheet)) end
     if ns.ExpertiseKnown(sheet) > ns.ExpertiseLimit(sheet) then return ("expertise in %d skills, the limit is %d"):format(ns.ExpertiseKnown(sheet), ns.ExpertiseLimit(sheet)) end

@@ -164,6 +164,15 @@ end })
 Action("ability", { weight = 10, guard = function() return Playing() and #RPSheet:Sheet().abilities > 0 end, run = function()
     RPSheet:UseAbility(Named("ability", RPSheet:Sheet().abilities), Mode())
 end })
+-- Into a beast form, whichever the character knows (the "ability" action does it
+-- too, among everything else; this one is for the cases).
+Action("wild shape", { weight = 1.5, guard = Playing, run = function()
+    local forms = {}
+    for _, ability in ipairs(RPSheet:Sheet().abilities) do
+        if ability.name:find("^Wild Shape: ") then forms[#forms + 1] = ability end
+    end
+    RPSheet:UseAbility(Named("form", forms), nil)
+end })
 Action("attack", { weight = 5, guard = Playing, run = function()
     if Z.Flip("swap", 0.3) then RPSheet:SwapWeapon() end
     RPSheet:Attack(Mode())

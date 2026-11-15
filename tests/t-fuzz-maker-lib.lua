@@ -109,7 +109,11 @@ function Z.FillLevelDialog(label)
             break
         end
         if Sweep() == 0 then
-            Z.Report("tester", label .. ": the level dialog can't be completed: " .. tostring(problem))
+            -- A level of a class the character may not take (picked in "Next level
+            -- in", where such classes are grey): the dialog says why and is closed.
+            if not tostring(problem):find("^You can't take a level") then
+                Z.Report("tester", label .. ": the level dialog can't be completed: " .. tostring(problem))
+            end
             break
         end
     end

@@ -54,6 +54,13 @@ local CASES = {
         if FUZZ.cast ~= "Starry Wisp" then return "the case didn't cast its spell (" .. tostring(FUZZ.cast) .. ")" end
         if not RPSheet.preparedWindow or not RPSheet.preparedWindow.frame:IsShown() then return "the case didn't open the window" end
     end },
+    -- A beast form that runs out during a short rest: the sheet went on showing
+    -- the form's Armor Class and attacks.
+    { name = "form ends during a short rest", steps = {
+        { a = "make", seed = 1874223803, p = { ["#1"] = "Warden", alignment = "Lawful Good", allegiance = "NEUTRAL", background = "GUARD", backgroundGear = true, class = "ROGUE", classGear = true, classSkill1 = "skill2", classSkill2 = "skill3", classSkill3 = "skill18", classSkill4 = "skill4", closet = false, extras = 2, gearChoicebackground1 = "Three-Dragon Ante Set", level = 4, moreClass1 = "DRUID", moreClass2 = "DEMONHUNTER", moreLevel1 = 2, moreLevel2 = 1, moreSkill2 = "Survival", moreSpec1 = "Guardian", moreSpec2 = "Devourer", plusOne = "WIS", plusTwo = "STR", scores = "14 14 13 13 8 8", spec = "Assassination", species = "PANDAREN", spread = false } },
+        { a = "wild shape", seed = 1530802240, p = {} },
+        { a = "short rest", seed = 1787215230, p = {} },
+    } },
 }
 
 local played, problems = 0, 0
