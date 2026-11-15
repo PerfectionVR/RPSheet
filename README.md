@@ -1,37 +1,95 @@
 # RP Sheet
 
-A small tabletop character sheet for World of Warcraft roleplay. Build a character with a
-27-point buy, then click a stat, skill, weapon or ability to roll and announce the result.
+A tabletop character sheet inside World of Warcraft, for people who roleplay with dice.
+You make a character with a step-by-step wizard, then click a check, a weapon, a spell or
+an ability on the sheet: the addon rolls, does the sums the rules ask for, and tells your
+group the result.
 
-Built for retail WoW (interface 12.1.5). Works on its own, and integrates with
-[Total RP 3](https://www.curseforge.com/wow/addons/total-rp-3) when it is installed.
+It follows D&D 5e (2024 rules) as used by the *D&D: World of Warcraft* setting book. You
+need the books for the full text of features; the addon handles the numbers and gives
+short summaries in its own words.
+
+- **For whom:** players in a roleplay group or campaign that uses those rules, and DMs
+  who want their players' rolls and numbers to be checkable.
+- **Needs:** retail WoW (interface 12.1.5). Nothing else.
+- **Optional:** [Total RP 3](https://www.curseforge.com/wow/addons/total-rp-3). With it,
+  each Total RP 3 profile has its own sheet, your character's name comes from the
+  profile, and stats show in its tooltips.
 
 ## Features
 
-- **Tabs on the sheet**: hit points, rests, conditions, combat numbers and your weapon
-  stay on top; abilities and spells, checks and saves, skills and tools, traits, and
-  items each have a tab below.
-- **Item browser**: a window listing what you carry and every item of the rules as a
-  block with its details and buttons to add, buy, equip and remove it.
-- **Multiclassing**, **professions and crafting**, **mounts, vehicles and companion
-  creatures**, **spell components** and **spell scrolls**, as the rules describe them.
-- **Minimize**: the sheet can fold up to its title bar and open only while hovered.
-- **Character sheet window** with HP, class resource and counter bars, AC, stats, skills,
-  weapons, abilities and passives.
-- **Click to roll.** Rolls use the game's real `/roll`, so everyone nearby or in your group
-  can verify them. The addon then announces the total, for example
-  `attacks with Rapier - d20 + DEX: 14 + 3 = 17, damage 1d4 + 3: 2 + 3 = 5`.
-- **In-game character editor** (`/sheet config`): point buy, race size, armor, shield,
-  class resource, weapons, abilities and passives. No file editing.
-- **Passives with working effects.** Each passive can add flat numbers or stat modifiers to
-  AC, HP, resource, attack, damage, healing or skills, and can be switched on and off.
-- **One sheet per Total RP 3 profile.** Switch TRP3 profile and the sheet switches with it.
-- **Stats in the TRP3 tooltip**, below the OOC block: your own, and those of other RP Sheet
-  users, which are synced automatically.
-- **Import and export:** share a whole character as one text string.
-- **Themes:** seven presets plus custom colours, size and scale, and any font or bar texture
-  your other addons provide.
-- **Minimap icon**, lockable window, and announce to Emote, Party, Raid or yourself only.
+**Make a character**
+
+- A creation wizard in five steps: class, origin, ability scores, alignment and
+  allegiance, details. It only lets you go on when a step is complete.
+- Thirteen classes with their subclasses and specializations, seventeen species (with
+  lineages) and sixteen backgrounds. Point buy, standard array or scores set by hand.
+- Levels 1 to 20, and more than one class from the start if you want.
+- Starting gear: the ready sets of your class and background, or a closet where you
+  take what you like, and starting gold.
+- An example character to look at, and import and export of a whole character as one
+  text string.
+
+**Play**
+
+- **Roll** ability checks, saving throws, skills, tools, initiative and spell attacks
+  by clicking them. Rolls use the game's real `/roll`, so others can verify them, and
+  the total is announced, for example
+  `rolls [Stealth]: 14 + 5 = 19`.
+- **Advantage and disadvantage** with Shift or Ctrl, or set for the next roll.
+  Conditions, armor, features, feats and items that give either are applied by the
+  sheet, and the two cancel out as the rules say.
+- **Attack** with the weapon in hand: to hit, then damage, with critical hits, Fighting
+  Styles, weapon mastery and magic bonuses counted.
+- **Cast** spells from a list with slots, save DC, dice, concentration, rituals,
+  higher slots and components. A Mage has a spellbook window; classes that change
+  prepared spells after a long rest have a window for that.
+- **Use class features** as clickable abilities with their costs, dice and uses per
+  rest, and passives you switch on and off.
+- **Take damage and heal** by amount and type: resistance, vulnerability, immunity,
+  temporary hit points, the concentration save and dropping to 0 are handled. Death
+  saves, conditions and exhaustion are on the sheet.
+- **Rest:** short and long rests, and Hit Dice to spend.
+- **Companions and forms:** a Beast Master's companion, Wild Shape forms and
+  Metamorphosis, each with their own numbers while they are on.
+- A small **[?]** in front of a number shows, to you alone, how it is worked out.
+
+**Level up and multiclass**
+
+- Levels are taken one at a time in a level dialog that shows what the level gives and
+  asks for its choices: subclass, Ability Score Improvement or feat, Fighting Style,
+  spells, expertise, maneuvers, Metamagic, invocations, beast forms and more.
+- Going back a level undoes exactly what that level gave.
+- The next level can be taken in another class; the sheet checks the scores it needs
+  and works out hit points, Hit Dice, features and spell slots class by class.
+
+**Inventory, crafting, mounts**
+
+- Coins with change, carried gear with prices and weight against your carrying
+  capacity, and magic items you equip and attune (three at most).
+- An item browser: every listed item as a block that says what it is and does, with
+  buttons to add, buy, equip and remove it.
+- Professions on a Trade tab: gathering checks, materials, a crafting window with
+  recipes, spell scrolls to scribe and read.
+- A stable for mounts, vehicles and companion creatures: buy them, ride them, and see
+  the mount's speed on your Speed row.
+
+**Share with the group**
+
+- Announcements go to Emote, Party or Raid, or to yourself only.
+- Rule terms in announcements are links for everyone who has the addon: hover for what
+  the term means, click for the maths behind the number.
+- With Total RP 3, your stats show in your tooltip, and other RP Sheet users' stats in
+  theirs.
+
+**Customize**
+
+- Every part of the character can be changed directly under Customize, for a DM's
+  ruling or a house rule. Abilities, passives, resources, weapons, spells, items and
+  mounts of your own can be built from scratch.
+- Seven themes, and every colour, the font, the size and the bar texture can be
+  changed. The sheet can be locked, or minimized to its title bar.
+- An armoury keeps weapons of your own for all your characters.
 
 ## Install
 
@@ -52,88 +110,287 @@ from `.pkgmeta`. Pushing a tag such as `v0.6.0` publishes a release; a tag conta
 clone, copy the libraries listed under "Bundled libraries" into a `Libs` folder, or run
 the packager locally.
 
-## Usage
+## Getting started
 
-| Action | How |
+### 1. The creation wizard
+
+A few seconds after you log in on a profile that has no character yet, the wizard opens
+by itself. `/sheet new` opens it at any time. **Next** stays grey until the step is
+complete, and a red line above the buttons says what is missing. **Not now** closes it
+without making a character; it is not offered again for that profile, but `/sheet new`
+still works.
+
+| Step | What you do |
 |---|---|
-| Show or hide the sheet | `/sheet`, or left-click the minimap icon |
-| Edit your character and settings | `/sheet config`, the gear icon, or right-click the minimap icon |
-| Lock or unlock the window | `/sheet lock`, the padlock icon, or shift-click the minimap icon |
-| Roll a stat or skill check | Click it |
-| Attack | Click the Attack row; right-click it to swap weapon |
-| Use an ability | Click it (spends its cost, rolls, announces) |
-| Change HP, resource or counter | Left-click +1, right-click -1, shift-click reset |
-| Switch a passive on or off | Click it |
+| 1. Choose a class | Pick the class and the level (the hero classes, Death Knight, Demon Hunter and Evoker, are set to level 3 when picked). Pick the class skills (the rest grey out once you have enough). From level 3 pick a subclass. A specialization is optional: it has no rules of its own, but it suggests a subclass, Fighting Style, weapons and spells and pre-selects the single picks. A Fighting Style is asked for if the class has one by that level. Under "More classes" you can split the levels over further classes. |
+| 2. Determine origin | Species (and size or lineage where the species has a choice), background, and the picks some species traits ask for (a skill, an origin feat). |
+| 3. Determine ability scores | Point buy (27 points), the standard array, or scores set by hand. Then place the background's three points: +2 and +1, or +1 on three abilities. Sliders only reach what you can still afford. |
+| 4. Choose an alignment and allegiance | Alignment is a short description of your character's outlook, picked from a list. Allegiance (Alliance, Horde or neutral) decides your common tongue and, for some species, starting renown. |
+| 5. Fill in details | Starting gear: take your class's and your background's ready sets with one button each, or open the closet and take what you like, ticking what you wear and wield. Set your starting gold. If the profile already had a character, a tick box lets you carry over what you made by hand. |
 
-The first time a profile has no character, a creation wizard walks through class, origin,
-ability scores, alignment and details; `/sheet new` reopens it. Levels are taken, and
-undone, one at a time on the Character tab, each with its own dialog and choices. Anything
-else can be changed directly under the Customize tab. The General tab also has a "Load example character" button that
-fills in a finished sheet to learn from, and `/sheet rest` takes a long rest.
+Highlighted words in the wizard's summaries can be hovered for an explanation.
 
-## Rules implemented
+**Create character** makes the sheet. Choices the wizard doesn't ask about (cantrips and
+spells, expertise, feats of earlier levels, maneuvers and the like) are asked straight
+afterwards in the level dialog, one level at a time; they also stay available on the
+Character tab of the settings.
+
+To look around first, open the settings (`/sheet config`), go to **General** and press
+**Load example character**.
+
+### 2. The sheet window
+
+`/sheet` or a left-click on the minimap icon shows and hides it.
+
+**Title bar.** Drag it to move the window; drag the bottom-right corner to resize it (it
+won't go narrower than its six tabs need). The buttons on the right:
+
+| Button | What it does |
+|---|---|
+| Minus / plus | Minimize: the window folds up to its title bar, opens while the mouse is over it, and folds up again shortly after the mouse leaves. Click again to keep it open. |
+| Cog | Opens the settings and character editor. |
+| Padlock | Lock: the window can't be moved or resized, and clicks on its title bar, background and edges go through to the game. The rows stay clickable. |
+| x | Hides the window. |
+
+**Top part.** Always shown, above the tabs:
+
+- A summary line (level, class, species, alignment).
+- **Announce to:** click to switch between Emote, Party, Raid and Self only.
+- **Next roll:** normal, advantage or disadvantage for the next d20. Left-click cycles;
+  it goes back to normal after one roll. Right-click keeps it for every roll.
+- **Cast at:** only with spell slots of more than one level. Click to cast your next
+  spell with a higher slot.
+- **Short rest** and **Long rest.** One click takes the rest and announces it.
+- Bars for hit points, Hit Dice, class resources and your own resources; temporary HP
+  and Heroic Inspiration; **Take damage** and **Heal**; death saves while you are at 0
+  hit points; your spell slots.
+- **Conditions** (click for a menu of tick boxes) and **Exhaustion**.
+- **Combat:** Armor Class, initiative, speed (and swim, climb or fly speeds when you
+  have one), proficiency bonus, passive Perception, spell save DC and spell attack,
+  senses, and what you resist, are immune to or vulnerable to.
+- The **weapon row:** the weapon in hand, with its to-hit and damage.
+
+**Tabs.** The open tab is remembered per game character.
+
+| Tab | What is on it |
+|---|---|
+| Actions | Your companion (if you have one), your abilities, and your spells by level with the slots left. Mages get "Open spellbook"; classes that change prepared spells after a long rest get "Change prepared spells". |
+| Checks | The six ability checks and the six saving throws. |
+| Skills | Every skill (proficient ones highlighted, a `*` for expertise) and your tools. |
+| Traits | Passives and traits, each a switch; languages and renown. |
+| Items | "Browse items", coins, attuned items, weight carried, every item as a row; then "Browse the stable" and your mounts, vehicles and companion creatures. |
+| Trade | Profession skill, "Make something", the professions you practise, gathering checks by region, archaeology fragments and gathered materials. |
+
+### 3. Clicking
+
+Every row has a tooltip that says what a click does. The ones worth knowing by heart:
+
+| On | Left-click | Right-click | With a key |
+|---|---|---|---|
+| Any roll (check, save, skill, tool, initiative, attack, spell attack, ability) | Roll it | | **Shift**: advantage. **Ctrl**: disadvantage. |
+| A row with **[?]** in front | Click the [?] itself to see how the number is worked out | | **Alt**-click anywhere on the row does the same |
+| Weapon row | Attack: to hit, then damage | Swap to the next ready weapon | |
+| Ability | Use it: pays its cost, rolls, announces | Take back a cost the feature lets you take back | |
+| Spell | Cast it | Cast a ritual spell as a ritual, without a slot | |
+| Passive | Switch it on or off | | |
+| HP, resource bars, temporary HP, spell slots | +1 | -1 | **Shift**-click: reset |
+| Hit Dice bar | Spend one: rolls the die and heals | Give one back | **Shift**-click: reset |
+| Death saves (at 0 HP) | Roll one | Start the count over | |
+| Exhaustion | +1 | -1 | |
+| Inventory item | Equip it or put it away | Attune or end the attunement | **Shift**-click: use one up (a spell scroll is read) |
+| Coins | Add coins | Spend coins | |
+| Mount or vehicle | Get on or off | | |
+| Companion creature | Call or dismiss it | It was treated well (rolls for loyalty) | **Shift**-click: it took damage |
+| Minimap icon | Show or hide the sheet | Settings | **Shift**-click: lock or unlock |
+
+A key held while clicking wins over the "Next roll" row. When a saving throw could have
+advantage against some things only (being charmed, a spell), a small menu asks what the
+save is against; Shift-click skips the question and rolls with advantage.
+
+### 4. The other windows
+
+| Window | Opened from | What it is for |
+|---|---|---|
+| Item browser | "Browse items" on the Items tab | A "Carried" tab and one tab per kind of item. Each item is a block with Add, Buy, Equip, Attune and Remove buttons. A search box looks through the whole open tab; long tabs show 24 blocks a page. |
+| Stable | "Browse the stable" on the Items tab | The same window on mounts, vehicles and companion creatures: Add, Buy, Ride, Call, Remove. |
+| Crafting | "Make something" or a profession on the Trade tab | What your professions can make, with cost, time and what is still missing; spell scrolls to scribe. |
+| Spellbook | "Open spellbook" on the Actions tab (Mage) | Every spell in the book. Left-click casts, right-click prepares a spell or puts it away. |
+| Prepared spells | "Change prepared spells" on the Actions tab | The same for classes that change prepared spells after a long rest. |
+
+The item browser, the stable and the crafting window are one window showing one of the
+three at a time. Each window has the same title-bar buttons as the sheet; its cog opens
+the Customize page that goes with it.
+
+### 5. The settings window
+
+`/sheet config`, the cog on the sheet, or a right-click on the minimap icon.
+
+| Tab | What is there |
+|---|---|
+| Character | An overview; **Take level**, **Back to level**, "Next level in" (another class), the choice made at each level (click one to change it), and **New character**. |
+| Customize | Pages that change the character directly: Weapons, Armoury, Spells, Spellbook (Mage), Abilities, Passives, Resources, Inventory, Mounts and companions, Class and origin, More classes, Metamagic / invocations / maneuvers (when the class has them), Lineage / languages / renown, Ability scores, Proficiencies, Professions, Defense. |
+| General | The name you announce as, the announce channel, the tooltip and sharing switches, lock, minimize, the minimap icon, the wizard and the example character. |
+| Appearance | Theme, colours, font, size, scale, bar texture. |
+| Import / Export | A character as a text string, out and in. |
+| Settings profiles | Copy, reset or switch the general settings and theme. Characters are not part of these profiles. |
+
+## Slash commands
+
+`/rpsheet` works in place of `/sheet` everywhere.
+
+| Command | What it does |
+|---|---|
+| `/sheet` | Shows or hides the sheet. |
+| `/sheet config` | Opens the settings and character editor. |
+| `/sheet new` | Opens the creation wizard. Finishing it replaces the character; closing it changes nothing. |
+| `/sheet lock` | Locks or unlocks the sheet window. |
+| `/sheet rest` | Takes a long rest. |
+| `/sheet damage 14` | Takes 14 damage without a type. |
+| `/sheet damage 14 fire` | Takes 14 fire damage, with your resistances, vulnerabilities and immunities applied. The types are acid, bludgeoning, cold, fire, force, lightning, necrotic, piercing, poison, psychic, radiant, slashing and thunder. |
+| `/sheet damage 28 fire -5` | The same, with 5 taken off first (a ward, a reaction). |
+| `/sheet heal 8` | Regains 8 hit points, up to your maximum. |
+
+Anything else after `/sheet` shows or hides the sheet.
+
+## How the rules are applied
 
 RP Sheet follows D&D 5e (2024 rules) as used by the *D&D: World of Warcraft* setting book.
-You need the books for the full text of features; the addon handles the numbers.
+The thirteen World of Warcraft classes each build on a Player's Handbook class (Death
+Knight and Paladin on Paladin, Demon Hunter and Hunter on Ranger, Evoker on Sorcerer,
+Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
 
-- **Classes:** the thirteen World of Warcraft classes, each using its Player's Handbook
-  class (Death Knight and Paladin use Paladin, Demon Hunter and Hunter use Ranger, Evoker
-  uses Sorcerer, Mage uses Wizard, Priest uses Cleric, Shaman uses Barbarian, Warrior uses
-  Fighter). Class sets hit die, saving throws, skill choices and spellcasting ability.
-- **Origin:** seventeen species (size, speed, darkvision, traits listed as passives) and the
-  sixteen Player's Handbook backgrounds (two skills, an origin feat, ability score increases).
-- **Ability scores:** point buy, standard array or manual, plus +2/+1 or +1/+1/+1 from the
-  background.
-- **Level 1 to 20:** proficiency bonus, hit points (maximum die at level 1, average after),
-  spell slots for full, half and pact casters, and class resources such as Rage, Focus
-  Points, Lay on Hands and Channel Divinity.
-- **Armor Class:** the standard armor table, shields, and Unarmored Defense.
-- **Class features:** each class's core features arrive as ready-made abilities and
-  passives when you reach their level. Subclass features do the same when
-  you pick a subclass.
-- **Spells:** enter the spells you know; casting one spends a slot and rolls its attack or
-  dice. No spell text is built in.
-- **Play:** advantage and disadvantage (Shift-click or Ctrl-click a roll), short and long
-  rests, hit dice, temporary HP, Heroic Inspiration and death saves.
-- **Origin extras:** lineages, allegiance, languages and faction renown.
-- **Rolls:** ability checks, saving throws, skills with proficiency or expertise,
-  initiative, weapon attacks (a natural 20 doubles the damage dice) and spell attacks.
-- **Effects:** passives add flat numbers, ability modifiers, level or proficiency bonus to
-  any of those numbers. Abilities are lists of steps (spend a resource, roll to hit, roll
-  dice, switch a passive), so custom features and feats can be built freely.
+### What the sheet does by itself
 
-Species traits, origin feats and class features that only describe behaviour are listed by
-name as reminders; the addon does not reproduce the books' text. The rules data lives in
-the `Data` folder. Sheets made with earlier versions are converted automatically.
+- **Numbers:** proficiency bonus, hit points, Armor Class (armor, shield, Unarmored
+  Defense, magic bonuses, a form's own), initiative, speeds, saving throws, skills,
+  spell save DC and spell attack, spell slots (shared slots for several spellcasting
+  classes, Pact Magic beside them), class resources and carrying capacity.
+- **Features:** class and subclass features arrive as abilities and passives at their
+  level and are taken off again when you go back down. Their dice and bonuses follow
+  your level. Species traits, the background's skills and origin feat, lineage spells,
+  feats and faction perks are added the same way.
+- **Rolls:** advantage and disadvantage from conditions, armor, features, feats, items
+  and a loyal companion; Strength and Dexterity saves that fail without a roll while
+  paralyzed, petrified, stunned or unconscious; a natural 20 doubling the damage dice; exhaustion on every
+  d20 and on speed.
+- **Casting:** the lowest free slot that fits (or the one set at "Cast at"), extra dice
+  and other growth with a higher slot, concentration (a new spell ends the earlier
+  one), the concentration save when you take damage, protective spells cast on
+  yourself, and spells that can't be cast in a beast form.
+- **Damage:** "Take damage" halves, doubles or ignores the amount as your defenses
+  say, uses temporary hit points first, and handles 0 hit points and death saves.
+- **Items:** equipping armor, a shield or a weapon puts it on the sheet; magic items
+  count while equipped and, where they ask for it, attuned; carrying too much holds
+  your speed to 5 feet.
+- **Rests:** a long rest refills everything, removes one level of exhaustion and ends
+  what doesn't outlast it; a short rest gives back what recharges on one.
+
+### What stays your call, or the DM's
+
+- **Time.** The sheet keeps no clock and no turns. A spell's duration, a beast form's
+  hours and "once a turn" effects are ended by hand or by a rest.
+- **Conditions** are ticked by you. The sheet applies what they do to your own rolls and
+  speed; it does not stop you from ticking one you are immune to.
+- **Situations.** Advantage that depends on the target or on what you can see, cover,
+  and anything else the sheet can't know: use Shift, Ctrl or the "Next roll" row.
+- **Passives** that only hold some of the time (a stance, Rage, a protective spell
+  someone cast on you) are switched on and off by you.
+- **Other people's saves and hit points.** A spell shows its save DC and rolls its dice;
+  whether the target fails is settled at the table.
+- **The HP bar by hand.** Clicking the bar changes hit points without any rule; use it
+  for a ruling, or to bring a dead character back.
+
+### Switches that turn a check off
+
+| Switch | Where | What it turns off |
+|---|---|---|
+| Check spell components | Customize > Spells | Needing to carry a spell's priced component, and using it up when the casting consumes it. |
+| Check that you carry the tool | Customize > Professions | Needing the profession's tool among your items to make or gather something. |
+
+Both are on by default and are kept per character.
+
+### Strict places and free places
+
+| Place | How it treats the rules |
+|---|---|
+| Creation wizard | Strict. You can't go on until the step fits the rules: the right number of skills, all points placed, prerequisites met. |
+| Level dialog | Strict. "Take level" stays grey until every choice of the level is made, exactly as many as the rules give. One pick can be exchanged where the rules allow one. |
+| The sheet and the browsers | Hold to the rules in play: slots, costs, components, attunement, prices, what you can ride. |
+| Customize pages | Free. Anything can be set, for a DM's ruling, a house rule or an experiment. Where a choice goes beyond the rules, the page says so in red and lets you. |
 
 Core rules numbers follow the System Reference Document 5.2 by Wizards of the Coast,
-available under the Creative Commons Attribution 4.0 licence.
+available under the Creative Commons Attribution 4.0 licence. Sheets made with earlier
+versions of the addon are converted automatically.
 
-## Syncing with other players
+## Sharing and privacy
 
-Players who both run RP Sheet see each other's stats in the Total RP 3 tooltip.
+Nothing leaves the game. What other players can see is this:
 
-- Hovering or targeting a player asks them for their stats with a hidden addon whisper.
-- Your own changes are pushed to your party or raid.
-- Sent: HP, AC, resource, counter, the six stats and the equipped weapon.
-- Cross-faction only works inside a group. Received stats are kept for the session only.
-- Sharing can be switched off in the settings.
+| What | Who gets it | How |
+|---|---|---|
+| Your rolls | Whoever the game shows a `/roll` to: people nearby, or your group | The game's own `/roll`, one per die. With "Self only" nothing is rolled in public: the dice are rolled privately. |
+| Announcements | The channel at "Announce to": Emote (people nearby), Party, Raid, or only you | An ordinary chat line. If Party or Raid is chosen and you are not in one, the line is shown to you alone and says so. |
+| Your stats | Your party or raid, and RP Sheet users of your own faction who hover over you or target you | Hidden addon messages. Sent: the summary line (level, class, species or lineage, alignment), Armor Class, the six ability scores, hit points and up to three resources with their current values, the weapon in hand, and your conditions and exhaustion. |
+| How a number is worked out | An RP Sheet user who clicks one of your terms in chat | A hidden addon whisper back to that player, with the same breakdown your own [?] shows. |
+
+- Stats you receive are kept until you log out or reload, never saved, and shown only in
+  the Total RP 3 tooltip. Everything received is treated as untrusted: numbers are
+  clamped and text is stripped of colour codes and links.
+- **To stop sharing:** untick "Share my stats with other RP Sheet users" on the General
+  tab. Your addon then sends no stats and answers no questions about your numbers. You
+  still receive what others share, and a click on another player's term then shows only
+  what the rules say about it.
+- **To hide the tooltip section:** untick "Show stats in Total RP 3 tooltips".
+- **To keep rolls and announcements to yourself:** set "Announce to" to Self only.
+- Hit Dice, spell slots, your inventory, coins and the rest of the sheet are never sent.
+  An export string holds the whole character (without current hit points and resource
+  values) and goes only where you paste it.
+- Term links in chat are made by each player's own copy of the addon. Without the addon
+  the terms are plain text in square brackets.
+
+**Total RP 3.** With it, a sheet belongs to the Total RP 3 profile that is active, and
+switching profile switches sheet. Without it, a sheet belongs to the WoW character.
+"Use my Total RP 3 name" on the General tab picks which name is announced.
+
+## Themes
+
+Settings > Appearance.
+
+| Preset | Look |
+|---|---|
+| Dark | The default: near-black, gold accents. |
+| Parchment | Light: brown text on parchment, without text shadow. |
+| Alliance | Dark blue and gold. |
+| Horde | Dark red and orange. |
+| Fel | Dark green. |
+| Void | Dark purple. |
+| Minimal (see-through) | A faint background without a border. |
+
+Picking a preset copies it; every value can then be changed: background, border, accent,
+text, secondary text, row highlight, the three bar colours, font, font size, window
+scale, text shadow and bar texture. Fonts and bar textures that your other addons
+register (LibSharedMedia) are listed too. The settings window, the creation wizard, the
+level dialog and the browsers follow the theme; other addons' settings windows are left
+as they are.
 
 ## Files
 
-Each file does one job. `RPSheet.toc` lists them in load order.
+Each file does one job. `RPSheet.toc` lists them in load order; a file can only use what
+the files above it have set up. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains
+how the parts work together.
 
 | Folder | What lives there |
 |---|---|
-| `Core/` | The addon object, small helpers, saved-data defaults, startup and `/sheet` |
-| `Data/` | Rules data, one file each: core rules, classes, species, backgrounds, effects, the example character |
-| `Sheet/` | The character sheet: storage per profile, conversion of old sheets, derived numbers, trackers (HP, resources, slots), summary |
-| `Actions/` | What the character does: announcing, dice, weapon attacks, abilities |
+| `Core/` | The addon object, small helpers, the text codec, saved-data defaults, startup and `/sheet` |
+| `Data/` | Rules data, one subject per file: core numbers, classes, species, backgrounds, feats, spells and their summaries, class and subclass features, weapons, items and magic items, mounts, professions and recipes, factions, the glossary, the example character |
+| `Sheet/` | The saved character and the numbers worked out from it: storage per profile, conversion of old sheets, classes and multiclassing, derived numbers, trackers, defenses, inventory, mounts, professions, the upkeep that puts features, picks and spells on the sheet, explanations, export and import |
+| `Actions/` | What the character does: announcing, dice, attacks, abilities, spells, scrolls, conditions, damage, rests, death saves, gathering, trade |
+| `UI/` | The sheet window: themes, the window, bar and tab widgets, rows, the sheet's sections and tabs, the item browser and its sources, the spellbook and prepared-spells windows, the dialog skin, the minimap icon |
+| `Integrations/` | The Total RP 3 tooltip section, syncing with other players, term links in chat |
+| `Options/` | The settings window: one file per tab or Customize page, the level dialog in parts, assembled by `Root.lua` |
+| `Wizard/` | Character creation: grants, the draft, more classes, Fighting Styles, the starting closet and gear sets, the pages, the dialog |
 | `tests/` | Regression tests that run the code outside the game (not shipped) |
-| `UI/` | The sheet window: themes, window and bar widgets, rows, window lifecycle, contents, minimap icon |
-| `Options/` | Settings and character editor, one file per tab, assembled by `Root.lua` |
-| `Wizard/` | Character creation: grants, the draft, the pages, the dialog |
-| `Integrations/` | Total RP 3 tooltip section and syncing with other players |
+| `docs/` | The architecture notes and the checklist of things to check in the game (not shipped) |
 
 To add a theme, edit `UI/Themes.lua`. To change rules numbers, edit the files in `Data/`.
 
