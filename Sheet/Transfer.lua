@@ -197,6 +197,15 @@ local function CleanSheet(source)
             end
         end
     end
+    -- Features the player deleted stay deleted: [auto key] = true, such as "class:Rage".
+    sheet.dismissed = {}
+    if type(source.dismissed) == "table" then
+        for key, value in pairs(source.dismissed) do
+            if value == true and type(key) == "string" and #key <= 120 and key:find("^%a+:.") and not key:find("[|%c]") then
+                sheet.dismissed[key] = true
+            end
+        end
+    end
     sheet.featureOptions = {}
     for _, field in ipairs({ "featureSkills", "featureSkillGranted", "featureOptions" }) do
         if type(source[field]) == "table" then

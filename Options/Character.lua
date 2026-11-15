@@ -199,7 +199,11 @@ Opt.custom.identity = {
         subclassLater = {
             type = "description", order = 5,
             name = function() return ("%sBy the rules a subclass is chosen at level %d; its features start then.|r\n"):format(Opt.RED, R.SUBCLASS_LEVEL) end,
-            hidden = function() return ns.ClassLevel(Sheet(), Sheet().class) >= R.SUBCLASS_LEVEL or Sheet().subclass == "" end,
+            -- (A hero class is its subclass from the start.)
+            hidden = function()
+                local class = RPSheet:ClassData()
+                return ns.ClassLevel(Sheet(), Sheet().class) >= R.SUBCLASS_LEVEL or Sheet().subclass == "" or (class ~= nil and class.hero == true)
+            end,
         },
         subclass = ClassList({
             type = "select", order = 5, name = "Subclass",

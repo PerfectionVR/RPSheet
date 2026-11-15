@@ -66,7 +66,10 @@ for index, skill in ipairs(R.SKILLS) do
         desc = "Your proficiency bonus is added twice for this skill. Only skills you are proficient in can be picked.",
         hidden = function()
             local _, allowed = L.ExpertiseLimit()
-            return (allowed ~= nil and not allowed[name]) or (not L.draft.expertise[name] and (L.Sheet().skills[name] or 0) == 0)
+            -- One that is picked always shows, so it can be unticked: a pick the class
+            -- no longer allows (after changing class under Customize) would stay otherwise.
+            if L.draft.expertise[name] then return false end
+            return (allowed ~= nil and not allowed[name]) or (L.Sheet().skills[name] or 0) == 0
         end,
         disabled = function() return not L.draft.expertise[name] and L.ExpertisePicked() >= L.ExpertiseLimit() end,
         get = function() return L.draft.expertise[name] or false end,

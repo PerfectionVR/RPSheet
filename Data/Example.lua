@@ -8,6 +8,7 @@ ns.ExampleCharacter = {
     version = 2,
     level = 3, class = "ROGUE", subclass = "Swashbuckler", spec = "Outlaw",
     species = "HUMAN", size = "M", background = "CRIMINAL", alignment = "Chaotic Good",
+    traitChoices = { Skillful = "Persuasion", Versatile = "Lucky" }, -- what the Human traits let it pick
     scoreMethod = "POINTBUY",
     base = { STR = 10, DEX = 15, CON = 12, INT = 10, WIS = 14, CHA = 10 },
     bonus = { STR = 0, DEX = 2, CON = 1, INT = 0, WIS = 0, CHA = 0 },

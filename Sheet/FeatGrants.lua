@@ -63,7 +63,9 @@ local function Describe(sheet, instances)
             end
             local text = MARK .. (#made > 0 and table.concat(made, "; ") or "none yet") .. "."
             if #open > 0 then
-                text = ("%s Still to choose: %s. Use \"Class and feat choices\" on the Character tab."):format(text, table.concat(open, ", "))
+                -- The button is named after the maneuvers for a Battle Master (Options/Character.lua).
+                text = ("%s Still to choose: %s. Use \"%s\" on the Character tab."):format(text, table.concat(open, ", "),
+                    ns.SheetManeuverLimit(sheet) > 0 and "Maneuvers" or "Class and feat choices")
             end
             local own = (passive.desc or ""):gsub("%s*" .. MARK .. ".*$", "")
             passive.desc = own ~= "" and (own .. " " .. text) or text

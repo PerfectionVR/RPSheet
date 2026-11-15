@@ -13,13 +13,15 @@ local DIALOG = L.DIALOG
 -- Closes the dialog, then opens the dialog for `nextLevel` or goes back to the settings.
 -- The window is closed a moment later: the options library redraws a window right
 -- after one of its buttons was pressed, which would bring a closed one straight back.
-function L.Finish(nextLevel)
+-- `follow` marks a dialog opened for the choices the one before it left open.
+function L.Finish(nextLevel, follow)
     local reopen = L.draft and L.draft.reopen
     L.draft = nil
     C_Timer.After(0, function()
         AceConfigDialog:Close(DIALOG)
         if nextLevel then
             ns.OpenLevelDialog(nextLevel, reopen)
+            if L.draft then L.draft.follow = follow end
         elseif reopen then
             AceConfigDialog:Open(ADDON)
         end
@@ -39,6 +41,8 @@ args.confirm = {
     disabled = function() return not L.draft or L.Problem() ~= nil end,
     func = function()
         local sheet, level, taking = L.Sheet(), L.draft.level, L.draft.taking
+        local state = RPSheet:State()
+        local hpWas, maxWas = state.hp, RPSheet:MaxHP()
         -- For a class that is only added by taking the level, RPSheet:SetLevel below
         -- writes the subclass and the skill.
         local subclass = L.AsksSubclass() and L.draft.subclass ~= "" and L.draft.subclass or nil
@@ -65,10 +69,20 @@ args.confirm = {
             ns.ApplyGrants(sheet)
             ns.NormalizeState(RPSheet:State())
         end
+        -- Hit points gained here are added to the current ones as well: the level's own,
+        -- and what the choice gave for every level before (Constitution, Tough).
+        local gained = RPSheet:MaxHP() - maxWas
+        if gained > 0 and type(hpWas) == "number" then state.hp = math.min(RPSheet:MaxHP(), hpWas + gained) end
+        RPSheet:ClampState()
         ns.RebuildOptions()
         Opt.Changed()
-        -- Earlier levels with an open choice are asked for next.
-        L.Finish(not taking and Levels.Pending(sheet)[1] or nil)
+        -- Earlier levels with an open choice are asked for next. Then what the feat
+        -- taken here asks for and this window couldn't show yet (the skills of Skilled).
+        local nextLevel, follow = not taking and Levels.Pending(sheet)[1] or nil, nil
+        if not nextLevel and not L.draft.follow and ns.OpenClassChoices(sheet) then
+            nextLevel, follow = ns.LevelSlot(sheet, sheet.class, ns.ClassLevel(sheet, sheet.class)), true
+        end
+        L.Finish(nextLevel, follow)
     end,
 }
 args.cancel = {
