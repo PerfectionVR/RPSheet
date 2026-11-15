@@ -2,7 +2,9 @@
 -- Data/Beasts.lua, chosen as the "forms" pick list). Each known beast gets:
 --   * an ability "Wild Shape: <Beast>" that spends a use and switches the form on,
 --   * a passive "<Beast> form" that is on while the form lasts,
---   * an ability for each of its attacks,
+--   * an ability for each of its attacks, with more rows where the data asks for
+--     them: one for a situation that changes the attack (a charge) and one for the
+--     same attack made as a follow-up,
 -- and there is one ability to leave any form. All are marked auto = "form:...".
 local _, ns = ...
 local R = ns.Rules
@@ -12,10 +14,25 @@ local PREFIX = "form:"
 
 -- What the second row of an attack says about when to use it (Data/Beasts.lua: alt).
 local SITUATIONS = {
-    ["charge"] = "Use this row when you moved 20 feet straight at the target just before the hit: it rolls that damage.",
+    ["charge"] = "Use this row when you ran straight at the target just before the hit, as far as it says above: it rolls and announces what the charge adds.",
     ["Bloodied target"] = "Use this row against a Bloodied target: it rolls the larger die.",
     ["while Bloodied"] = "Use this row while you are Bloodied: it rolls the smaller damage.",
 }
+
+-- What else a hit with a beast attack does, for the announcement: "On a hit: [Prone]
+-- if Large or smaller". `ability` is one of the attack rows made below; nil for any
+-- other ability and for an attack without a rider. The charge row has its own.
+function ns.BeastRider(ability)
+    local name, index, row = (ability.auto or ""):match("^form:(.+):attack(%d+):?(%a*)$")
+    local beast = name and R.BEASTS[name]
+    local attack = beast and beast.attacks[tonumber(index)]
+    if not attack then return end
+    local rider = (row == "alt" and attack.alt and attack.alt.rider) or attack.rider
+    if not rider then return end
+    rider = (rider:gsub("{(.-)}", ns.Mark))
+    -- Without an attack roll the rider is the save itself, not something a hit adds.
+    return attack[2] and ("On a hit: " .. rider) or rider
+end
 
 local function Find(list, auto)
     for _, entry in ipairs(list) do
@@ -75,14 +92,20 @@ function ns.ApplyBeastForms(sheet)
                 rows[#rows + 1] = { attack, ("%s%s:attack%d:alt"):format(PREFIX, name, index),
                     ("%s: %s (%s)"):format(name, attack[1], attack.alt[1]), attack.alt }
             end
+            -- The same attack again as a follow-up (the bite a charge gives).
+            if attack.follow then
+                rows[#rows + 1] = { attack, ("%s%s:attack%d:follow"):format(PREFIX, name, index),
+                    ("%s: %s (%s)"):format(name, attack[1], attack.follow[1]), nil, attack.follow }
+            end
         end
         for _, row in ipairs(rows) do
-            local attack, key, alt = row[1], row[2], row[4]
+            local attack, key, alt, follow = row[1], row[2], row[4], row[5]
             if not sheet.dismissed[key] then
                 wanted[key] = true
                 local ability = Entry(sheet.abilities, key, row[3])
                 local note, plus = attack[7] and (" " .. attack[7]) or "", attack.plus
                 if alt then note = note .. " " .. SITUATIONS[alt[1]] end
+                if follow then note = note .. " " .. follow[2] end
                 -- The dice of this row: the usual ones, or the situation's in their place.
                 local count, sides, flat = attack[3], attack[4], attack[5]
                 if alt and not alt.extra then count, sides, flat = alt[2], alt[3], alt[4] end
@@ -102,7 +125,7 @@ function ns.ApplyBeastForms(sheet)
                 if count > 0 or flat ~= 0 then
                     ability.actions[#ability.actions + 1] = Kit.Dice(count, sides, "", "DAMAGE", flat)
                 end
-                if alt and alt.extra then ability.actions[#ability.actions + 1] = Kit.Dice(alt[2], alt[3], "", "DAMAGE", 0) end
+                if alt and alt.extra and alt[2] > 0 then ability.actions[#ability.actions + 1] = Kit.Dice(alt[2], alt[3], "", "DAMAGE", 0) end
                 if plus then ability.actions[#ability.actions + 1] = Kit.Dice(plus[1], plus[2], "", "DAMAGE", 0) end
             end
         end

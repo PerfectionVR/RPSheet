@@ -18,16 +18,16 @@ R.LOYALTY_HELP = ("Loyalty starts at your Charisma modifier (at least 1) and can
 --   advantage  rolls it gives advantage on, by their label (Sheet/RollModes.lua)
 --   ward     { type = "psychic", sides = 4 }: a die rolled and taken off damage of
 --            that type whenever you take it (Actions/Damage.lua)
--- A gift without any of these is only described: the sheet can't tell when it applies.
+-- A gift that depends on what a save is against is in Data/SaveAdvantages.lua.
 R.COMPANIONS = {
     Aquatic = { desc = "Fish, crabs, frogs, turtles, otters and other water creatures, sometimes floating along in a bubble of water.",
         gift = "You have a swim speed equal to your speed.", moves = { swim = true } },
     Beast = { desc = "Small natural animals that neither fly nor swim, and the young of larger ones. They don't age while kept.",
         gift = "You have proficiency and expertise in Animal Handling and Survival.", skills = { "Animal Handling", "Survival" } },
     Dragonkin = { desc = "Tiny dragon whelplings and the draconic animals of the Dragon Isles.",
-        gift = "You have advantage on saving throws to avoid or end being Frightened. Set advantage on the roll yourself when the save is about that." },
+        gift = "You have advantage on saving throws to avoid or end being Frightened. The sheet asks what a save is against when you roll one." },
     Elemental = { desc = "Living motes of elemental energy, animate plants, and leftovers of older powers.",
-        gift = "You have advantage on saving throws to avoid or end Exhaustion. Set advantage on the roll yourself when the save is about that." },
+        gift = "You have advantage on saving throws to avoid or end Exhaustion. The sheet asks what a save is against when you roll one." },
     Flying = { desc = "Birds, bats, moths, bees, flying snakes and magical versions of them.",
         gift = "Your speed is 5 feet higher.", speed = 5 },
     Humanoid = { desc = "Imps, kobolds, baby murlocs and other small folk that help in ways that aren't fighting. The DM may play one as a character of its own.",

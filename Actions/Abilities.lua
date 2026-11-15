@@ -226,6 +226,9 @@ function RPSheet:UseAbility(ability, mode)
         local text = "uses " .. ns.Mark(ability.name)
         if #costTexts > 0 then text = text .. " (" .. table.concat(costTexts, ", ") .. ")" end
         if #parts > 0 then text = text .. " - " .. table.concat(parts, ", ") end
+        -- A beast form's attack says what else a hit does (Sheet/BeastForms.lua).
+        local rider = ns.BeastRider(ability)
+        if rider then text = text .. ". " .. rider end
         self.busy = false
         self:Announce(text)
         self:OfferRefund(ability, costs)

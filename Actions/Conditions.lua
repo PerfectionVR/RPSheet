@@ -38,9 +38,20 @@ end
 
 function RPSheet:ToggleCondition(name)
     local conditions = self:State().conditions
+    -- Holding a spell takes a character that can act.
+    if name == "Concentrating" and not conditions[name] and self:Incapacitated() then
+        self:Print(("You can't concentrate on a spell while %s."):format(self:Incapacitated():lower()))
+        return
+    end
     conditions[name] = not conditions[name] or nil
     local term = ns.Mark(name)
-    self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
+    local text = conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term)
+    -- Unconscious includes Prone, which stays when the character comes to.
+    if name == "Unconscious" and conditions.Unconscious and not conditions.Prone then
+        conditions.Prone = true
+        text = ("is now %s and %s."):format(term, ns.Mark("Prone"))
+    end
+    self:Announce(text)
     -- Unticking it by hand ends the spell, and with it the protection it gave.
     if name == "Concentrating" and not conditions[name] then self:EndConcentrationWards() end
     if conditions[name] and INCAPACITATES[name] then
@@ -56,7 +67,8 @@ function RPSheet:ChangeExhaustion(delta)
     local level = math.max(0, math.min(R.MAX_EXHAUSTION, self:Exhaustion() + delta))
     if level == self:Exhaustion() then return end
     state.exhaustion = level
-    self:Announce(level == 0 and "is no longer exhausted." or ("is at exhaustion level %d."):format(level))
+    self:Announce(level == 0 and "is no longer exhausted."
+        or ("is at exhaustion level %d%s."):format(level, level >= R.MAX_EXHAUSTION and " and dies of it" or ""))
     self:QueueBroadcast()
     self:PopulateSoon()
 end
@@ -86,11 +98,13 @@ function RPSheet:RollConcentration(damage)
     end
     local mod = self:SaveMod("CON")
     self.busy = true
-    self:RollD20(self:ResolveMode("CON save", nil), function(d20, note)
+    -- War Caster and the like give advantage on this save alone (Sheet/SaveAdvantages.lua).
+    self:RollD20(self:ResolveMode("CON save", self:ConcentrationAdvantage() and "ADV" or nil), function(d20, note)
         self.busy = false
         local kept = d20 + mod >= dc
         if not kept then
             self:State().conditions.Concentrating = nil
+            self:EndConcentrationWards() -- protection that hung on the spell (Sheet/Wards.lua)
             self:QueueBroadcast()
             self:PopulateSoon()
         end

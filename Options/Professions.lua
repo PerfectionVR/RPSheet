@@ -30,7 +30,7 @@ local args = {
     standing = { type = "description", order = 1, fontSize = "medium", name = Standing },
     toolCheck = {
         type = "toggle", order = 2, width = "full", name = "Check that you carry the tool",
-        desc = "Making something takes the tool in hand, not only knowing how to use it. While this is on, a profession only makes things when one of its tools you are proficient with is among your items. Switch it off when your DM rules otherwise.",
+        desc = "Making something takes the tool in hand, not only knowing how to use it, and so do disenchanting and gathering herbs, ore and hides. While this is on, a profession only works when one of its tools you are proficient with is among your items. Switch it off when your DM rules otherwise.",
         get = function() return Opt.Sheet().toolsWaived ~= true end,
         set = function(_, value) Opt.Sheet().toolsWaived = not value; Opt.Changed() end,
     },

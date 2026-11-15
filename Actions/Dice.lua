@@ -133,14 +133,17 @@ end
 -- A plain d20 check: ability check, saving throw, skill, initiative, spell attack.
 -- A feature that gives advantage on this roll applies by itself; with disadvantage
 -- chosen on top, the two cancel out.
-function RPSheet:RollCheck(label, mod, mode)
+-- `about` is what a saving throw is against, when that brings advantage; false when
+-- the player was asked and it is nothing the sheet knows of (Actions/SaveAdvantages.lua).
+function RPSheet:RollCheck(label, mod, mode, about)
     local failed = self:AutoFail(label)
     if failed then
         self:Announce(("fails the %s without a roll (%s)."):format(ns.Mark(label), ns.Mark(failed)))
         return
     end
     -- Features, conditions and armor can give advantage or disadvantage by themselves.
-    mode = self:ResolveMode(label, mode)
+    if about == nil and self:AskSaveAbout(label, mod, mode) then return end -- the menu rolls
+    mode = self:ResolveMode(label, mode, nil, about and true or nil)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
     -- It covers checks with a tool you are proficient with too.
     local proficient = (self:Sheet().skills[label] or 0) >= 1 or (ns.Rules.TOOLS[label] and self:ToolSource(label) ~= nil)
@@ -150,7 +153,7 @@ function RPSheet:RollCheck(label, mod, mode)
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
-        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label), d20, mod, note))
+        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note))
     end)
 end
 
