@@ -18,7 +18,7 @@ ns.defaults = {
     char = {
         name = "",
         shown = true,
-        inventoryOpen = false, -- the sheet's Inventory section lists every item
+        sheetTab = "Actions", -- the open tab of the sheet (UI/SheetTabs.lua)
     },
     -- One entry per Total RP 3 profile ("trp3:<profile id>"), shared by the whole account
     -- like TRP3's own profiles. Without TRP3 the key is "char:<Name-Realm>".

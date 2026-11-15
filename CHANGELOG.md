@@ -86,6 +86,11 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   prices and weights, see your load against your carrying capacity, and equip and
   attune magic items (three at most) whose bonuses are applied. Weapons can have a
   magic bonus, and the creation wizard asks for starting gold.
+- The sheet is split into a top part and tabs, so it no longer grows past the
+  screen. Hit points, rests, conditions, the combat numbers and your weapon are
+  always shown; Actions (abilities, spells, companion), Checks (ability checks and
+  saving throws), Skills (with tools), Traits (passives, languages, renown) and
+  Items (coins and inventory) are tabs. The open tab is remembered.
 - The creation wizard has a starting closet in place of the single main weapon:
   open a drawer (weapons, armor, packs, focuses, gear, tools), take as many things as
   you like, and tick which armor, shield and weapons you have equipped. Everything

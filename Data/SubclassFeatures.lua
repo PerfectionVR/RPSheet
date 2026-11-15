@@ -241,7 +241,7 @@ R.SUBCLASS_FEATURES = {
             local pet, block = R.Pet(sheet), R.PetBlock(sheet)
             return ("Your companion's attack, with your spell attack modifier.%s %s%s"):format(
                 level >= 11 and " It strikes twice when commanded: click once for each." or "", block.strike,
-                pet and (" If the family is one of your Weapon Mastery picks (set in the Companion section of the sheet), the strike has %s and says so when it rolls."):format(pet.mastery) or "")
+                pet and (" If the family is one of your Weapon Mastery picks (set under Companion on the Actions tab of the sheet), the strike has %s and says so when it rolls."):format(pet.mastery) or "")
         end, function(_, sheet)
             local block = R.PetBlock(sheet)
             return { Roll("SPELL", "WIS"), Dice(1, block.die, "WIS", "DAMAGE", block.flat) }

@@ -109,7 +109,7 @@ function W.AddClosetArgs(args)
         type = "description", order = 3.1, fontSize = "medium",
         name = function()
             if #Wearable() == 0 then return "Take a weapon, armor or a shield from the closet to equip it here.\n" end
-            return "Tick what you have on and at hand. Armor and a shield count for your Armor Class, and ticked weapons are the ones on your sheet. The rest stays in your pack; you equip and put away from the sheet's Inventory at any time.\n"
+            return "Tick what you have on and at hand. Armor and a shield count for your Armor Class, and ticked weapons are the ones on your sheet. The rest stays in your pack; you equip and put away on the Items tab of the sheet at any time.\n"
         end,
     }
     args.worn = {
