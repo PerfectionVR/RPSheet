@@ -33,6 +33,7 @@ local SHEET = {
     title = function(self) return ("%s - Items"):format(self:GetCharacterName()) end,
     class = function() return nil end, -- judged by the active character
     find = function(self, name) return self:CarriedItem(name) end,
+    top = function(self, body) UI.AddShopChoice(self, body) end,
 }
 
 function SHEET.standing(self)
@@ -78,12 +79,13 @@ function SHEET.buttons(self, card, entry, first)
             end)
         end
     else
-        local price = R.ITEMS[name].cost or 0
+        -- What it costs from whoever is selling (Sheet/Shop.lua).
+        local price, percent = self:ItemBuyPrice(name, 1)
         UI.AddItemButton(card, 0.3, "Add", true, function()
             self:AddItem(name, 1)
             Changed(self)
         end)
-        UI.AddItemButton(card, 0.4, price > 0 and ("Buy  " .. ns.CoinText(price)) or "No price", price > 0 and self:CanAfford(price), function()
+        UI.AddItemButton(card, 0.4, ns.BuyLabel(price, percent), price > 0 and self:CanAfford(price), function()
             if self:BuyItem(name, 1) then Changed(self) end
         end)
     end

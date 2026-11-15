@@ -110,11 +110,14 @@ function ns.ItemPrice(name, quantity)
     return known and known.cost * math.max(1, math.floor(quantity or 1)) or 0
 end
 
--- Pays for a listed item and adds it. False when the character can't afford it.
+-- Pays for a listed item and adds it. False when the character can't afford it. The
+-- price is the one for whoever the character is buying from (Sheet/Shop.lua).
 function RPSheet:BuyItem(name, quantity)
     quantity = math.max(1, math.floor(quantity or 1))
     local label = quantity > 1 and ("%s x%d"):format(name, quantity) or name
-    if not self:SpendCoins(ns.ItemPrice(name, quantity), label) then return false end
+    local price, percent, faction = self:ItemBuyPrice(name, quantity)
+    if percent then label = ("%s, %d%% off with %s"):format(label, percent, faction) end
+    if not self:SpendCoins(price, label) then return false end
     self:AddItem(name, quantity)
     return true
 end

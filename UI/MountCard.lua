@@ -7,6 +7,12 @@ local UI = ns.UI
 local RED = "|cffff5555"
 
 local function MountLines(self, lines, about)
+    -- A flying carpet and the like: no size to fit, no saddle, nothing to hitch.
+    if ns.MountIsThing(about) then
+        lines[#lines + 1] = ("Something you ride that is not an animal: a rider of any size, no saddle. Speed %s."):format(ns.MountSpeeds(about))
+        if about.capacity > 0 then lines[#lines + 1] = ("Carries %d lb."):format(about.capacity) end
+        return
+    end
     lines[#lines + 1] = ("%s mount. Speed %s."):format(R.MOUNT_SIZES[about.size] or "Large", ns.MountSpeeds(about) ~= "" and ns.MountSpeeds(about) or "not set")
     if about.capacity > 0 then
         lines[#lines + 1] = ("Carries %d lb. Hitched to a drawn vehicle it moves %d lb., the vehicle included."):format(about.capacity, about.capacity * R.DRAW_TIMES)
@@ -31,7 +37,7 @@ local function VehicleLines(self, lines, about, known)
     end
     lines[#lines + 1] = ("Pulled by animals. It weighs %d lb.; an animal pulls %d times what it carries, the vehicle included, and a team adds up."):format(about.weight, R.DRAW_TIMES)
     for _, animal in ipairs(self:Sheet().mounts or {}) do
-        if animal.kind == "MOUNT" and animal.name ~= "" and animal.capacity > 0 then
+        if animal.kind == "MOUNT" and animal.name ~= "" and animal.capacity > 0 and not ns.MountIsThing(animal) then
             local load = ns.PullLimit(animal, about)
             lines[#lines + 1] = ("%sBehind your %s: a load of up to %d lb.|r"):format(load < 0 and RED or UI.GREEN, animal.name, math.max(0, load))
         end
@@ -69,9 +75,11 @@ function UI.MountLines(self, name, entry)
     local met, need = ns.MountRenown(self:Sheet(), name)
     if need then
         local keep = known.keep and " It only obeys you while you have that." or ""
-        lines[#lines + 1] = ("%sSold to those with %s.%s|r"):format(met and UI.GREY or RED, need, keep)
+        lines[#lines + 1] = ("%s%s those with %s.%s|r"):format(met and UI.GREY or RED, known.unsold and "Only for" or "Sold to", need, keep)
     end
-    if about.cost > 0 then
+    if known and known.unsold and not entry then
+        lines[#lines + 1] = UI.GREY .. "Not for sale: Add puts it in your stable once you have made, found or summoned it.|r"
+    elseif about.cost > 0 then
         lines[#lines + 1] = UI.GREY .. ns.CoinText(about.cost) .. "|r"
     elseif about.kind == "COMPANION" and not entry then
         lines[#lines + 1] = UI.GREY .. "No listed price: a few gold from a merchant, a reward or a find, as the DM says.|r"

@@ -97,6 +97,7 @@ local function RenownRow(faction, order)
                 func = function()
                     local before = Opt.RenownTiers()
                     Sheet().renown[faction] = nil
+                    Sheet().renownReached[faction] = nil -- taken off the sheet: as if never known
                     if Sheet().stronghold == faction then Sheet().stronghold = "" end
                     ns.RebuildOptions()
                     Opt.RenownChanged(before)

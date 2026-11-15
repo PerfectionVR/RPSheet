@@ -42,17 +42,13 @@ local function HurtWhileDown(state, damage, max)
     return ("A failed death save: %d passed, %d failed"):format(state.deathPass or 0, state.deathFail)
 end
 
--- `damageType` is one of Rules.DAMAGE_TYPES or nil for damage without a type;
--- `reduction` is taken off before anything else, and `why` says where it comes from.
--- Actions/WardDamage.lua wraps this to roll the wards that take dice off the damage.
-function RPSheet:TakeDamage(amount, damageType, reduction, why)
-    amount = math.floor(tonumber(amount) or 0)
-    if amount <= 0 then
-        self:Print("Give the damage as a number above 0, for example /sheet damage 14 fire.")
-        return
-    end
+-- Takes the damage once everything that comes off first is known. `ward` is what a
+-- companion's gift rolled against it: { name, sides, rolled }; `why` says where a
+-- `reduction` comes from.
+local function Apply(self, amount, damageType, reduction, ward, why)
     local state, max = self:State(), self:MaxHP()
-    local final, notes = self:AdjustDamage(amount, damageType, reduction, why)
+    local final, notes = self:AdjustDamage(amount, damageType, (reduction or 0) + (ward and ward.rolled or 0), why)
+    if ward then table.insert(notes, 1, ("%s takes 1d%d = %d off"):format(ward.name, ward.sides, ward.rolled)) end
 
     local absorbed = math.min(state.tempHP or 0, final)
     if absorbed > 0 then
@@ -91,6 +87,28 @@ function RPSheet:TakeDamage(amount, damageType, reduction, why)
     end
     self:QueueBroadcast()
     self:PopulateSoon()
+end
+
+-- `damageType` is one of Rules.DAMAGE_TYPES or nil for damage without a type;
+-- `reduction` is taken off before anything else, and `why` says where it comes from.
+-- Actions/WardDamage.lua wraps this to roll the wards that take dice off the damage.
+function RPSheet:TakeDamage(amount, damageType, reduction, why)
+    amount = math.floor(tonumber(amount) or 0)
+    if amount <= 0 then
+        self:Print("Give the damage as a number above 0, for example /sheet damage 14 fire.")
+        return
+    end
+    -- A loyal mechanical companion: a die comes off psychic damage each time. Nothing
+    -- is rolled against damage the character is immune to.
+    local sides, companion = self:CompanionWard(damageType)
+    if not sides or self:Defenses().immune[damageType] then return Apply(self, amount, damageType, reduction, nil, why) end
+    if self.busy or self:IsRolling() then
+        self:Print("Another roll is still going. Take the damage again when it is done.")
+        return
+    end
+    self:Roll(sides, function(rolled)
+        Apply(self, amount, damageType, reduction, { name = companion.name, sides = sides, rolled = rolled }, why)
+    end)
 end
 
 -- Regains hit points, up to the maximum.

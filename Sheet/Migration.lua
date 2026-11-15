@@ -128,7 +128,7 @@ function ns.NormalizeState(state)
     -- Choices are kept per level (see Sheet/Levels.lua); the totals follow from them.
     ns.Levels.Migrate(sheet)
     ns.Levels.Recompute(sheet)
-    for _, key in ipairs({ "dismissed", "languages", "renown", "renownTraining", "renownGranted", "defensePicks", "traitChoices", "traitGranted", "maneuvers", "featureSkills", "featureSkillGranted", "featureScores", "featureOptions", "picks", "expertise", "expertiseGranted", "featSkills", "featSkillGranted", "featTools", "featChoices", "featGranted", "tools", "spellbook" }) do
+    for _, key in ipairs({ "dismissed", "languages", "renown", "renownReached", "renownTraining", "renownGranted", "defensePicks", "traitChoices", "traitGranted", "maneuvers", "featureSkills", "featureSkillGranted", "featureScores", "featureOptions", "picks", "expertise", "expertiseGranted", "featSkills", "featSkillGranted", "featTools", "featChoices", "featGranted", "tools", "spellbook" }) do
         if type(sheet[key]) ~= "table" then sheet[key] = {} end
     end
     for _, key in ipairs(R.PICK_LIST_ORDER) do

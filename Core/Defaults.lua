@@ -58,6 +58,7 @@ ns.defaults = {
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
                     renown = {},    -- [faction] = score
+                    renownReached = {},  -- [faction] = lowest score of the highest tier it ever reached (Sheet/RenownRules.lua)
                     renownTraining = {}, -- [faction] = language, tool or skill its trainers taught (Sheet/RenownTraining.lua)
                     renownGranted = {},  -- [faction] = the language or skill that pick added
                     stronghold = "",     -- the faction whose lands the character's stronghold stands in (Sheet/RenownRules.lua)

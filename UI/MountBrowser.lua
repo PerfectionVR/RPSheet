@@ -27,7 +27,7 @@ local STABLE = {
     kinds = {
         { name = "Mounts", kind = "Mounts" }, { name = "Drawn", kind = "Drawn vehicles" },
         { name = "Powered", kind = "Powered vehicles" }, { name = "Ships", kind = "Ships" },
-        { name = "Companions", kind = "Companions" },
+        { name = "Companions", kind = "Companions" }, { name = "Special", kind = "Made and summoned" },
     },
     empty = "You own no mount, vehicle or companion creature yet. Open another tab to add or buy one.",
     title = function(self) return ("%s - Stable"):format(self:GetCharacterName()) end,
@@ -36,6 +36,7 @@ local STABLE = {
     names = function(kind) return R.MOUNT_NAMES[kind] end,
     lines = function(self, entry) return UI.MountLines(self, entry.name, entry.item) end,
     options = function() ns.OpenMountOptions() end,
+    top = function(self, body) UI.AddShopChoice(self, body) end,
 }
 
 function STABLE.standing(self)
@@ -66,12 +67,14 @@ function STABLE.buttons(self, card, entry, first)
     local name, owned = entry.name, entry.item
     if not first then
         local known = R.MOUNTS[name]
-        local label = known.unsold and "Not for sale" or (known.cost or 0) > 0 and ("Buy  " .. ns.CoinText(known.cost)) or "No price"
+        -- What it costs from whoever is selling (Sheet/Shop.lua).
+        local price, percent = self:MountBuyPrice(name)
+        local label = known.unsold and "Not for sale" or ns.BuyLabel(price, percent)
         UI.AddItemButton(card, 0.35, "Add", true, function()
             self:AddMount(name)
             Changed(self)
         end)
-        UI.AddItemButton(card, 0.6, label, not self:MountNotSold(name) and self:CanAfford(known.cost), function()
+        UI.AddItemButton(card, 0.6, label, not self:MountNotSold(name) and self:CanAfford(price), function()
             if self:BuyMount(name) then Changed(self) end
         end)
         return

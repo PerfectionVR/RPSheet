@@ -49,10 +49,12 @@ function RPSheet:DisadvantageFrom(label)
     end
 end
 
--- A condition that gives advantage on the roll: its name, or nil.
+-- A condition or a loyal companion's gift that gives advantage on the roll: its name,
+-- or nil.
 function RPSheet:AdvantageFrom(label)
     local on = self:State().conditions
     if on.Invisible and (IsAttack(label) or label == "initiative") then return "Invisible" end
+    if self:CompanionAdvantage(label) then return "your companion" end
 end
 
 -- A condition under which the saving throw fails without a roll: its name, or nil.

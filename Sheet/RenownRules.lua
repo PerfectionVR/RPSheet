@@ -3,9 +3,10 @@
 --   * 1 while the character's stronghold stands in the faction's lands
 --     (sheet.stronghold = that faction's name),
 --   * for the faction the species starts with: 1, 2, 3 and 5 for every other faction of
---     the same side that is Friendly, Honored, Revered and Exalted.
--- The rule speaks of the first time a tier is reached; the sheet keeps no history, so
--- it goes by the scores as they are now.
+--     the same side that has reached Friendly, Honored, Revered and Exalted.
+-- That gain comes the first time a tier is reached and stays when the other faction's
+-- score drops again, so the sheet records the highest tier each faction has reached
+-- (sheet.renownReached, kept up by ns.NoteRenownReached).
 local _, ns = ...
 local R = ns.Rules
 
@@ -32,6 +33,43 @@ local function Standing(sheet, faction)
     return own + stronghold, own, stronghold
 end
 
+-- The lowest score of the highest tier `score` reaches: 10 for 12, 0 below Friendly.
+local function TierFloor(score)
+    for _, tier in ipairs(R.RENOWN_TIERS) do
+        if score >= tier[1] then return tier[1] end
+    end
+    return 0
+end
+
+-- The lowest score of the highest tier the faction has ever reached, as recorded.
+function ns.RenownReached(sheet, faction)
+    local reached = type(sheet.renownReached) == "table" and tonumber(sheet.renownReached[faction]) or 0
+    return TierFloor(reached)
+end
+
+-- Records the tiers reached as the scores are now. Called whenever the sheet is
+-- brought up to date after a change (ns.ApplyRenownPerks), so nothing is missed. A
+-- character from before the record starts with the tiers its scores have now.
+function ns.NoteRenownReached(sheet)
+    if type(sheet.renownReached) ~= "table" then sheet.renownReached = {} end
+    if type(sheet.renown) ~= "table" then return end
+    for _, faction in ipairs(R.ALL_FACTIONS) do
+        local now = TierFloor(Standing(sheet, faction) or 0)
+        if now > ns.RenownReached(sheet, faction) then sheet.renownReached[faction] = now end
+    end
+end
+
+-- The tier a faction reached earlier and has dropped out of since, by name, where the
+-- faction the character started with still has the gain from it; nil otherwise.
+function ns.RenownLostTier(sheet, faction)
+    if type(sheet.renown) ~= "table" then return end
+    -- It only matters for the other factions of the side the character started on.
+    local home, side = ns.RenownHome(sheet)
+    if not home or faction == home or SIDE[faction] ~= side then return end
+    local reached = ns.RenownReached(sheet, faction)
+    if reached > TierFloor(Standing(sheet, faction) or 0) then return R.RenownTier(reached) end
+end
+
 -- The score that counts, and what the rules added to it as a list of { label, points }
 -- (empty when it is all the player's own). 0 for a faction the sheet doesn't list.
 function ns.RenownScore(sheet, faction)
@@ -43,13 +81,16 @@ function ns.RenownScore(sheet, faction)
     local home, side = ns.RenownHome(sheet)
     if home == faction then
         for _, other in ipairs(R.FACTIONS[side]) do
-            local theirs = other ~= faction and Standing(sheet, other) or 0
+            -- A tier counts from the first time it was reached, whatever the score is now.
+            local now = other ~= faction and Standing(sheet, other) or 0
+            local theirs = other ~= faction and math.max(now, ns.RenownReached(sheet, other)) or 0
             local gain = 0
             for _, tier in ipairs(R.RENOWN_TIERS) do
                 if theirs >= tier[1] then gain = gain + R.SIDE_RENOWN_GAIN[tier[2]] end
             end
             if gain > 0 then
-                added[#added + 1] = { ("%s (%s)"):format(other, R.RenownTier(theirs)), gain }
+                local tier = R.RenownTier(theirs)
+                added[#added + 1] = { ("%s (%s%s)"):format(other, tier ~= R.RenownTier(now) and "once " or "", tier), gain }
                 score = score + gain
             end
         end
