@@ -24,15 +24,21 @@
 --   names(kind)            optional: the names of a tab, when they are not items
 --   lines(self, entry)     optional: what a block says, when it is not an item
 --   options()              optional: opens the Customize page behind the cog
+--
+-- Only one page of blocks is built at a time (UI/ItemPages.lua); the search goes over
+-- the whole tab.
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 local UI = ns.UI
 local AceGUI = LibStub("AceGUI-3.0")
+local Pages = UI.ItemPages
 
 local source     -- what the window is showing
 local open       -- the open tab: source.first or one of source.kinds
 local search = ""
+local toTop = false -- a page was turned: start reading it at its top
+local fills = 0     -- how often the window was filled, to tell whether showing it did
 
 -- The kinds of part the dialog skin (UI/DialogSkin.lua) styles in this window. The
 -- texts and tabs are themed where they are made.
@@ -60,12 +66,14 @@ local function Build(self)
     self.itemBody = body
 end
 
--- Shows the browser on a source; on the one it already shows, this closes it.
-function RPSheet:ShowItemBrowser(wanted)
+-- Shows the browser on a source, at its first tab or the one given; on the source it
+-- already shows, this closes it.
+function RPSheet:ShowItemBrowser(wanted, tab)
     local same = source == wanted
     if not same then
-        source, open, search = wanted, wanted.first, ""
+        source, open, search = wanted, tab or wanted.first, ""
     end
+    local before = fills
     if not self.itemWindow then
         Build(self) -- a new window is already shown
     elseif same and self.itemWindow.frame:IsShown() then
@@ -75,7 +83,8 @@ function RPSheet:ShowItemBrowser(wanted)
         self.itemWindow:Show()
     end
     self.itemWindow.frame:Raise()
-    self:PopulateItemBrowser()
+    -- Showing a hidden window has filled it already (OnShow); building blocks twice is slow.
+    if fills == before then self:PopulateItemBrowser() end
 end
 
 -- Shows the browser on a source at one of its tabs. Unlike ShowItemBrowser it never
@@ -84,10 +93,11 @@ function RPSheet:OpenItemBrowser(wanted, tab)
     local shown = self.itemWindow and self.itemWindow.frame:IsShown()
     if source ~= wanted or not shown then
         if source == wanted then source = nil end -- or showing it again would be taken as closing it
-        self:ShowItemBrowser(wanted)
+        self:ShowItemBrowser(wanted, tab)
+    else
+        open = tab or open
+        self:PopulateItemBrowser()
     end
-    open = tab or open
-    self:PopulateItemBrowser()
 end
 
 -- Closes the browser if it is showing that source.
@@ -165,6 +175,7 @@ end
 function RPSheet:PopulateItemBrowser()
     local window, body = self.itemWindow, self.itemBody
     if not window or not source or not window.frame:IsShown() then return end
+    fills = fills + 1
     if source.gone and source.gone() then
         window:Hide()
         return
@@ -179,7 +190,7 @@ function RPSheet:PopulateItemBrowser()
     AddTabs(self, body)
     AddSearch(self, body)
 
-    local first, shown = open == source.first, 0
+    local first = open == source.first
     local entries = first and source.own(self) or {}
     if not first and source.list then
         entries = source.list(self, open)
@@ -188,17 +199,31 @@ function RPSheet:PopulateItemBrowser()
             entries[#entries + 1] = { name = name, item = source.find(self, name) }
         end
     end
+    -- The search goes over the whole tab; only the page that is open is built.
+    local matching = {}
     for _, entry in ipairs(entries) do
-        if Matches(entry.name) then
-            AddCard(self, body, entry, first)
-            shown = shown + 1
-        end
+        if Matches(entry.name) then matching[#matching + 1] = entry end
     end
-    if shown == 0 then
+    local from, to = Pages.Range(#matching, source, open, search)
+    local function Turn(step)
+        Pages.Turn(step)
+        toTop = true
+        Later(self)
+    end
+    Pages.AddControls(body, from, to, #matching, Turn)
+    for index = from, to do
+        AddCard(self, body, matching[index], first)
+    end
+    if #matching == 0 then
         UI.AddLabel(body, 1, UI.GREY .. (search ~= "" and "Nothing here matches your search." or source.empty) .. "|r")
     end
+    Pages.AddControls(body, from, to, #matching, Turn)
     body:ResumeLayout()
     -- The blocks, buttons and search box in the theme's look, like the dialogs.
     ns.DialogSkin.ApplyTo(body, self.db.profile.theme, THEMED)
+    if toTop then
+        toTop = false
+        body:SetScroll(0)
+    end
     body:DoLayout()
 end

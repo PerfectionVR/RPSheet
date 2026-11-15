@@ -20,21 +20,28 @@ local function Theme()
 end
 
 -- Font, colours and shadow from the theme. AceGUI resets all of these when it reuses a label.
-local function StyleLabel(label, color, sizeOffset)
-    local theme = Theme()
+local function StyleLabel(label, theme, color, sizeOffset)
     label:SetFont(ns.ThemeFont(theme), theme.fontSize + (sizeOffset or 0), "")
     label.label:SetTextColor(color[1], color[2], color[3])
     label.label:SetShadowOffset(1, -1)
     label.label:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)
 end
 
+-- What a row shows and does is kept on the row itself (its user data, which AceGUI
+-- clears when the row is released), so all rows share these handlers instead of each
+-- getting functions of its own every time the sheet is rebuilt.
+local function ShowTooltip(widget)
+    local body = widget:GetUserData("tipBody")
+    GameTooltip:SetOwner(widget.frame, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(widget:GetUserData("tipTitle"))
+    if body and body ~= "" then GameTooltip:AddLine(body, 1, 1, 1, true) end
+    GameTooltip:Show()
+end
+
 local function AttachTooltip(widget, title, body)
-    widget:SetCallback("OnEnter", function(self)
-        GameTooltip:SetOwner(self.frame, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(title)
-        if body and body ~= "" then GameTooltip:AddLine(body, 1, 1, 1, true) end
-        GameTooltip:Show()
-    end)
+    widget:SetUserData("tipTitle", title)
+    widget:SetUserData("tipBody", body)
+    widget:SetCallback("OnEnter", ShowTooltip)
     widget:SetCallback("OnLeave", GameTooltip_Hide)
 end
 
@@ -51,6 +58,20 @@ local function OverMark(label)
     return x - left <= Theme().fontSize * 1.7
 end
 
+-- A click on a row: on its mark (or with Alt) the explanation, otherwise what the row does.
+local function ClickLabel(label, _, button)
+    local explain, onClick = label:GetUserData("explain"), label:GetUserData("onClick")
+    if explain and (OverMark(label) or IsAltKeyDown()) then
+        explain()
+    elseif onClick then
+        onClick(button)
+    end
+end
+
+local function ClickBar(bar, _, button)
+    bar:GetUserData("onClick")(button)
+end
+
 -- Sets a row's text, keeping the mark in front if it has one.
 function UI.SetText(label, text)
     label:SetText(label:GetUserData("explains") and (EXPLAIN_MARK .. text) or text)
@@ -60,22 +81,19 @@ end
 -- With `onClick(mouseButton)` it highlights under the mouse and can be clicked.
 -- With `explain()` it gets a "[?]" in front that calls it.
 function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain)
+    local theme = Theme()
     local label = AceGUI:Create("InteractiveLabel")
-    StyleLabel(label, Theme().text)
+    StyleLabel(label, theme, theme.text)
     label:SetRelativeWidth(relWidth)
     label:SetUserData("explains", explain ~= nil)
     UI.SetText(label, text)
     if onClick or explain then
-        label.highlight:SetColorTexture(unpack(Theme().highlight))
-        label:SetCallback("OnClick", function(_, _, button)
-            if explain and (OverMark(label) or IsAltKeyDown()) then
-                explain()
-            elseif onClick then
-                onClick(button)
-            end
-        end)
+        label.highlight:SetColorTexture(unpack(theme.highlight))
+        label:SetUserData("onClick", onClick)
+        label:SetUserData("explain", explain)
+        label:SetCallback("OnClick", ClickLabel)
     end
-    if tipTitle then AttachTooltip(label, tipTitle, (tipBody or "") .. (explain and EXPLAIN_TIP or "")) end
+    if tipTitle then AttachTooltip(label, tipTitle, explain and ((tipBody or "") .. EXPLAIN_TIP) or tipBody) end
     parent:AddChild(label)
     return label
 end
@@ -83,7 +101,8 @@ end
 -- A section title with a blank line above it.
 function UI.AddHeading(parent, text)
     local heading = AceGUI:Create("InteractiveLabel")
-    StyleLabel(heading, Theme().accent, 1)
+    local theme = Theme()
+    StyleLabel(heading, theme, theme.accent, 1)
     heading.frame:EnableMouse(false)
     heading:SetFullWidth(true)
     heading:SetText("\n" .. text)
@@ -95,7 +114,8 @@ function UI.AddBar(parent, color, onClick, tipTitle, tipBody)
     local bar = AceGUI:Create("RPSheetBar")
     bar:SetStyle(Theme(), color)
     bar:SetRelativeWidth(0.5)
-    bar:SetCallback("OnClick", function(_, _, button) onClick(button) end)
+    bar:SetUserData("onClick", onClick)
+    bar:SetCallback("OnClick", ClickBar)
     AttachTooltip(bar, tipTitle, tipBody)
     parent:AddChild(bar)
     return bar
