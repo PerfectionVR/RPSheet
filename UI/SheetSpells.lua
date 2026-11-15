@@ -63,7 +63,8 @@ function UI.SpellSection(self, body)
         -- A spell chosen for a class feature says so.
         local mark = self:ChosenSpellNote(spell)
         if mark then info = info ~= "" and (info .. ", " .. mark) or mark end
-        UI.AddLabel(body, 1, ("%s  %s%s|r"):format(spell.name, UI.GREY, info),
+        -- (a spell two classes both prepared says whose each one is)
+        UI.AddLabel(body, 1, ("%s  %s%s|r"):format(ns.SpellRowName(self:Sheet(), spell), UI.GREY, info),
             function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name,
             function() return Tip(self, spell) end,
             function() self:ExplainSpell(spell) end)

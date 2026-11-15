@@ -178,6 +178,12 @@ local function Blocked(sheet, store, instances, slot, value)
             end
         end
     end
+    -- A cantrip the character has from its class or a feature isn't learned again.
+    if choice.kind == "spell" and R.SPELLS[value] and R.SPELLS[value].level == 0 and (slot.picked or NONE)[slot.index] ~= value then
+        for _, spell in ipairs(sheet.spells or NONE) do
+            if spell.name == value and spell.level == 0 and not (spell.auto or ""):find("^feat:") then return true end
+        end
+    end
     if choice.kind == "tool" then
         return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value)
     elseif choice.kind == "mastery" then

@@ -17,6 +17,12 @@ local function Listed(spell)
     return spell, NONE
 end
 
+-- The dice each slot level above the spell's own adds: the listed spell's, or the
+-- number the player set on a spell they changed (Options/Spells.lua).
+local function DiceUp(spell, known)
+    return (spell.edited and spell.up or known.up) or 0
+end
+
 -- The entry of the highest slot level reached in { [slot level] = entry }.
 local function Reached(steps, level)
     local best
@@ -37,7 +43,7 @@ function RPSheet:SlotGrowth(spell, level)
     level = math.max(level or spell.level, spell.level)
     local above = level - spell.level
     local growth = {
-        dice = above * (known.up or 0) + (Reached(facts.upAt, level) or 0),
+        dice = above * DiceUp(spell, known) + (Reached(facts.upAt, level) or 0),
         flat = (facts.flat or 0) + above * (facts.flatUp or 0),
         noConcentration = facts.noConc ~= nil and level >= facts.noConc,
         notes = {},
@@ -85,7 +91,7 @@ function RPSheet:SlotGrowthHelp(spell)
 
     -- What the sheet rolls or adds by itself.
     local rolled = {}
-    if spell.count > 0 and (known.up or 0) > 0 then rolled[#rolled + 1] = ("%dd%d"):format(known.up, spell.sides) end
+    if spell.count > 0 and DiceUp(spell, known) > 0 then rolled[#rolled + 1] = ("%dd%d"):format(DiceUp(spell, known), spell.sides) end
     if spell.count > 0 and (facts.flatUp or 0) > 0 then rolled[#rolled + 1] = ("%d to the total"):format(facts.flatUp) end
     if (spell.hitsUp or 0) > 0 then rolled[#rolled + 1] = spell.hitsUp == 1 and "one more attack" or ("%d more attacks"):format(spell.hitsUp) end
     if also and (also.up or 0) > 0 then rolled[#rolled + 1] = ("%dd%d %s"):format(also.up, also.sides, also.word) end

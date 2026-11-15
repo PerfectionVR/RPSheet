@@ -458,8 +458,10 @@ function T.CheckNumbers(label, sheet, want)
     for _, list in ipairs({ sheet.abilities, sheet.passives, sheet.spells }) do
         for _, entry in ipairs(list) do
             if entry.auto and entry.auto ~= "" then
-                if seen[entry.auto] then Bad("two entries marked %s (%s)", entry.auto, tostring(entry.name)) end
-                seen[entry.auto] = true
+                -- (a spell that two classes each picked is there once for each class)
+                local mark = entry.auto .. (list == sheet.spells and ("/" .. tostring(entry.class or "")) or "")
+                if seen[mark] then Bad("two entries marked %s (%s)", mark, tostring(entry.name)) end
+                seen[mark] = true
             end
         end
     end

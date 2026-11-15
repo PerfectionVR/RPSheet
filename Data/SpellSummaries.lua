@@ -18,19 +18,12 @@ for name, text in pairs(R.SPELL_SUMMARIES or {}) do
     end
 end
 
--- Lines of facts that were corrected since: a saved copy may still carry the old one.
-local FORMER = {
-    ["Banishing Smite"] = "Conjuration. Range Self. 5d10 force damage. Concentration.",
-    ["Control Weather"] = "Transmutation. Range Self, 5-foot sphere. Concentration.",
-    ["Conjure Fey"] = "Conjuration. Range 60 feet. 3d12 psychic damage. 1d12 more for each slot level above 6th. Concentration.",
-    ["Earthquake"] = "Transmutation. Range 500 feet. Constitution save. 12d6 bludgeoning damage. Concentration.",
-}
-
 -- The summary a saved copy of a spell should now show, or nil to leave it alone:
--- only a copy that still carries the old line of facts is brought up to date.
+-- only a copy that still carries the line of facts, or a summary the spell had
+-- before (Data/SpellFormer.lua), is brought up to date.
 function R.FreshSpellSummary(saved)
     local known = R.SPELLS[saved.name]
-    if known and known.level == saved.level and (R.SPELL_FACT_LINES[saved.name] == saved.desc or FORMER[saved.name] == saved.desc) then
+    if known and known.level == saved.level and R.SpellHadValue(saved.name, "desc", saved.desc) then
         return known.desc
     end
 end

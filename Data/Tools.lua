@@ -57,7 +57,7 @@ for line in DATA:gmatch("[^\r\n]+") do
 end
 
 -- Tools a class gives, by Player's Handbook class. (A Monk chooses one artisan's tool
--- or instrument: ticked by hand.)
+-- or instrument: a pick in the level dialog, Data/ToolPicks.lua.)
 R.CLASS_TOOLS = {
     Druid = { "Herbalism Kit" },
     Rogue = { "Thieves' Tools" },

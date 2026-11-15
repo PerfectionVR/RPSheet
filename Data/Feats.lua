@@ -9,6 +9,7 @@
 --   needCaster    prerequisite: a class that casts spells
 --   needAllStats  prerequisite: every one of these abilities at 13 or higher
 --   needSpecies   prerequisite: this species
+--   needTools     prerequisite: proficiency with one of these tools
 --   save     true if it also grants saving throw proficiency in the raised ability
 --   skillPicks, expertisePicks  skills to choose for proficiency and for expertise
 --   toolPicks   how many of the skillPicks may be tools instead (Sheet/FeatTools.lua)
@@ -137,10 +138,14 @@ local NEED_TRAINING = {
     ["Moderately Armored"] = "light", ["Heavily Armored"] = "medium", ["Medium Armor Master"] = "medium",
     ["Heavy Armor Master"] = "heavy", ["Shield Master"] = "shield",
 }
+local NEED_TOOLS = {
+    ["Inscription Adept"] = { "Calligrapher's Supplies", "Cartographer's Tools", "Painter's Supplies" },
+}
 local NEED_CASTER = { ["Elemental Adept"] = true, ["Spell Sniper"] = true, ["War Caster"] = true, ["Boon of Spell Recall"] = true }
 for _, feat in ipairs(LIST) do
     feat.needStats, feat.needTraining, feat.needCaster = NEED_STATS[feat.name], NEED_TRAINING[feat.name], NEED_CASTER[feat.name]
     feat.needAllStats, feat.needSpecies = NEED_ALL_STATS[feat.name], NEED_SPECIES[feat.name]
+    feat.needTools = NEED_TOOLS[feat.name]
 end
 
 R.FEATS = {}           -- by name

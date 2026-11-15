@@ -1,11 +1,12 @@
--- The kind of artisan's tools picked for a feature in the level dialog (list in
--- Data/ToolPicks.lua): sheet.picks[<list>][<name>] = true. The pick is a tool
--- proficiency while the character has the feature (see RPSheet:ToolSource), so it
--- goes away by itself below the feature's level or with another subclass.
+-- The tools picked in the level dialog (lists in Data/ToolPicks.lua): a Battle
+-- Master's artisan's tools, a Monk's artisan's tools or instrument.
+-- sheet.picks[<list>][<name>] = true. A pick is a tool proficiency while the list
+-- is the character's (see RPSheet:ToolSource), so it goes away by itself below the
+-- feature's level, with another subclass or with another class.
 local _, ns = ...
 local R = ns.Rules
 
-local KEY = R.TOOL_PICK_LIST
+local LISTS = R.TOOL_PICK_LISTS
 
 -- "class" or "background" when one of those already names the tool, or nil.
 function ns.ToolGranted(sheet, name)
@@ -24,28 +25,68 @@ function ns.ToolGranted(sheet, name)
     if R.BACKGROUND_TOOLS[sheet.background] == name then return "background" end
 end
 
--- True if the tool is the one picked for a feature the character has.
+-- True if the tool is picked in one list (a key) the character has.
+local function PickedIn(sheet, key, name)
+    local picks = sheet.picks and sheet.picks[key]
+    return type(picks) == "table" and picks[name] == true and R.PICK_LISTS[key].items[name] ~= nil
+        and ns.SheetPickLimit(sheet, key) > 0
+end
+
+-- True if the tool is one picked in the level dialog, for a feature or for the class.
 function ns.ToolPicked(sheet, name)
-    local picks = sheet.picks and sheet.picks[KEY]
-    return picks ~= nil and picks[name] == true and R.PICK_LISTS[KEY].items[name] ~= nil
-        and ns.SheetPickLimit(sheet, KEY) > 0
+    for _, key in ipairs(LISTS) do
+        if PickedIn(sheet, key, name) then return true end
+    end
+    return false
+end
+
+-- True if the character is proficient with a tool, wherever that comes from: what
+-- RPSheet:ToolSource says of the active character, for any sheet.
+function ns.SheetToolProficient(sheet, name)
+    return ns.ToolGranted(sheet, name) ~= nil or ns.ToolPicked(sheet, name) or ns.FeatTool(sheet, name)
+        or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) or (sheet.tools ~= nil and sheet.tools[name] == true)
 end
 
 -- A kind the character is proficient with from elsewhere can't be picked as well.
-R.PICK_LISTS[KEY].blocked = function(sheet, name)
-    if ns.ToolGranted(sheet, name) or (sheet.tools and sheet.tools[name]) then return "already proficient" end
+for _, key in ipairs(LISTS) do
+    R.PICK_LISTS[key].blocked = function(sheet, name)
+        if ns.ToolGranted(sheet, name) or (sheet.tools and sheet.tools[name]) then return "already proficient" end
+        local whole = sheet.viewOf or sheet -- the other list may be another class's
+        for _, other in ipairs(LISTS) do
+            if other ~= key and PickedIn(whole, other, name) then return "already proficient" end
+        end
+        if ns.FeatTool(sheet, name) or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) then return "already proficient" end
+    end
 end
 
--- Keeps the pick apart from the other sources of the same tool.
+-- A Monk made before its tool was a pick ticked it by hand under Customize (or chose
+-- it with the starting gear): the first such tick becomes the pick, so nothing is
+-- asked again.
+local function AdoptTick(sheet, key)
+    local list, picks = R.PICK_LISTS[key], sheet.picks[key]
+    if not list.firstClass or next(picks) ~= nil then return end
+    for _, name in ipairs(list.order) do
+        if sheet.tools[name] and not ns.ToolGranted(sheet, name) then
+            picks[name] = true
+            return
+        end
+    end
+end
+
+-- Keeps the picks apart from the other sources of the same tool.
 function ns.ApplyToolPicks(sheet)
-    local picks = sheet.picks[KEY]
-    if type(picks) ~= "table" or ns.SheetPickLimit(sheet, KEY) == 0 then return end
-    for name in pairs(picks) do
-        if ns.ToolGranted(sheet, name) then
-            -- The class or background gives it now: the pick is open again.
-            picks[name] = nil
-        else
-            sheet.tools[name] = nil -- the pick stands in for a tick made by hand
+    for _, key in ipairs(LISTS) do
+        if ns.SheetPickLimit(sheet, key) > 0 then
+            if type(sheet.picks[key]) ~= "table" then sheet.picks[key] = {} end
+            AdoptTick(sheet, key)
+            for name in pairs(sheet.picks[key]) do
+                if ns.ToolGranted(sheet, name) then
+                    -- The class or background gives it now: the pick is open again.
+                    sheet.picks[key][name] = nil
+                else
+                    sheet.tools[name] = nil -- the pick stands in for a tick made by hand
+                end
+            end
         end
     end
 end

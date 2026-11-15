@@ -46,6 +46,11 @@ function Levels.FeatBlock(sheet, level, name)
     if feat.needCaster and not ns.CasterView(sheet) then
         return "needs a spellcasting class"
     end
+    if feat.needTools then
+        local met = false
+        for _, tool in ipairs(feat.needTools) do met = met or ns.SheetToolProficient(sheet, tool) end
+        if not met then return "needs proficiency with " .. table.concat(feat.needTools, " or ") end
+    end
 end
 
 -- The points Epic Boons (at other levels than `level`) added to an ability score.

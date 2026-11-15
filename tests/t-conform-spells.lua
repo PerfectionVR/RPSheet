@@ -211,20 +211,22 @@ for name, sizes in pairs(R.GROWING_SPELLS) do
     Same(table.concat(sizes, ",") == table.concat(theirs, ","), name, "growing die", ("addon d%s, site d%s"):format(table.concat(sizes, " d"), table.concat(theirs, " d")))
 end
 
--- Class lists: the list of a class is that of its core class in the addon ------------------------
+-- Class lists: the list of a class is that of its core class in the addon, but for the two
+-- classes that have a list of their own (Data/SpellLists.lua) ---------------------------------------
 local function SiteList(key)
     local class = R.CLASSES[key]
     return SITE_LISTS["WoW/" .. class.name] or SITE_LISTS["XPHB/" .. class.base], class.name
 end
 for _, key in ipairs(R.CLASS_ORDER) do
     local class = R.CLASSES[key]
-    local mine, site, label = R.SPELL_LISTS[class.base], SiteList(key)
-    if mine and class.caster then
+    local mine, site, label = R.ClassSpellList(key), SiteList(key)
+    if #mine > 0 and class.caster then
         local have = {}
         for _, name in ipairs(mine) do
             Same(not have[name], label .. " list", name, "listed twice")
             have[name] = true
             Same(site[name] == true, label .. " list", name, "on the addon's list, not on the site's")
+            Same(R.OnClassSpellList(key, name), label .. " list", name, "on the list, but R.OnClassSpellList says it isn't")
         end
         for name in pairs(site) do Same(have[name] == true, label .. " list", name, "on the site's list, not on the addon's") end
     end
@@ -358,7 +360,15 @@ for _, key in ipairs(R.CLASS_ORDER) do
                 for name in pairs(names) do if mine[level] then mine[level][name] = nil end end
             end
             for level, names in pairs(mine) do if not next(names) then mine[level] = nil end end
-            Compare(("%s, %s%s prepared"):format(class.name, subclass, option and (" (" .. option .. ")") or ""), mine, grant and grant.prepared or {})
+            -- For a class that casts spells, a cantrip the subclass makes known is on
+            -- the sheet's spell list like a prepared spell (and makes way for no pick).
+            local site = {}
+            for level, names in pairs(grant and grant.prepared or {}) do site[level] = { unpack(names) } end
+            for level, names in pairs(grant and class.caster and grant.cantrips or {}) do
+                site[level] = site[level] or {}
+                for _, name in ipairs(names) do table.insert(site[level], name) end
+            end
+            Compare(("%s, %s%s prepared"):format(class.name, subclass, option and (" (" .. option .. ")") or ""), mine, site)
         end
     end
 end

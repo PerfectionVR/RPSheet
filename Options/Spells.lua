@@ -8,14 +8,26 @@ local With = Opt.With
 local function Build(spell)
     local function self() return spell end
     local rollsDice = function() return spell.count == 0 end
+    -- A control for a fact of the spell. Changing one makes the spell the player's
+    -- own: a copy of a listed spell then keeps it when the listed spell is corrected
+    -- (Sheet/SpellRefresh.lua).
+    local function Own(option, key, isText)
+        With(option, self, key, isText)
+        local set = option.set
+        option.set = function(info, value)
+            spell.edited = true
+            set(info, value)
+        end
+        return option
+    end
     return {
-        name = With({ type = "input", order = 1, name = "Name" }, self, "name", true),
+        name = Own({ type = "input", order = 1, name = "Name" }, "name", true),
         level = {
             type = "select", order = 2, name = "Level",
             desc = "Cantrips need no slot. Other spells use your lowest free slot of that level or higher, so a spell above your slots can't be cast.",
             values = R.SPELL_LEVELS,
             get = function() return spell.level end,
-            set = function(_, value) spell.level = value; Opt.Changed() end,
+            set = function(_, value) spell.level, spell.edited = value, true; Opt.Changed() end,
         },
         -- Only a character with more than one spellcasting class has this to choose.
         class = {
@@ -35,48 +47,69 @@ local function Build(spell)
             name = "Doesn't count against my limit",
             desc = "For spells that are always prepared, or that come from a subclass, a lineage or a feat. They are left out of the counts above.",
         }, self, "free"),
-        concentration = With({
+        concentration = Own({
             type = "toggle", order = 3, name = "Concentration",
-        }, self, "concentration"),
-        kind = With({
+        }, "concentration"),
+        kind = Own({
             type = "select", order = 4, name = "Resolved by",
             desc = "Spell attack: you roll a d20 + your spell attack bonus. Saving throw: the target rolls against your spell save DC.",
             values = R.SPELL_KINDS, sorting = R.SPELL_KIND_ORDER,
-        }, self, "kind"),
-        save = With({
+        }, "kind"),
+        save = Own({
             type = "select", order = 5, name = "Saving throw",
             hidden = function() return spell.kind ~= "SAVE" end,
             values = Opt.STAT_VALUES, sorting = R.STATS,
-        }, self, "save"),
-        count = With({
+        }, "save"),
+        count = Own({
             type = "range", order = 6, min = 0, max = 40, softMax = 12, step = 1, name = "Number of dice",
             desc = "Dice of damage or healing. 0 if the spell rolls none.",
-        }, self, "count"),
-        sides = With({
+        }, "count"),
+        sides = Own({
             type = "select", order = 7, name = "Die", hidden = rollsDice,
             values = Opt.DIE_VALUES, sorting = Opt.DIE_ORDER,
-        }, self, "sides"),
-        dice = With({
+        }, "sides"),
+        dice = Own({
             type = "select", order = 8, name = "Counts as", hidden = rollsDice, values = R.DICE_KINDS, sorting = R.DICE_KIND_ORDER,
-        }, self, "dice"),
+        }, "dice"),
+        -- (never overwritten by the listed spell, so setting it doesn't mark the spell)
         damage = With({
             type = "select", order = 8.5, name = "Damage type",
             desc = "What kind of damage the dice deal, for features that treat one kind differently. Left unset, a spell from the built-in list keeps its own.",
             hidden = function() return spell.count == 0 or spell.dice ~= "DAMAGE" end,
             values = R.DAMAGE_TYPE_VALUES, sorting = R.DAMAGE_TYPE_ORDER,
         }, self, "damage"),
-        addMod = With({
+        addMod = Own({
             type = "toggle", order = 9, name = "Add spellcasting modifier", hidden = rollsDice,
             desc = "Adds your spellcasting ability modifier to the dice, as healing spells usually do.",
-        }, self, "addMod"),
-        scales = With({
+        }, "addMod"),
+        scales = Own({
             type = "toggle", order = 9.5, name = "Grows with level",
             desc = "For damaging cantrips: rolls one more set of dice at character levels 5, 11 and 17.",
             hidden = function() return spell.count == 0 or spell.level > 0 end,
-        }, self, "scales"),
-        desc = With({
+        }, "scales"),
+        up = Own({
+            type = "range", order = 9.7, min = 0, max = 10, softMax = 4, step = 1, name = "Dice per higher slot",
+            desc = "How many more of its dice the spell rolls for each slot level above its own, when you cast it with a higher slot. 0 if a higher slot adds none.",
+            hidden = function() return spell.count == 0 or spell.level == 0 end,
+        }, "up"),
+        desc = Own({
             type = "input", order = 10, width = "full", multiline = 3, name = "Description",
-        }, self, "desc", true),
+        }, "desc", true),
+        -- A copy of a built-in spell that was changed here no longer follows it.
+        own = {
+            type = "description", order = 11, fontSize = "medium",
+            hidden = function() return not (spell.edited and ns.ListedSpell(spell)) end,
+            name = Opt.GOLD .. "You changed this spell by hand, so it keeps what you set when the built-in spell of this name is corrected.|r",
+        },
+        restore = {
+            type = "execute", order = 12, name = "Use the built-in spell", width = "double",
+            desc = "Puts back the built-in spell's roll, dice and description, and lets it follow corrections again. Its class and whether it counts against your limit stay.",
+            hidden = function() return not (spell.edited and ns.ListedSpell(spell)) end,
+            func = function()
+                ns.RefreshSpell(spell, true)
+                Opt.Changed()
+            end,
+        },
     }
 end
 
@@ -124,7 +157,7 @@ local function Available()
     for level, count in pairs(RPSheet:SpellSlots()) do
         if count > 0 then highest = math.max(highest, level) end
     end
-    for _, name in ipairs(class and R.SPELL_LISTS[class.base] or {}) do
+    for _, name in ipairs(class and R.ClassSpellList(Opt.Sheet().class) or {}) do
         if not have[name] and R.SPELLS[name].level <= highest then names[#names + 1] = name end
     end
     -- Spells the class's own subclass gives are always prepared: they only need the slots.
@@ -135,7 +168,7 @@ local function Available()
     local listed = {}
     for _, name in ipairs(names) do listed[name] = true end
     for _, key in ipairs(ns.ExtraClassKeys(Opt.Sheet())) do
-        for _, name in ipairs(R.SPELL_LISTS[R.CLASSES[key].base] or {}) do
+        for _, name in ipairs(R.ClassSpellList(key)) do
             if not have[name] and not listed[name] and R.SPELLS[name].level <= highest then
                 names[#names + 1], listed[name] = name, true
             end
@@ -187,8 +220,7 @@ local function Extra(args)
             local sheet = Opt.Sheet()
             if ns.IsMulticlass(sheet) then
                 for _, key in ipairs(ns.CasterKeys(sheet)) do
-                    local owns = false
-                    for _, name in ipairs(R.SPELL_LISTS[R.CLASSES[key].base] or {}) do owns = owns or name == picked end
+                    local owns = R.OnClassSpellList(key, picked)
                     for _, name in ipairs(R.CLASS_SPELLS[key] or {}) do
                         if name == picked then owns, spell.free = true, true end
                     end
@@ -211,5 +243,5 @@ end
 Opt.lists.spells = {
     extra = Extra,
     order = 2, title = "Spells", noun = "spell", template = R.TEMPLATES.spell, build = Build,
-    help = "Your spells. Pick common ones for your class from the list, or add any spell by hand: clicking one on the sheet spends a slot, rolls the attack or shows the save, and rolls its dice. Casting with a higher slot adds dice in most spells; add those by hand.\n",
+    help = "Your spells. Pick common ones for your class from the list, or add any spell by hand: clicking one on the sheet spends a slot, rolls the attack or shows the save, and rolls its dice. A built-in spell knows what a higher slot adds to it. For a spell of your own, set \"Dice per higher slot\" on its page; \"Grows with level\" does the same for a cantrip's dice at character levels 5, 11 and 17.\n",
 }

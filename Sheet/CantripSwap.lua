@@ -34,10 +34,12 @@ function RPSheet:BookCantrips()
     local view, picks = Book(self:Sheet())
     if not view then return known, offered end
     local swap = Swap(self)
+    -- A cantrip the character has from a feat or a feature isn't learned again.
+    local elsewhere = ns.CantripsElsewhere(view, true)
     for _, name in ipairs(R.PICK_LISTS[KEY].order) do
         if picks[name] then
             known[#known + 1] = name
-        elseif swap and not swap.into then
+        elseif swap and not swap.into and not elsewhere[name] then
             offered[#offered + 1] = name
         end
     end
@@ -73,6 +75,10 @@ function RPSheet:ChangeCantrip(name)
         end
         if ns.PicksKnown(sheet, KEY) >= limit then
             self:Print(("You know %d cantrips already."):format(limit))
+            return false
+        end
+        if ns.CantripsElsewhere(view, true)[name] then
+            self:Print(("You know %s already, without it taking the place of a cantrip."):format(name))
             return false
         end
         -- The cantrip given up comes back, or another takes its place.

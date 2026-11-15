@@ -23,6 +23,7 @@ function R.DefineSpell(name, level, how, dice, desc, extra)
     -- A cantrip's dice grow at character levels 5, 11 and 17.
     if level == 0 and dice then spell.scales = true end
     for key, value in pairs(extra or {}) do spell[key] = value end
+    spell.tracked = true -- a copy of it put on a sheet records what the player changes
     R.SPELLS[name] = spell
 end
 local Spell = R.DefineSpell

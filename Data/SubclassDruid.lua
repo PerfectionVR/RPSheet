@@ -81,8 +81,8 @@ F["Circle of the Moon"] = {
         { Dice(2, 10) }),
 }
 F["Circle of the Stars"] = {
-    -- (Guidance is left to the cantrip picks: a druid who already chose it would have it twice)
-    Prepared({ { 3, "Guiding Bolt" } }, Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
+    -- (A druid who picked Guidance as a cantrip gets that pick back: Sheet/SpellPicks.lua)
+    Prepared({ { 3, "Guidance, Guiding Bolt" } }, Limited(3, "Star Map", "A star chart that serves as your spellcasting focus. With it you have Guidance and Guiding Bolt prepared; neither counts against your cantrips or prepared spells. Clicking casts Guiding Bolt without a slot: uses equal to your Wisdom modifier per long rest.",
         { stat = "WIS" }, { Roll("SPELL", "WIS"), Dice(4, 6) })),
     Ability(3, "Starry Form", "Bonus action. For 10 minutes you become starry in place of a beast form, and choose a constellation: Archer, Chalice or Dragon. From level 10 you can change it at the start of each turn.",
         function(level) return level >= 14 and { Spend("Wild Shape"), SwitchOn("Full of Stars") } or { Spend("Wild Shape") } end),
