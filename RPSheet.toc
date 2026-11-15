@@ -50,6 +50,15 @@ Data\SlotGrowth.lua
 Data\GrowingSpells.lua
 Data\SpellDetails.lua
 Data\SpellDamage.lua
+Data\SpellSummaries2.lua
+Data\SpellSummaries3.lua
+Data\SpellSummaries4.lua
+Data\SpellSummaries5.lua
+Data\SpellSummaries6.lua
+Data\SpellSummaries7.lua
+Data\SpellSummaries8.lua
+Data\SpellSummaries9.lua
+Data\SpellSummaries.lua
 Data\Conditions.lua
 Data\Combat.lua
 Data\Maneuvers.lua

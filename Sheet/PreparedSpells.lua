@@ -56,6 +56,8 @@ function ns.ApplyPreparedSpells(sheet)
         if known and known.level == spell.level and growth and growth.refresh then
             spell.count, spell.sides, spell.dice, spell.desc = known.count, known.sides, known.dice, known.desc
         end
+        -- A core spell saved with its line of facts takes the written summary.
+        spell.desc = R.FreshSpellSummary(spell) or spell.desc
         if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
             spell.up = known.up
         end
