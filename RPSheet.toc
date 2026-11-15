@@ -149,6 +149,8 @@ Sheet\Companions.lua
 Sheet\Professions.lua
 Sheet\Crafting.lua
 Sheet\Combat.lua
+Sheet\FightingStyles.lua
+Sheet\StyleEffects.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
 Sheet\Equipment.lua
@@ -173,6 +175,7 @@ Sheet\FeatSpells.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedPicks.lua
 Sheet\PrepareRules.lua
+Sheet\PrepareChanges.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
 Sheet\SpellChoices.lua
@@ -259,6 +262,7 @@ Options\MulticlassPage.lua
 Options\FeatChoices.lua
 Options\LevelDialogState.lua
 Options\LevelDialogCounts.lua
+Options\LevelDialogSwaps.lua
 Options\LevelDialogCheck.lua
 Options\LevelDialogGains.lua
 Options\LevelDialogClass.lua

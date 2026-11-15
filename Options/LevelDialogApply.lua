@@ -44,7 +44,9 @@ args.confirm = {
         local subclass = L.AsksSubclass() and L.draft.subclass ~= "" and L.draft.subclass or nil
         if subclass then ns.SetSubclass(sheet, L.draft.class, subclass) end
         local slot = L.StyleSlot()
-        if slot and L.draft.style ~= "" then sheet[ns.STYLE_FIELDS[slot]] = L.draft.style end
+        -- The style is the class's own; a class that is new gets it from SetLevel as well.
+        local style = slot and L.draft.style ~= "" and L.draft.style or nil
+        if style then ns.SetClassStyle(sheet, L.draft.class, slot, style) end
         if L.draft.kind then Levels.Set(sheet, level, L.draft.record) end
         for _, feature in ipairs(L.OptionFeatures()) do sheet.featureOptions[feature.name] = L.draft.options[feature.name] end
         for _, key in ipairs(R.PICK_LIST_ORDER) do
@@ -58,7 +60,7 @@ args.confirm = {
         sheet.featChoices = CopyTable(L.draft.featChoices) -- kept per feat; the upkeep drops what no feat asks for
         for _, feature in ipairs(L.SkillFeatures()) do sheet.featureSkills[feature] = L.draft.featureSkills[feature] end
         if taking then
-            RPSheet:SetLevel(sheet.level + 1, L.draft.class, { subclass = subclass, skill = L.draft.skill })
+            RPSheet:SetLevel(sheet.level + 1, L.draft.class, { subclass = subclass, skill = L.draft.skill, style = style, styleSlot = slot })
         else
             ns.ApplyGrants(sheet)
             ns.NormalizeState(RPSheet:State())

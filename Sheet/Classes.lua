@@ -1,7 +1,8 @@
 -- The classes of a character. The first class stays where it always was
 -- (sheet.class, sheet.subclass, sheet.spec) and sheet.level is the whole character's
 -- level. Classes taken later are kept beside it:
---   sheet.classes[<class key>] = { level = n, subclass = "", spec = "", skill = "" }
+--   sheet.classes[<class key>] = { level = n, subclass = "", spec = "", skill = "",
+--                                  fightingStyle = "", fightingStyle2 = "" }
 -- The first class's own level is what the others leave of sheet.level. A character
 -- with one class has an empty sheet.classes and works as it did before.
 -- Views of one class at a time are in Sheet/ClassViews.lua.
@@ -83,6 +84,10 @@ local function Clean(value)
     return (value:gsub("[|%c]", "")):sub(1, 60)
 end
 
+local function Style(value)
+    return R.FIGHTING_STYLES[value] and value or ""
+end
+
 -- A safe copy of later classes that came from outside (an import string).
 function ns.CleanClasses(source)
     local clean = {}
@@ -94,6 +99,8 @@ function ns.CleanClasses(source)
             clean[key] = {
                 level = math.min(R.MAX_LEVEL - 1, level),
                 subclass = Clean(entry.subclass), spec = Clean(entry.spec), skill = Clean(entry.skill),
+                -- The class's own Fighting Styles (Sheet/FightingStyles.lua).
+                fightingStyle = Style(entry.fightingStyle), fightingStyle2 = Style(entry.fightingStyle2),
             }
         end
     end
@@ -118,6 +125,7 @@ function ns.NormalizeClasses(sheet)
         end
     end
     if type(sheet.lastClass) ~= "string" then sheet.lastClass = "" end
+    ns.AdoptStyles(sheet) -- a style picked before each class had its own
 end
 
 -- The character as it would be with `level` levels in one of its classes (or in a new

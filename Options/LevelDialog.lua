@@ -46,21 +46,13 @@ function ns.OpenLevelDialog(level, reopen, classKey)
         taking = taking, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
-        featTools = CopyTable(sheet.featTools or {}), before = {},
+        featTools = CopyTable(sheet.featTools or {}), before = {}, fixed = {},
         featChoices = CopyTable(sheet.featChoices or {}),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do L.draft.picks[key] = L.draft.picks[key] or {} end
     L.DropUnfollowed() -- a pick that stopped being valid is asked for again
-    -- The picks the character had before this level: only so many of them may be
-    -- exchanged while taking it (see L.SwapLocked in LevelDialogCounts.lua).
-    if L.draft.taking then
-        for _, key in ipairs(R.PICK_LIST_ORDER) do
-            if R.PICK_LISTS[key].swaps and ns.SheetPickLimit(sheet, key) > 0 then
-                L.draft.before[key] = CopyTable(L.draft.picks[key])
-            end
-        end
-    end
+    L.RememberPicks(sheet) -- the picks that may not all be exchanged here (LevelDialogSwaps.lua)
     if kind == "BOON" then L.draft.record.choice = "FEAT" end
     -- A hero class taken as a new class comes with its subclass.
     if newClass and R.CLASSES[own].hero then L.draft.subclass = R.CLASSES[own].subclasses[1] or "" end

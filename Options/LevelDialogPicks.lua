@@ -12,7 +12,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
     local group = {
         type = "group", inline = true, order = 12.5 + listIndex / 10, args = {},
         name = function()
-            local swaps = L.draft and ns.PickSwapNote(key, L.draft.before, L.draft.picks, L.Picking()) or ""
+            local swaps = L.draft and L.SwapNote(key) or ""
             return ("%s (%d of %d chosen%s)"):format(list.title, L.draft and L.PicksChosen(key) or 0, L.PickLimit(key), swaps)
         end,
         hidden = function() return L.PickLimit(key) == 0 end,

@@ -50,12 +50,6 @@ function L.Blocked(key, name)
     return ns.PickBlocked(key, name, view.level, L.draft.picks[key], view.subclass, view)
 end
 
--- True if a pick made at an earlier level has to stay: only so many may be exchanged
--- when a level is gained (Sheet/PickSwaps.lua). Looking at the choices again is free.
-function L.SwapLocked(key, name)
-    return ns.PickSwapLocked(key, name, L.draft.before, L.draft.picks, L.Picking())
-end
-
 -- A list that follows another (list.follows) loses the picks that list no longer
 -- allows: a mastered spell that was taken out of the spellbook is open again.
 function L.DropUnfollowed()
