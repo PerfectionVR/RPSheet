@@ -243,6 +243,7 @@ Sheet\RenownPerks.lua
 Sheet\RenownSummary.lua
 Sheet\Shop.lua
 Sheet\LevelUp.lua
+Sheet\PassCache.lua
 
 # Things the character does
 Actions\Announce.lua

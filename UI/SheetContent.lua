@@ -59,9 +59,7 @@ local function Rebuild(self, body)
     UI.SetOut(body)
 end
 
-function RPSheet:Populate()
-    local body = self.body
-    if not body then return end
+local function Fill(self, body)
     -- Nobody sees the rows of a hidden window: they are made when it is shown again
     -- (its OnShow calls Refresh, which catches up).
     if self.window.frame:IsShown() then
@@ -72,6 +70,18 @@ function RPSheet:Populate()
     self:PopulateSpellbook() -- the open spellbook follows the sheet
     self:PopulatePrepared()  -- and the open list of spells to prepare
     self:PopulateItemBrowser() -- and so does the open item browser
+end
+
+function RPSheet:Populate()
+    local body = self.body
+    if not body then return end
+    -- Making the rows only reads the sheet, so the numbers they ask for again and again
+    -- are kept while they are made (Sheet/PassCache.lua). The pass is closed whatever
+    -- happens: a number kept past this point could outlive a change to the sheet.
+    ns.BeginPass()
+    local ok, problem = pcall(Fill, self, body)
+    ns.EndPass()
+    if not ok then error(problem, 0) end
 end
 
 function RPSheet:Refresh()

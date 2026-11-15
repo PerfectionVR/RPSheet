@@ -226,11 +226,19 @@ function ns.FeaturePools(sheet)
 end
 
 -- The features a character of this class and subclass gains on reaching `level`.
+-- The answer comes from the rules data alone, which doesn't change while the game runs,
+-- and it is asked for hundreds of times when a level dialog opens: each list is made
+-- once and kept. Don't change the list that comes back.
+local gainedAt = {}
 function ns.FeaturesGainedAt(class, subclass, level)
-    local gained = {}
+    local id = ("%s|%s|%s"):format(tostring(class), tostring(subclass), tostring(level))
+    local gained = gainedAt[id]
+    if gained then return gained end
+    gained = {}
     EachFeature({ class = class, subclass = subclass, level = level, dismissed = {} }, function(feature)
         if feature.level == level then gained[#gained + 1] = feature end
     end)
+    gainedAt[id] = gained
     return gained
 end
 

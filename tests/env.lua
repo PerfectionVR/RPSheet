@@ -201,5 +201,9 @@ function LoadAddon(hook)
     end
     CURRENT_FILE = nil
     TRACK_WRITES = false
+    -- Every number the addon keeps for the length of one rebuild of the sheet window is
+    -- worked out again when it is asked for a second time, and must be the same
+    -- (Sheet/PassCache.lua).
+    NS.checkPass = true
     return files
 end
