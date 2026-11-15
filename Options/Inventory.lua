@@ -38,10 +38,15 @@ local function Build(item)
                 Opt.Changed()
             end,
         },
-        equipped = With({
+        equipped = {
             type = "toggle", order = 5, name = "Equipped",
-            desc = "Worn or held. An item's effects only count while it is equipped. You can also click the item on the sheet.",
-        }, self, "equipped"),
+            desc = "Worn or held. An item's effects only count while it is equipped. Equipping armor or a shield puts it on, and equipping a basic weapon readies it on the sheet. You can also click the item on the sheet.",
+            get = function() return item.equipped end,
+            set = function(_, value)
+                RPSheet:SetEquipped(item, value)
+                Opt.Changed()
+            end,
+        },
         sell = {
             type = "execute", order = 6, name = "Sell one",
             desc = function() return ("Takes one off the list and gives you half its price: %s."):format(ns.CoinText(math.floor(item.cost / 2))) end,
@@ -87,5 +92,5 @@ end
 Opt.lists.items = {
     extra = Opt.InventoryExtra,
     order = 5.5, title = "Inventory", noun = "item", template = R.TEMPLATES.item, build = Build,
-    help = "Your money and what you carry. Pick a listed item to add or buy, or add an empty one and fill it in yourself. Armor and weapons listed here count for weight and price; what you wear and wield is set on the Defense and Weapons pages.\n",
+    help = "Your money and what you carry. Pick a listed item to add or buy, or add an empty one and fill it in yourself. Equip armor, a shield or a basic weapon to wear or ready it; the Defense and Weapons pages can still set those directly.\n",
 }

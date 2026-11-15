@@ -86,6 +86,14 @@ Switched from the earlier simplified rules to D&D 5e (2024) as used by the
   prices and weights, see your load against your carrying capacity, and equip and
   attune magic items (three at most) whose bonuses are applied. Weapons can have a
   magic bonus, and the creation wizard asks for starting gold.
+- The creation wizard has a starting closet in place of the single main weapon:
+  open a drawer (weapons, armor, packs, focuses, gear, tools), take as many things as
+  you like, and tick which armor, shield and weapons you have equipped. Everything
+  taken goes into the inventory.
+- Equipping armor, a shield or a basic weapon in the inventory now does something:
+  the armor counts for your Armor Class (one suit at a time), the shield is raised,
+  and the weapon joins the ones on the weapon row. Putting it away takes it off the
+  sheet without losing its settings. The Defense page keeps the items in step.
 - "Take damage" and "Heal" under the HP bar (and `/sheet damage 14 fire`,
   `/sheet heal 8`): the sheet halves damage you resist, doubles damage you are
   vulnerable to, ignores damage you are immune to, uses temporary hit points first,

@@ -55,3 +55,14 @@ Opt.custom.defense = {
         }, Sheet, "hpAdjust"),
     },
 }
+
+-- Armor and shields in the inventory follow what is set here.
+for _, key in ipairs({ "armor", "shield" }) do
+    local option = Opt.custom.defense.args[key]
+    local set = option.set
+    option.set = function(info, value)
+        Sheet()[key] = value
+        ns.MatchWorn(Sheet())
+        set(info, value)
+    end
+end

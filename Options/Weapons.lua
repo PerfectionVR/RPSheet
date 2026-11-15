@@ -64,6 +64,10 @@ local function Build(weapon)
             desc = "A magic weapon adds this to attack and damage rolls made with it: 1, 2 or 3. It counts for this weapon only.",
             hidden = function() return weapon.heal end,
         }, self, "magic"),
+        stowed = With({
+            type = "toggle", order = 5.7, name = "Put away",
+            desc = "A weapon that is put away is kept but isn't on the sheet. Equipping a basic weapon in your inventory readies it again.",
+        }, self, "stowed"),
         heal = With({
             type = "toggle", order = 6, name = "Healing, no attack roll",
             desc = "Rolls the dice as healing and skips the d20.",

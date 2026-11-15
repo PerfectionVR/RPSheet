@@ -237,9 +237,14 @@ other ten still need that.
 - [x] Coins with change, an inventory of gear with prices and weights against your
       carrying capacity, and magic items: equipped and attuned (three at most), with
       bonuses the sheet applies; a magic bonus on weapons; starting gold in the wizard
+- [x] A starting closet in the creation wizard: take as much plain gear as you like
+      and tick what you wear and wield
+- [x] Armor, shields and basic weapons in the inventory linked to Defense and Weapons:
+      equipping one puts it on or readies it, putting it away undoes that
 - [ ] Magic items that set an ability score or a speed, or whose bonus depends on the
-      situation; armor and weapons in the inventory linked to Defense and Weapons;
-      being over the carrying limit slowing you; starting gear packages
+      situation; magic armor and weapons, and weapons of your own, equipped from the
+      inventory; being over the carrying limit slowing you; the fixed starting gear
+      packages of each class and background (the closet has no budget)
 - [ ] Mounts, vehicles and companion creatures
 - [x] Senses and damage resistances shown on the sheet, gathered from the species, the
       beast form and the passives switched on

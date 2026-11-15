@@ -12,7 +12,7 @@ local function Changed(self)
 end
 
 function RPSheet:ToggleEquipped(item)
-    item.equipped = not item.equipped
+    self:SetEquipped(item, not item.equipped)
     Changed(self)
 end
 
@@ -36,6 +36,7 @@ function RPSheet:UseItem(item)
     item.qty = item.qty - 1
     self:Announce(("uses %s"):format(ns.Mark(item.name)))
     if item.qty == 0 then
+        if item.equipped then self:SetEquipped(item, false) end
         local items = self:Sheet().items
         for index, other in ipairs(items) do
             if other == item then
