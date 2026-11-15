@@ -7,9 +7,14 @@ local RPSheet = ns.addon
 local UI = ns.UI
 
 -- Rebuilds the rows on the next frame. Used from a row's own click, because that row
--- is part of what gets rebuilt.
+-- is part of what gets rebuilt. Asked for several times in one frame, it rebuilds once.
 function RPSheet:PopulateSoon()
-    C_Timer.After(0, function() self:Populate() end)
+    if self.populatePending then return end
+    self.populatePending = true
+    C_Timer.After(0, function()
+        self.populatePending = nil
+        self:Populate()
+    end)
 end
 
 -- Always shown, above the tabs.
@@ -30,10 +35,9 @@ local TABS = {
 ---------------------------------------------------------------------------
 -- Populate and Refresh
 ---------------------------------------------------------------------------
-function RPSheet:Populate()
-    local body = self.body
-    if not body then return end
-
+-- Releases and makes again every row of the sheet window.
+local function Rebuild(self, body)
+    self.populateSkipped = nil
     body:PauseLayout()
     body:ReleaseChildren()
     self.sheetSlotLabels = {} -- the old lines are gone with the rows
@@ -53,6 +57,18 @@ function RPSheet:Populate()
     self:Refresh()
     body:ResumeLayout()
     body:DoLayout()
+end
+
+function RPSheet:Populate()
+    local body = self.body
+    if not body then return end
+    -- Nobody sees the rows of a hidden window: they are made when it is shown again
+    -- (its OnShow calls Refresh, which catches up).
+    if self.window.frame:IsShown() then
+        Rebuild(self, body)
+    else
+        self.populateSkipped = true
+    end
     self:PopulateSpellbook() -- the open spellbook follows the sheet
     self:PopulatePrepared()  -- and the open list of spells to prepare
     self:PopulateItemBrowser() -- and so does the open item browser
@@ -60,6 +76,14 @@ end
 
 function RPSheet:Refresh()
     if not self.window or not self.channelLabel then return end
+    if self.populateSkipped then
+        -- The rows are out of date. Shown again: make them now, which ends in a Refresh.
+        if self.window.frame:IsShown() then return Rebuild(self, self.body) end
+        -- Still hidden: only what reaches beyond the sheet's own rows.
+        self:RefreshSlotLabels() -- the spellbook window may be open
+        self:QueueBroadcast()
+        return
+    end
     self:RefreshSlotLabels()
     self:QueueBroadcast()
     local state = self:State()

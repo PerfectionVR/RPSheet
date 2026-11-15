@@ -38,6 +38,7 @@ local source     -- what the window is showing
 local open       -- the open tab: source.first or one of source.kinds
 local search = ""
 local toTop = false -- a page was turned: start reading it at its top
+local fills = 0     -- how often the window was filled, to tell whether showing it did
 
 -- The kinds of part the dialog skin (UI/DialogSkin.lua) styles in this window. The
 -- texts and tabs are themed where they are made.
@@ -65,12 +66,14 @@ local function Build(self)
     self.itemBody = body
 end
 
--- Shows the browser on a source; on the one it already shows, this closes it.
-function RPSheet:ShowItemBrowser(wanted)
+-- Shows the browser on a source, at its first tab or the one given; on the source it
+-- already shows, this closes it.
+function RPSheet:ShowItemBrowser(wanted, tab)
     local same = source == wanted
     if not same then
-        source, open, search = wanted, wanted.first, ""
+        source, open, search = wanted, tab or wanted.first, ""
     end
+    local before = fills
     if not self.itemWindow then
         Build(self) -- a new window is already shown
     elseif same and self.itemWindow.frame:IsShown() then
@@ -80,7 +83,8 @@ function RPSheet:ShowItemBrowser(wanted)
         self.itemWindow:Show()
     end
     self.itemWindow.frame:Raise()
-    self:PopulateItemBrowser()
+    -- Showing a hidden window has filled it already (OnShow); building blocks twice is slow.
+    if fills == before then self:PopulateItemBrowser() end
 end
 
 -- Shows the browser on a source at one of its tabs. Unlike ShowItemBrowser it never
@@ -89,10 +93,11 @@ function RPSheet:OpenItemBrowser(wanted, tab)
     local shown = self.itemWindow and self.itemWindow.frame:IsShown()
     if source ~= wanted or not shown then
         if source == wanted then source = nil end -- or showing it again would be taken as closing it
-        self:ShowItemBrowser(wanted)
+        self:ShowItemBrowser(wanted, tab)
+    else
+        open = tab or open
+        self:PopulateItemBrowser()
     end
-    open = tab or open
-    self:PopulateItemBrowser()
 end
 
 -- Closes the browser if it is showing that source.
@@ -170,6 +175,7 @@ end
 function RPSheet:PopulateItemBrowser()
     local window, body = self.itemWindow, self.itemBody
     if not window or not source or not window.frame:IsShown() then return end
+    fills = fills + 1
     if source.gone and source.gone() then
         window:Hide()
         return
