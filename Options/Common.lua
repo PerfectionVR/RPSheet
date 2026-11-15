@@ -15,6 +15,7 @@ local Opt = { tabs = {}, custom = {}, lists = {}, rebuilders = {} }
 ns.Opt = Opt
 
 Opt.RED, Opt.GOLD, Opt.GREEN = "|cffff5555", "|cffffd100", "|cff80ff80"
+Opt.CLASS_PICKS_PAGE = "Metamagic, invocations, maneuvers" -- the page of Options/ClassPicks.lua
 
 function Opt.Sheet() return RPSheet:Sheet() end
 function Opt.Changed() RPSheet:SheetChanged() end

@@ -52,7 +52,9 @@ function ns.OpenLevelDialog(level, reopen, classKey)
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do L.draft.picks[key] = L.draft.picks[key] or {} end
     L.DropUnfollowed() -- a pick that stopped being valid is asked for again
+    L.DropUnmet()      -- and so is an option whose own requirement isn't met
     L.RememberPicks(sheet) -- the picks that may not all be exchanged here (LevelDialogSwaps.lua)
+    L.RememberManeuvers(sheet) -- and the maneuvers (LevelDialogManeuvers.lua)
     if kind == "BOON" then L.draft.record.choice = "FEAT" end
     -- A hero class taken as a new class comes with its subclass.
     if newClass and R.CLASSES[own].hero then L.draft.subclass = R.CLASSES[own].subclasses[1] or "" end

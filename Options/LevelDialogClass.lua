@@ -52,7 +52,9 @@ args.style = {
 
 args.maneuvers = {
     type = "group", inline = true, order = 12, args = {},
-    name = function() return ("Maneuvers (%d of %d chosen)"):format(L.draft and L.ManeuversPicked() or 0, L.ManeuverLimit()) end,
+    name = function()
+        return ("Maneuvers (%d of %d chosen%s)"):format(L.draft and L.ManeuversPicked() or 0, L.ManeuverLimit(), L.ManeuverNote())
+    end,
     hidden = function() return L.ManeuverLimit() == 0 end,
 }
 args.featureSkill = {
@@ -69,7 +71,8 @@ args.featureSkill = {
 }
 
 -- One checkbox per maneuver. Once the number for the level is chosen the rest grey
--- out; a known one can be unticked to swap it for another.
+-- out. A maneuver known before can be unticked to exchange it only where the rules
+-- allow that (Options/LevelDialogManeuvers.lua).
 for index, name in ipairs(R.MANEUVER_ORDER) do
     args.maneuvers.args["maneuver" .. index] = {
         type = "toggle", order = index, width = 1.5, name = name,
@@ -77,7 +80,10 @@ for index, name in ipairs(R.MANEUVER_ORDER) do
             local maneuver = R.MANEUVERS[name]
             return maneuver.desc .. (maneuver.save and (" " .. R.STAT_NAMES[maneuver.save] .. " save.") or "")
         end,
-        disabled = function() return not L.draft.maneuvers[name] and L.ManeuversPicked() >= L.ManeuverLimit() end,
+        disabled = function()
+            if L.draft.maneuvers[name] then return L.ManeuverLocked(name) end
+            return L.ManeuversPicked() >= L.ManeuverLimit()
+        end,
         get = function() return L.draft.maneuvers[name] or false end,
         set = function(_, value) L.draft.maneuvers[name] = value or nil end,
     }

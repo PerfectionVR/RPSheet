@@ -33,6 +33,12 @@ local function StyleLevels(key, subclass)
     return known[id]
 end
 
+-- The class level at which a class with that subclass picks the style of a slot, or
+-- nil when it never does. The creation wizard asks before there is a sheet to look at.
+function ns.StyleLevel(key, subclass, slot)
+    return StyleLevels(key, subclass or "")[slot]
+end
+
 -- True if one of the character's classes has reached the feature of a slot.
 local function Reaches(sheet, key, slot)
     local level = StyleLevels(key, ns.ClassSubclass(sheet, key))[slot]

@@ -77,17 +77,21 @@ end
 ---------------------------------------------------------------------------
 -- How many weapons the character can use the mastery of: what the class's feature
 -- allows, and one for each feat that unlocks a kind of weapon (Weapon Master).
--- The feature of several classes doesn't add up: the class that allows the most counts.
+-- Our reading for several classes: each class's Weapon Mastery is a feature of its
+-- own that lets the character pick so many kinds of weapon, and a class gives its
+-- features at its own level. The multiclassing rules name the features that don't
+-- add up (Extra Attack, the ways to work out Armor Class, Spellcasting) and Weapon
+-- Mastery is not one of them, so the picks of the classes are added together.
 function RPSheet:MasteryLimit()
     local class = self:ClassData()
     local _, fromFeats = ns.FeatMasteryWeapons(self:Sheet())
     if not class or not self:HasWeaponMastery() then return fromFeats end
-    local most = 0
+    local total = 0
     for _, view in ipairs(ns.ClassViews(self:Sheet())) do
         local base = R.CLASSES[view.class].base
-        most = math.max(most, ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
+        total = total + (ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
     end
-    return most + fromFeats
+    return total + fromFeats
 end
 
 -- How many weapons have a mastery set. A companion's family picked for its strike

@@ -57,7 +57,8 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             set = function(_, value)
                 local picked = L.draft.picks[key]
                 picked[name] = value or nil
-                -- Dropping a pick drops the ones that build on it.
+                -- Dropping a pick drops the ones that build on it. (An earlier pick
+                -- that an earlier one builds on is locked: Sheet/PickSwaps.lua.)
                 local dropped = not value
                 while dropped do
                     dropped = false

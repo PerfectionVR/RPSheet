@@ -99,6 +99,7 @@ local classPage = Page(1, {
             local draft = W.draft
             draft.class = value
             draft.subclass, draft.spec, draft.classSkills = "", "", {}
+            draft.fightingStyle, draft.fightingStyle2 = "", "" -- the styles on offer differ by class
             W.DropExtra(value) -- it can't be one of the other classes as well
             -- A hero class is its subclass: the choice is fixed from the start.
             if R.CLASSES[value].hero then draft.subclass = R.CLASSES[value].subclasses[1] end
@@ -143,23 +144,10 @@ local classPage = Page(1, {
             return ("%sSuggested for %s|r\n%s\n"):format(GOLD, draft.spec, table.concat(lines, "\n"))
         end,
     },
-    fightingStyle = {
-        type = "select", order = 5.5, name = "Fighting Style",
-        desc = function()
-            local lines = {}
-            for _, style in ipairs(R.FIGHTING_STYLE_ORDER) do
-                lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, style, R.FIGHTING_STYLES[style].desc)
-            end
-            return table.concat(lines, "\n\n")
-        end,
-        -- Only when one of the character's classes has the feature by its level; the
-        -- styles on offer are those of that class.
-        hidden = function() return not W.NeedsFightingStyle() end,
-        values = function() return (Opt.ListMap(ns.StyleChoices({ class = W.StyleClass() or W.draft.class, passives = {} }, 1), true)) end,
-        sorting = function() return (select(2, Opt.ListMap(ns.StyleChoices({ class = W.StyleClass() or W.draft.class, passives = {} }, 1), true))) end,
-        get = function() return W.draft.fightingStyle end,
-        set = function(_, value) W.draft.fightingStyle = value end,
-    },
+    -- The first class's own styles, where it has the feature by its level; a later
+    -- class's are on its row (Wizard/Styles.lua).
+    fightingStyle = W.StyleOption(5.5, 1, function() return W.draft end),
+    fightingStyle2 = W.StyleOption(5.6, 2, function() return W.draft end),
     skills = {
         type = "group", inline = true, order = 6, args = skillArgs,
         -- The dialog asks for the name even while the option is hidden (no class chosen yet).

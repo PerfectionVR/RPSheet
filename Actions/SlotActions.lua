@@ -1,6 +1,7 @@
 -- Ability steps that change spell slots (step type "SLOTS", see Kit.Slots):
---   RECOVER     gives back spent slots with a combined level of up to half the
---               character's level, none above 5th (Arcane Recovery)
+--   RECOVER     gives back spent slots with a combined level of up to half the level
+--               in the feature's class, none above 5th (Arcane Recovery, Natural
+--               Recovery)
 --   TOPOINTS    turns a slot into Sorcery Points equal to its level (Font of Magic)
 --   FROMPOINTS  makes a slot from Sorcery Points (Font of Magic)
 -- The last two use the level set at the sheet's "Cast at" row, or the lowest.
@@ -30,10 +31,21 @@ local function Slots(self)
     return slots
 end
 
-local function Recover(self)
-    -- Half the level in the class that recovers slots, for a character with several.
+-- The class a recovery feature belongs to: each goes by its own class's level, so a
+-- character with both (Arcane Recovery and Natural Recovery) has two budgets.
+local RECOVERS = { { "^Natural Recovery", "Druid" }, { "^Arcane Recovery", "Wizard" } }
+
+local function Recover(self, ability)
+    -- Half the level in the feature's own class, for a character with several. An
+    -- ability made by hand (no known name) goes by the first class that recovers slots.
     local sheet = self:Sheet()
-    local recovering = ns.BaseView(sheet, "Wizard") or ns.BaseView(sheet, "Druid") or sheet
+    local recovering
+    for _, rule in ipairs(RECOVERS) do
+        if ability and type(ability.name) == "string" and ability.name:find(rule[1]) then
+            recovering = ns.BaseView(sheet, rule[2])
+        end
+    end
+    recovering = recovering or ns.BaseView(sheet, "Wizard") or ns.BaseView(sheet, "Druid") or sheet
     local slots, budget, gains, texts = Slots(self), math.ceil(recovering.level / 2), {}, {}
     -- The highest spent slots that fit come back first.
     for level = HIGHEST, 1, -1 do
@@ -113,8 +125,9 @@ local function FromPoints(self)
     }
 end
 
-function ns.PlanSlotAction(self, action)
-    if action.mode == "RECOVER" then return Recover(self) end
+-- `ability` is the ability the step belongs to: it tells whose feature recovers.
+function ns.PlanSlotAction(self, action, ability)
+    if action.mode == "RECOVER" then return Recover(self, ability) end
     if action.mode == "TOPOINTS" then return ToPoints(self) end
     if action.mode == "FROMPOINTS" then return FromPoints(self) end
     self:Print("This step doesn't know what to do with spell slots.")
