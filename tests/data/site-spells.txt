@@ -1,0 +1,471 @@
+# Every spell of the 2024 core rules (XPHB) and of the setting's book (WoW) as the rules
+# site holds it, one per line, reduced to facts by a script in the site's page
+# (see tests/t-conform-spells.lua). Fields:
+# name|source|level|school|casting time|r = ritual|c = concentration|duration|range|
+# components|priced material: price, ! = consumed, what it is|saving throws|attack
+# (M melee, R ranged)|damage types|dice in the text: damage tags, then ~ and other dice|
+# higher slots: dice added per slot level, + = other dice named there, * = something
+# else grows; for a cantrip its dice by character level|classes: core ones by letter
+# (B Bard, C Cleric, D Druid, P Paladin, R Ranger, S Sorcerer, K Warlock, W Wizard) ;
+# the setting's (Pr Priest, Ma Mage, Ev Evoker, Hu Hunter, Dr Druid, Pa Paladin,
+# Wl Warlock, DK Death Knight, DH Demon Hunter)
+Acid Splash|XPHB|0|V|1 action|||instant|60 feet|vs||DEX||acid|1d6|1:1d6 5:2d6 11:3d6 17:4d6|SW;Ev,Ma
+Aid|XPHB|2|A|1 action|||8 hour|30 feet|vsm||||||*|BCDPR;DH,DK,Dr,Hu,Pa,Pr
+Alarm|XPHB|1|A|1 minute|r||8 hour|30 feet|vsm|||||||RW;DH,Hu,Ma
+Alter Self|XPHB|2|T|1 action||c|1 hour|self|vs||||bludgeoning,piercing,slashing|1d6||SW;Ev,Ma
+Animal Friendship|XPHB|1|E|1 action|||24 hour|30 feet|vsm||WIS||||*|BDR;DH,Dr,Hu
+Animal Messenger|XPHB|2|E|1 action|r||24 hour|30 feet|vsm||CHA||||*|BDR;DH,Dr,Hu
+Animal Shapes|XPHB|8|T|1 action|||24 hour|30 feet|vs|||||||D;Dr
+Animate Dead|XPHB|3|N|1 minute|||instant|10 feet|vsm||||||*|CW;Ma,Pr
+Animate Objects|XPHB|5|T|1 action||c|1 minute|120 feet|vs||||bludgeoning,piercing,slashing||+1d4,1d6,1d12|BSW;Ev,Ma
+Antilife Shell|XPHB|5|A|1 action||c|1 hour|emanation 10 feet|vs|||||||D;Dr
+Antimagic Field|XPHB|8|A|1 action||c|1 hour|emanation 10 feet|vsm|||||||CW;Ma,Pr
+Antipathy/Sympathy|XPHB|8|E|1 hour|||10 day|60 feet|vsm||WIS|||||BDW;Dr,Ma
+Apotheosis|WoW|9|T|1 bonus|||1 minute|self|v|||||||C;Pr
+Arcane Eye|XPHB|4|D|1 action||c|1 hour|30 feet|vsm|||||||W;Ma
+Arcane Gate|XPHB|6|C|1 action||c|10 minute|500 feet|vs|||||||KSW;Ev,Ma,Wl
+Arcane Lock|XPHB|2|A|1 action|||permanent(dispel)|touch|vsm|25gp! gold dust worth 25+ GP, which the spell consumes||||||W;Ma
+Arcane Pulse|WoW|0|V|1 action|||1 round|emanation 10 feet|vs||CON||force|1d8||W;Ma
+Arcane Vigor|XPHB|2|A|1 bonus|||instant|self|vs||||||*|SW;Ev,Ma
+Armor of Agathys|XPHB|1|A|1 bonus|||1 hour|self|vsm||||cold||*|K;Wl
+Arms of Hadar|XPHB|1|C|1 action|||instant|emanation 10 feet|vs||STR||necrotic|2d6|1d6|K;Wl
+Astral Projection|XPHB|9|N|1 hour|||permanent(dispel)|10 feet|vsm|1000gp! for each of the spell's targets, one jacinth worth 1,000+ GP and one silver bar worth 100+ GP, all of which the spell consumes||||||CKW;Ma,Pr,Wl
+Augury|XPHB|2|D|1 minute|r||instant|self|vsm|25gp specially marked sticks, bones, cards, or other divinatory tokens worth 25+ GP||||||CDW;Dr,Ma,Pr
+Aura of Life|XPHB|4|A|1 action||c|10 minute|emanation 30 feet|v|||||||CP;DK,Pa,Pr
+Aura of Purity|XPHB|4|A|1 action||c|10 minute|emanation 30 feet|v|||||||CP;DK,Pa,Pr
+Aura of Vitality|XPHB|3|A|1 action||c|1 minute|emanation 30 feet|v|||||~2d6||CDP;DK,Dr,Pa,Pr
+Awaken|XPHB|5|T|8 hour|||instant|touch|vsm|1000gp! an agate worth 1,000+ GP, which the spell consumes||||||BD;Dr
+Azure Strike|WoW|1|V|1 action|||1 round|60 feet|vs|||R|force|2d6|+1d6|S;Ev
+Azure Sweep|WoW|6|V|1 action|||1 minute|emanation 30 feet|vs||CON||force|7d8||S;Ev
+Bane|XPHB|1|E|1 action||c|1 minute|30 feet|vsm||CHA|||~1d4|*|BCK;Pr,Wl
+Banishing Smite|XPHB|5|C|1 bonus||c|1 minute|self|v||||force|5d10||P;DK,Pa
+Banishment|XPHB|4|A|1 action||c|1 minute|30 feet|vsm||CHA||||*|CKPSW;DK,Ev,Ma,Pa,Pr,Wl
+Barkskin|XPHB|2|T|1 bonus|||1 hour|touch|vsm|||||||DR;DH,Dr,Hu
+Beacon of Hope|XPHB|3|A|1 action||c|1 minute|30 feet|vs|||||||C;Pr
+Beast Sense|XPHB|2|D|1 action|r|c|1 hour|touch|s|||||||DR;DH,Dr,Hu
+Befuddlement|XPHB|8|E|1 action|||instant|150 feet|vsm||INT||psychic|10d12||BDKW;Dr,Ma,Wl
+Bestow Curse|XPHB|3|N|1 action||c|1 minute|touch|vs||WIS||necrotic|1d8|*|BCW;Ma,Pr
+Bigby's Hand|XPHB|5|V|1 action||c|1 minute|120 feet|vsm||DEX,STR|M|bludgeoning,force|5d8,4d6|2d8,2d6|SW;Ev,Ma
+Blade Barrier|XPHB|6|V|1 action||c|10 minute|90 feet|vs||DEX||force|6d10||C;Pr
+Blade Ward|XPHB|0|A|1 action||c|1 minute|self|vs|||||~1d4||BKSW;Ev,Ma,Wl
+Bless|XPHB|1|E|1 action||c|1 minute|30 feet|vsm|5gp a Holy Symbol worth 5+ GP||||~1d4|*|CP;DK,Pa,Pr
+Blight|XPHB|4|N|1 action|||instant|30 feet|vs||CON||necrotic|8d8|1d8|DKSW;Dr,Ev,Ma,Wl
+Blinding Smite|XPHB|3|V|1 bonus|||1 minute|self|v||CON||radiant|3d8|1d8|P;DK,Pa
+Blindness/Deafness|XPHB|2|T|1 action|||1 minute|120 feet|v||CON||||*|BCSW;Ev,Ma,Pr
+Blink|XPHB|3|T|1 action|||1 minute|self|vs|||||~1d6||SW;Ev,Ma
+Blistering Scales|WoW|3|T|1 bonus||c|1 minute|30 feet|vsm||||fire|1d8|*|S;Ev
+Blur|XPHB|2|I|1 action||c|1 minute|self|v|||||||SW;Ev,Ma,Pr
+Bonestorm|WoW|5|A|1 action|||instant|emanation 10 feet|v||CON||necrotic|4d8~4d6||;
+Breath of Eons|WoW|4|A|1 action||c|1 minute|self|vs||||force|1d10||S;Ev
+Burning Hands|XPHB|1|V|1 action|||instant|cone 15 feet|vs||DEX||fire|3d6|1d6|SW;Ev,Ma
+Call Lightning|XPHB|3|C|1 action||c|10 minute|120 feet|vs||DEX||lightning|3d10,1d10|1d10|D;Dr
+Calm Emotions|XPHB|2|E|1 action||c|1 minute|60 feet|vs||CHA|||||BC;Pr
+Chain Lightning|XPHB|6|V|1 action|||instant|150 feet|vsm||DEX||lightning|10d8|*|SW;Ev,Ma
+Chains of Ice|WoW|1|V|1 action|||instant|30 feet|v||DEX||cold|1d10|+1d10|;
+Chaos Nova|WoW|4|V|1 action|||instant|emanation 20 feet|v||WIS||force|2d6||;
+Charm Monster|XPHB|4|E|1 action|||1 hour|30 feet|vs||WIS||||*|BDKSW;Dr,Ev,Ma,Wl
+Charm Person|XPHB|1|E|1 action|||1 hour|30 feet|vs||WIS||||*|BDKSW;Dr,Ev,Ma,Wl
+Chill Touch|XPHB|0|N|1 action|||instant|touch|vs|||M|necrotic|1d10|1:1d10 5:2d10 11:3d10 17:4d10|KSW;Ev,Ma,Wl
+Chromatic Orb|XPHB|1|V|1 action|||instant|90 feet|vsm|50gp a diamond worth 50+ GP||R|acid,cold,fire,lightning,poison,thunder|3d8|1d8|SW;Ev,Ma
+Circle of Death|XPHB|6|N|1 action|||instant|150 feet|vsm|500gp the powder of a crushed black pearl worth 500+ GP|CON||necrotic|8d8|2d8|KSW;Ev,Ma,Wl
+Circle of Power|XPHB|5|A|1 action||c|10 minute|emanation 30 feet|v|||||||CPW;DK,Ma,Pa,Pr
+Clairvoyance|XPHB|3|D|10 minute||c|10 minute|1 miles|vsm|100gp a focus worth 100+ GP, either a jeweled horn for hearing or a glass eye for seeing||||||BCSW;Ev,Ma,Pr
+Clone|XPHB|8|N|1 hour|||instant|touch|vsm|1000gp! a diamond worth 1,000+ GP, which the spell consumes, and a sealable vessel worth 2,000+ GP that is large enough to hold the creature being cloned||||||W;Ma
+Cloud of Daggers|XPHB|2|C|1 action||c|1 minute|60 feet|vsm||||slashing|4d4|2d4|BKSW;Ev,Ma,Wl
+Cloudkill|XPHB|5|C|1 action||c|10 minute|120 feet|vs||CON||poison|5d8|1d8|SW;Ev,Ma
+Collapsing Star|WoW|4|V|1 action|||instant|60 feet|v||CON||force|4d12||;
+Color Spray|XPHB|1|I|1 action|||instant|cone 15 feet|vsm||CON|||||BSW;Ev,Ma
+Combustion|WoW|6|V|1 action|||1 minute|emanation 5 feet|vs||||fire|3d8||W;Ma
+Command|XPHB|1|E|1 action|||instant|60 feet|v||WIS||||*|BCP;DK,Pa,Pr
+Commune|XPHB|5|D|1 minute|r||1 minute|self|vsm|||||||C;Pr
+Commune with Nature|XPHB|5|D|1 minute|r||1 minute|self|vs|||||||DR;DH,Dr,Hu
+Compelled Duel|XPHB|1|E|1 bonus||c|1 minute|30 feet|v||WIS|||||P;DK,Pa
+Comprehend Languages|XPHB|1|D|1 action|r||1 hour|self|vsm|||||||BKSW;Ev,Ma,Wl
+Compulsion|XPHB|4|E|1 action||c|1 minute|30 feet|vs||WIS|||||B;
+Cone of Cold|XPHB|5|V|1 action|||instant|cone 60 feet|vsm||CON||cold|8d8|1d8|DSW;Dr,Ev,Ma
+Confusion|XPHB|4|E|1 action||c|1 minute|90 feet|vsm||WIS|||~1d10,1d4|*|BDSW;Dr,Ev,Ma
+Conjure Animals|XPHB|3|C|1 action||c|10 minute|60 feet|vs||DEX||slashing|3d10|1d10|DR;DH,Dr,Hu
+Conjure Barrage|XPHB|3|C|1 action|||instant|cone 60 feet|vsm|0.01gp a Melee or Ranged weapon worth at least 1 CP|DEX||force|5d8|1d8|R;DH,Hu
+Conjure Celestial|XPHB|7|C|1 action||c|10 minute|90 feet|vs||DEX||radiant|6d12~4d12|1d12|C;Pr
+Conjure Elemental|XPHB|5|C|1 action||c|10 minute|60 feet|vs||DEX||lightning,thunder,fire,cold|8d8,4d8|1d8|DW;Dr,Ma
+Conjure Fey|XPHB|6|C|1 action||c|10 minute|60 feet|vs||||psychic|3d12|1d12|D;Dr
+Conjure Minor Elementals|XPHB|4|C|1 action||c|10 minute|emanation 15 feet|vs||||acid,cold,fire,lightning|2d8|1d8|DW;Dr,Ma
+Conjure Volley|XPHB|5|C|1 action|||instant|150 feet|vsm|0.01gp a Melee or Ranged weapon worth at least 1 CP|DEX||force|8d8||R;DH,Hu
+Conjure Woodland Beings|XPHB|4|C|1 action||c|10 minute|emanation 10 feet|vs||WIS||force|5d8|1d8|DR;DH,Dr,Hu
+Consecration|WoW|2|V|1 action||c|1 minute|emanation 15 feet|v||||radiant|1d8||P;Pa
+Consume Soul|WoW|1|N|1 action|||instant|60 feet|v||CON||force|4d4|+1d4|;
+Contact Other Plane|XPHB|5|D|1 minute|r||1 minute|self|v||INT||psychic|6d6||KW;Ma,Wl
+Contagion|XPHB|5|N|1 action|||7 day|touch|vs||CON||necrotic|11d8||CD;Dr,Pr
+Contingency|XPHB|6|A|10 minute|||10 day|self|vsm|1500gp a gem-encrusted statuette of yourself worth 1,500+ GP||||||W;Ma
+Continual Flame|XPHB|2|V|1 action|||permanent(dispel)|touch|vsm|50gp! ruby dust worth 50+ GP, which the spell consumes||||||CDW;Dr,Ma,Pr
+Control Water|XPHB|4|T|1 action||c|10 minute|300 feet|vsm||STR||bludgeoning|2d8||CDW;Dr,Ma,Pr
+Control Weather|XPHB|8|T|10 minute||c|8 hour|sphere 5 miles|vsm|||||~1d4 x 10||CDW;Dr,Ma,Pr
+Cordon of Arrows|XPHB|2|T|1 action|||8 hour|touch|vsm||DEX||piercing|2d4|*|R;DH,Hu
+Counterspell|XPHB|3|A|1 reaction|||instant|60 feet|s||CON|||||KSW;Ev,Ma,Wl
+Create Food and Water|XPHB|3|C|1 action|||instant|30 feet|vs|||||||CP;DK,Ma,Pa,Pr
+Create Undead|XPHB|6|N|1 minute|||instant|10 feet|vsm|150gp one 150+ GP black onyx stone for each corpse|||||*|CKW;Ma,Pr,Wl
+Create or Destroy Water|XPHB|1|T|1 action|||instant|30 feet|vsm||||||*|CD;Dr,Pr
+Creation|XPHB|5|I|1 minute|||special|30 feet|vsm||||||*|SW;Ev,Ma
+Crown of Madness|XPHB|2|E|1 action||c|1 minute|120 feet|vs||WIS|||||BKSW;Ev,Ma,Wl
+Crusader's Mantle|XPHB|3|V|1 action||c|1 minute|emanation 30 feet|v||||radiant|1d4||P;DK,Pa
+Cure Wounds|XPHB|1|A|1 action|||instant|touch|vs|||||~2d8|2d8|BCDPR;DH,DK,Dr,Hu,Pa,Pr
+Curse of Agony|WoW|2|N|1 action|||1 minute|30 feet|vs||CON||psychic|1d4,1d6,1d8,1d10,1d12||K;Wl
+Dancing Lights|XPHB|0|I|1 action||c|1 minute|120 feet|vsm|||||||BSW;Ev,Ma
+Darkness|XPHB|2|V|1 action||c|10 minute|60 feet|vm|||||||KSW;Ev,Ma,Wl
+Darkvision|XPHB|2|T|1 action|||8 hour|touch|vsm|||||||DRSW;DH,Dr,Ev,Hu,Ma
+Daylight|XPHB|3|V|1 action|||1 hour|60 feet|vs|||||||CDPRS;DH,DK,Dr,Ev,Hu,Pa,Pr
+Death Grip|WoW|1|A|1 bonus|||instant|30 feet|v||STR|||||;
+Death Ward|XPHB|4|A|1 action|||8 hour|touch|vs|||||||CP;DK,Pa,Pr
+Death and Decay|WoW|2|N|1 action|||instant|60 feet|v||WIS||necrotic|2d6,1d6||;
+Delayed Blast Fireball|XPHB|7|V|1 action||c|1 minute|150 feet|vsm||DEX||fire|12d6,1d6|1d6|SW;Ev,Ma
+Demiplane|XPHB|8|C|1 action|||1 hour|60 feet|s|||||||KSW;Ev,Ma,Wl
+Demon Spikes|WoW|3|T|1 bonus|||1 minute|self|v||||piercing|||;
+Destructive Wave|XPHB|5|V|1 action|||instant|emanation 30 feet|v||CON||necrotic,radiant,thunder|5d6||P;DK,Pa
+Detect Evil and Good|XPHB|1|D|1 action||c|10 minute|sphere 30 feet|vs|||||||CP;DK,Pa,Pr
+Detect Magic|XPHB|1|D|1 action|r|c|10 minute|sphere 30 feet|vs|||||||BCDKPRSW;DH,DK,Dr,Ev,Hu,Ma,Pa,Pr,Wl
+Detect Poison and Disease|XPHB|1|D|1 action|r|c|10 minute|sphere 30 feet|vsm|||||||CDPR;DH,DK,Dr,Hu,Pa,Pr
+Detect Thoughts|XPHB|2|D|1 action||c|1 minute|self|vsm||WIS|||||BSW;Ev,Ma
+Dimension Door|XPHB|4|C|1 action|||instant|500 feet|v||||force|4d6||BKSW;Ev,Ma,Wl
+Disguise Self|XPHB|1|I|1 action|||1 hour|self|vs|||||||BSW;Ev,Ma
+Disintegrate|XPHB|6|T|1 action|||instant|60 feet|vsm||DEX||force|10d6 + 40|3d6|SW;Ev,Ma
+Dispel Evil and Good|XPHB|5|A|1 action||c|1 minute|self|vsm||CHA|||||CP;DK,Pa,Pr
+Dispel Magic|XPHB|3|A|1 action|||instant|120 feet|vs||||||*|BCDKPRSW;DH,DK,Dr,Ev,Hu,Ma,Pa,Pr,Wl
+Dissonant Whispers|XPHB|1|E|1 action|||instant|60 feet|v||WIS||psychic|3d6|1d6|B;
+Divination|XPHB|4|D|1 action|r||instant|self|vsm|25gp! incense worth 25+ GP, which the spell consumes||||||CDW;Dr,Ma,Pr
+Divine Favor|XPHB|1|T|1 bonus|||1 minute|self|vs||||radiant|1d4||P;DK,Pa
+Divine Shield|WoW|4|A|1 reaction|||1 round|self|v|||||||P;Pa
+Divine Smite|XPHB|1|V|1 bonus|||instant|self|v||||radiant|2d8,1d8|1d8|P;DK,Pa
+Divine Word|XPHB|7|V|1 bonus|||instant|30 feet|v||CHA|||||C;Pr
+Dominate Beast|XPHB|4|E|1 action||c|1 minute|60 feet|vs||WIS||||*|DRS;DH,Dr,Ev,Hu
+Dominate Monster|XPHB|8|E|1 action||c|1 hour|60 feet|vs||WIS||||*|BKSW;Ev,Ma,Pr,Wl
+Dominate Person|XPHB|5|E|1 action||c|1 minute|60 feet|vs||WIS||||*|BSW;Ev,Ma,Pr
+Dragon's Breath|XPHB|2|T|1 bonus||c|1 minute|touch|vsm||DEX||acid,cold,fire,lightning,poison|3d6|1d6|SW;Ev,Ma
+Drawmij's Instant Summons|XPHB|6|C|1 minute|r||permanent(dispel)|touch|vsm|1000gp a sapphire worth 1,000+ GP||||||W;Ma
+Dream|XPHB|5|I|1 minute|||8 hour|self|vsm||WIS||psychic|3d6||BKW;Ma,Wl
+Dream Breath|WoW|2|A|1 action|||instant|cone 15 feet|vs|||||~2d6|+2d6|S;Ev
+Dream Flight|WoW|5|A|1 action||c|1 minute|self|vs|||||~5d4||S;Ev
+Druidcraft|XPHB|0|T|1 action|||instant|30 feet|vs|||||||D;Dr
+Earthquake|XPHB|8|T|1 action||c|1 minute|500 feet|vsm||CON,DEX||bludgeoning|12d6~1d6,1d10 x 10||CDS;Dr,Ev,Pr
+Ebon Might|WoW|1|T|1 action|||instant|emanation 10 feet|vs||||force|1d4||S;Ev
+Eldritch Blast|XPHB|0|V|1 action|||instant|120 feet|vs|||R|force|1d10|*|K;Wl
+Elemental Weapon|XPHB|3|T|1 action||c|1 hour|touch|vs||||acid,cold,fire,lightning,thunder|1d4|+2d4,3d4|DPR;DH,DK,Dr,Hu,Pa
+Elementalism|XPHB|0|T|1 action|||instant|30 feet|vs|||||||DSW;Dr,Ev,Ma
+Emberstorm|WoW|4|V|1 action|||instant|60 feet|vs||CON||fire|6d8,1d8|+1d8|S;Ev
+Emerald Blossom|WoW|3|C|1 bonus||c|1 minute|60 feet|vs||||||*|S;Ev
+Enhance Ability|XPHB|2|T|1 action||c|1 hour|touch|vsm||||||*|BCDRSW;DH,Dr,Ev,Hu,Ma,Pr
+Enlarge/Reduce|XPHB|2|T|1 action||c|1 minute|30 feet|vsm||CON|||1d4||BDSW;Dr,Ev,Ma
+Ensnaring Strike|XPHB|1|C|1 bonus||c|1 minute|self|v||STR||piercing|1d6|1d6|R;DH,Hu
+Entangle|XPHB|1|C|1 action||c|1 minute|90 feet|vs||STR|||||DR;DH,Dr,Hu
+Enthrall|XPHB|2|E|1 action||c|1 minute|60 feet|vs||WIS|||||BK;Wl
+Entropic Embrace|WoW|1|N|1 reaction|||1 minute|self|v||||necrotic|1d4~1d4|+1d4|K;Wl
+Eruption|WoW|2|V|1 action|||instant|60 feet|vs||DEX||fire|3d8|+1d8|S;Ev
+Etherealness|XPHB|7|C|1 action|||8 hour|self|vs||||force||*|BCKSW;Ev,Ma,Pr,Wl
+Evard's Black Tentacles|XPHB|4|C|1 action||c|1 minute|90 feet|vsm||STR||bludgeoning|3d6||W;Ma
+Expeditious Retreat|XPHB|1|T|1 bonus||c|10 minute|self|vs|||||||KSW;Ev,Ma,Wl
+Explosive Trap|WoW|5|V|1 action||c|1 minute|60 feet|s||DEX||fire|8d6||R;Hu
+Eye Beam|WoW|2|V|1 action||c|1 minute|cone 15 feet|v||DEX||force|3d6|+1d6|;
+Eyebite|XPHB|6|N|1 action||c|1 minute|self|vs||WIS|||||BKSW;Ev,Ma,Wl
+Fabricate|XPHB|4|T|10 minute|||instant|120 feet|vs|||||||W;Ma
+Faerie Fire|XPHB|1|V|1 action||c|1 minute|60 feet|v||DEX|||||BD;Dr
+False Life|XPHB|1|N|1 action|||instant|self|vsm|||||~2d4 + 4|*|SW;Ev,Ma
+Fear|XPHB|3|I|1 action||c|1 minute|cone 30 feet|vsm||WIS|||||BKSW;Ev,Ma,Wl
+Feather Fall|XPHB|1|T|1 reaction|||1 minute|60 feet|vm|||||||BSW;Ev,Ma
+Feign Death|XPHB|3|N|1 action|r||1 hour|touch|vsm|||||||BCDW;Dr,Ma,Pr
+Fel Rush|WoW|1|T|1 action|||instant|self|v||DEX||fire|2d6|+1d6|;
+Feral Prowl|WoW|2|T|1 bonus|||1 minute|self|v|||||||D;Dr
+Fiery Brand|WoW|2|V|1 action|||1 minute|30 feet|v||WIS||fire|3d10||;
+Find Familiar|XPHB|1|C|1 hour|r||instant|10 feet|vsm|10gp! burning incense worth 10+ GP, which the spell consumes||||||W;Ma
+Find Steed|XPHB|2|C|1 action|||instant|30 feet|vs||||||*|P;DK,Pa
+Find Traps|XPHB|2|D|1 action|||instant|120 feet|vs|||||||CDR;DH,Dr,Hu,Pr
+Find the Path|XPHB|6|D|1 minute||c|1 day|self|vsm|100gp a set of divination tools-such as cards or runes-worth 100+ GP||||||BCD;Dr,Pr
+Finger of Death|XPHB|7|N|1 action|||instant|60 feet|vs||CON||necrotic|7d8 + 30||KSW;Ev,Ma,Wl
+Fire Bolt|XPHB|0|V|1 action|||instant|120 feet|vs|||R|fire|1d10|1:1d10 5:2d10 11:3d10 17:4d10|SW;Ev,Ma
+Fire Shield|XPHB|4|V|1 action|||10 minute|self|vsm||||cold,fire|2d8||DSW;Dr,Ev,Ma
+Fire Storm|XPHB|7|V|1 action|||instant|150 feet|vs||DEX||fire|7d10||CDS;Dr,Ev,Pr
+Fireball|XPHB|3|V|1 action|||instant|150 feet|vsm||DEX||fire|8d6|1d6|SW;Ev,Ma
+Flame Blade|XPHB|2|V|1 bonus||c|10 minute|self|vsm|||M|fire|3d6|1d6|DS;Dr,Ev
+Flame Strike|XPHB|5|V|1 action|||instant|60 feet|vsm||DEX||fire,radiant|5d6|1d6|C;Ma,Pr
+Flaming Sphere|XPHB|2|V|1 action||c|1 minute|60 feet|vsm||DEX||fire|2d6|1d6|DSW;Dr,Ev,Ma
+Flesh to Stone|XPHB|6|T|1 action||c|1 minute|60 feet|vsm||CON|||||DSW;Dr,Ev,Ma
+Flurry|WoW|3|V|1 action|||instant|120 feet|vs|||R|cold|3d6|*|W;Ma
+Fly|XPHB|3|T|1 action||c|10 minute|touch|vsm||||||*|KSW;Ev,Ma,Wl
+Fog Cloud|XPHB|1|C|1 action||c|1 hour|120 feet|vs||||||*|DRSW;DH,Dr,Ev,Hu,Ma
+Forbiddance|XPHB|6|A|10 minute|r||1 day|touch|vsm|1000gp ruby dust worth 1,000+ GP|||necrotic,radiant|5d10||C;Pr
+Forcecage|XPHB|7|V|1 action||c|1 hour|100 feet|vsm|1500gp! ruby dust worth 1,500+ GP, which the spell consumes|CHA|||||BKW;Ma,Wl
+Foresight|XPHB|9|D|1 minute|||8 hour|touch|vsm|||||||BDKW;Dr,Ma,Wl
+Fount of Moonlight|XPHB|4|V|1 action||c|10 minute|self|vs||CON||radiant|2d6||BD;Dr
+Freedom of Movement|XPHB|4|A|1 action|||1 hour|touch|vsm||||||*|BCDR;DH,Dr,Hu,Pr
+Freezing Trap|WoW|1|V|1 action||c|1 minute|60 feet|s||CON|||||R;Hu
+Friends|XPHB|0|E|1 action||c|1 minute|10 feet|sm||WIS|||||BKSW;Ev,Ma,Wl
+Frost Nova|WoW|1|V|1 action|||instant|emanation 15 feet|vs||CON||cold|2d6|+1d6|W;Ma
+Frostscythe|WoW|2|V|1 action|||instant|cone 20 feet|v||CON||cold|3d8|+1d8|;
+Gaseous Form|XPHB|3|T|1 action||c|1 hour|touch|vsm||||||*|KSW;Ev,Ma,Wl
+Gate|XPHB|9|C|1 action||c|1 minute|60 feet|vsm|5000gp a diamond worth 5,000+ GP||||||CKSW;Ev,Ma,Pr,Wl
+Geas|XPHB|5|E|1 minute|||30 day|60 feet|v||WIS||psychic|5d10|*|BCDPW;DK,Dr,Ma,Pa,Pr
+Gentle Repose|XPHB|2|N|1 action|r||10 day|touch|vsm|0.02gp! 2 Copper Pieces, which the spell consumes||||||CPW;DK,Ma,Pa,Pr
+Giant Insect|XPHB|4|C|1 action||c|10 minute|60 feet|vs||||||*|D;Dr
+Glibness|XPHB|8|E|1 action|||1 hour|self|v|||||||BK;Wl
+Globe of Invulnerability|XPHB|6|A|1 action||c|1 minute|emanation 10 feet|vsm||||||*|SW;Ev,Ma
+Glyph of Warding|XPHB|3|A|1 hour|||permanent(dispel/trigger)|touch|vsm|200gp! powdered diamond worth 200+ GP, which the spell consumes|DEX||acid,cold,fire,lightning,thunder|5d8|1d8|BCW;Ma,Pr
+Goodberry|XPHB|1|C|1 action|||24 hour|touch|vsm|||||||DR;DH,Dr,Hu
+Grasping Vine|XPHB|4|C|1 bonus||c|1 minute|60 feet|vs|||M|bludgeoning|4d8|*|DR;DH,Dr,Hu
+Grease|XPHB|1|C|1 action|||1 minute|60 feet|vsm||DEX|||||SW;Ev,Ma
+Greater Invisibility|XPHB|4|I|1 action||c|1 minute|touch|vs|||||||BSW;Ev,Ma
+Greater Restoration|XPHB|5|A|1 action|||instant|touch|vsm|100gp! diamond dust worth 100+ GP, which the spell consumes||||||BCDPR;DH,DK,Dr,Hu,Pa,Pr
+Guardian of Faith|XPHB|4|C|1 action|||8 hour|30 feet|v||DEX||radiant|||C;Pr
+Guards and Wards|XPHB|6|A|1 hour|||24 hour|touch|vsm|10gp a silver rod worth 10+ GP||||||BW;Ma
+Guidance|XPHB|0|D|1 action||c|1 minute|touch|vs|||||~1d4||CD;Dr,Pr
+Guided Prayer|WoW|3|V|1 reaction|||instant|self|v|||||~8d4||P;Pa
+Guiding Bolt|XPHB|1|V|1 action|||1 round|120 feet|vs|||R|radiant|4d6|1d6|C;Pr
+Gust of Wind|XPHB|2|V|1 action||c|1 minute|line 60 feet|vsm||STR|||||DRSW;DH,Dr,Ev,Hu,Ma
+Hail of Thorns|XPHB|1|C|1 bonus|||instant|self|v||DEX||piercing|1d10|1d10|R;DH,Hu
+Hallow|XPHB|5|A|24 hour|||permanent(dispel)|touch|vsm|1000gp! incense worth 1,000+ GP, which the spell consumes||||||C;Pr
+Hallucinatory Terrain|XPHB|4|I|10 minute|||24 hour|300 feet|vsm|||||||BDKW;Dr,Ma,Wl
+Hand of Gul'dan|WoW|3|C|1 action||c|1 minute|120 feet|vs||DEX||fire,necrotic|2d8,1d8||K;Wl
+Harm|XPHB|6|N|1 action|||instant|60 feet|vs||CON||necrotic|14d6||C;Pr
+Haste|XPHB|3|T|1 action||c|1 minute|30 feet|vsm|||||||SW;Ev,Ma,Pr
+Heal|XPHB|6|A|1 action|||instant|60 feet|vs||||||10|CD;Dr,Pr
+Healing Word|XPHB|1|A|1 bonus|||instant|60 feet|v|||||~2d4|2d4|BCD;Dr,Pr
+Heat Metal|XPHB|2|T|1 action||c|1 minute|60 feet|vsm||CON||fire|2d8|1d8|BD;Dr
+Hellish Rebuke|XPHB|1|V|1 reaction|||instant|60 feet|vs||DEX||fire|2d10|1d10|K;Wl
+Heroes' Feast|XPHB|6|C|10 minute|||instant|cube 10 feet|vsm|1000gp! a gem-encrusted bowl worth 1,000+ GP, which the spell consumes||||~2d10||BCD;Dr,Ma,Pr
+Heroism|XPHB|1|E|1 action||c|1 minute|touch|vs||||||*|BP;DK,Pa
+Hex|XPHB|1|E|1 bonus||c|1 hour|90 feet|vsm||||necrotic|1d6|*|K;Wl
+Hold Monster|XPHB|5|E|1 action||c|1 minute|90 feet|vsm||WIS||||*|BKSW;Ev,Ma,Wl
+Hold Person|XPHB|2|E|1 action||c|1 minute|60 feet|vsm||WIS||||*|BCDKSW;Dr,Ev,Ma,Pr,Wl
+Holy Aura|XPHB|8|A|1 action||c|1 minute|emanation 30 feet|vsm|1000gp a reliquary worth 1,000+ GP|CON|||||C;Pr
+Holy Nova|WoW|4|V|1 action|||instant|emanation 30 feet|v||CON||radiant|5d6~3d6|+1d6|C;Pr
+Hunger of Hadar|XPHB|3|C|1 action||c|1 minute|150 feet|vsm||DEX||acid,cold|2d6|1d6|K;Wl
+Hunter's Mark|XPHB|1|D|1 bonus||c|1 hour|90 feet|v||||force|1d6|*|R;DH,Hu
+Hypnotic Pattern|XPHB|3|I|1 action||c|1 minute|120 feet|sm||WIS|||||BKSW;Ev,Ma,Wl
+Ice Knife|XPHB|1|C|1 action|||instant|60 feet|sm||DEX|R|cold,piercing|1d10,2d6|1d6|DSW;Dr,Ev,Ma
+Ice Storm|XPHB|4|V|1 action|||instant|300 feet|vsm||DEX||bludgeoning,cold|2d10,4d6|1d10|DSW;Dr,Ev,Ma
+Identify|XPHB|1|D|1 minute|r||instant|touch|vsm|100gp a pearl worth 100+ GP||||||BW;Ma
+Illusory Script|XPHB|1|I|1 minute|r||10 day|touch|sm|10gp! ink worth 10+ GP, which the spell consumes||||||BKW;Ma,Wl
+Imprisonment|XPHB|9|A|1 minute|||permanent(dispel)|30 feet|vsm|5000gp a statuette of the target worth 5,000+ GP|WIS|||||KW;Ma,Wl
+Incendiary Cloud|XPHB|8|C|1 action||c|1 minute|150 feet|vs||DEX||fire|10d8||DSW;Dr,Ev,Ma
+Infernal Strike|WoW|1|V|1 action|||instant|emanation 10 feet|v||DEX||fire|2d6|+1d6|;
+Inflict Wounds|XPHB|1|N|1 action|||instant|touch|vs||CON||necrotic|2d10|1d10|C;Pr
+Innervate|WoW|5|T|1 action|||instant|30 feet|v|||||||D;Dr
+Insect Plague|XPHB|5|C|1 action||c|10 minute|300 feet|vsm||CON||piercing|4d10|1d10|CDS;Dr,Ev,Pr
+Invisibility|XPHB|2|I|1 action||c|1 hour|touch|vsm||||||*|BKSW;Ev,Ma,Wl
+Jallarzi's Storm of Radiance|XPHB|5|V|1 action||c|1 minute|120 feet|vsm||CON||radiant,thunder|2d10|1d10|KW;Ma,Wl
+Jump|XPHB|1|T|1 bonus|||1 minute|touch|vsm||||||*|DRSW;DH,Dr,Ev,Hu,Ma
+Knock|XPHB|2|T|1 action|||instant|60 feet|v|||||||BSW;Ev,Ma
+Lay Waste|WoW|7|V|1 action|||instant|line 120 feet|v||DEX||fire|12d6||S;Ev
+Leeching Strike|WoW|3|N|1 bonus|||instant|self|v||||necrotic|3d8~3d4|+1d8,1d4|;
+Legend Lore|XPHB|5|D|10 minute|||instant|self|vsm|250gp! incense worth 250+ GP, which the spell consumes, and four ivory strips worth 50+ GP each||||||BCW;Ma,Pr
+Leomund's Secret Chest|XPHB|4|C|1 action|||permanent(dispel)|touch|vsm|5000gp a chest, 3 feet by 2 feet by 2 feet, constructed from rare materials worth 5,000+ GP, and a Tiny replica of the chest made from the same materials worth 50+ GP||||||W;Ma
+Leomund's Tiny Hut|XPHB|3|V|1 minute|r||8 hour|emanation 10 feet|vsm|||||||BW;Ma
+Lesser Restoration|XPHB|2|A|1 bonus|||instant|touch|vs|||||||BCDPR;DH,DK,Dr,Hu,Pa,Pr
+Levitate|XPHB|2|T|1 action||c|10 minute|60 feet|vsm||CON|||||SW;Ev,Ma,Pr
+Light|XPHB|0|V|1 action|||1 hour|touch|vm|||||||BCSW;Ev,Ma,Pr
+Lightning Arrow|XPHB|3|T|1 bonus|||instant|self|vs||DEX||lightning|4d8,2d8|1d8|R;DH,Hu
+Lightning Bolt|XPHB|3|V|1 action|||instant|line 100 feet|vsm||DEX||lightning|8d6|1d6|SW;Ev,Ma
+Living Flame|WoW|1|V|1 action|||instant|60 feet|v||||fire|2d8~2d6|*|S;Ev
+Locate Animals or Plants|XPHB|2|D|1 action|r||instant|self|vsm|||||||BDR;DH,Dr,Hu
+Locate Creature|XPHB|4|D|1 action||c|1 hour|self|vsm|||||||BCDPRW;DH,DK,Dr,Hu,Ma,Pa,Pr
+Locate Object|XPHB|2|D|1 action||c|10 minute|self|vsm|||||||BCDPRW;DH,DK,Dr,Hu,Ma,Pa,Pr
+Longstrider|XPHB|1|T|1 action|||1 hour|touch|vsm||||||*|BDRW;DH,Dr,Hu,Ma
+Mage Armor|XPHB|1|A|1 action|||8 hour|touch|vsm|||||||SW;Ev,Ma
+Mage Hand|XPHB|0|C|1 action|||1 minute|30 feet|vs|||||||BKSW;Ev,Ma,Wl
+Magic Circle|XPHB|3|A|1 minute|||1 hour|10 feet|vsm|100gp! salt and powdered silver worth 100+ GP, which the spell consumes|CHA||||*|CKPW;DK,Ma,Pa,Pr,Wl
+Magic Jar|XPHB|6|N|1 minute|||permanent(dispel)|self|vsm|500gp a gem, crystal, or reliquary worth 500+ GP|CHA|||||W;Ma
+Magic Missile|XPHB|1|V|1 action|||instant|120 feet|vs||||force|1d4 + 1|*|SW;Ev,Ma
+Magic Mouth|XPHB|2|I|1 minute|r||permanent(dispel)|30 feet|vsm|10gp! jade dust worth 10+ GP, which the spell consumes||||||BW;Ma
+Magic Weapon|XPHB|2|T|1 bonus|||1 hour|touch|vs||||||*|PRSW;DH,DK,Ev,Hu,Ma,Pa
+Major Image|XPHB|3|I|1 action||c|10 minute|120 feet|vsm||||||*|BKSW;Ev,Ma,Wl
+Mass Cure Wounds|XPHB|5|A|1 action|||instant|60 feet|vs|||||~5d8|1d8|BCD;Dr,Pr
+Mass Heal|XPHB|9|A|1 action|||instant|60 feet|vs|||||||C;Pr
+Mass Healing Word|XPHB|3|A|1 bonus|||instant|60 feet|v|||||~2d4|1d4|BC;Pr
+Mass Polymorph|WoW|9|T|1 action||c|1 hour|emanation 30 feet|vsm||WIS|||||W;Ma
+Mass Suggestion|XPHB|6|E|1 action|||24 hour|60 feet|vm||WIS||||*|BSW;Ev,Ma
+Maze|XPHB|8|C|1 action||c|10 minute|60 feet|vs|||||||W;Ma
+Meld into Stone|XPHB|3|T|1 action|r||8 hour|touch|vs||||force|6d6||CDR;DH,Dr,Hu,Pr
+Melf's Acid Arrow|XPHB|2|V|1 action|||instant|90 feet|vsm|||R|acid|4d4,2d4|1d4|W;Ma
+Mending|XPHB|0|T|1 minute|||instant|touch|vsm|||||||BCDSW;Dr,Ev,Ma,Pr
+Message|XPHB|0|T|1 action|||1 round|120 feet|sm|||||||BDSW;Dr,Ev,Ma
+Metamorphosis|WoW|3|T|1 bonus|||1 minute|self|vsm||||fire|1d6||;
+Meteor Swarm|XPHB|9|V|1 action|||instant|1 miles|vs||DEX||bludgeoning,fire|20d6||SW;Ev,Ma
+Mind Blank|XPHB|8|A|1 action|||24 hour|touch|vs|||||||BW;Ma
+Mind Sliver|XPHB|0|E|1 action|||instant|60 feet|v||INT||psychic|1d6~1d4|1:1d6 5:2d6 11:3d6 17:4d6|KSW;Ev,Ma,Pr,Wl
+Mind Spike|XPHB|2|D|1 action||c|1 hour|120 feet|s||WIS||psychic|3d8|1d8|KSW;Ev,Ma,Wl
+Minor Illusion|XPHB|0|I|1 action|||1 minute|30 feet|sm|||||||BKSW;Ev,Ma,Wl
+Mirage Arcane|XPHB|7|I|10 minute|||10 day|sight|vs|||||||BDW;Dr,Ma
+Mirror Image|XPHB|2|I|1 action|||1 minute|self|vs|||||~d6||BKSW;Ev,Ma,Wl
+Mislead|XPHB|5|I|1 action||c|1 hour|self|s|||||||BKW;Ma,Wl
+Misty Step|XPHB|2|C|1 bonus|||instant|self|v|||||||KSW;Ev,Ma,Wl
+Modify Memory|XPHB|5|E|1 action||c|1 minute|30 feet|vs||WIS||||*|BW;Ma
+Moonbeam|XPHB|2|V|1 action||c|1 minute|120 feet|vsm||CON||radiant|2d10|1d10|D;Dr
+Moonfire|WoW|1|V|1 bonus|||1 round|60 feet|v||DEX||radiant|2d8,1d8|+1d8|D;Dr
+Mordenkainen's Faithful Hound|XPHB|4|C|1 action|||8 hour|30 feet|vsm||DEX||force|4d8||W;Ma
+Mordenkainen's Magnificent Mansion|XPHB|7|C|1 minute|||24 hour|300 feet|vsm|15gp a miniature door worth 15+ GP||||||BW;Ma
+Mordenkainen's Private Sanctum|XPHB|4|A|10 minute|||24 hour|120 feet|vsm||||||*|W;Ma
+Mordenkainen's Sword|XPHB|7|V|1 action||c|1 minute|90 feet|vsm|250gp a miniature sword worth 250+ GP||M|force|4d12||BW;Ma
+Move Earth|XPHB|6|T|1 action||c|2 hour|120 feet|vsm|||||||DSW;Dr,Ev,Ma
+Nondetection|XPHB|3|A|1 action|||8 hour|touch|vsm|25gp! a pinch of diamond dust worth 25+ GP, which the spell consumes||||||BRW;DH,Hu,Ma
+Nystul's Magic Aura|XPHB|2|I|1 action|||24 hour|touch|vsm|||||||W;Ma
+Otiluke's Freezing Sphere|XPHB|6|V|1 action|||instant|300 feet|vsm||CON||cold|10d6|1d6|SW;Ev,Ma
+Otiluke's Resilient Sphere|XPHB|4|A|1 action||c|1 minute|30 feet|vsm||DEX|||||W;Ma
+Otto's Irresistible Dance|XPHB|6|E|1 action||c|1 minute|30 feet|v||WIS|||||BW;Ma
+Pass without Trace|XPHB|2|A|1 action||c|1 hour|emanation 30 feet|vsm|||||||DR;DH,Dr,Hu
+Passwall|XPHB|5|T|1 action|||1 hour|30 feet|vsm|||||||W;Ma
+Phantasmal Force|XPHB|2|I|1 action||c|1 minute|60 feet|vsm||INT||psychic|2d8||BSW;Ev,Ma
+Phantasmal Killer|XPHB|4|I|1 action||c|1 minute|120 feet|vs||WIS||psychic|4d10|1d10|BW;Ma
+Phantom Steed|XPHB|3|I|1 minute|r||1 hour|30 feet|vs|||||||W;Ma
+Planar Ally|XPHB|6|C|10 minute|||instant|60 feet|vs|||||||C;Pr
+Planar Binding|XPHB|5|A|1 hour|||24 hour|60 feet|vsm|1000gp! a jewel worth 1,000+ GP, which the spell consumes|CHA||||*|BCDKW;Dr,Ma,Pr,Wl
+Plane Shift|XPHB|7|C|1 action|||instant|touch|vsm|250gp a forked, metal rod worth 250+ GP and attuned to a plane of existence||||||CDKSW;Dr,Ev,Ma,Pr,Wl
+Plant Growth|XPHB|3|T|1 action/8 hour|||instant|150 feet|vs|||||||BDR;DH,Dr,Hu
+Poison Spray|XPHB|0|N|1 action|||instant|30 feet|vs|||R|poison|1d12|1:1d12 5:2d12 11:3d12 17:4d12|DKSW;Dr,Ev,Ma,Wl
+Polymorph|XPHB|4|T|1 action||c|1 hour|60 feet|vsm||WIS|||||BDSW;Dr,Ev,Ma
+Power Word Fortify|XPHB|7|E|1 action|||instant|60 feet|v|||||||BC;Pr
+Power Word Heal|XPHB|9|E|1 action|||instant|60 feet|vs|||||||BC;Pr
+Power Word Kill|XPHB|9|E|1 action|||instant|60 feet|v||||psychic|12d12||BKSW;Ev,Ma,Wl
+Power Word Stun|XPHB|8|E|1 action|||instant|60 feet|v||CON|||||BKSW;Ev,Ma,Wl
+Prayer of Healing|XPHB|2|A|10 minute|||instant|30 feet|v|||||~2d8|1d8|CP;DK,Pa,Pr
+Prayer of Mending|WoW|3|A|1 action|||1 minute|60 feet|vm|||||~1d8|*|C;Pr
+Prestidigitation|XPHB|0|T|1 action|||1 hour|10 feet|vs|||||||BKSW;Ev,Ma,Wl
+Prismatic Spray|XPHB|7|V|1 action|||instant|cone 60 feet|vs||DEX,CON,WIS||acid,cold,fire,lightning,poison|12d6~1d8||BSW;Ev,Ma
+Prismatic Wall|XPHB|9|A|1 action|||10 minute|60 feet|vs||CON,DEX,WIS||acid,cold,fire,force,lightning,poison|12d6||BW;Ma
+Produce Flame|XPHB|0|C|1 bonus|||10 minute|self|vs|||R|fire|1d8|1:1d8 5:2d8 11:3d8 17:4d8|D;Dr
+Programmed Illusion|XPHB|6|I|1 action|||permanent(dispel)|120 feet|vsm|25gp jade dust worth 25+ GP||||||BW;Ma
+Project Image|XPHB|7|I|1 action||c|1 day|500 miles|vsm|5gp a statuette of yourself worth 5+ GP||||||BW;Ma
+Protection from Energy|XPHB|3|A|1 action||c|1 hour|touch|vs|||||||CDRSW;DH,Dr,Ev,Hu,Ma,Pr
+Protection from Evil and Good|XPHB|1|A|1 action||c|10 minute|touch|vsm|25gp! a flask of Holy Water worth 25+ GP, which the spell consumes||||||CDKPW;DK,Dr,Ma,Pa,Pr,Wl
+Protection from Poison|XPHB|2|A|1 action|||1 hour|touch|vs|||||||CDPR;DH,DK,Dr,Hu,Pa,Pr
+Psychic Horror|WoW|4|E|1 action|||instant|30 feet|vm||WIS||psychic|2d10|+1d10|C;Pr
+Purify Food and Drink|XPHB|1|T|1 action|r||instant|10 feet|vs|||||||CDP;DK,Dr,Pa,Pr
+Rain of Fire|WoW|3|V|1 action||c|1 minute|120 feet|vs||DEX||fire,necrotic|3d8,1d6|+1d8|K;Wl
+Raise Dead|XPHB|5|N|1 hour|||instant|touch|vsm|500gp! a diamond worth 500+ GP, which the spell consumes||||||BCP;DK,Pa,Pr
+Rary's Telepathic Bond|XPHB|5|D|1 action|r||1 hour|30 feet|vsm|||||||BW;Ma
+Ray of Enfeeblement|XPHB|2|N|1 action||c|1 minute|60 feet|vs||CON|||~1d8||KW;Ma,Wl
+Ray of Frost|XPHB|0|V|1 action|||instant|60 feet|vs|||R|cold|1d8|1:1d8 5:2d8 11:3d8 17:4d8|SW;Ev,Ma
+Ray of Sickness|XPHB|1|N|1 action|||instant|60 feet|vs|||R|poison|2d8|1d8|SW;Ev,Ma
+Regenerate|XPHB|7|T|1 minute|||1 hour|touch|vsm|||||~4d8 + 15||BCD;Dr,Pr
+Regrowth|WoW|3|A|1 action||c|1 minute|120 feet|v|||||~3d8,1d8||D;Dr
+Reincarnate|XPHB|5|N|1 hour|||instant|touch|vsm|1000gp! rare oils worth 1,000+ GP, which the spell consumes||||~1d10||D;Dr
+Remorseless Winter|WoW|3|V|1 action|||instant|emanation 30 feet|v||CON||cold|6d6|+1d6|;
+Remove Curse|XPHB|3|A|1 action|||instant|touch|vs|||||||CKPW;DK,Ma,Pa,Pr,Wl
+Rescue|WoW|5|C|1 bonus|||instant|120 feet|v|||||||S;Ev
+Resistance|XPHB|0|A|1 action||c|1 minute|touch|vs|||||~1d4||CD;Dr,Pr
+Resurrection|XPHB|7|N|1 hour|||instant|touch|vsm|1000gp! a diamond worth 1,000+ GP, which the spell consumes||||||BC;Pr
+Reverse Gravity|XPHB|7|T|1 action||c|1 minute|100 feet|vsm||DEX|||||DSW;Dr,Ev,Ma
+Revivify|XPHB|3|N|1 action|||instant|touch|vsm|300gp! a diamond worth 300+ GP, which the spell consumes||||||CDPR;DH,DK,Dr,Hu,Pa,Pr
+Roar of Ursoc|WoW|2|T|1 bonus|||1 round|self|v|||||||D;Dr
+Rope Trick|XPHB|2|T|1 action|||1 hour|touch|vsm|||||||W;Ma
+Rune Strike|WoW|1|V|1 bonus|||instant|self|v||||necrotic|2d8,1d8|+1d8|;
+Sacred Flame|XPHB|0|V|1 action|||instant|60 feet|vs||DEX||radiant|1d8|1:1d8 5:2d8 11:3d8 17:4d8|C;Pr
+Sanctuary|XPHB|1|A|1 bonus|||1 minute|30 feet|vsm||WIS|||||C;Pr
+Scorching Ray|XPHB|2|V|1 action|||instant|120 feet|vs|||R|fire|2d6|*|SW;Ev,Ma
+Scourge Strike|WoW|1|N|1 bonus|||1 minute|self|v||CON||necrotic|2d6|+1d6|;
+Scrying|XPHB|5|D|10 minute||c|10 minute|self|vsm|1000gp a focus worth 1,000+ GP, such as a crystal ball, mirror, or water-filled font|WIS|||||BCDKW;Dr,Ma,Pr,Wl
+Searing Smite|XPHB|1|V|1 bonus|||1 minute|self|v||CON||fire|1d6|1d6|P;DK,Pa
+See Invisibility|XPHB|2|D|1 action|||1 hour|self|vsm|||||||BSW;Ev,Ma
+Seeming|XPHB|5|I|1 action|||8 hour|30 feet|vs||CHA|||||BSW;Ev,Ma
+Sending|XPHB|3|D|1 action|||instant|unlimited|vsm|||||||BCW;Ma,Pr
+Sequester|XPHB|7|T|1 action|||permanent(dispel)|touch|vsm|5000gp! gem dust worth 5,000+ GP, which the spell consumes||||||W;Ma
+Serpent Sting|WoW|3|N|1 bonus|||1 minute|self|v||CON||poison|4d6,2d6||R;Hu
+Shadow Word: Pain|WoW|1|N|1 action|||1 minute|60 feet|v||WIS||psychic|1d10|+1d10|C;Pr
+Shapechange|XPHB|9|T|1 action||c|1 hour|self|vsm|1500gp a jade circlet worth 1,500+ GP||||||DW;Dr,Ma
+Shatter|XPHB|2|V|1 action|||instant|60 feet|vsm||CON||thunder|3d8|1d8|BSW;Ev,Ma
+Shattering Star|WoW|5|V|1 action|||instant|90 feet|vs|||R|force|10d8|+1d8|S;Ev
+Shield|XPHB|1|A|1 reaction|||1 round|self|vs|||||||SW;Ev,Ma
+Shield of Faith|XPHB|1|A|1 bonus||c|10 minute|60 feet|vsm|||||||CP;DK,Pa,Pr
+Shillelagh|XPHB|0|T|1 bonus|||1 minute|self|vsm||||force|d8|1:1d8 5:1d10 11:1d12 17:2d6|D;Dr
+Shining Smite|XPHB|2|T|1 bonus||c|1 minute|self|v||||radiant|2d6|1d6|P;DK,Pa
+Shocking Grasp|XPHB|0|V|1 action|||instant|touch|vs|||M|lightning|1d8|1:1d8 5:2d8 11:3d8 17:4d8|SW;Ev,Ma
+Sigil of Chains|WoW|5|C|1 action|||1 round|90 feet|v||DEX||force|5d6||;
+Sigil of Flame|WoW|2|V|1 action|||instant|90 feet|v||CON||fire|2d8,1d8|+1d8|;
+Silence|XPHB|2|I|1 action|r|c|10 minute|120 feet|vs|||||||BCR;DH,Hu,Pr
+Silent Image|XPHB|1|I|1 action||c|10 minute|60 feet|vsm|||||||BSW;Ev,Ma
+Simulacrum|XPHB|7|I|12 hour|||permanent(dispel)|touch|vsm|1500gp! powdered ruby worth 1,500+ GP, which the spell consumes||||||W;Ma
+Sleep|XPHB|1|E|1 action||c|1 minute|60 feet|vsm||WIS|||||BSW;Ev,Ma
+Sleet Storm|XPHB|3|C|1 action||c|1 minute|150 feet|vsm||DEX|||||DSW;Dr,Ev,Ma
+Slow|XPHB|3|T|1 action||c|1 minute|120 feet|vsm||WIS|||||BSW;Ev,Ma
+Sorcerous Burst|XPHB|0|V|1 action|||instant|120 feet|vs|||R|acid,cold,fire,lightning,poison,psychic,thunder|1d8,d8|1:1d8 5:2d8 11:3d8 17:4d8|S;Ev
+Soul Reap|WoW|3|N|1 action|||instant|60 feet|vs|||R|force|6d6,d6|+1d6|;
+Spare the Dying|XPHB|0|N|1 action|||instant|15 feet|vs||||||*|CD;Dr,Pr
+Speak with Animals|XPHB|1|D|1 action|r||10 minute|self|vs|||||||BDKR;DH,Dr,Hu,Wl
+Speak with Dead|XPHB|3|N|1 action|||10 minute|10 feet|vsm|||||||BCW;Ma,Pr
+Speak with Plants|XPHB|3|T|1 action|||10 minute|emanation 30 feet|vs|||||||BDR;DH,Dr,Hu
+Spider Climb|XPHB|2|T|1 action||c|1 hour|touch|vsm||||||*|KSW;Ev,Ma,Wl
+Spike Growth|XPHB|2|T|1 action||c|10 minute|150 feet|vsm||||piercing|2d4||DR;DH,Dr,Hu
+Spirit Guardians|XPHB|3|C|1 action||c|10 minute|emanation 15 feet|vsm||WIS||necrotic,radiant|3d8|1d8|C;Pr
+Spiritual Weapon|XPHB|2|V|1 bonus||c|1 minute|60 feet|vs|||M|force|1d8|1d8|C;Pr
+Staggering Smite|XPHB|4|E|1 bonus|||instant|self|v||WIS||psychic|4d6|1d6|P;DK,Pa
+Starfall|WoW|4|V|1 action|||1 round|120 feet|vsm||DEX||radiant|7d8||D;Dr
+Starry Wisp|XPHB|0|V|1 action|||instant|60 feet|vs|||R|radiant|1d8|1:1d8 5:2d8 11:3d8 17:4d8|BD;Dr
+Steel Wind Strike|XPHB|5|C|1 action|||instant|30 feet|sm|0.1gp a Melee weapon worth 1+ SP||M|force|6d10||RW;DH,Hu,Ma
+Stinking Cloud|XPHB|3|C|1 action||c|1 minute|90 feet|vsm||CON|||||BSW;Ev,Ma
+Stone Shape|XPHB|4|T|1 action|||instant|touch|vsm|||||||CDW;Dr,Ma,Pr
+Stoneskin|XPHB|4|T|1 action||c|1 hour|touch|vsm|100gp! diamond dust worth 100+ GP, which the spell consumes||||||DRSW;DH,Dr,Ev,Hu,Ma
+Storm of Vengeance|XPHB|9|C|1 action||c|1 minute|1 miles|vs||CON,DEX||acid,bludgeoning,cold,lightning,thunder|2d6,4d6,10d6,1d6||D;Dr
+Suggestion|XPHB|2|E|1 action||c|8 hour|30 feet|vm||WIS|||||BKSW;Ev,Ma,Wl
+Summon Aberration|XPHB|4|C|1 action||c|1 hour|90 feet|vsm|400gp a pickled tentacle and an eyeball in a platinum-inlaid vial worth 400+ GP|||||*|KW;Ma,Wl
+Summon Beast|XPHB|2|C|1 action||c|1 hour|90 feet|vsm|200gp a feather, tuft of fur, and fish tail inside a gilded acorn worth 200+ GP|||||*|DR;DH,Dr,Hu
+Summon Celestial|XPHB|5|C|1 action||c|1 hour|90 feet|vsm|500gp a reliquary worth 500+ GP|||||*|CP;DK,Pa,Pr
+Summon Construct|XPHB|4|C|1 action||c|1 hour|90 feet|vsm|400gp a lockbox worth 400+ GP|||||*|W;Ma
+Summon Dragon|XPHB|5|C|1 action||c|1 hour|60 feet|vsm|500gp an object with the image of a dragon engraved on it worth 500+ GP|||||*|W;Ma
+Summon Elemental|XPHB|4|C|1 action||c|1 hour|90 feet|vsm|400gp air, a pebble, ash, and water inside a gold-inlaid vial worth 400+ GP|||||*|DRW;DH,Dr,Hu,Ma
+Summon Fey|XPHB|3|C|1 action||c|1 hour|90 feet|vsm|300gp a gilded flower worth 300+ GP|||||*|DKRW;DH,Dr,Hu,Ma,Wl
+Summon Fiend|XPHB|6|C|1 action||c|1 hour|90 feet|vsm|600gp a bloody vial worth 600+ GP|||||*|KW;Ma,Wl
+Summon Undead|XPHB|3|N|1 action||c|1 hour|90 feet|vsm|300gp a gilded skull worth 300+ GP|||||*|KW;Ma,Pr,Wl
+Sunbeam|XPHB|6|V|1 action||c|1 minute|line 60 feet|vsm||CON||radiant|6d8||CDSW;Dr,Ev,Ma,Pr
+Sunburst|XPHB|8|V|1 action|||instant|150 feet|vsm||CON||radiant|12d6||CDSW;Dr,Ev,Ma,Pr
+Swift Quiver|XPHB|5|T|1 bonus||c|1 minute|self|vsm|1gp a Quiver worth 1+ GP||||||R;DH,Hu
+Symbol|XPHB|7|A|1 minute|||permanent(dispel/trigger)|touch|vsm|1000gp! powdered diamond worth 1,000+ GP, which the spell consumes|CON,WIS,INT||necrotic|10d10||BCDW;Dr,Ma,Pr
+Synaptic Static|XPHB|5|E|1 action|||instant|120 feet|vs||INT,CON||psychic|8d6~1d6||BKSW;Ev,Ma,Wl
+Tasha's Bubbling Cauldron|XPHB|6|C|1 action|||10 minute|5 feet|vsm|||||||KW;Ma,Wl
+Tasha's Hideous Laughter|XPHB|1|E|1 action||c|1 minute|30 feet|vsm||WIS||||*|BKW;Ma,Wl
+Telekinesis|XPHB|5|T|1 action||c|10 minute|60 feet|vs||STR|||||SW;Ev,Ma
+Telepathy|XPHB|8|D|1 action|||24 hour|unlimited|vsm|||||||W;Ma
+Teleport|XPHB|7|C|1 action|||instant|10 feet|v||||force|3d10~1d100,2d12,1d8||BSW;Ev,Ma
+Teleportation Circle|XPHB|5|C|1 minute|||1 round|10 feet|vm|50gp! rare inks worth 50+ GP, which the spell consumes||||||BKSW;Ev,Ma,Wl
+Tenser's Floating Disk|XPHB|1|C|1 action|r||1 hour|30 feet|vsm|||||||W;Ma
+Thaumaturgy|XPHB|0|T|1 action|||1 minute|30 feet|v|||||||C;Pr
+Thorn Whip|XPHB|0|T|1 action|||instant|30 feet|vsm|||M|piercing|1d6|1:1d6 5:2d6 11:3d6 17:4d6|D;Dr
+Throw Glaive|WoW|1|V|1 action|||instant|60 feet|vs|||R|fire,slashing|1d8|+1d8|;
+Thunderclap|XPHB|0|V|1 action|||instant|emanation 5 feet|s||CON||thunder|1d6|1:1d6 5:2d6 11:3d6 17:4d6|BDKSW;Dr,Ev,Ma,Wl
+Thunderous Smite|XPHB|1|V|1 bonus|||instant|self|v||STR||thunder|2d6|1d6|P;DK,Pa
+Thunderwave|XPHB|1|V|1 action|||instant|cube 15 feet|vs||CON||thunder|2d8|1d8|BDSW;Dr,Ev,Ma
+Time Dilation|WoW|4|A|1 reaction|||instant|60 feet|vs|||||~4d8,1d8||S;Ev
+Time Stop|XPHB|9|T|1 action|||instant|self|v|||||~1d4 + 1||SW;Ev,Ma
+Toll the Dead|XPHB|0|N|1 action|||instant|60 feet|vs||WIS||necrotic|1d8,1d12|1:1d8 5:2d8 11:3d8 17:4d8 & 1:1d12 5:2d12 11:3d12 17:4d12|CKW;Ma,Pr,Wl
+Tongues|XPHB|3|D|1 action|||1 hour|touch|vm|||||||BCKSW;Ev,Ma,Pr,Wl
+Tranquility|WoW|6|A|1 action||c|1 minute|emanation 60 feet|v|||||~2d8|+1d8|D;Dr
+Transport via Plants|XPHB|6|C|1 action|||1 minute|10 feet|vs|||||||D;Dr
+Tree Stride|XPHB|5|C|1 action||c|1 minute|self|vs|||||||DR;DH,Dr,Hu
+Tree of Life|WoW|8|T|1 bonus|||1 minute|self|vs|||||~1d8||D;Dr
+True Polymorph|XPHB|9|T|1 action||c|1 hour|30 feet|vsm||WIS|||||BKW;Ma,Wl
+True Resurrection|XPHB|9|N|1 hour|||instant|touch|vsm|25000gp! diamonds worth 25,000+ GP, which the spell consumes||||||CD;Dr,Pr
+True Seeing|XPHB|6|D|1 action|||1 hour|touch|vsm|25gp! mushroom powder worth 25+ GP, which the spell consumes||||||BCKSW;Ev,Ma,Pr,Wl
+True Strike|XPHB|0|D|1 action|||instant|self|sm|0.01gp a weapon with which you have proficiency and that is worth 1+ CP|||radiant||5:1d6 11:2d6 17:3d6|BKSW;Ev,Ma,Wl
+Tsunami|XPHB|8|C|1 minute||c|6 round|1 miles|vs||STR||bludgeoning|6d10,5d10~1d10||D;Dr
+Unseen Servant|XPHB|1|C|1 action|r||1 hour|60 feet|vsm|||||||BKW;Ma,Wl
+Upheaval|WoW|4|V|1 action|||instant|90 feet|vs||DEX||bludgeoning,fire|1d12,3d8|+1d12|S;Ev
+Vampiric Blood|WoW|1|N|1 action||c|1 minute|self|v|||||~1d6|+1d6|;
+Vampiric Touch|XPHB|3|N|1 action||c|1 minute|self|vs|||M|necrotic|3d6|1d6|KSW;Ev,Ma,Wl
+Vicious Mockery|XPHB|0|E|1 action|||instant|60 feet|v||WIS||psychic|1d6|1:1d6 5:2d6 11:3d6 17:4d6|B;
+Vitriolic Sphere|XPHB|4|V|1 action|||instant|150 feet|vsm||DEX||acid|10d4,5d4|2d4|SW;Ev,Ma
+Void Eruption|WoW|5|N|1 bonus||c|1 minute|120 feet|v||CON|R|necrotic|5d6,2d6||C;Pr
+Wall of Fire|XPHB|4|V|1 action||c|1 minute|120 feet|vsm||DEX||fire|5d8|1d8|DSW;Dr,Ev,Ma
+Wall of Force|XPHB|5|V|1 action||c|10 minute|120 feet|vsm|||||||W;Ma
+Wall of Ice|XPHB|6|V|1 action||c|10 minute|120 feet|vsm||DEX,CON||cold|10d6,5d6|2d6,1d6|W;Ma
+Wall of Stone|XPHB|5|V|1 action||c|10 minute|120 feet|vsm||DEX|||||DSW;Dr,Ev,Ma
+Wall of Thorns|XPHB|6|C|1 action||c|10 minute|120 feet|vsm||DEX||piercing,slashing|7d8|1d8|D;Dr
+Warding Bond|XPHB|2|A|1 action|||1 hour|touch|vsm|50gp a pair of platinum rings worth 50+ GP each, which you and the target must wear for the duration||||||CP;DK,Pa,Pr
+Water Breathing|XPHB|3|T|1 action|r||24 hour|30 feet|vsm|||||||DRSW;DH,Dr,Ev,Hu,Ma
+Water Walk|XPHB|3|T|1 action|r||1 hour|30 feet|vsm|||||||CDRS;DH,Dr,Ev,Hu,Pr
+Web|XPHB|2|C|1 action||c|1 hour|60 feet|vsm||DEX||fire|2d4||SW;Ev,Ma
+Weird|XPHB|9|I|1 action||c|1 minute|120 feet|vs||WIS||psychic|10d10,5d10||KW;Ma,Wl
+Wind Walk|XPHB|6|T|1 minute|||8 hour|30 feet|vsm|||||||D;Dr
+Wind Wall|XPHB|3|V|1 action||c|1 minute|120 feet|vsm||STR||bludgeoning|4d8||DR;DH,Dr,Hu
+Wish|XPHB|9|C|1 action|||instant|self|v||||necrotic|1d10~2d4||SW;Ev,Ma
+Witch Bolt|XPHB|1|V|1 action||c|1 minute|60 feet|vsm|||R|lightning|2d12,1d12|1d12|KSW;Ev,Ma,Wl
+Word of Radiance|XPHB|0|V|1 action|||instant|emanation 5 feet|vm||CON||radiant|1d6|1:1d6 5:2d6 11:3d6 17:4d6|C;Pr
+Word of Recall|XPHB|6|C|1 action|||instant|5 feet|v|||||||C;Pr
+Wrath|WoW|0|V|1 action|||instant|60 feet|vs|||R|lightning|1d8|1:1d8 5:2d8 11:3d8 17:4d8|D;Dr
+Wrathful Smite|XPHB|1|N|1 bonus|||1 minute|self|v||WIS||necrotic|1d6|1d6|P;DK,Pa
+Yolande's Regal Presence|XPHB|5|E|1 action||c|1 minute|emanation 10 feet|vsm||WIS||psychic|4d6||BW;Ma
+Zone of Truth|XPHB|2|E|1 action|||10 minute|60 feet|vs||CHA|||||BCP;DK,Pa,Pr
