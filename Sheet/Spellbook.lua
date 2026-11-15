@@ -115,10 +115,21 @@ function RPSheet:PreparedSpell(name)
     end
 end
 
+-- Prepared spells are changed when a long rest is finished. The sheet keeps no clock,
+-- so that window is open from a long rest until the first spell cast after it.
+-- Returns true, with a message printed, while it is shut.
+local function Shut(self)
+    if not self:State().prepareClosed then return false end
+    self:Print("You change your prepared spells when you finish a long rest. You have cast a spell since, so the list stays as it is until your next one.")
+    return true
+end
+
 -- Prepares a spell from the book, if one more fits. Returns true when it did.
-function RPSheet:PrepareSpell(name)
+-- `free` skips the long rest rule (the Customize page).
+function RPSheet:PrepareSpell(name, free)
     local known = R.SPELLS[name]
     if not known or self:PreparedSpell(name) then return false end
+    if not free and Shut(self) then return false end
     if not self:SpellFits(known.level) then
         local _, maxPrepared, highest = self:SpellLimits()
         if known.level > highest then
@@ -134,8 +145,9 @@ function RPSheet:PrepareSpell(name)
 end
 
 -- Takes a spell off the prepared list. One that is always prepared stays.
-function RPSheet:UnprepareSpell(name)
+function RPSheet:UnprepareSpell(name, free)
     local spells = self:Sheet().spells
+    if not free and self:PreparedSpell(name) and Shut(self) then return false end
     for index, spell in ipairs(spells) do
         if spell.name == name then
             if spell.free then

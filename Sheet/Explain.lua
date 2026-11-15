@@ -161,6 +161,7 @@ function RPSheet:ExplainAC()
         Add(parts, "Unarmored Defense, " .. R.STAT_NAMES[class.unarmored], self:Mod(class.unarmored))
     end
     if sheet.shield then Add(parts, "shield", R.SHIELD_AC) end
+    Add(parts, "magic armor and shield", self:WornBonus())
     AddBonuses(self, parts, "AC")
     Add(parts, "Fighting Style", self:StyleAC())
     Out(self, ("Armor Class |cffffd100%d|r: %s."):format(Total(parts), Join(parts)))

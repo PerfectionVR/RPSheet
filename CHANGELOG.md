@@ -7,6 +7,14 @@
 - A found spell can be copied into the spellbook for 50 gp per spell level, paid
   from your coins (Customize > Spellbook). Spells gained by levelling stay free.
 - The companion's Weapon Mastery pick can be changed once per long rest.
+- An inventory item can count as a plain weapon, suit of armor or shield and have a
+  magic bonus (Customize > Inventory, "Counts as"). Equipping it wears or readies it
+  under its own name: magic armor and shields add their bonus to your Armor Class,
+  and a magic weapon comes onto the sheet with its bonus. An item named like one of
+  your own weapons readies and puts away that weapon.
+- A Mage changes prepared spells in the spellbook window only after a long rest:
+  the list is fixed from the first spell cast after it. Customize > Spellbook can
+  still change it at any time.
 
 ## 0.6.0
 

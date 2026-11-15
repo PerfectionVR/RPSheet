@@ -11,6 +11,8 @@ R.TEMPLATES.item = {
     weight = 0,        -- pounds, each
     cost = 0,          -- copper pieces, each; 0 = no listed price
     equipped = false,  -- worn or held
+    base = "",         -- the plain armor, shield or weapon it counts as (Sheet/Equipment.lua)
+    bonus = 0,         -- magic bonus of such an item: to Armor Class, or to the weapon's rolls
     magic = false, rarity = "",
     attune = false,    -- needs attunement before its magic works
     attuned = false,
