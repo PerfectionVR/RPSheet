@@ -71,6 +71,7 @@ function ns.ApplyRenownPerks(sheet)
     for _, key in ipairs({ "renown", "dismissed", "featureScores" }) do
         if type(sheet[key]) ~= "table" then sheet[key] = {} end
     end
+    ns.NoteRenownReached(sheet) -- before the scores are read: one faction's tier can raise another's score
     local current = {}
     EachGrant(sheet, function(key) current[key] = true end)
 

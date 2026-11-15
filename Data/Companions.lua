@@ -14,16 +14,20 @@ R.LOYALTY_HELP = ("Loyalty starts at your Charisma modifier (at least 1) and can
 -- R.COMPANIONS[family] = { desc, gift, and what the sheet counts of the gift:
 --   skills   skills the gift makes you an expert in
 --   speed    feet it adds to your own speed
--- A gift without either is only described: the sheet can't apply it by itself.
+--   moves    { swim = true }: a speed of that kind equal to your walking speed
+--   advantage  rolls it gives advantage on, by their label (Sheet/RollModes.lua)
+--   ward     { type = "psychic", sides = 4 }: a die rolled and taken off damage of
+--            that type whenever you take it (Actions/Damage.lua)
+-- A gift without any of these is only described: the sheet can't tell when it applies.
 R.COMPANIONS = {
     Aquatic = { desc = "Fish, crabs, frogs, turtles, otters and other water creatures, sometimes floating along in a bubble of water.",
-        gift = "You have a swim speed equal to your speed." },
+        gift = "You have a swim speed equal to your speed.", moves = { swim = true } },
     Beast = { desc = "Small natural animals that neither fly nor swim, and the young of larger ones. They don't age while kept.",
         gift = "You have proficiency and expertise in Animal Handling and Survival.", skills = { "Animal Handling", "Survival" } },
     Dragonkin = { desc = "Tiny dragon whelplings and the draconic animals of the Dragon Isles.",
-        gift = "You have advantage on saving throws to avoid or end being Frightened." },
+        gift = "You have advantage on saving throws to avoid or end being Frightened. Set advantage on the roll yourself when the save is about that." },
     Elemental = { desc = "Living motes of elemental energy, animate plants, and leftovers of older powers.",
-        gift = "You have advantage on saving throws to avoid or end Exhaustion." },
+        gift = "You have advantage on saving throws to avoid or end Exhaustion. Set advantage on the roll yourself when the save is about that." },
     Flying = { desc = "Birds, bats, moths, bees, flying snakes and magical versions of them.",
         gift = "Your speed is 5 feet higher.", speed = 5 },
     Humanoid = { desc = "Imps, kobolds, baby murlocs and other small folk that help in ways that aren't fighting. The DM may play one as a character of its own.",
@@ -31,9 +35,9 @@ R.COMPANIONS = {
     Magic = { desc = "Beings of magic through and through: oozes, stray eyes and tentacles, Void creatures, ghostly spirits, animated tomes.",
         gift = "You have proficiency and expertise in Arcana.", skills = { "Arcana" } },
     Mechanical = { desc = "Clockwork and engineered creatures, from mechanical chickens to toy war machines. They are switched off and stowed, not sent away.",
-        gift = "Whenever you take psychic damage, roll 1d4 and take that much less." },
+        gift = "Whenever you take psychic damage, roll 1d4 and take that much less.", ward = { type = "psychic", sides = 4 } },
     Undead = { desc = "Skeletal or ghostly animals and the like.",
-        gift = "You have advantage on death saving throws." },
+        gift = "You have advantage on death saving throws.", advantage = { "death save roll" } },
 }
 R.COMPANION_ORDER = { "Aquatic", "Beast", "Dragonkin", "Elemental", "Flying", "Humanoid", "Magic", "Mechanical", "Undead" }
 

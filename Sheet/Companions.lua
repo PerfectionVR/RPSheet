@@ -39,6 +39,22 @@ function RPSheet:CompanionSpeed()
     return gift and gift.speed or 0
 end
 
+-- True when the gift gives advantage on the roll of that label (RPSheet:AdvantageFrom).
+function RPSheet:CompanionAdvantage(label)
+    local gift = self:CompanionGift()
+    for _, name in ipairs(gift and gift.advantage or NONE) do
+        if name == label then return true end
+    end
+    return false
+end
+
+-- The die the gift takes off damage of that type, and the companion giving it; nil
+-- when it doesn't (RPSheet:TakeDamage).
+function RPSheet:CompanionWard(damageType)
+    local gift, entry = self:CompanionGift()
+    if gift and gift.ward and gift.ward.type == damageType then return gift.ward.sides, entry end
+end
+
 -- 2 when the gift makes the character an expert in that skill, else 0 (RPSheet:SkillMod).
 function RPSheet:CompanionSkillRank(name)
     local gift = self:CompanionGift()

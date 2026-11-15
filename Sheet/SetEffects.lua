@@ -66,3 +66,20 @@ function RPSheet:BaseSpeed()
     if floor and floor > own then return floor, from, own end
     return own
 end
+
+-- The first passive or item with an effect of that mode on `target` that counts now.
+function RPSheet:EffectSource(target, mode)
+    local from
+    Each(self, target, mode, function(_, name) from = from or name end)
+    return from
+end
+
+-- An effect that ties a speed to the walking speed says so; every other effect keeps
+-- the words of RPSheet:EffectText in Sheet/Derived.lua, which this wraps.
+local PlainText = RPSheet.EffectText
+function RPSheet:EffectText(effect)
+    if ns.EffectMode(effect) == "WALK" then
+        return ("%s equal to your walking speed"):format(ns.Rules.EFFECT_TARGETS[effect.target] or effect.target)
+    end
+    return PlainText(self, effect)
+end

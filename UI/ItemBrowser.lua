@@ -13,6 +13,7 @@
 --                          simply every item of its kind
 --   notes(self, entry)     optional: lines added under what the block says
 --   standing(self)         the line above the tabs
+--   top(self, body)        optional: adds more above the tabs (whose merchant is selling)
 --   own(self)              entries for the first tab, a list of { name, item }
 --   find(self, name)       the carried entry of that name, or nil
 --   marks(self, entry)     words after the block's title ("you have 2", "equipped")
@@ -169,6 +170,7 @@ function RPSheet:PopulateItemBrowser()
     body:PauseLayout()
     body:ReleaseChildren()
     UI.AddLabel(body, 1, source.standing(self) .. "\n ")
+    if source.top then source.top(self, body) end
     AddTabs(self, body)
     AddSearch(self, body)
 

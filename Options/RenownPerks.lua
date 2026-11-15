@@ -59,6 +59,19 @@ function Opt.RenownPerkArgs(faction)
                 Opt.RenownChanged(before)
             end,
         },
+        -- A tier reached once keeps counting for the faction the character started
+        -- with; a slip of the slider can be undone here.
+        reached = {
+            type = "execute", order = 2.7, width = "double",
+            name = function() return ("Forget it was once %s"):format(ns.RenownLostTier(Sheet(), faction) or "higher") end,
+            desc = "The first time a faction of your side reaches a tier, the faction you started with gains renown, and keeps it when the score drops again. The sheet remembers the highest tier this faction reached. If that was a mistake, this goes back to the tier of the score as it is now.",
+            hidden = function() return not ns.RenownLostTier(Sheet(), faction) end,
+            func = function()
+                local before = Opt.RenownTiers()
+                Sheet().renownReached[faction] = nil -- the next upkeep records the tier of the score as it is
+                Opt.RenownChanged(before)
+            end,
+        },
         training = {
             type = "select", order = 3, width = "double", name = "Taught by its trainers",
             desc = "Thirty days with the faction's trainers teaches you one of these. The sheet adds it while your renown is high enough: a language comes on top of the ones you choose, a tool or skill becomes proficient. More than one month of training? Tick the others by hand.",

@@ -57,8 +57,16 @@ function RPSheet:RiddenMount()
     if entry and entry.kind == "MOUNT" and ns.MountPace(entry) > 0 then return entry end
 end
 
+-- True for a listed mount that is a thing and not an animal, such as a flying carpet:
+-- a rider of any size sits on it, and it takes no saddle.
+function ns.MountIsThing(entry)
+    local known = R.MOUNTS[entry.name]
+    return entry.kind == "MOUNT" and known ~= nil and known.thing == true
+end
+
 -- True for a mount that needs the saddle made for flyers and swimmers.
 function ns.NeedsExoticSaddle(entry)
+    if ns.MountIsThing(entry) then return false end
     return entry.kind == "MOUNT" and ((entry.fly or 0) > 0 or (entry.swim or 0) > 0)
 end
 
@@ -74,7 +82,7 @@ function RPSheet:MountRefusal(entry)
     if entry.kind == "VEHICLE" then
         return (entry.travel or "") == "" and "an animal pulls it: ride or lead the animal" or nil
     end
-    if (R.SIZE_RANK[entry.size] or 3) <= (R.SIZE_RANK[sheet.size] or 2) then
+    if not ns.MountIsThing(entry) and (R.SIZE_RANK[entry.size] or 3) <= (R.SIZE_RANK[sheet.size] or 2) then
         return ("a mount has to be at least one size larger than you, and it is %s"):format((R.MOUNT_SIZES[entry.size] or "Large"):lower())
     end
     if ns.NeedsExoticSaddle(entry) and not self:CarriedItem(R.EXOTIC_SADDLE) then

@@ -172,6 +172,13 @@ local function CombatSection(self, body)
         function() self:RollCheck("initiative", self:Initiative(), ns.RollMode()) end,
         "Click to roll initiative.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainInitiative() end)
     Number("Speed", self:Speed() .. " ft" .. UI.RidingMark(self), nil, UI.SpeedTip(self), function() self:ExplainSpeed() end)
+    -- Swimming, climbing and flying speeds, only when the character has one (Sheet/MoveSpeeds.lua).
+    for _, kind in ipairs(R.MOVE_KINDS) do
+        local feet = self:MoveSpeed(kind)
+        if feet then
+            Number(R.MOVE_LABELS[kind], feet .. " ft", nil, R.MOVE_TIPS[kind], function() self:ExplainMoveSpeed(kind) end)
+        end
+    end
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
     Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)

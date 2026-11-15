@@ -25,5 +25,24 @@ R.STRONGHOLD_LANDS = {
 -- has reached a tier. The gains add up: a faction at Honored has given 1 + 2.
 R.SIDE_RENOWN_GAIN = { Friendly = 1, Honored = 2, Revered = 3, Exalted = 5 }
 
+-- What a faction's merchants take off their prices from Honored on: percent, and the
+-- highest rarity of magic item the discount covers. It is for everyday equipment and
+-- those magic items; the player says whose merchant is selling (Sheet/Shop.lua).
+R.RENOWN_DISCOUNT = { Honored = { 10, "Uncommon" }, Revered = { 15, "Rare" }, Exalted = { 25, "Very rare" } }
+-- Not everyday equipment: fuel is a thing of this world's engineers, and a spell
+-- component is named by what it is worth, so a cheaper one would not do.
+R.NO_DISCOUNT_ITEMS = { ["Fuel"] = true }
+R.NO_DISCOUNT_KINDS = { ["Spell components"] = true }
+-- The mounts, vehicles and ships that are everyday equipment. The ones a faction
+-- breeds or builds for itself keep their price.
+R.DISCOUNT_RIDES = {}
+for _, name in ipairs({
+    "Camel", "Draft Horse", "Elephant", "Mastiff", "Mule", "Pony", "Riding Horse", "Warhorse",
+    "Carriage", "Cart", "Chariot", "Sled", "Wagon",
+    "Airship", "Galley", "Keelboat", "Longship", "Rowboat", "Sailing Ship", "Warship",
+}) do
+    R.DISCOUNT_RIDES[name] = true
+end
+
 -- Rivals: a character rises with one of the pair, never with both.
 R.RIVAL_FACTIONS = { { "Explorers' League", "Reliquary" } }

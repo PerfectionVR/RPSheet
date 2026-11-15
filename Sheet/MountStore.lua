@@ -46,7 +46,10 @@ function RPSheet:BuyMount(name)
         self:Print(("You can't buy %s: %s."):format(name, why))
         return false
     end
-    if not self:SpendCoins(R.MOUNTS[name].cost, name) then return false end
+    -- The price is the one for whoever the character is buying from (Sheet/Shop.lua).
+    local price, percent, faction = self:MountBuyPrice(name)
+    local label = percent and ("%s, %d%% off with %s"):format(name, percent, faction) or name
+    if not self:SpendCoins(price, label) then return false end
     self:AddMount(name)
     return true
 end

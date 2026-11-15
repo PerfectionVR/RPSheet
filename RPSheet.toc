@@ -43,6 +43,7 @@ Data\Species.lua
 Data\Backgrounds.lua
 Data\Effects.lua
 Data\EffectModes.lua
+Data\MoveSpeeds.lua
 Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
@@ -90,6 +91,7 @@ Data\MagicItemsSituational.lua
 Data\StartingGear.lua
 Data\Mounts.lua
 Data\MountList.lua
+Data\MountsMade.lua
 Data\Vehicles.lua
 Data\Companions.lua
 Data\Equipment.lua
@@ -146,6 +148,7 @@ Sheet\SetEffects.lua
 Sheet\Mounts.lua
 Sheet\MountStore.lua
 Sheet\Companions.lua
+Sheet\MoveSpeeds.lua
 Sheet\Professions.lua
 Sheet\Crafting.lua
 Sheet\Combat.lua
@@ -181,6 +184,7 @@ Sheet\RenownRules.lua
 Sheet\RenownTraining.lua
 Sheet\RenownPerks.lua
 Sheet\RenownSummary.lua
+Sheet\Shop.lua
 Sheet\LevelUp.lua
 
 # Things the character does
@@ -229,6 +233,7 @@ UI\PetSection.lua
 UI\InventorySection.lua
 UI\ItemCard.lua
 UI\ItemBrowser.lua
+UI\ShopChoice.lua
 UI\ItemBrowserSheet.lua
 UI\MountCard.lua
 UI\MountSection.lua

@@ -8,21 +8,36 @@ local With = Opt.With
 -- The amount's slider reaches what the effect's way of counting needs: a bonus, a
 -- score or speed to set, or a multiplier. The options library reads `hidden` before
 -- it sets a slider up, which is where the range is brought up to date (see Opt.Bounded).
+-- A speed that equals the walking speed has no amount.
 local AMOUNT_RANGES = { [""] = { -20, 20 }, TIMES = { 2, R.MAX_MULTIPLIER } }
 function Opt.EffectAmount(effect, option)
     option.hidden = function()
-        local range = AMOUNT_RANGES[ns.EffectMode(effect)]
-            or (effect.target == "SPEED" and { 0, 120 } or { 1, 30 }) -- a speed or a score to set
+        local mode = ns.EffectMode(effect)
+        local range = AMOUNT_RANGES[mode]
+            or (ns.EffectModesFor(effect.target) and { 0, 120 } or { 1, 30 }) -- a speed or a score to set
         local current = tonumber(effect.flat) or 0
         option.min, option.max = math.min(range[1], current), math.max(range[2], current)
-        return false
+        return mode == "WALK"
     end
     return option
+end
+
+-- The ways of counting the effect's target allows, for the "How" dropdown.
+local function ModeValues(effect)
+    local values = {}
+    for _, mode in ipairs(ns.EffectModesFor(effect.target) or {}) do values[mode] = R.EFFECT_MODES[mode] end
+    return values
 end
 
 -- The editor for one effect of `owner`: a passive, or an item (Options/Inventory.lua).
 local function EffectOptions(owner, index, effect, base)
     local function this() return effect end
+    -- The dropdown shows the way the effect counts now: a way its target doesn't
+    -- allow (left over from another target) counts, and shows, as plain adding.
+    local function ShowsMode(option)
+        option.get = function() return ns.EffectMode(effect) end
+        return option
+    end
     -- An effect that sets or multiplies (Data/EffectModes.lua) has only its amount.
     local function Adds() return ns.EffectMode(effect) == "" end
     return {
@@ -34,12 +49,13 @@ local function EffectOptions(owner, index, effect, base)
                 desc = "What the effect works on. An ability score can only be set to a number, which counts when it is higher than your own score.",
                 values = R.EFFECT_TARGETS, sorting = R.EFFECT_TARGET_ORDER,
             }, this, "target"),
-            mode = With({
+            mode = ShowsMode(With({
                 type = "select", order = 1.5, name = "How",
-                desc = "Your speed can be added to, set to a number when that is higher than your own speed, or multiplied (2 doubles it).",
-                values = R.EFFECT_MODES, sorting = R.EFFECT_MODE_ORDER,
-                hidden = function() return effect.target ~= "SPEED" end,
-            }, this, "mode"),
+                desc = "Your walking speed can be added to, set to a number when that is higher than your own speed, or multiplied (2 doubles it). A swimming, climbing or flying speed can be set to a number, made equal to your walking speed, or added to when you have one.",
+                values = function() return ModeValues(effect) end,
+                sorting = function() return ns.EffectModesFor(effect.target) or {} end,
+                hidden = function() return not ns.EffectModesFor(effect.target) end,
+            }, this, "mode")),
             flat = Opt.EffectAmount(effect, With({
                 type = "range", order = 2, min = -20, max = 20, step = 1,
                 name = function() return Adds() and "Flat amount" or "Amount" end,
@@ -99,7 +115,7 @@ local function Build(passive)
             type = "input", order = 3, width = "full", multiline = 3, name = "Description",
         }, self, "desc", true),
     }
-    Opt.AddEffectArgs(args, passive, "Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing, or sets an ability score or your speed to a number that counts when it is higher than your own (your speed can also be multiplied). A passive can have as many effects as you like, and effects from different passives add up.")
+    Opt.AddEffectArgs(args, passive, "Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing, or sets an ability score or a speed to a number that counts when it is higher than your own (your walking speed can also be multiplied). A swimming, climbing or flying speed is one you only have when something sets it: to a number, or to your walking speed. A passive can have as many effects as you like, and effects from different passives add up.")
     return args
 end
 

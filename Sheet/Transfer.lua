@@ -126,6 +126,15 @@ local function CleanSheet(source)
             if score > 0 then sheet.renown[faction] = math.min(100, score) end
         end
     end
+    -- The highest tier each faction ever reached: only a tier's own lowest score is a
+    -- valid record. A string from before the record brings none, and the scores set it.
+    sheet.renownReached = {}
+    for _, faction in ipairs(R.ALL_FACTIONS) do
+        local reached = type(source.renownReached) == "table" and tonumber(source.renownReached[faction])
+        for _, tier in ipairs(R.RENOWN_TIERS) do
+            if reached == tier[1] then sheet.renownReached[faction] = reached end
+        end
+    end
     -- What a faction's trainers taught, and what that added to the sheet.
     for _, field in ipairs({ "renownTraining", "renownGranted" }) do
         sheet[field] = {}
