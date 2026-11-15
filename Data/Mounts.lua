@@ -60,6 +60,10 @@ function R.AddMount(group, name, entry)
     table.sort(R.MOUNT_NAMES[group])
 end
 
+-- Said in the note of a mount whose carrying capacity no rule lists: the number is
+-- what a creature of its size and Strength carries.
+R.CAPACITY_ESTIMATED = "What it carries is an estimate from its size and Strength."
+
 -- Something to ride: price in gold, feet a turn, pounds carried, a note, and `extra`
 -- for size (Large when left out), fly, swim, climb, renown and keep.
 function R.AddRide(name, gold, speed, capacity, desc, extra)

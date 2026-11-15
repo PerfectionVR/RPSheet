@@ -69,6 +69,11 @@ end
 function RPSheet:Disenchant(item)
     local row = R.DISENCHANT[item.rarity]
     if not row then return end
+    local missing = self:MissingTool(ENCHANTING) -- the tool in hand (Sheet/CraftTools.lua)
+    if missing then
+        self:Print(("You can't disenchant %s: %s."):format(item.name, missing))
+        return
+    end
     local name = item.name
     self:DropItem(item)
     self:Trade().materials.residue = self:Trade().materials.residue + row.worth
@@ -80,6 +85,11 @@ end
 -- A menu at the cursor with the items that can be disenchanted.
 function RPSheet:OpenDisenchantMenu(owner)
     local items = self:Disenchantable()
+    local missing = self:MissingTool(ENCHANTING)
+    if missing then
+        self:Print(("You can't disenchant anything: %s."):format(missing))
+        return
+    end
     if #items == 0 then
         self:Print("You carry no magic item your enchanting can take apart. Potions and the like, legendary items and artifacts can't be.")
         return

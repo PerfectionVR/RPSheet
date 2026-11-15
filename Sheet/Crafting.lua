@@ -88,7 +88,9 @@ function RPSheet:Craft(profession, recipe, coinsOnly)
     if recipe.vehicle then self:AddMount(name) else self:AddItem(name, 1) end
     local days = self:CraftDays(profession, name)
     local tool = self:CraftTool(profession) or self:ProfessionTool(profession)
-    self:Announce(("makes %s with %s (%s of work)."):format(ns.Mark(name), tool or profession.name:lower(), ns.DaysText(days)))
+    -- No rule says how long a vehicle takes: the time is what gear of that price would.
+    self:Announce(("makes %s with %s (%s of work%s)."):format(ns.Mark(name), tool or profession.name:lower(), ns.DaysText(days),
+        recipe.vehicle and " at the usual rate for gear of its price; the DM decides" or ""))
     local notes = { ("%s of eight hours' work, which needn't follow one another. A helper proficient with the same tools halves it."):format(ns.DaysText(days)) }
     if R.RECIPE_OPEN[name] then
         notes[#notes + 1] = ("That is the magic alone: %s is bought or made apart."):format(R.RECIPE_OPEN[name])

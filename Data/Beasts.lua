@@ -22,7 +22,13 @@
 --                    alt = { label, dice, sides, flat }   other damage in a situation
 --                      ("charge", "Bloodied target", "while Bloodied"); with
 --                      extra = true the dice come on top instead. It gets a row of
---                      its own, so the player says when the situation applies. } }
+--                      its own, so the player says when the situation applies.
+--                      alt.rider is announced on that row only (a charge that also
+--                      knocks prone); a charge that adds no damage has 0 dice
+--                    rider = "{Prone} if Large or smaller"   what else a hit does, said
+--                      in the announcement; a term in braces is marked as one
+--                    follow = { label, when }   a row of its own for the same attack
+--                      made as a follow-up (the bite a charge or a rampage gives) } }
 --                An attack bonus of false is an action without an attack roll, such
 --                as one the target saves against; the note says how it works.
 --     note       anything else worth knowing

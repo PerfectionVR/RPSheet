@@ -1,6 +1,8 @@
--- Carrying the tool: making something takes the tool in hand, not only knowing how
--- to use it. The character needs one of the profession's tools that it is proficient
--- with among its items (Tools tab of the item browser). A setting under Customize,
+-- Carrying the tool: making or gathering something takes the tool in hand, not only
+-- knowing how to use it. The character needs one of the profession's tools that it is
+-- proficient with among its items (Tools tab of the item browser). That goes for
+-- crafting, the great feast, scribing, disenchanting, and gathering herbs, ore and
+-- hides; fishing and archaeology have no tool. A setting under Customize,
 -- Professions switches the check off, for a table where the DM rules otherwise.
 local _, ns = ...
 local RPSheet = ns.addon

@@ -34,7 +34,7 @@ Ride("Warhorse Skeleton", 500, 60, 540, "A dead horse that still runs for the Fo
 -- Flying mounts, sold to the Revered (renown 25) of a side.
 Ride("Gryphon", 2000, 30, 540, "The flying mount of the Alliance.", { fly = 80, renown = { 25, "ALLIANCE" } })
 Ride("Wind Rider", 2000, 10, 450, "The flying mount of the Horde. It is clumsy on the ground.", { fly = 60, renown = { 25, "HORDE" } })
--- Its carrying capacity is not listed anywhere; this is what a Large creature of its
--- Strength (17) carries.
-Ride("Cenarion War Hippogryph", 2000, 40, 510, "Sold only to the Exalted of the Cenarion Circle. It stops obeying you if your renown there drops below 50.",
+-- Every other capacity here is the listed one. This one is not listed anywhere; it is
+-- what a Large creature of its Strength (17) carries, and the note says so.
+Ride("Cenarion War Hippogryph", 2000, 40, 510, "Sold only to the Exalted of the Cenarion Circle. It stops obeying you if your renown there drops below 50. " .. R.CAPACITY_ESTIMATED,
     { fly = 60, renown = { 50, "Cenarion Circle" }, keep = true })

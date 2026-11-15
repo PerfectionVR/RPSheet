@@ -81,6 +81,13 @@ function RPSheet:Gather(profession, mode)
         self:Print(("%s needs %s."):format(profession.name, lacks))
         return
     end
+    -- Herbalism, mining and skinning are done with their tool in hand, like making
+    -- things (Sheet/CraftTools.lua). Fishing asks for none.
+    local missing = self:MissingTool(profession)
+    if missing then
+        self:Print(("You can't go %s: %s."):format(profession.name:lower(), missing))
+        return
+    end
     local region = self:GatherRegion()
     local mod, skilled = self:GatherMod(profession)
     if profession.key == "skinning" and skilled then

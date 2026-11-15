@@ -95,6 +95,7 @@ Data\MountList.lua
 Data\MountsMade.lua
 Data\Vehicles.lua
 Data\Companions.lua
+Data\SaveAdvantages.lua
 Data\Equipment.lua
 Data\FeatChoices.lua
 Data\Example.lua
@@ -147,6 +148,7 @@ Sheet\Forms.lua
 Sheet\Pet.lua
 Sheet\Metamorphosis.lua
 Sheet\RollModes.lua
+Sheet\SaveAdvantages.lua
 Sheet\Limits.lua
 Sheet\Senses.lua
 Sheet\DefenseText.lua
@@ -219,6 +221,7 @@ Actions\Abilities.lua
 Actions\Pet.lua
 Actions\Refunds.lua
 Actions\Conditions.lua
+Actions\SaveAdvantages.lua
 Actions\Spells.lua
 Actions\SlotGrowth.lua
 Actions\SpellChoices.lua
