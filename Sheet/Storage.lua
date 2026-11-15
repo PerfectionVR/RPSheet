@@ -79,6 +79,11 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     if type(state.pactSlots) == "table" then wipe(state.pactSlots) end
     if type(state.hitDiceMore) == "table" then wipe(state.hitDiceMore) end
     state.conditions, state.exhaustion = {}, 0
+    -- What the character before left behind, as after a long rest (Actions/Rest.lua):
+    -- temporary hit points, death saves, a spell that was running, and the marks that
+    -- say the prepared spells and mastery picks were already changed since a rest.
+    state.tempHP, state.deathPass, state.deathFail, state.growing = 0, 0, 0, {}
+    state.prepareClosed, state.prepareSwap, state.cantripSwap, state.petMasteryChanged = nil, nil, nil, nil
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
     ns.ApplyLineageSpells(sheet)
