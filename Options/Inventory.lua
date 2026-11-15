@@ -114,7 +114,7 @@ local function Build(item)
         }, self, "limit"),
     }
     Opt.AddEffectArgs(args, item,
-        "What the item adds to your numbers while it is equipped, and attuned if it requires that. Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing. A magic weapon's own bonus is set on the weapon, on the Weapons page.",
+        "What the item adds to your numbers while it is equipped, and attuned if it requires that. Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing, or sets an ability score or your speed to a number that counts when it is higher than your own. A magic weapon's own bonus is set on the weapon, on the Weapons page.",
         100)
     return args
 end

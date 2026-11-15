@@ -37,6 +37,9 @@ function W.NewDraft()
         closet = {}, -- starting gear taken: item name -> how many (Wizard/Closet.lua)
         worn = {},   -- the taken armor, shield and weapons that are equipped
         gold = 0,    -- gold pieces to start with
+        gear = {},   -- the ready sets taken from class and background (Wizard/StartingGear.lua)
+        gearSet = 1, -- which of the class's sets, for a class that offers two
+        gearNote = "",
         -- A new character starts clean. What the player made by hand on the current one
         -- can be carried over, but only if they ask for it.
         keepLists = false, hasContent = hasContent,

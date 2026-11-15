@@ -25,7 +25,7 @@ function RPSheet:ItemBonus(target)
     for _, item in ipairs(self:Sheet().items or NONE) do
         if #item.effects > 0 and self:ItemActive(item) then
             for _, effect in ipairs(item.effects) do
-                if effect.target == target then total = total + self:EffectValue(effect) end
+                if effect.target == target and ns.EffectMode(effect) == "" then total = total + self:EffectValue(effect) end
             end
         end
     end
@@ -145,7 +145,12 @@ function ns.NormalizeInventory(sheet, source)
         if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM) then item.base = "" end
         item.bonus = Whole(item.bonus, 3)
         for at = #item.effects, 1, -1 do
-            if not R.EFFECT_TARGETS[item.effects[at].target] then table.remove(item.effects, at) end
+            local effect = item.effects[at]
+            if not R.EFFECT_TARGETS[effect.target] then
+                table.remove(item.effects, at)
+            elseif not R.EFFECT_MODES[effect.mode] then
+                effect.mode = "" -- an unknown way of counting just adds
+            end
         end
     end
 end

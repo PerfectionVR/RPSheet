@@ -41,6 +41,7 @@ Data\SpecGuide.lua
 Data\Species.lua
 Data\Backgrounds.lua
 Data\Effects.lua
+Data\EffectModes.lua
 Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
@@ -83,6 +84,9 @@ Data\Gear.lua
 Data\GearArms.lua
 Data\MagicItems.lua
 Data\SpellComponents.lua
+Data\MagicItemsSet.lua
+Data\MagicItemsSituational.lua
+Data\StartingGear.lua
 Data\Equipment.lua
 Data\FeatChoices.lua
 Data\Example.lua
@@ -119,6 +123,7 @@ Sheet\Tools.lua
 Sheet\Coins.lua
 Sheet\Inventory.lua
 Sheet\SpellComponents.lua
+Sheet\SetEffects.lua
 Sheet\Combat.lua
 Sheet\Armoury.lua
 Sheet\Requirements.lua
@@ -209,6 +214,7 @@ Options\Common.lua
 Wizard\Grants.lua
 Wizard\Draft.lua
 Wizard\Closet.lua
+Wizard\StartingGear.lua
 Wizard\ClosetBrowser.lua
 Wizard\Pages.lua
 Wizard\Dialog.lua
