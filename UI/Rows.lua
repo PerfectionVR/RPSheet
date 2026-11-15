@@ -98,6 +98,15 @@ function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain
     return label
 end
 
+-- Sets out the rows of a window that was just filled or resized. A row learns its
+-- height only when the layout gives it its width, after the layout has read the height
+-- it had before, so one pass can leave a row lying over the next one. The second pass
+-- sets the rows out with the heights they have now.
+function UI.SetOut(body)
+    body:DoLayout()
+    body:DoLayout()
+end
+
 -- A section title with a blank line above it.
 function UI.AddHeading(parent, text)
     local heading = AceGUI:Create("InteractiveLabel")

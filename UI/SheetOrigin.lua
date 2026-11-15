@@ -11,9 +11,13 @@ function UI.OriginSection(self, body)
         -- The score with what the rules add to it (Sheet/RenownRules.lua).
         local score, added = ns.RenownScore(self:Sheet(), faction)
         if score > 0 then
-            local tier = R.RenownTier(score)
-            if #added > 0 then tier = tier .. ", partly by rule" end
-            if ns.RenownRival(self:Sheet(), faction) then tier = tier .. " |cffff5555(rival)" end
+            -- What stands after the score. Below Friendly there is no tier to name, so
+            -- the words are joined only where there are two.
+            local notes = {}
+            if R.RenownTier(score) ~= "" then notes[#notes + 1] = R.RenownTier(score) end
+            if #added > 0 then notes[#notes + 1] = "partly by rule" end
+            local tier = table.concat(notes, ", ")
+            if ns.RenownRival(self:Sheet(), faction) then tier = (tier ~= "" and tier .. " " or "") .. "|cffff5555(rival)" end
             -- The perks of every tier reached and the next one (Sheet/RenownSummary.lua).
             renown[#renown + 1] = {
                 text = ("%s %s%d%s|r"):format(faction, UI.GREY, score, tier ~= "" and (" " .. tier) or ""),

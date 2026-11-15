@@ -113,6 +113,8 @@ end
 
 local STATES = { "Normal", "Highlight", "Disabled" }
 local fonts = {}
+local isOurs = {} -- the fonts made here
+local kept = setmetatable({}, { __mode = "k" }) -- button -> state -> the font to put back
 
 -- A font of our own for one state of a button: the theme's font and `color`, at the
 -- size and spacing of the game's font `base`.
@@ -122,6 +124,7 @@ function Skin.StateFont(name, base, theme, color)
         font = CreateFont(name)
         font:CopyFontObject(base)
         fonts[name] = font
+        isOurs[font] = true
     end
     local _, size = base:GetFont()
     font:SetFont(ns.ThemeFont(theme), size or 12, "")
@@ -138,8 +141,18 @@ function Skin.ButtonFonts(widget, button, wanted)
         local get, set = button["Get" .. state .. "FontObject"], button["Set" .. state .. "FontObject"]
         local was = wanted[state] and get and set and get(button)
         if was then
+            -- The font to put back is the last one that wasn't ours: the library gives
+            -- a line of a tree another font when the line takes another place.
+            local own = kept[button]
+            if not own then
+                own = {}
+                kept[button] = own
+            end
+            if not isOurs[was] then own[state] = was end
             if Skin.First(widget, "font" .. state, button) then
-                Skin.Undo(widget, function() set(button, was) end)
+                Skin.Undo(widget, function()
+                    if own[state] then set(button, own[state]) end
+                end)
             end
             set(button, wanted[state])
         end

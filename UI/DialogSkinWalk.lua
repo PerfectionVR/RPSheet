@@ -12,6 +12,7 @@ function Skin.Apply(dialog)
     local theme = Skin.Theme()
     if type(root) ~= "table" or not theme then return end
     pcall(Skin.Walk, root, { theme = theme }, true) -- never an error into the library
+    Skin.pass = Skin.pass + 1 -- this redraw is done: the next one styles every part again
 end
 
 -- The library rebuilds a window's contents through Open, both when it is first shown
@@ -33,6 +34,7 @@ end)
 
 -- After a theme change: the open windows take the new look straight away.
 function ns.SkinOpenDialogs()
+    Skin.pass = Skin.pass + 1 -- another theme: every part is styled again
     for dialog in pairs(OURS) do
         if AceConfigDialog.OpenFrames[dialog] then
             ns.AddDialogBacking(dialog)

@@ -12,6 +12,11 @@ local _, ns = ...
 local Skin = { styles = {}, failed = {} }
 ns.DialogSkin = Skin
 
+-- Counts the redraws of a window. The library fills a window from the inside out and
+-- each filled group is walked (DialogSkinWalk.lua), so one redraw comes past the same
+-- part up to three times: it is styled the first time only.
+Skin.pass = 1
+
 local records = {} -- part -> what to undo when it is handed back
 
 function Skin.Theme()
@@ -65,17 +70,26 @@ function Skin.Style(widget, theme)
     local kind = widget.type
     local style = kind and Skin.styles[kind]
     if not style or Skin.failed[kind] then return end
+    local record = records[widget]
+    if record and record.pass == Skin.pass then return end -- styled in this redraw already
     local ok, problem = pcall(style, widget, theme)
     if not ok then
         Skin.failed[kind] = problem or true
         Skin.Restore(widget)
+        return
     end
+    record = records[widget]
+    if record then record.pass = Skin.pass end
 end
 
 -- Styles a part again that is already styled, after the library changed its state.
 function Skin.Restyle(widget)
     local theme = Skin.Theme()
-    if theme and records[widget] then Skin.Style(widget, theme) end
+    local record = records[widget]
+    if theme and record then
+        record.pass = nil -- its state changed since it was styled
+        Skin.Style(widget, theme)
+    end
 end
 
 local function Then(widget, after, busy, ...)
