@@ -43,6 +43,9 @@ ends with a summary line; `run-all.sh` fails when any script reports a problem.
 | `t-test-items-*.lua` | Coins, inventory, equipping, every catalogue item, the item browser's sources, professions and crafting, mounts, starting gear, the armoury |
 | `t-test-windows-*.lua` | The real AceGUI and AceConfigDialog on a fake frame API (`-ui*.lua`), then the sheet, its tabs and rows, the item browser, popups, every settings page, the wizard and level dialog by clicking, and the dialog skin's restore |
 | `t-conform-spells.lua`, `data/site-*.txt`, `data/spells-allowed.lua` | Every spell fact against the rules site's, read from the files in `data/` (their first lines say how they were made); the differences that are meant are listed with their reasons |
+| `t-conform-classes.lua`, `t-conform-origin.lua`, `t-conform-items.lua`, `t-conform-beasts.lua`, `t-conform-*-lib.lua`, `data/` | Every class and subclass at every level, species, backgrounds, feats, weapons, armor, items, mounts and beasts against facts reduced from the rules site |
+| `t-sync-clients.lua` | Several players in one run: each gets its own globals, saved variables, name and realm, with the real AceAddon, AceEvent, AceDB, AceConsole, AceComm, ChatThrottleLib, LibSerialize and LibDeflate, joined by a fake addon channel and chat that hold to the game's limits, and a stand-in for Total RP 3 |
+| `t-sync-*.lua` | Built on that: sheets shared between two and three players and what their tooltips say (`share`, `tooltip`), broken and hostile messages (`hostile`), how much is sent (`traffic`), which sheet belongs to which character or Total RP 3 profile over logins and reloads (`profiles`), announcements and chat links (`chat`), `/sheet` (`slash`) |
 | `*-lib.lua`, `*-base.lua`, `*-walk.lua`, `*-dialog.lua`, `*-codec.lua` | Helpers shared by the scripts of one group |
 | `dupkeys.py`, `dupfuncs.py`, `freenames.py`, `toccheck.py` | Static checks: a key twice in a table, a function defined twice, undeclared names, the load list against the files |
 
@@ -50,7 +53,9 @@ ends with a summary line; `run-all.sh` fails when any script reports a problem.
 
 Nothing is drawn. Text widths are estimated, so wrapping and what a window looks like
 are not checked; neither is anything that needs the real game: its menus and popups,
-other addons, syncing between two players, combat lockdown.
+other addons, combat lockdown. The players of the `t-sync-*.lua` scripts talk over a
+model of the game's addon channel and of Total RP 3 (written from its 3.5.5 source):
+what the real ones do differently only two people in the game can find.
 
 ## Writing a test
 

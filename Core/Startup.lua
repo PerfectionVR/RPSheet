@@ -37,6 +37,7 @@ function RPSheet:OnEnable()
     -- switch to that profile's sheet and refresh the name.
     local function OnProfileChanged()
         if not self:UpdateSheetKey() then self:Refresh() end
+        self:QueueBroadcast() -- another character now, also while the sheet window is closed
         LibStub("AceConfigRegistry-3.0"):NotifyChange(ADDON)
         ns.OfferWizard()
     end
@@ -46,19 +47,26 @@ function RPSheet:OnEnable()
     -- Total RP 3 may finish loading its profile after us; catch up once shortly after
     -- login, then offer the creation wizard if this profile has no character yet.
     C_Timer.After(3, OnProfileChanged)
+    -- The wizard isn't opened in combat: offer it when the fight is over.
+    self:RegisterEvent("PLAYER_REGEN_ENABLED", function() ns.OfferWizard() end)
 end
 
--- /sheet            show or hide the sheet
--- /sheet config     settings and character editor
--- /sheet new        creation wizard
--- /sheet lock       lock or unlock the window
--- /sheet rest       long rest
--- /sheet damage 14 fire   take damage of a type (the type can be left out)
--- /sheet heal 8     regain hit points
+local USAGE = {
+    "/sheet - show or hide the sheet",
+    "/sheet config - settings and character editor",
+    "/sheet new - creation wizard",
+    "/sheet lock - lock or unlock the window",
+    "/sheet rest - long rest",
+    "/sheet damage 14 fire - take damage of a type (the type can be left out)",
+    "/sheet heal 8 - regain hit points",
+}
+
 function RPSheet:SlashCommand(input)
-    local command = input:trim():lower()
+    local command = (input or ""):trim():lower()
     local verb, rest = command:match("^(%a+)%s*(.*)$")
-    if command == "config" then
+    if command == "" then
+        self:ToggleWindow()
+    elseif command == "config" then
         AceConfigDialog:Open(ADDON)
     elseif command == "lock" then
         self:ToggleLock()
@@ -69,6 +77,10 @@ function RPSheet:SlashCommand(input)
     elseif verb == "damage" or verb == "heal" then
         self:DamageCommand(verb, rest)
     else
-        self:ToggleWindow()
+        -- A mistyped word says so, instead of opening or closing the window without one.
+        if command ~= "help" then
+            self:Print(("\"%s\" is not something /sheet knows."):format(ns.Codec.Cut(ns.Codec.PlainText(command), 40)))
+        end
+        for _, line in ipairs(USAGE) do self:Print(line) end
     end
 end

@@ -76,7 +76,9 @@ function ns.LinkTerms(text, sender)
     for _, pattern in ipairs(OURS) do
         ours = ours or text:find(pattern) ~= nil
     end
-    return (text:gsub("%[([^%[%]|]+)%]", function(term)
+    return (text:gsub("()%[([^%[%]|]+)%]", function(at, term)
+        -- The name inside a link the game made (an item, a spell) is that link's.
+        if text:sub(at - 2, at - 1) == "|h" then return end
         if ours or ns.TermInfo(term) then
             return ("|H%s:%s:%s|h%s[%s]|r|h"):format(LINK, sender, term, COLOR, term)
         end
