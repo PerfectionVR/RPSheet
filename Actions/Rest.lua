@@ -30,7 +30,8 @@ function RPSheet:LongRest()
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
     state.conditions.Concentrating = nil
     state.petMasteryChanged = nil -- Weapon Mastery picks can be changed again
-    state.prepareClosed = nil     -- and so can the spellbook's prepared spells
+    state.prepareClosed = nil     -- and so can the prepared spells
+    state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).

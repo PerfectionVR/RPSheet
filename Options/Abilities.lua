@@ -65,6 +65,13 @@ local function StepOptions(ability, index, action)
                 type = "select", order = 8, name = "Counts as", hidden = Only("DICE"), values = R.DICE_KINDS, sorting = R.DICE_KIND_ORDER,
             }, this, "dice"),
 
+            damage = With({
+                type = "select", order = 8.5, name = "Damage type",
+                desc = "What kind of damage the dice deal, for features that treat one kind differently.",
+                hidden = function() return action.type ~= "DICE" or (action.dice ~= "DAMAGE" and action.dice ~= "DRAIN") end,
+                values = R.DAMAGE_TYPE_VALUES, sorting = R.DAMAGE_TYPE_ORDER,
+            }, this, "damage"),
+
             -- Roll the weapon's dice
             times = With({
                 type = "range", order = 9, min = 1, max = 5, step = 1, name = "Weapon dice multiplier", hidden = Only("WEAPON"),

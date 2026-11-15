@@ -19,6 +19,14 @@ R.DAMAGE_TYPES = {
 R.DAMAGE_TYPE = {}
 for _, name in ipairs(R.DAMAGE_TYPES) do R.DAMAGE_TYPE[name] = true end
 
+-- For a dropdown in the editor: the types by name, with "not set" first.
+R.DAMAGE_TYPE_VALUES = { [""] = "Not set" }
+R.DAMAGE_TYPE_ORDER = { "" }
+for _, name in ipairs(R.DAMAGE_TYPES) do
+    R.DAMAGE_TYPE_VALUES[name] = name:sub(1, 1):upper() .. name:sub(2)
+    R.DAMAGE_TYPE_ORDER[#R.DAMAGE_TYPE_ORDER + 1] = name
+end
+
 -- The three ways a damage type can be met, in the order the rules apply them.
 R.DEFENSE_KINDS = { "immune", "resist", "vulnerable" }
 

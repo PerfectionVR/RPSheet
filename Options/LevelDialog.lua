@@ -99,6 +99,12 @@ local function Blocked(key, name)
     return ns.PickBlocked(key, name, ChoiceLevel(), draft.picks[key], SubclassAfter(), Picking())
 end
 
+-- True if a pick made at an earlier level has to stay: only so many may be exchanged
+-- when a level is gained (Sheet/PickSwaps.lua). Looking at the choices again is free.
+local function SwapLocked(key, name)
+    return ns.PickSwapLocked(key, name, draft.before, draft.picks, Picking())
+end
+
 -- A list that follows another (list.follows) loses the picks that list no longer
 -- allows: a mastered spell that was taken out of the spellbook is open again.
 local function DropUnfollowed()
@@ -125,8 +131,15 @@ local function FeatSkillLimit()
     return draft and ns.FeatSkillLimit(Sheet()) or 0
 end
 
-local function FeatSkillsPicked()
+-- Tools picked in place of skills (Skilled), out of the same picks.
+local function FeatToolsPicked()
     local count = 0
+    for _ in pairs(draft.featTools) do count = count + 1 end
+    return count
+end
+
+local function FeatSkillsPicked()
+    local count = FeatToolsPicked()
     for _ in pairs(draft.featSkills) do count = count + 1 end
     return count
 end
@@ -155,7 +168,7 @@ end
 local function Problem()
     local featSkills = FeatSkillLimit()
     if featSkills > 0 and FeatSkillsPicked() ~= featSkills then
-        return ("Choose %d skills for your feats (%d chosen)."):format(featSkills, FeatSkillsPicked())
+        return ("Choose %d skills or tools for your feats (%d chosen)."):format(featSkills, FeatSkillsPicked())
     end
     local expertise = ExpertiseLimit()
     if expertise > 0 and ExpertisePicked() ~= expertise then
@@ -465,7 +478,9 @@ local args = {
             end
             if ManeuverLimit() > 0 then sheet.maneuvers = CopyTable(draft.maneuvers) end
             if ExpertiseLimit() > 0 then sheet.expertise = CopyTable(draft.expertise) end
-            if FeatSkillLimit() > 0 then sheet.featSkills = CopyTable(draft.featSkills) end
+            if FeatSkillLimit() > 0 then
+                sheet.featSkills, sheet.featTools = CopyTable(draft.featSkills), CopyTable(draft.featTools)
+            end
             sheet.featChoices = CopyTable(draft.featChoices) -- kept per feat; the upkeep drops what no feat asks for
             for _, feature in ipairs(SkillFeatures()) do sheet.featureSkills[feature] = draft.featureSkills[feature] end
             if taking then
@@ -527,7 +542,10 @@ end
 -- Skills from feats: one checkbox per skill the character isn't proficient in yet.
 args.featSkills = {
     type = "group", inline = true, order = 13.4, args = {},
-    name = function() return ("Skills from your feats (%d of %d chosen)"):format(draft and FeatSkillsPicked() or 0, FeatSkillLimit()) end,
+    name = function()
+        local title = draft and ns.FeatToolLimit(Sheet()) > 0 and "Skills and tools from your feats" or "Skills from your feats"
+        return ("%s (%d of %d chosen)"):format(title, draft and FeatSkillsPicked() or 0, FeatSkillLimit())
+    end,
     hidden = function() return FeatSkillLimit() == 0 end,
 }
 for index, skill in ipairs(R.SKILLS) do
@@ -543,6 +561,30 @@ for index, skill in ipairs(R.SKILLS) do
         disabled = function() return not draft.featSkills[name] and FeatSkillsPicked() >= FeatSkillLimit() end,
         get = function() return draft.featSkills[name] or false end,
         set = function(_, value) draft.featSkills[name] = value or nil end,
+    }
+end
+
+-- A feat that offers skills or tools (Skilled) lists the tools under the skills: the
+-- ones the character isn't proficient with from somewhere else.
+args.featSkills.args.toolHead = {
+    type = "header", order = 100, name = "Or tools",
+    hidden = function() return not draft or ns.FeatToolLimit(Sheet()) == 0 end,
+}
+for index, name in ipairs(R.TOOL_ORDER) do
+    args.featSkills.args["tool" .. index] = {
+        type = "toggle", order = 100 + index, width = 1, name = name,
+        desc = ("Proficiency with this tool in place of a skill, from the Skilled feat. %s; checks with it normally use %s."):format(
+            R.TOOL_KINDS[R.TOOLS[name].kind] or "Tool", R.STAT_NAMES[R.TOOLS[name].stat] or "an ability"),
+        hidden = function()
+            if not draft or ns.FeatToolLimit(Sheet()) == 0 then return true end
+            return not draft.featTools[name] and ns.FeatToolTaken(Sheet(), name)
+        end,
+        disabled = function()
+            if draft.featTools[name] then return false end
+            return FeatSkillsPicked() >= FeatSkillLimit() or FeatToolsPicked() >= ns.FeatToolLimit(Sheet())
+        end,
+        get = function() return draft.featTools[name] or false end,
+        set = function(_, value) draft.featTools[name] = value or nil end,
     }
 end
 
@@ -576,7 +618,10 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
     local list = R.PICK_LISTS[key]
     local group = {
         type = "group", inline = true, order = 12.5 + listIndex / 10, args = {},
-        name = function() return ("%s (%d of %d chosen)"):format(list.title, draft and PicksChosen(key) or 0, PickLimit(key)) end,
+        name = function()
+            local swaps = draft and ns.PickSwapNote(key, draft.before, draft.picks, Picking()) or ""
+            return ("%s (%d of %d chosen%s)"):format(list.title, draft and PicksChosen(key) or 0, PickLimit(key), swaps)
+        end,
         hidden = function() return PickLimit(key) == 0 end,
     }
     -- A long list leaves out what the character can't pick yet.
@@ -612,7 +657,7 @@ for listIndex, key in ipairs(R.PICK_LIST_ORDER) do
             hidden = function() return Hidden(name) end,
             desc = list.items[name].desc,
             disabled = function()
-                if draft.picks[key][name] then return false end
+                if draft.picks[key][name] then return SwapLocked(key, name) end
                 return PicksChosen(key) >= PickLimit(key) or Blocked(key, name) ~= nil
             end,
             get = function() return draft.picks[key][name] or false end,
@@ -693,11 +738,21 @@ function ns.OpenLevelDialog(level, reopen)
         level = level, taking = level > sheet.level, kind = kind, subclass = "", style = "", reopen = reopen,
         maneuvers = CopyTable(sheet.maneuvers), featureSkills = CopyTable(sheet.featureSkills),
         options = CopyTable(sheet.featureOptions), picks = CopyTable(sheet.picks), expertise = CopyTable(sheet.expertise), featSkills = CopyTable(sheet.featSkills),
+        featTools = CopyTable(sheet.featTools or {}), before = {},
         featChoices = CopyTable(sheet.featChoices or {}),
         record = record and CopyTable(record) or Levels.NewRecord(kind),
     }
     for _, key in ipairs(R.PICK_LIST_ORDER) do draft.picks[key] = draft.picks[key] or {} end
     DropUnfollowed() -- a pick that stopped being valid is asked for again
+    -- The picks the character had before this level: only so many of them may be
+    -- exchanged while taking it (see SwapLocked).
+    if draft.taking then
+        for _, key in ipairs(R.PICK_LIST_ORDER) do
+            if R.PICK_LISTS[key].swaps and ns.PickLimit(key, sheet.class, level - 1, sheet.subclass) > 0 then
+                draft.before[key] = CopyTable(draft.picks[key])
+            end
+        end
+    end
     if kind == "BOON" then draft.record.choice = "FEAT" end
     -- The specialization's suggestions are pre-selected; the player can pick otherwise.
     local guide = R.SpecGuide(sheet.class, sheet.spec)

@@ -46,6 +46,12 @@ local function Build(spell)
         dice = With({
             type = "select", order = 8, name = "Counts as", hidden = rollsDice, values = R.DICE_KINDS, sorting = R.DICE_KIND_ORDER,
         }, self, "dice"),
+        damage = With({
+            type = "select", order = 8.5, name = "Damage type",
+            desc = "What kind of damage the dice deal, for features that treat one kind differently. Left unset, a spell from the built-in list keeps its own.",
+            hidden = function() return spell.count == 0 or spell.dice ~= "DAMAGE" end,
+            values = R.DAMAGE_TYPE_VALUES, sorting = R.DAMAGE_TYPE_ORDER,
+        }, self, "damage"),
         addMod = With({
             type = "toggle", order = 9, name = "Add spellcasting modifier", hidden = rollsDice,
             desc = "Adds your spellcasting ability modifier to the dice, as healing spells usually do.",

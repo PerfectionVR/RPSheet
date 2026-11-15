@@ -140,7 +140,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
 
     local function finish()
         -- The spellbook's prepared list is fixed from the first spell after a long rest.
-        if ns.HasSpellbook(self:Sheet()) then self:State().prepareClosed = true end
+        if ns.PreparesAtRest(self:Sheet()) then self:State().prepareClosed = true end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
         local used = self:SpendComponents(spell)
@@ -181,7 +181,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit)
         self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
             -- A feature can make low force damage dice count as higher.
-            local raised = spell.dice == "DAMAGE" and R.SPELL_DAMAGE[spell.name] == "force" and self:RaiseForceDice(rolls)
+            local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
                 .. (note and (" (" .. note .. ")") or "")

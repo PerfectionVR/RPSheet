@@ -138,6 +138,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFeatureSkills(sheet)
     ns.ApplyFeatSkills(sheet)
     ns.ApplyFeatChoices(sheet) -- before expertise: a feat's skill can be picked for it
+    ns.ApplyFeatTools(sheet)   -- after the feats' own tools: one isn't picked twice
     ns.ApplyExpertise(sheet)
     ns.ApplySpellPicks(sheet)
     ns.ApplyPreparedPicks(sheet) -- before the always-prepared spells: a pick makes way for one

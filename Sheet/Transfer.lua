@@ -158,10 +158,12 @@ local function CleanSheet(source)
             if type(name) == "string" and R.SPELLS[name] and source.spellbook[name] == true then sheet.spellbook[name] = true end
         end
     end
-    sheet.tools = {}
-    if type(source.tools) == "table" then
-        for _, name in ipairs(R.TOOL_ORDER) do
-            if source.tools[name] == true then sheet.tools[name] = true end
+    for _, field in ipairs({ "tools", "featTools" }) do
+        sheet[field] = {}
+        if type(source[field]) == "table" then
+            for _, name in ipairs(R.TOOL_ORDER) do
+                if source[field][name] == true then sheet[field][name] = true end
+            end
         end
     end
     sheet.picks = {}
@@ -205,6 +207,13 @@ local function CleanSheet(source)
         local original = source.spells[index]
         spell.level = math.max(0, math.min(9, math.floor(tonumber(original.level) or 0)))
         spell.count = math.max(0, math.min(40, math.floor(tonumber(original.count) or 0)))
+        if not R.DAMAGE_TYPE[spell.damage] then spell.damage = "" end
+    end
+    -- A damage type is one of the known ones or not set.
+    for _, ability in ipairs(sheet.abilities) do
+        for _, action in ipairs(ability.actions) do
+            if not R.DAMAGE_TYPE[action.damage] then action.damage = "" end
+        end
     end
     return sheet
 end

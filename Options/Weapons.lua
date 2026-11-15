@@ -86,7 +86,7 @@ local function Build(weapon)
                 return ("Mastery (%s%d of %d used|r)"):format(used > limit and Opt.RED or "", used, limit)
             end,
             desc = function()
-                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature. Your class allows the mastery of a set number of weapons; the count turns red when you go over it." }
+                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature, or the Weapon Master feat for the one kind of weapon chosen for it. Your class allows the mastery of a set number of weapons; the count turns red when you go over it." }
                 for _, name in ipairs(R.MASTERY_ORDER) do
                     if name ~= "" then lines[#lines + 1] = ("|cffffd100%s|r: %s"):format(name, R.MASTERIES[name].desc) end
                 end

@@ -83,6 +83,18 @@ function ns.ApplyFeatChoices(sheet)
     Describe(sheet, instances)
 end
 
+-- The kinds of weapon whose mastery property a feat lets the character use
+-- ({ [weapon name] = true }), and how many feats do so.
+function ns.FeatMasteryWeapons(sheet)
+    local kinds, count = {}, 0
+    for _, instance in ipairs(ns.FeatInstances(sheet)) do
+        ns.EachFeatPick(sheet.featChoices, instance, "mastery", function(value)
+            kinds[value], count = true, count + 1
+        end)
+    end
+    return kinds, count
+end
+
 -- True if a tool is one picked for a feat the character has.
 function ns.FeatTool(sheet, name)
     local found = false

@@ -48,6 +48,10 @@ for index, classLevel in ipairs({ 11, 13, 15, 17 }) do
         feature = "Mystic Arcanum", spellLevel = spellLevel, once = true, only = true, mark = "arcanum",
         note = "Mystic Arcanum: you cast it once without a spell slot. A long rest brings the casting back.",
     })
+    -- One arcanum spell, of whichever level, can be exchanged when a level is gained
+    -- (see Sheet/PickSwaps.lua).
+    R.PICK_LISTS["arcanum" .. spellLevel].swapGroup = "arcanum"
+    R.PICK_LISTS["arcanum" .. spellLevel].swaps = 1
 end
 
 -- Spell Mastery, at level 18.
