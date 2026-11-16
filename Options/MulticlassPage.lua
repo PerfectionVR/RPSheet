@@ -37,8 +37,9 @@ local function EntryPicker(key, field, order, name, desc, list)
             return ""
         end,
         set = function(_, value)
-            if Entry() then Entry()[field] = value end
-            Opt.Regrant()
+            Opt.Regrant(function()
+                if Entry() then Entry()[field] = value end
+            end)
         end,
     }
 end

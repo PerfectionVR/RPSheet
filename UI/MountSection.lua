@@ -8,8 +8,8 @@ local Util = ns.Util
 
 local RED = "|cffff5555"
 local RIDE_HELP = "A trained mount moves on your turn as you direct it, and can only Dash, Disengage or Dodge. If something moves it against its will, or you or it are knocked prone, you make a DC 10 Dexterity save or fall off and land prone."
-local KEEP_HELP = ("A day's feed costs %s and a day's stabling %s. Armor made for a mount costs %d times the price and weighs twice as much."):format(
-    ns.CoinText(R.FEED_COPPER), ns.CoinText(R.STABLE_COPPER), R.BARDING_COST)
+local KEEP_HELP = ("A day's feed costs %s and a day's stabling %s. Armor made for a mount costs %d times the price and weighs %d times as much."):format(
+    ns.CoinText(R.FEED_COPPER), ns.CoinText(R.STABLE_COPPER), R.BARDING_COST, R.BARDING_WEIGHT)
 
 -- After the Speed row's number while riding: how the mount moves, if not on the ground.
 function UI.RidingMark(self)

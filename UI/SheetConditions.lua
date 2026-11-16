@@ -14,6 +14,7 @@ function UI.ConditionSection(self, body)
                 lines[#lines + 1] = ("%s%s|r: %s"):format(UI.ACCENT, condition.name, condition.desc)
             end
         end
+        lines[#lines + 1] = R.CONDITION_HELP
         lines[#lines + 1] = "Click to choose the conditions you are under."
         return table.concat(lines, "\n\n")
     end

@@ -51,6 +51,7 @@ args.confirm = {
         -- The style is the class's own; a class that is new gets it from SetLevel as well.
         local style = slot and L.draft.style ~= "" and L.draft.style or nil
         if style then ns.SetClassStyle(sheet, L.draft.class, slot, style) end
+        L.ApplyOpenStyles(sheet) -- styles left empty, asked for again (LevelDialogStyles.lua)
         if L.draft.kind then Levels.Set(sheet, level, L.draft.record) end
         for _, feature in ipairs(L.OptionFeatures()) do sheet.featureOptions[feature.name] = L.draft.options[feature.name] end
         for _, key in ipairs(R.PICK_LIST_ORDER) do

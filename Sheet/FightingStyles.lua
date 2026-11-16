@@ -87,6 +87,16 @@ function ns.StyleSlots(sheet)
     return slots
 end
 
+-- The slots of StyleSlots that have no style in them: given up under Customize, or
+-- never picked on an older character. The choices dialog asks for them.
+function ns.OpenStyleSlots(sheet)
+    local open = {}
+    for _, slot in ipairs(ns.StyleSlots(sheet)) do
+        if not R.FIGHTING_STYLES[slot.name] then open[#open + 1] = slot end
+    end
+    return open
+end
+
 -- The styles the character has chosen and is entitled to, each once however many of
 -- its classes picked it: a list of { name = , style = <its data> }.
 function ns.StylesHeld(sheet)

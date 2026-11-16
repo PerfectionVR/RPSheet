@@ -267,6 +267,7 @@ Actions\NextRollBonus.lua
 Actions\RollQuestions.lua
 Actions\Incapacitated.lua
 Actions\Weapons.lua
+Actions\PopupBox.lua
 Actions\Inventory.lua
 Actions\Scrolls.lua
 Actions\Mounts.lua
@@ -401,6 +402,7 @@ Options\LevelDialogManeuvers.lua
 Options\LevelDialogCheck.lua
 Options\LevelDialogGains.lua
 Options\LevelDialogClass.lua
+Options\LevelDialogStyles.lua
 Options\LevelDialogFeat.lua
 Options\LevelDialogPoints.lua
 Options\LevelDialogSkills.lua
@@ -420,6 +422,8 @@ Options\Weapons.lua
 Options\WeaponStore.lua
 Options\WeaponStorePage.lua
 Options\Abilities.lua
+Options\SpellPage.lua
+Options\SpellListTop.lua
 Options\Spells.lua
 Options\Spellbook.lua
 Options\Passives.lua

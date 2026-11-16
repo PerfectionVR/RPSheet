@@ -242,6 +242,21 @@ function ns.FeaturesGainedAt(class, subclass, level)
     return gained
 end
 
+-- The features one class of a character gains on reaching `level` of that class, for
+-- this character: those that hang on its specialization, on an option it picked or on
+-- something else of the sheet (the kind of beast its companion is) are counted only
+-- when they apply. `view` is the character of one class or a view of one class (it
+-- may carry options picked but not yet saved, in featureOptions); the features it
+-- deleted are listed all the same. Worked out on every call: nothing is kept.
+function ns.FeaturesGainedFor(view, level)
+    local gained = {}
+    local like = setmetatable({ level = level, dismissed = {} }, { __index = view })
+    EachClassFeature(like, function(feature)
+        if feature.level == level then gained[#gained + 1] = feature end
+    end)
+    return gained
+end
+
 -- Called when an entry is deleted in the editor.
 function ns.DismissAuto(sheet, entry)
     if entry.auto and entry.auto ~= "" then

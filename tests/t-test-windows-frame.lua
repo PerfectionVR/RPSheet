@@ -10,6 +10,9 @@ local saved, profile = RPSheet.db.char, RPSheet.db.profile
 local window = RPSheet.window
 local frame = window.frame
 local widths, rowsChecked = 0, 0
+local fitChecked = 0
+local ROW_MARGIN = 0.9 -- a third-width row's text may take this share of its width at most
+local checkFit = true
 
 local function Check(what, ok)
     if not ok then Problem(what) end
@@ -229,6 +232,22 @@ local function CheckWidth(label, width)
     Check(where .. ": the tabs run past the window's edge", last:GetRight() <= edge + 0.5)
     rowsChecked = rowsChecked + CheckFlowRows(RPSheet.body, where)
     CheckOverlap(RPSheet.body, where)
+    -- a third-width row's text (the numbers, checks, saves, bars) stays on one line
+    -- with the theme's own font, with room to spare: text widths are only estimated
+    -- here, and the game's letters can be wider. (Half-width rows carry names of any
+    -- length, and a larger font is the player's choice: those may wrap.)
+    for _, part in ipairs(checkFit and RPSheet.body.children or {}) do
+        if part.relWidth and part.relWidth < 0.4 and part.type == "InteractiveLabel" then
+            local text = part.label:GetText() or ""
+            local _, size = part.label:GetFont()
+            local _, wide = F.Measure(text, size or 12)
+            local room = part.label:GetWidth()
+            if text:find("\n") == nil and wide > room * ROW_MARGIN then
+                Problem(("%s: '%s' needs %d of %d pixels"):format(where, F.Plain(text):sub(1, 30), wide, math.floor(room)))
+            end
+            fitChecked = fitChecked + 1
+        end
+    end
     -- nothing is wider than the window
     for _, part in ipairs(RPSheet.body.children) do
         if part.frame:GetRight() > edge + 0.5 then
@@ -321,11 +340,13 @@ Try("resize with a large font", function()
     local was = theme.fontSize
     theme.fontSize = 16
     RPSheet:ApplyTheme()
+    checkFit = false
     ResizeRun("WARRIOR 11 font 16")
+    checkFit = true
     theme.fontSize = was
     RPSheet:ApplyTheme()
     F.Settle()
 end)
 
 SmokeChecks("after the window tests")
-Finish("frame", ("close, lock, move, minimize and cog checked; %d widths laid out, %d part-width rows checked"):format(widths, rowsChecked))
+Finish("frame", ("close, lock, move, minimize and cog checked; %d widths laid out, %d part-width rows checked, %d third-width texts fitted"):format(widths, rowsChecked, fitChecked))

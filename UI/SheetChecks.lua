@@ -1,4 +1,5 @@
--- The sheet's ability checks and saving throws, each a roll to click.
+-- The sheet's ability checks and saving throws, each a roll to click; a right-click
+-- shows how the number is worked out (UI.AddRollLabel).
 local _, ns = ...
 local R = ns.Rules
 local UI = ns.UI
@@ -8,7 +9,7 @@ function UI.CheckSection(self, body)
     UI.AddHeading(body, "Ability checks")
     for _, stat in ipairs(R.STATS) do
         local mod = self:CheckMod(stat)
-        UI.AddLabel(body, 0.33, ("%s %d %s(%s)|r"):format(stat, self:Score(stat), UI.GREY, Signed(mod)),
+        UI.AddRollLabel(body, 0.33, ("%s %d %s(%s)|r"):format(stat, self:Score(stat), UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " check", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat],
             function() return ("%s\n\nClick to roll a %s check.\n%s"):format(ns.Glossary[stat], R.STAT_NAMES[stat], ns.ROLL_MODE_HELP) end,
@@ -22,7 +23,7 @@ function UI.SaveSection(self, body)
     for _, stat in ipairs(R.STATS) do
         local mod = self:SaveMod(stat)
         local name = saves[stat] and (UI.ACCENT .. stat .. "|r") or stat
-        UI.AddLabel(body, 0.33, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
+        UI.AddRollLabel(body, 0.33, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
             function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat] .. " saving throw",
             -- Advantage that only counts against some things is named too (Sheet/SaveAdvantages.lua).

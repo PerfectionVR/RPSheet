@@ -4,7 +4,7 @@ For someone about to change the code. It describes the addon as it is, names the
 files and functions, and leaves out what you can read in a file's own header comment.
 Every file starts with a comment that says what it is for; read that first.
 
-RP Sheet is an Ace3 addon without a build step: about 330 small Lua files, loaded by the
+RP Sheet is an Ace3 addon without a build step: about 390 small Lua files, loaded by the
 game in the order `RPSheet.toc` lists them.
 
 ## 1. Load order
@@ -27,11 +27,13 @@ Core\Defaults.lua    ns.defaults, ns.NewSheet
 Sheet\*.lua          the saved character and its numbers; ns.Levels
 Actions\*.lua        what the character does; ns.RollText
 UI\*.lua             widgets, ns.DialogSkin, ns.UI, the sheet, the browsers
-Integrations\*.lua   Total RP 3 tooltip, sync, chat links
+Integrations\*.lua   Total RP 3 tooltip, ns.Sync (sharing stats), chat links
 Options\Common.lua   ns.Opt
 Wizard\*.lua         ns.Wizard, the wizard's pages and dialog
 Options\*.lua        tabs, Customize pages, ns.LevelDialog, then Root.lua: ns.options
-Core\Startup.lua     OnInitialize, OnEnable, /sheet     (last: everything exists)
+Core\Slash.lua       what each word after /sheet does (RPSheet:SlashCommand)
+Core\Startup.lua     OnInitialize, OnEnable; registers /sheet and /rpsheet
+                     (last: everything exists)
 ```
 
 Where the order inside a group matters:
@@ -45,18 +47,21 @@ Where the order inside a group matters:
 | `Data\Spells.lua` before the other spell files | It creates `R.SPELLS` and `R.DefineSpell`; the later spell files add entries or set fields on the ones that exist. `R.SPELL_LISTS` (who can pick what) starts there too. |
 | `Data\Items.lua` before `Gear`, `GearArms`, `MagicItems*` | It defines `R.AddGear` and `R.AddMagicItem`. |
 | `Sheet\Levels.lua` before `Sheet\LevelUp.lua` and the Options files | It creates `ns.Levels`, which they read into a local at load time. |
-| A wrapped function's file before the file that wraps it | See section 9. |
+| A wrapped function's file before the file that wraps it | See section 9. `Sheet\PassCache.lua` is the last Sheet file for that reason; `Actions\RestUndo.lua` and `Actions\BeastUses.lua` come after `Actions\Rest.lua`. |
 | `UI\WindowMinimize.lua` before `UI\Window.lua` | The window's constructor calls `ns.AttachMinimize`. |
 | `UI\DialogSkin.lua` before the other `DialogSkin*.lua` | It creates `ns.DialogSkin`; each other file adds a style for one kind of part. |
 | `UI\Rows.lua` before every `UI\Sheet*.lua`, section and browser file | It creates `ns.UI`. |
 | `UI\Sheet*.lua` sections before `UI\SheetContent.lua` | `SheetContent.lua` puts the section functions in its `TOP` and `TABS` tables at load time. |
 | `UI\ItemPages.lua` before `UI\ItemBrowser.lua`; `UI\ScribeTab.lua` before `UI\CraftBrowser.lua` | Read into locals at load time. |
+| `Integrations\SyncPayload.lua` first of the Sync files, `Sync.lua` last | SyncPayload creates `ns.Sync` (`S`); SyncSend, SyncReceive and SyncTerms add to it; Sync.lua switches it on. |
 | `Options\Common.lua` before the Wizard and every Options file | It creates `ns.Opt`. The wizard's pages use its dropdown lists. |
 | `Wizard\Draft.lua` before the other wizard files that use `W` | It creates `ns.Wizard`. (`Wizard\Grants.lua` comes first and doesn't need it.) |
 | `Options\Character.lua` before `Options\Multiclass.lua` | Multiclass adds to and changes `Opt.tabs.character.args`. |
 | `Options\Defense.lua` before `DefensePicks.lua` and `WardSwitches.lua` | They add to `Opt.custom.defense.args`. |
 | `Options\LevelDialogState.lua` first of the level dialog files, `LevelDialog.lua` last | State creates `ns.LevelDialog` and its `args`; the parts fill `args`; `LevelDialog.lua` registers the finished table. |
+| `Options\SpellPage.lua` and `Options\SpellListTop.lua` before `Options\Spells.lua` | Spells.lua puts `Opt.SpellPage` and `Opt.SpellListTop` in its `Opt.lists.spells` entry at load time. |
 | `Options\Root.lua` after every tab and page | It copies `Opt.tabs`, `Opt.custom` and `Opt.lists` into `ns.options`. |
+| `Core\Slash.lua` just before `Core\Startup.lua` | Its words call into everything; Startup registers `RPSheet:SlashCommand` for `/sheet`. |
 
 `tests/toccheck.py` and the commit script check that every file is listed and every
 listed file exists; nothing checks the order itself except loading the addon
@@ -78,6 +83,7 @@ globals are created except the saved variable `RPSheetDB`.
 | `ns.Opt` | `Options/Common.lua` | `Opt.tabs`, `Opt.custom`, `Opt.lists`, `Opt.rebuilders` (collected by `Options/Root.lua`), dropdown lists, and helpers such as `Opt.With`, `Opt.Bounded`, `Opt.Changed`, `Opt.Regrant`. |
 | `ns.Wizard` (`W`) | `Wizard/Draft.lua` | `W.draft` (the character being made), `W.STEPS`, `W.StepProblem`, `W.Finish`, `W.pages`. |
 | `ns.LevelDialog` (`L`) | `Options/LevelDialogState.lua` | `L.draft` (the level being decided), `L.args`, `L.Like`, `L.Problem`, `L.Finish`. |
+| `ns.Sync` (`S`) | `Integrations/SyncPayload.lua` | Sharing stats with other players (section 12): `S.PREFIX`, `S.Sharing`, `S.StatMessage`, `S.Sanitize`, `S.handlers` (one per message kind), `S.AskGroup`, `S.QueryUnit`. |
 | `ns.Util`, `ns.Codec` | `Core/` | Small helpers; packing data into text (`"print"` for export strings, `"addon"` for the hidden channel). |
 | `ns.Glossary`, `ns.Themes`, `ns.defaults`, `ns.options`, `ns.RollText` | `Data/Glossary.lua`, `UI/Themes.lua`, `Core/Defaults.lua`, `Options/Root.lua`, `Actions/Dice.lua` | Hover explanations; theme presets; the saved-data shape; the settings tree; the wording of roll results. |
 
@@ -94,8 +100,10 @@ with a comment per field).
 ```
 RPSheetDB
   profile   settings shared by all characters: channel, useTRP3, tooltip, share, locked,
-            minimized, minimap, themePreset, theme, window (and itemWindow,
-            spellbookWindow, preparedWindow, made when those windows are first opened)
+            minimized, minimap, themePreset, theme, and the size and place of each
+            window: window (the sheet, 340 x 560 at first; 340 is as narrow as it
+            goes), itemWindow (560 x 520), spellbookWindow and preparedWindow (340 x 420).
+            The place is added when a window is first moved.
   char      per WoW character: name, shown, sheetTab
   global
     weaponStore            the armoury, for every character on the account
@@ -183,7 +191,7 @@ Who runs it:
 |---|---|
 | `RPSheet:UpdateSheetKey` (`Sheet/Storage.lua`) | Login and profile switch, so a sheet follows a new version of the addon. |
 | `RPSheet:ReplaceSheet` | Wizard, import, example. |
-| `Opt.Regrant` (`Options/Common.lua`) | A Customize page changed class, subclass, species, background, lineage or allegiance. |
+| `Opt.Regrant(change)` (`Options/Common.lua`) | A Customize page changed class, subclass, species, background, lineage or allegiance. Given the change as a function, it makes it and raises the current hit points by what the maximum gained (`RPSheet:KeepHPGain`, as taking a level does). |
 | `RPSheet:SetLevel` (`Sheet/LevelUp.lua`) and the level dialog's confirm (`Options/LevelDialogApply.lua`), both through `ns.ApplyGrants` | A level was taken, undone, or its choice changed. |
 | `ns.OpenLevelDialog` | Before the dialog reads what is picked. |
 
@@ -204,13 +212,19 @@ RPSheet:SkillMod(skill)
   + RPSheet:Bonus("SKILL:<name>") + Bonus("SKILLS") + Bonus("CHECKS")
   (or the beast form's own bonus, when higher)
 
-RPSheet:Bonus(target)                       Sheet/Derived.lua
+RPSheet:Bonus(target)                       Sheet/DerivedEffects.lua
   = exhaustion, for d20 targets and SPEED
   + every effect aimed at `target` of every passive that is enabled,
     named, and not stopped by armor (RPSheet:PassiveBlocked)
   + RPSheet:ItemBonus(target)               items equipped, and attuned where needed
                                             (RPSheet:ItemActive, Sheet/Inventory.lua)
 ```
+
+While the sheet window's rows are being made (`RPSheet:Populate`), `Sheet/PassCache.lua`
+keeps the answers of `RPSheet:Bonus`, `:EffectFloor` and `:Form`, which each walk every
+passive and item: one rebuild asks for the same numbers again and again. The pass is
+closed before anything else runs, so an answer never outlives a change; outside a pass
+the three work as before. (`ns.checkPass`, set by the tests, checks every kept answer.)
 
 An **effect** is `{ target, flat, stat, times, mode }`. Its value is
 `flat + times x source` (`RPSheet:Amount`), where the source is an ability modifier,
@@ -235,7 +249,9 @@ read by `RPSheet:HasAdvantage`, `RPSheet:FeatureFlag`, `Sheet/Limits.lua`,
 (`ExplainAC`, `ExplainSave`, `ExplainWeapon`, ...). Each mirrors the calculation next to
 it by hand, as a list of labelled parts: **when you change a calculation, change its
 explanation too**. `UI.AddLabel`'s last argument is that method; it puts the `[?]` in
-front of the row. `RPSheet:ExplainTerm(term)` captures the same text for another player
+front of the row. A row that rolls a d20 is made with `UI.AddRollLabel` (checks, saves,
+skills, tools, initiative, spell attack): there a right-click explains as well, and its
+tooltip says so. `RPSheet:ExplainTerm(term)` captures the same text for another player
 who clicked a term in chat.
 
 ## 6. How a roll travels
@@ -285,7 +301,13 @@ Things to know:
   of ours.
 - **Abilities** (`Actions/Abilities.lua`) are lists of steps (`R.ACTIONS`): costs are
   collected first, then the rolls run one after another, then resources and passives
-  change and one line is announced.
+  change and one line is announced. A beast form's action that recharges or comes once
+  a day is counted in `Actions/BeastUses.lua` (`state.beastUsed`): a used one is
+  refused, and a right-click on a recharging row rolls its d6.
+- **The "Next roll" rows** (`Actions/NextRollBonus.lua`, `UI/SheetNextRoll.lua`) hold
+  a die added or taken off (Bless, Bane) and a number for the next d20, on `RPSheet`
+  (`rollBonusDie`, `rollBonusFlat`, `rollBonusLocked`); `RPSheet:RollTest` rolls them
+  after the d20 and uses them up, unless they are kept.
 
 ## 7. Class views and multiclassing
 
@@ -350,8 +372,10 @@ Options/LevelDialogCounts.lua     limits and counts for every kind of choice
 Options/LevelDialogSwaps.lua      which earlier picks may be exchanged
 Options/LevelDialogManeuvers.lua  the same for maneuvers
 Options/LevelDialogCheck.lua      L.Problem(): the first thing still missing, or nil
-Options/LevelDialogGains.lua      what the level gives (text)
+Options/LevelDialogGains.lua      what the level gives (text): ns.FeaturesGainedFor lists
+                                  only what applies (specialization, options, `when`)
 Options/LevelDialogClass.lua      subclass, Fighting Style, a new class's skill
+Options/LevelDialogStyles.lua     Fighting Styles left empty, asked again with the choices
 Options/LevelDialogFeat.lua       improvement or feat;  Options/FeatChoices.lua: its choices
 Options/LevelDialogPoints.lua     the ability score points
 Options/LevelDialogSkills.lua     expertise, feature skills
@@ -386,7 +410,10 @@ wrappers of one method run in reverse load order.
 |---|---|---|---|
 | `RPSheet:SpellBenefits`, `:AskBenefit`, `:TakeBenefit` | `Sheet/Metamorphosis.lua` | `Sheet/WardCasting.lua`, then `Sheet/ComponentTargets.lua` | Protective spells ("who is it for?"), then spells that need components per target ("how many?"). Each handles its own kind of pick and passes the rest down. |
 | `RPSheet:PassiveSwitchedOn` | `Sheet/Metamorphosis.lua` | `Sheet/DefensePicks.lua` | Asks for the damage types of a passive that lets you choose them. |
-| `RPSheet:EffectText` | `Sheet/Derived.lua` | `Sheet/SetEffects.lua` | The wording of a `WALK` effect. |
+| `RPSheet:EffectText` | `Sheet/DerivedEffects.lua` | `Sheet/SetEffects.lua` | The wording of a `WALK` effect. |
+| `RPSheet:Bonus`, `:EffectFloor`, `:Form` | `Sheet/DerivedEffects.lua`, `Sheet/SetEffects.lua`, `Sheet/Forms.lua` | `Sheet/PassCache.lua` | Keeps the answers while the sheet's rows are being made (section 5). |
+| `RPSheet:LongRest`, `:ShortRest` | `Actions/Rest.lua` | `Actions/RestUndo.lua`, then `Actions/BeastUses.lua` | RestUndo keeps the play state from before the rest in memory, for `/sheet undo` or a right-click on the rest's row, until the next announcement (`ns.RestUndoExpire`, called by `RPSheet:Announce`) or a change to the character. BeastUses gives back a beast form's used actions. |
+| `UI.HeaderSection` | `UI/SheetHeader.lua` | `UI/SheetNextRoll.lua` | The "Next roll" rows below the top part. |
 | `RPSheet:SpellDC`, `:SpellAttack` | `Sheet/Derived.lua` | `Actions/Scrolls.lua` | A found scroll's fixed numbers. |
 | `RPSheet:TakeDamage` | `Actions/Damage.lua` | `Actions/WardDamage.lua` | Rolls the dice a protective spell takes off the damage first. |
 
@@ -428,6 +455,17 @@ click use `RPSheet:PopulateSoon()`: the row is part of what gets released.
 
 Never name a field on a widget `base`, `frame`, `type`, `content` or `userdata`: AceGUI
 owns those. Per-row data goes through `widget:SetUserData`.
+
+The window can't be narrower than 340 (`UI/Window.lua`). Rows a third of the width wide
+(checks, saves, bars) must fit on one line there with room to spare;
+`tests/t-test-windows-frame.lua` checks it with estimated text widths. The combat
+numbers are two to a row for that reason.
+
+**The game's popups** (`StaticPopup_Show` with an edit box) ask for coins, an amount of
+damage or healing, and a worth of materials. Their box is found by
+`ns.PopupEditBox(dialog)` (`Actions/PopupBox.lua`), which tries every way the game has
+offered (a `GetEditBox` method, the `EditBox` and `editBox` keys, the global name) and
+then looks among the popup's children.
 
 **Windows built from a source.** The item browser (`UI/ItemBrowser.lua`) is one window
 that shows blocks with buttons, and knows nothing about items. What it lists comes from
@@ -499,19 +537,41 @@ widget is as it was). Then do section J of [MANUAL-CHECKS.md](MANUAL-CHECKS.md).
 
 ## 12. Talking to other players
 
-`Integrations/Sync.lua`, over AceComm with the prefix `RPSheet4` (bump the number when
-the data changes shape). Messages are packed by `ns.Codec.Pack("addon", kind, ...)`:
+`ns.Sync` (`S`), over AceComm with the prefix `S.PREFIX` = `RPSheet4` (bump the number
+when the data changes shape). Four files and a switch:
+
+| File | What it does |
+|---|---|
+| `Integrations/SyncPayload.lua` | Creates `ns.Sync`. `S.Sharing()` (the `share` setting), `S.StatMessage()` (our stats, packed and stamped), `S.Sanitize` / `S.Text` / `S.Num` / `S.Stamp` for what comes in. |
+| `Integrations/SyncSend.lua` | `RPSheet:SendStats`, `RPSheet:QueueBroadcast` / `:BroadcastToGroup`, `S.AskGroup`, `S.QueryUnit`, `RPSheet:SetSharing`; holds what can't be sent while the game blocks addon messages and sends it once it can again. |
+| `Integrations/SyncReceive.lua` | `S.handlers` (one per kind), `RPSheet:OnCommReceived`, the session's `cache` of other players' stats (`RPSheet:GetCachedStats`), `S.Forget`. |
+| `Integrations/SyncTerms.lua` | The question about a term clicked in chat, and its answer. |
+| `Integrations/Sync.lua` | `RPSheet:EnableSync()` at login: the comm prefix, the mouseover, target and group events, a first broadcast and a question to the group. |
+
+Messages are packed by `ns.Codec.Pack("addon", kind, ...)`:
 
 | Kind | Sent | Meaning |
 |---|---|---|
-| `Q` | Whisper, on mouseover or target of a player of the same faction, at most once per 30 s per player | "Send me your stats." |
-| `D` | Whisper in answer to `Q` (at most once per 5 s per asker); `PARTY` or `RAID` about 2 s after a change (`RPSheet:QueueBroadcast`, called by `Refresh`) | `RPSheet:GetStatData()` (`Sheet/Summary.lua`). |
+| `Q` | Whisper, on mouseover or target of a player of the same faction, at most once per 30 s per player; to the group after a login or reload inside one (`S.AskGroup`) | "Send me your stats." |
+| `D` | Whisper in answer to `Q` (at most once per 5 s per asker); `PARTY` or `RAID` about 2 s after a change (`RPSheet:QueueBroadcast`, called by `Refresh`), and only when what others see changed | `RPSheet:GetStatData()` (`Sheet/Summary.lua`), then a stamp. |
+| `C` | To the group, when "Share my stats" is switched off (`RPSheet:SetSharing(false)`) | "Drop what you have of me." Carries a stamp. |
 | `E` | Whisper, when a player clicks another's term in chat | "Explain this term." |
 | `X` | Whisper in answer to `E` | `RPSheet:ExplainTerm(term)` as plain text. |
 
-Everything received goes through `Sanitize` / `Text` / `Num`: never trust it. The
-`share` setting gates sending `D` and `X` and asking `E`. Received stats live in a
-local `cache` for the session and are shown by `Integrations/TRP3Tooltip.lua`.
+**The stamp.** A whisper and a group message can overtake each other, so `D` and `C`
+carry a number that only grows (`S.NextStamp()`, from the server's clock, so also over
+a reload); the same stats keep the same stamp. The receiver keeps the newest stamp per
+player and ignores anything older. It travels after the data, where a version without
+stamps never looks, and a message without one counts as new.
+
+Everything received goes through `S.Sanitize` / `S.Text` / `S.Num` and a size limit
+(`S.MAX_MESSAGE`): never trust it. With `share` off nothing is sent, asked or taken
+in. Received stats live in the local `cache` for the session and are shown by
+`Integrations/TRP3Tooltip.lua`.
+
+**`/sheet`** (`Core/Slash.lua`): no word toggles the window; `config`, `new`, `level`,
+`tab <name>`, `items`, `lock`, `rest`, `short`, `undo`, `damage <n> [type] [crit]`,
+`heal <n>`. Anything else prints the list.
 
 ## 13. How to add things
 

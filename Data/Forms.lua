@@ -27,4 +27,3 @@ R.FORMS = {
         scores = { STR = "WIS", DEX = "WIS" }, skills = {},
     },
 }
-R.FORM_ORDER = { "Cat Form active", "Bear Form active" }
