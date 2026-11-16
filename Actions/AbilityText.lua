@@ -20,7 +20,7 @@ function RPSheet:ActionText(action)
         if action.perSlot then text = text .. " per slot level" end
         if (action.strain or "") ~= "" then text = text .. ", more with each use" end
         if (action.slotAdd or 0) > 0 then text = text .. (", +%dd%d per slot level above 1st"):format(action.slotAdd, action.sides) end
-        if R.AMOUNT_SOURCES[action.stat] and action.stat ~= "" then
+        if (R.AMOUNT_SOURCES[action.stat] or R.AMOUNT_SHORT[action.stat]) and action.stat ~= "" then
             text = text .. " + " .. (R.AMOUNT_SHORT[action.stat] or action.stat)
         end
         return text
@@ -48,6 +48,8 @@ function RPSheet:ActionText(action)
         return ("Only with no %s left"):format(action.resource)
     elseif kind == "LOSEHP" then
         return ("Lose %d hit points"):format(action.amount)
+    elseif kind == "REROLL" then
+        return action.mode == "ATTACK" and "Reroll the last spell's attack" or "Reroll the last spell's lowest damage dice"
     elseif kind == "NEXTROLL" then
         return ("Next roll: %s"):format(action.mode == "DIS" and "disadvantage" or "advantage")
     end

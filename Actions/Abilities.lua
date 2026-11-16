@@ -24,6 +24,8 @@ function RPSheet:UseAbility(ability, mode, answers)
     if not ns.AbilityKit.OwnSaveOnly(ability) and self:CantAct("use " .. ability.name) then return end
     -- A beast's action that is used up until it recharges or a rest (Actions/BeastUses.lua).
     if self:BeastUseSpent(ability) then return end
+    -- A Metamagic reroll needs a spell just cast (Actions/SpellFeats.lua): nothing is spent without one.
+    if not self:CanReroll(ability) then return end
 
     local costs, costTexts = CollectCosts(self, ability)
     if not costs then return end
@@ -132,16 +134,25 @@ function RPSheet:UseAbility(ability, mode, answers)
             local doubled = critical and word == "damage"
             local more = (action.slotAdd or 0) * math.max(0, (costs.slotLevel or 1) - 1)
             self:RollDice((count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
-                -- A feature can make low force damage dice count as higher.
-                local raised = action.damage == "force" and self:RaiseForceDice(rolls)
-                -- ...and some count healing dice at their highest (Actions/FeatureDice.lua).
-                local featured = self:AbilityDiceFeatures(ability, action, rolls, mod)
-                if featured then raised = raised and (raised .. "; " .. featured) or featured end
-                local note = self:ApplyDice(action.dice, rolls, mod)
-                -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
-                local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
-                    or ("%s %d"):format(word, mod)
-                parts[#parts + 1] = text .. (raised and (" [" .. raised .. "]") or "") .. (note and (" (" .. note .. ")") or "")
+                -- A feat can reroll low dice or count them as higher (Sheet/DiceFeats.lua).
+                local upTo, lowest = (action.reroll or 0) > 0 and action.reroll or nil, (action.lowest or 0) > 0 and action.lowest or nil
+                self:AdjustRolls(rolls, action.sides, upTo, lowest, { reroll = action.rerollFrom, lowest = action.lowestFrom }, function(notes)
+                    -- A feature can make low force damage dice count as higher.
+                    local raised = action.damage == "force" and self:RaiseForceDice(rolls)
+                    -- ...and some count healing dice at their highest (Actions/FeatureDice.lua).
+                    local featured = self:AbilityDiceFeatures(ability, action, rolls, mod)
+                    if featured then raised = raised and (raised .. "; " .. featured) or featured end
+                    local note = self:ApplyDice(action.dice, rolls, mod)
+                    -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
+                    local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
+                        or ("%s %d"):format(word, mod)
+                    parts[#parts + 1] = text .. (raised and (" [" .. raised .. "]") or "") .. ns.DiceNotes(notes) .. (note and (" (" .. note .. ")") or "")
+                    step()
+                end)
+            end)
+        elseif action.type == "REROLL" then
+            self:RerollLastSpell(action.mode, function(text)
+                parts[#parts + 1] = text
                 step()
             end)
         elseif action.type == "WEAPON" then

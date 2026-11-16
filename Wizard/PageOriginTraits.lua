@@ -1,4 +1,5 @@
--- Wizard step 2, the species traits that ask for a choice: a skill or an origin feat.
+-- Wizard step 2, the species traits that ask for a choice: a skill, a tool or an
+-- origin feat.
 local _, ns = ...
 local R = ns.Rules
 local Opt = ns.Opt
@@ -26,6 +27,12 @@ local function DraftTraitOptions(name)
         for _, skill in ipairs(pool) do
             if not taken[skill] then names[#names + 1] = skill end
         end
+    elseif trait.choice == "TOOL" then
+        -- Any tool but the trait's other pick.
+        local other = draft.traitChoices[trait.more or trait.of or ""]
+        for _, tool in ipairs(R.TOOL_ORDER) do
+            if tool ~= other then names[#names + 1] = tool end
+        end
     else
         for _, feat in ipairs(R.FEAT_NAMES.GENERAL) do
             local data = R.FEATS[feat]
@@ -43,9 +50,9 @@ function W.TraitOptions(name) return DraftTraitOptions(name) end
 local function DraftTraitPicker(name, order)
     return {
         type = "select", order = order,
-        name = function() return name .. (R.TRAITS[name].choice == "FEAT" and " (origin feat)" or " (skill)") end,
+        name = function() return ns.TraitChoiceLabel(name) end,
         desc = function()
-            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[name] end
+            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[R.TRAITS[name].of or name] end
             local lines = { ns.Glossary[name] or "" }
             for _, feat in ipairs(DraftTraitOptions(name)) do
                 lines[#lines + 1] = ("%s%s|r: %s"):format(GOLD, feat, R.FEATS[feat].desc)
@@ -61,7 +68,13 @@ local function DraftTraitPicker(name, order)
         values = function() return (Opt.ListMap(DraftTraitOptions(name))) end,
         sorting = function() return (select(2, Opt.ListMap(DraftTraitOptions(name)))) end,
         get = function() return W.draft.traitChoices[name] end,
-        set = function(_, value) W.draft.traitChoices[name] = value end,
+        set = function(_, value)
+            local choices, trait = W.draft.traitChoices, R.TRAITS[name]
+            choices[name] = value
+            -- The same tool picked for the other half of the trait: that one is asked again.
+            local other = trait.more or trait.of
+            if other and choices[other] == value then choices[other] = nil end
+        end,
     }
 end
 

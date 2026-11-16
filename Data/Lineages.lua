@@ -18,10 +18,13 @@ R.LINEAGE_STATS = { "INT", "WIS", "CHA" }
 local ELF_SWAP = { cantrip = "Prestidigitation", list = "Wizard" }
 
 -- A Tauren lineage's save DC: 8 + proficiency + the Strength, Constitution or Wisdom
--- modifier. The rules let the player choose one; the sheet takes the highest.
+-- modifier, the one chosen with the lineage (`saveStats`, kept in sheet.lineageStat
+-- like a spellcasting lineage's ability: Sheet/LineageCasting.lua). Until it is chosen
+-- the sheet takes the highest.
+local TAUREN_STATS = { "STR", "CON", "WIS" }
 local function TaurenDC(sheet)
     local Kit = ns.FeatureKit
-    return 8 + Kit.Prof(sheet.level) + math.max(Kit.Mod(sheet, "STR"), Kit.Mod(sheet, "CON"), Kit.Mod(sheet, "WIS"))
+    return 8 + Kit.Prof(sheet.level) + Kit.Mod(sheet, ns.LineageCastStat(sheet))
 end
 
 R.LINEAGES = {
@@ -62,10 +65,10 @@ R.LINEAGES = {
     TAUREN = {
         trait = "Tauren Lineage",
         options = {
-            { name = "Mulgore Tauren", renown = "Thunder Bluff",
+            { name = "Mulgore Tauren", renown = "Thunder Bluff", saveStats = TAUREN_STATS,
               desc = "War stomp: in place of one attack, creatures of your choice within 5 feet make a Constitution save or are stunned until the end of your turn. Not while prone, flying, climbing or swimming.",
               detail = function(sheet) return ("Save DC %d."):format(TaurenDC(sheet)) end },
-            { name = "Highmountain Tauren",
+            { name = "Highmountain Tauren", saveStats = TAUREN_STATS,
               desc = "Bull rush: as an action, move up to your speed through other creatures without provoking opportunity attacks. Medium or smaller creatures in your path make a Strength save or take damage and fall prone.",
               detail = function(sheet)
                   local Kit = ns.FeatureKit
@@ -80,10 +83,10 @@ R.LINEAGES = {
     TROLL = {
         trait = "Troll Lineage",
         options = {
-            { name = "Amani Troll", desc = "Whenever you spend Heroic Inspiration you regain one spent hit die." },
+            { name = "Amani Troll", desc = "Whenever you spend Heroic Inspiration you regain one spent hit die. The sheet gives it back when you spend it on the Inspiration row." },
             { name = "Darkspear Troll", renown = "Darkspear Tribe",
               desc = "When you Dash, ice, rubble, snow and undergrowth don't slow you for the rest of the turn." },
-            { name = "Zandalari Troll", desc = "When you roll a 1 on a d20, you gain Heroic Inspiration at the end of the turn." },
+            { name = "Zandalari Troll", desc = "When you roll a 1 on a d20 test, you gain Heroic Inspiration at the end of the turn. The sheet gives it when it rolls the 1." },
         },
     },
 }

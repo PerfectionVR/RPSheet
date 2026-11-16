@@ -174,6 +174,9 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
         end
         if slot then slot.set(slot.get() - 1) end
         if chosen then self:SpendChosenCasting(spell, chosen) end
+        -- A draenei's lineage spell can bring Heroic Inspiration (Actions/Inspiration.lua).
+        local presence = self:HeroicPresence(spell)
+        if presence then parts[#parts + 1] = presence end
         local used = self:SpendComponents(spell, benefit, slot and slot.level)
         if #used > 0 then parts[#parts + 1] = "uses up " .. table.concat(used, ", ") end
         if scroll then
@@ -213,12 +216,17 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
         self.busy = false
         self:Announce(text)
         self:Refresh()
+        -- Boon of Spell Recall may give the slot back (Actions/SpellFeats.lua).
+        if slot then self:SpellRecall(slot) end
     end
 
     -- A natural 20 on the spell attack doubles the dice.
     local function rollDice(critical, after)
         if spell.count <= 0 then return after() end
         self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
+          -- Feats that reroll low dice or count them as higher, a free casting that takes
+          -- the highest number (Actions/SpellFeats.lua).
+          self:SpellFeatDice(spell, chosen, rolls, function(notes)
             local label = word == "damage" and critical and "critical damage" or word
             -- A feature can make low force damage dice count as higher.
             local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
@@ -232,8 +240,10 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             if named then raised = raised and (named .. "; " .. raised) or named end
             local note = self:ApplyDice(spell.dice, rolls, mod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, mod) .. (raised and (" [" .. raised .. "]") or "")
-                .. (note and (" (" .. note .. ")") or "")
+                .. ns.DiceNotes(notes) .. (note and (" (" .. note .. ")") or "")
+            self:RememberSpellRoll("dice", { spell = spell.name, rolls = rolls, sides = spell.sides, mod = mod, word = label, kind = spell.dice })
             after()
+          end)
         end)
     end
 
@@ -260,6 +270,8 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             self:RollTest(mode, function(d20, note, extra)
                 local label = hits > 1 and ("attack %d"):format(index) or "spell attack"
                 parts[#parts + 1] = RollText.Check(label, d20, self:SpellAttack(spell) or 0, note, extra)
+                -- (for Seeking Spell's reroll: Actions/SpellFeats.lua)
+                self:RememberSpellRoll("attack", { spell = spell.name, mod = self:SpellAttack(spell) or 0 })
                 rollDice(d20 == 20, function()
                     if index < hits then attack(index + 1) else finishWithSecondRoll() end
                 end)

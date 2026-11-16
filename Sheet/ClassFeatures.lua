@@ -175,6 +175,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)
     ns.ApplyPicks(sheet)
+    ns.ApplyLessonFeats(sheet) -- an invocation's origin feat (Sheet/LessonFeats.lua)
     ns.ApplyBeastForms(sheet)
     ns.ApplyToolPicks(sheet)
     ns.ApplyFeatureSkills(sheet)
@@ -187,6 +188,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
+    ns.ApplyInvocationSpells(sheet) -- an invocation's spell, and Agonizing Blast on a cantrip
     ns.ApplyFeatSpells(sheet)   -- last: a spell the class prepares isn't listed twice
     ns.ApplyWards(sheet)        -- spell protection that is running, and a feat's situation passive
     ns.ApplyRenownPerks(sheet)  -- here, so a blessing's score points follow the reset above

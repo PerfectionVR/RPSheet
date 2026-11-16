@@ -83,6 +83,19 @@ local function Build(weapon)
             desc = "A magic weapon adds this to attack and damage rolls made with it: 1, 2 or 3. It counts for this weapon only.",
             hidden = function() return weapon.heal end,
         }, self, "magic"),
+        pact = {
+            type = "toggle", order = 5.6, name = "Pact weapon",
+            desc = "The weapon bonded by your Pact of the Blade: you are proficient with it, and it can attack with Charisma when that is your best. Tick one melee weapon.",
+            hidden = function() return weapon.heal or not ns.HasPactBlade(RPSheet:Sheet()) end,
+            get = function() return weapon.pact == true end,
+            set = function(_, value)
+                -- One bond at a time: ticking this weapon ends the bond with any other.
+                for _, other in ipairs(RPSheet:Sheet().weapons) do other.pact = false end
+                weapon.pact = value
+                if value then weapon.proficient = true end
+                Opt.Changed()
+            end,
+        },
         stowed = With({
             type = "toggle", order = 5.7, name = "Put away",
             desc = "A weapon that is put away is kept but isn't on the sheet. Equipping a basic weapon in your inventory readies it again.",

@@ -29,4 +29,7 @@ R.LASTING = {
     ["Innate Sorcery active"] = { label = "Innate Sorcery" },  -- 1 minute
     ["Reckless"] = { label = "Reckless Attack" },              -- until your next turn
     ["Dispersed"] = { label = "Dispersion" },                  -- until the end of your next turn
+    -- Species traits and feats (Data/Traits.lua, Data/FeatUses.lua)
+    ["Draconic Flight active"] = { label = "Draconic Flight" }, -- 10 minutes
+    ["Parrying"] = { label = "Parry" },                        -- until your next turn
 }

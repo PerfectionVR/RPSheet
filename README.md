@@ -669,30 +669,16 @@ and blessings. Class passives are in the classes table.
 
 | Kind | Name | Caveat |
 |---|---|---|
-| Species | Bloodied Frenzy (Troll) | Advantage on attack rolls while Bloodied isn't applied, though the sheet knows your hit points: use Shift. |
-| Species | Tauren Lineage | The save DC uses the highest of Strength, Constitution and Wisdom; the rules let you choose one. |
-| Species | Troll Lineage (Amani, Zandalari), Heroic Presence (Draenei) | The hit die or Heroic Inspiration they give is changed by hand. |
-| Species | Draconic Flight (Dracthyr) | The flying speed isn't shown. |
-| Species | Specialized Design (Mechagnome) | The two tools are ticked by hand under Customize, Proficiencies. |
-| Feat | Lucky | The luck points have no bar: keep count yourself. |
-| Feat | Mage Slayer, Arathi Heritage, Boon of Recovery, Boon of Fate | Their once-per-rest uses and Boon of Recovery's pool of d10s have no bar; Boon of Fate's 2d4 is rolled by hand. |
-| Feat | Boon of Spell Recall | The d4 rolled when you cast with a slot isn't rolled; give the slot back by hand on a match. |
-| Feat | Chef | The extra 1d8 when Hit Dice are spent and the treats' temporary hit points are given by hand. |
-| Feat | Charger, Great Weapon Master, Boon of Irresistible Offense, Fingers of Frost, Poisoner | Their extra damage is added by hand. |
-| Feat | Elemental Adept, Clearcasting, Fists of Fury, Healer, Piercer, Savage Attacker, Tavern Brawler | Rerolls and low dice counted as 2 are not applied to the sheet's rolls. |
-| Feat | Defensive Duelist | The Armor Class from the reaction isn't added. |
-| Feat | Medium Armor Master | Dexterity in medium armor is still held to +2 for Armor Class. |
+| Feat | Poisoner | The poison doses you brew aren't counted; the Poisoned Weapon row rolls a dose's damage. |
+| Feat | Boon of Irresistible Offense | The natural 20's extra damage is added to weapon rows, not to abilities that attack (Unarmed Strike, Pole Strike). |
+| Feat | Piercer, Savage Attacker | Applied to weapon rows, not to abilities that attack (Pole Strike); "once per turn" is yours to keep. |
+| Feat | Elemental Adept | Spells whose damage type is chosen as they are cast (Chromatic Orb, Dragon's Breath and the like) don't count their 1s as 2s. |
+| Feat | Fists of Fury | Combo Strikes' +1 for each earlier hit on the creature this turn is added by hand. |
+| Feat | Healer | Battle Medic (a creature spends a Hit Die with your healer's kit) is rolled by hand. |
 | Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
-| Feat | Polearm Master | The butt strike has no weapon row: make a weapon of your own for it. |
-| Unarmed | Tavern Brawler, Unarmed Fighting (Fighting Style), Strike of the Earth-Warder (renown) | Outside the Monk there is no unarmed strike row: make a weapon of your own with the damage and bonus. |
-| Invocation | Armor of Shadows, Ascendant Step, Fiendish Vigor, Gift of the Depths, Legion Summoning, Mask of Many Faces, Master of Myriad Forms, Misty Visions, One with Shadows, Otherworldly Leap, Visions of Distant Realms, Whispers of the Grave | The spell isn't put on your spell list, so there is no free casting to click; Armor of Shadows doesn't change Armor Class and Fiendish Vigor's temporary hit points are set by hand. |
-| Invocation | Pact of the Blade, Pact of the Chain, Pact of the Legion | No pact weapon row and no familiar are added: make the weapon under Customize, Weapons. |
-| Invocation | Agonizing Blast | Tick "Add spellcasting modifier" on the cantrip yourself. |
-| Invocation | Lessons of the First Ones | The origin feat is added by hand under Customize, Passives. |
-| Metamagic | Empowered Spell, Seeking Spell | The points are spent; the reroll is yours to make. |
+| Unarmed | Unarmed Fighting (Fighting Style) | A Monk's strikes keep the Martial Arts die, even at the levels where the style's d8 with hands free is larger. |
+| Invocation | Pact of the Blade | The pact weapon is a weapon of yours with "Pact weapon" ticked under Customize, Weapons; its necrotic, psychic or radiant damage is said by hand. |
 | Renown | Blessing of Argent Fortitude (Argent Dawn) | The immunity to poison damage and to being poisoned isn't applied. |
-| Renown | Tushui Meditation (Tushui) | The Heroic Inspiration after a short rest is ticked by hand. |
-| Renown | Gilneas, Honored | The +2 to checks to skin a creature isn't added. |
 
 ## Known limits
 

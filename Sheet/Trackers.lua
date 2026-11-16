@@ -90,6 +90,7 @@ function RPSheet:GetTrackers()
     local shared = {
         ns.TraitPools(sheet),   -- species traits with uses
         ns.RenownPools(sheet),  -- a faction's blessings with uses
+        ns.FeatPools(sheet),    -- feats with uses (Sheet/FeatUses.lua)
         ns.PetPools(sheet),     -- a Beast Master's companion
     }
     for _, source in ipairs(shared) do collect(source, self:Level(), firstDropped) end

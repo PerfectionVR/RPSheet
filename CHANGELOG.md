@@ -58,6 +58,40 @@
   - The Dragon constellation counts a d20 of 9 or lower as 10 on Intelligence and
     Wisdom checks and the save to keep concentrating.
   - Assassinate has an ability for its first-round damage.
+- Medium Armor Master works: with Dexterity 16 or more, medium armor adds 3 from
+  Dexterity to Armor Class.
+- Feats with uses have bars and rows: Lucky's luck points (a click sets advantage on
+  the next roll), Mage Slayer's Guarded Mind, Arathi Heritage's Lethargy Resilience
+  (back after 1d4 long rests, rolled at the first), Boon of Recovery's Last Stand and
+  pool of ten d10s, Boon of Fate's 2d4 (back when you roll initiative), Chef's treats.
+  Charger, Fingers of Frost, Poisoner and Polearm Master get a row that rolls their
+  damage; Defensive Duelist's Parry switches on Parrying, which adds your proficiency
+  bonus to Armor Class until you switch it off or rest.
+- Weapon attacks apply Great Weapon Master's extra damage with heavy weapons, Boon of
+  Irresistible Offense on a natural 20, Savage Attacker (rolled twice, the better
+  kept), Piercer (the low die rerolled, one more die on a critical hit) and Fists of
+  Fury with light weapons.
+- Tavern Brawler, Unarmed Fighting and the Strike of the Earth-Warder give an Unarmed
+  Strike row with their damage and bonus; a Monk's own strikes take the blessing and
+  the feats.
+- Spells apply Elemental Adept and Clearcasting (a 1 on their damage type counts as
+  2) and Healer (1s on healing dice rerolled). Boon of Spell Recall rolls its d4 and
+  gives the slot back on a match. Empowered Spell and Seeking Spell reroll the spell
+  you just cast.
+- Invocations that cast a spell without a slot put it on your spell list and cast it
+  that way: Armor of Shadows, Mask of Many Faces, Fiendish Vigor (the highest
+  numbers), Gift of the Depths and Legion Summoning (once per long rest) and the
+  others; Pact of the Chain and Pact of the Legion give Find Familiar. Agonizing Blast
+  adds Charisma to Eldritch Blast by itself. A weapon can be ticked as your Pact of
+  the Blade weapon, to attack with Charisma. Lessons of the First Ones' origin feat is
+  chosen under Customize, Metamagic, invocations, maneuvers.
+- Trolls have advantage on attacks while Bloodied; an Amani troll regains a Hit Die
+  when it spends Heroic Inspiration, a Zandalari troll gains it on a natural 1, and a
+  draenei's Heroic Presence gives it when a lineage spell is cast. Draconic Flight
+  switches on a flying speed. A Mulgore or Highmountain tauren chooses the ability
+  of its save DC. A mechagnome picks the two tools of Specialized Design.
+- Tushui Meditation gives Heroic Inspiration after a short rest; Honored with Gilneas
+  adds 2 to skinning checks. Chef's short-rest meal adds 1d8 to your next Hit Die.
 
 ## 0.7.0
 
