@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Every piece of plain gear, pack, spellcasting focus, tool and instrument says what
+  it is for: light radius, what a container holds, the DC of a tool's checks and what
+  it makes, a pack's contents. The item browser's search finds them by it
+  ("stabilize", "pick a lock", "holy symbol").
 - Cordon of Arrows cast with a higher slot plants two more arrows or bolts for each
   level above 2nd, as many as you carry.
 - A Warlock with Mystic Arcanum reads spell scrolls up to the arcanum's level without
