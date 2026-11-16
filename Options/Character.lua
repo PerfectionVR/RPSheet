@@ -52,12 +52,13 @@ Opt.tabs.character = {
                 if limit > 0 then return ("Maneuvers (%d of %d)"):format(ns.ManeuversKnown(Sheet()), limit) end
                 return "Class and feat choices"
             end,
-            desc = "The choices your class, subclass and feats give you at this level, such as a Battle Master's maneuvers or the spells of Magic Initiate.",
+            desc = "The choices your class, subclass and feats give you at this level, such as a Battle Master's maneuvers, a Fighting Style left empty or the spells of Magic Initiate.",
             hidden = function()
                 local sheet = Sheet()
                 return NoCharacter() or (ns.SheetManeuverLimit(sheet) == 0 and #ns.SkillChoiceFeatures(sheet) == 0
                     and #ns.OptionFeatures(sheet) == 0 and not ns.HasPickList(sheet)
-                    and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0 and not ns.HasFeatChoices(sheet))
+                    and ns.ExpertiseLimit(sheet) == 0 and ns.FeatSkillLimit(sheet) == 0 and not ns.HasFeatChoices(sheet)
+                    and #ns.OpenStyleSlots(sheet) == 0)
             end,
             -- The dialog of the first class's latest level shows every class's choices.
             func = function()

@@ -43,10 +43,6 @@ R.MATERIAL_ORDER = { "herbs", "ore", "leather", "fish", "cloth", "residue" }
 
 -- Archaeology.
 R.RELIC_FRAGMENTS, R.RELIC_DC, R.FRAGMENT_DIE = 6, 15, 6
--- Skinning: the skill a fiend's or a dragon's hide asks for.
-R.SKIN_FIEND_LEVEL, R.SKIN_DRAGON_LEVEL = 3, 5
--- Smelting ore into bars: one hour per this much worth, at a forge.
-R.SMELT_COPPER_PER_HOUR = 1000
 -- Where the table trains to gain levels: days per point of the new bonus, and copper a day.
 R.TRAINING_COPPER_PER_DAY = 200
 -- Enchanting: taking the magic out of an item, from this skill up. By the item's

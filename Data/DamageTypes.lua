@@ -27,9 +27,6 @@ for _, name in ipairs(R.DAMAGE_TYPES) do
     R.DAMAGE_TYPE_ORDER[#R.DAMAGE_TYPE_ORDER + 1] = name
 end
 
--- The three ways a damage type can be met, in the order the rules apply them.
-R.DEFENSE_KINDS = { "immune", "resist", "vulnerable" }
-
 R.WEAPON_DAMAGE = { "bludgeoning", "piercing", "slashing" }
 
 -- Every damage type except the ones named: R.AllDamage("force").

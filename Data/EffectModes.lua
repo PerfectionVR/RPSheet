@@ -12,7 +12,6 @@ R.EFFECT_MODES = {
     TIMES = "Multiplies it by the amount",
     WALK = "Equal to your walking speed",
 }
-R.EFFECT_MODE_ORDER = { "", "MIN", "TIMES", "WALK" }
 R.MAX_MULTIPLIER = 10 -- keeps a typo from making a speed of thousands of feet
 
 -- Older effects have no mode and keep adding.

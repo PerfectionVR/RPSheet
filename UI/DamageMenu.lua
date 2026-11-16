@@ -7,10 +7,7 @@ local UI = ns.UI
 
 local POPUP = "RPSHEET_DAMAGE_AMOUNT"
 
--- The game has named the box differently over time.
-local function BoxOf(dialog)
-    return (dialog.GetEditBox and dialog:GetEditBox()) or dialog.EditBox or dialog.editBox
-end
+local BoxOf = ns.PopupEditBox -- Actions/PopupBox.lua
 
 -- `request` is { heal = true } or { damageType = "fire" } (no type: an empty table).
 -- ward = false leaves the dice of a protective spell out; prompt = a question of its

@@ -25,8 +25,14 @@ function L.Gains()
                 ns.MulticlassGains(L.draft.class))
         end
     end
-    local subclass = L.SubclassAfter()
-    local features = ns.FeaturesGainedAt(L.draft.class, subclass, level)
+    -- Only what applies to this character, with the options picked here: a land
+    -- beast's charge only for a beast of the land, a specialization's feature only
+    -- for that specialization.
+    local features = {}
+    if L.draft.taking then
+        local view = setmetatable({ featureOptions = L.draft.options }, { __index = ns.ClassView(L.Like(), L.draft.class) })
+        features = ns.FeaturesGainedFor(view, level)
+    end
     if L.draft.taking and #features > 0 then
         lines[#lines + 1] = ""
         for _, feature in ipairs(features) do

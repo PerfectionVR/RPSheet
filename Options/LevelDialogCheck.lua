@@ -36,6 +36,7 @@ function L.Problem()
     end
     if L.AsksSubclass() and L.draft.taking and L.draft.subclass == "" then return "Choose a subclass: it is part of this level." end
     if L.StyleSlot() and L.draft.style == "" then return "Choose a Fighting Style: it is part of this level." end
+    if L.StyleMissing() then return "Choose a Fighting Style: the feature has none." end
     local problem = L.draft.kind and Levels.Problem(L.Sheet(), L.draft.level, L.draft.record)
     if problem then return problem end
     -- Last: the feat has to be settled before its own choices are.

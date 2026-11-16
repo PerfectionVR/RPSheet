@@ -31,6 +31,14 @@ local function Added(before, after)
     return names
 end
 
+-- After a change that may have raised the hit point maximum from `oldMax`: the current
+-- hit points grow by as much (a level, a class or subclass changed under Customize).
+-- A lower maximum only caps them, which RPSheet:ClampState does.
+function RPSheet:KeepHPGain(oldMax)
+    local state, gained = self:State(), self:MaxHP() - oldMax
+    if gained > 0 then state.hp = (state.hp or oldMax) + gained end
+end
+
 -- Sets the character's level. The levels gained or lost are those of `classKey`: the
 -- first class when it is left out, one of the character's other classes, or a class
 -- it doesn't have yet, which is then added (Sheet/Classes.lua). Losing the last level
@@ -86,7 +94,7 @@ function RPSheet:SetLevel(level, classKey, with)
     -- Going up, current HP and hit dice grow by what was gained. Going down they are
     -- only capped by the new maximums.
     if level > old then
-        state.hp = (state.hp or oldHP) + math.max(0, self:MaxHP() - oldHP)
+        self:KeepHPGain(oldHP)
         for _, tracker in ipairs(self:GetTrackers()) do
             if tracker.kind == "hitdice" then
                 local before = oldDice[tracker.sides] or 0

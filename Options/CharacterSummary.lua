@@ -38,12 +38,11 @@ local function Summary()
     for _, trait in ipairs(ns.OpenTraitChoices(sheet)) do
         lines[#lines + 1] = ("%s%s has a choice to make, under Customize, Lineage, languages, renown.|r"):format(Opt.RED, trait)
     end
-    -- Each class with the feature picks its own.
-    for _, slot in ipairs(ns.StyleSlots(sheet)) do
-        if not R.FIGHTING_STYLES[slot.name] then
-            lines[#lines + 1] = ("%sYou have a Fighting Style to choose, under Customize, %s.|r"):format(Opt.RED,
-                slot.class == sheet.class and "Class and origin" or "More classes")
-        end
+    -- Each class with the feature picks its own. The choices button below asks for it.
+    for _, slot in ipairs(ns.OpenStyleSlots(sheet)) do
+        lines[#lines + 1] = ("%sYou have a Fighting Style to choose: use \"%s\" below (or Customize, %s).|r"):format(Opt.RED,
+            ns.SheetManeuverLimit(sheet) > 0 and "Maneuvers" or "Class and feat choices",
+            slot.class == sheet.class and "Class and origin" or "More classes")
     end
     -- Each class picks its subclass at its own level 3.
     for _, view in ipairs(ns.ClassViews(sheet)) do

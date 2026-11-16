@@ -446,7 +446,7 @@ for _, key in ipairs(R.ITEM_VARIANTS) do
                 Eq(Found("vulnerable"), Sorted(variant.vulnerable), added.name .. ": vulnerabilities")
                 for _, kind in ipairs(variant.resist or {}) do
                     Eq(RPSheet:Defenses().resist[kind], added.name, added.name .. ": the resistance names the armor")
-                    Check(tContains(RPSheet:Resistances(), kind), added.name .. ": listed among the resistances")
+                    Check(tContains((ns.DefenseNames(RPSheet:Defenses().resist)), kind), added.name .. ": listed among the resistances")
                 end
                 Eq(RPSheet:ItemBonus("SAVES"), key == "Luck Blade" and 1 or 0, added.name .. ": saving throws")
                 if slot == "armor" then

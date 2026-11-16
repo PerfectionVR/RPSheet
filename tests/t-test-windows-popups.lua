@@ -620,5 +620,78 @@ Try("prepared window buttons", function()
     Check("the prepared window doesn't close", not window.frame:IsShown())
 end)
 
+---------------------------------------------------------------------------
+-- The popup's text box, however the game lets it be reached (Actions/PopupBox.lua)
+---------------------------------------------------------------------------
+Try("popup box routes", function()
+    Use(NewCharacter("ROGUE", nil, nil, 4, 6))
+    local function Dialog(how, name)
+        local dialog = CreateFrame("Frame", name, UIParent)
+        local holder = how == "nested" and CreateFrame("Frame", nil, dialog) or dialog
+        local box = CreateFrame("EditBox", nil, holder, "InputBoxTemplate")
+        if how == "method" then function dialog:GetEditBox() return box end end
+        if how == "broken" then function dialog:GetEditBox() return nil end end -- a method that answers nothing
+        if how == "EditBox" then dialog.EditBox = box end
+        if how == "editBox" then dialog.editBox = box end
+        if how == "global" then _G[name .. "EditBox"] = box end
+        return dialog, box
+    end
+    local hows = { "method", "broken", "EditBox", "editBox", "global", "child", "nested" }
+    for index, how in ipairs(hows) do
+        local dialog, box = Dialog(how, how == "global" and "RPSheetTestPopup" .. index or nil)
+        Check("the popup's box isn't found when it is reached by " .. how, ns.PopupEditBox(dialog) == box)
+        -- and the coin box reads it: 3 gp added
+        local before = RPSheet:Coins()
+        box:SetText("3 gp")
+        dialog.data = {}
+        Try("coin box by " .. how, StaticPopupDialogs.RPSHEET_COINS.OnAccept, dialog, dialog.data)
+        Check(("the coin box reached by %s added %d copper, not 300"):format(how, RPSheet:Coins() - before), RPSheet:Coins() - before == 300)
+        -- and the damage box: 2 damage taken
+        FullHP()
+        box:SetText("2")
+        dialog.data = {}
+        Try("damage box by " .. how, StaticPopupDialogs.RPSHEET_DAMAGE_AMOUNT.OnAccept, dialog, dialog.data)
+        Check(("the damage box reached by %s took %d hit points, not 2"):format(how, RPSheet:MaxHP() - HP()), RPSheet:MaxHP() - HP() == 2)
+    end
+    Check("a popup without a box gives a box", ns.PopupEditBox(CreateFrame("Frame", nil, UIParent)) == nil)
+    Check("nothing gives a box", ns.PopupEditBox(nil) == nil)
+end)
+
+---------------------------------------------------------------------------
+-- A right-click on a roll's row explains the number and rolls nothing
+---------------------------------------------------------------------------
+Try("right-click on rolls", function()
+    Use(NewCharacter("PRIEST", nil, nil, 5, 7))
+    RPSheet:Sheet().tools["Thieves' Tools"] = true
+    RPSheet:SheetChanged()
+    local rolls, roll = 0, RandomRoll
+    RandomRoll = function(...) rolls = rolls + 1 return roll(...) end
+    local found = {}
+    local STARTS = { "[?] STR", "[?] DEX +", "[?] Athletics", "[?] Initiative", "[?] Spell attack", "[?] Thieves' Tools" }
+    for _, tab in ipairs({ "Checks", "Skills" }) do
+        Tab(tab)
+        for _, start in ipairs(STARTS) do
+            local row = Row(start)
+            if row and not found[start] then
+                found[start] = true
+                local before, printed = rolls, #PRINTED
+                ClickPart("right-click " .. start, row, "RightButton")
+                Check(start .. ": a right-click rolled", rolls == before)
+                Check(start .. ": a right-click explained nothing", #PRINTED > printed)
+                local lines = HoverPart("hover " .. start, row) or {}
+                local tip = lines[#lines] and F.Plain(lines[#lines].text) or ""
+                Check(start .. ": the tooltip doesn't say what a right-click does", tip:find("Right%-click") ~= nil)
+                before = rolls
+                ClickPart("left-click " .. start, row, "LeftButton")
+                -- (a save may first ask what it is against)
+                Check(start .. ": a left-click doesn't roll", rolls > before or F.popup ~= nil or F.menu ~= nil)
+                Dismiss()
+            end
+        end
+    end
+    RandomRoll = roll
+    for _, start in ipairs(STARTS) do Check("no row starting " .. start, found[start]) end
+end)
+
 Finish("popups", ("%d damage menu rows (%d protective spell options), %d boxes typed into, %d conditions ticked, %d spellbook rows, %d prepared rows"):format(
     stats.menuRows, stats.wards or 0, stats.popups, stats.conditions, stats.bookRows, stats.preparedRows))

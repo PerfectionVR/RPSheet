@@ -10,10 +10,7 @@ local RPSheet = ns.addon
 ---------------------------------------------------------------------------
 local DIALOG = "RPSHEET_MATERIALS"
 
--- The game has named the box's text field differently over time.
-local function Box(dialog)
-    return dialog.GetEditBox and dialog:GetEditBox() or dialog.EditBox or dialog.editBox
-end
+local Box = ns.PopupEditBox -- Actions/PopupBox.lua
 
 local function Apply(dialog)
     local box, request = Box(dialog), dialog.data

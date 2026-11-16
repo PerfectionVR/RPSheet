@@ -34,12 +34,16 @@ end
 -- the mouse is over the row, so rebuilding the sheet doesn't pay for the tooltips of
 -- rows nobody hovers. (EXPLAIN_TIP: see the "[?]" below.)
 local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the [?] in front to see how this number is worked out.|r"
+-- (a roll's row, UI.AddRollLabel, also explains on a right-click)
+local EXPLAIN_RIGHT_TIP = "\n\n|cff8f8f8fRight-click, or click the [?] in front, to see how this number is worked out.|r"
 
 local function ShowTooltip(widget)
     local body = widget:GetUserData("tipBody")
     if type(body) == "function" then
         body = body()
-        if widget:GetUserData("explain") then body = (body or "") .. EXPLAIN_TIP end
+        if widget:GetUserData("explain") then
+            body = (body or "") .. (widget:GetUserData("rightExplains") and EXPLAIN_RIGHT_TIP or EXPLAIN_TIP)
+        end
     end
     GameTooltip:SetOwner(widget.frame, "ANCHOR_RIGHT")
     GameTooltip:AddLine(widget:GetUserData("tipTitle"))
@@ -109,6 +113,22 @@ function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain
         AttachTooltip(label, tipTitle, fixed and explain and ((tipBody or "") .. EXPLAIN_TIP) or tipBody)
     end
     parent:AddChild(label)
+    return label
+end
+
+-- A row that rolls a d20 (a check, save, skill, tool, initiative, spell attack): a
+-- left-click rolls, a right-click shows how the number is worked out, as the "[?]"
+-- does, and the tooltip says so. `explain()` is required.
+local function ClickRoll(button, roll, explain)
+    if button == "RightButton" then explain() else roll() end
+end
+
+function UI.AddRollLabel(parent, relWidth, text, roll, tipTitle, tipBody, explain)
+    local body = tipBody
+    if type(body) ~= "function" then body = function() return tipBody end end
+    local label = UI.AddLabel(parent, relWidth, text, function(button) ClickRoll(button, roll, explain) end,
+        tipTitle, body, explain)
+    label:SetUserData("rightExplains", true)
     return label
 end
 

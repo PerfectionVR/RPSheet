@@ -1,4 +1,4 @@
--- How a check, saving throw, skill, Passive Perception or initiative is worked out
+-- How a check, saving throw, skill, tool check, Passive Perception or initiative is worked out
 -- (mirrors Sheet/DerivedChecks.lua).
 local _, ns = ...
 local R = ns.Rules
@@ -63,6 +63,15 @@ end
 
 function RPSheet:ExplainSkill(skill)
     Show(self, skill.name, SkillParts(self, skill))
+end
+
+-- A check with a tool the character is proficient with (see RPSheet:ToolMod).
+function RPSheet:ExplainTool(tool)
+    local parts = {}
+    Ability(self, parts, tool.stat)
+    Add(parts, "proficiency", self:ProficiencyBonus())
+    AddBonuses(self, parts, "CHECKS")
+    Show(self, tool.name, parts)
 end
 
 function RPSheet:ExplainPassivePerception()

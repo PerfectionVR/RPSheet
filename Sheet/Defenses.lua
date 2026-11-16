@@ -116,7 +116,3 @@ function ns.DefenseNames(entries)
     return names, lines
 end
 
--- Damage types the character resists, sorted.
-function RPSheet:Resistances()
-    return (ns.DefenseNames(self:Defenses().resist))
-end

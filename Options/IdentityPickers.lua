@@ -10,14 +10,12 @@ local Sheet = Opt.Sheet
 local function Granting(option, key)
     option.get = function() return Sheet()[key] end
     option.set = function(_, value)
-        local sheet = Sheet()
-        sheet[key] = value
-        if key == "class" then sheet.subclass, sheet.spec = "", "" end
-        if key == "species" then sheet.lineage = "" end
-        ns.ApplyGrants(sheet)
-        ns.NormalizeState(RPSheet:State())
-        ns.RebuildOptions()
-        Opt.Changed()
+        Opt.Regrant(function()
+            local sheet = Sheet()
+            sheet[key] = value
+            if key == "class" then sheet.subclass, sheet.spec = "", "" end
+            if key == "species" then sheet.lineage = "" end
+        end)
     end
     return option
 end

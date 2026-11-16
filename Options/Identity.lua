@@ -51,7 +51,7 @@ Opt.custom.identity = {
             type = "select", order = 5, name = "Subclass",
             get = ListedSubclass,
             -- Picking a subclass hands out its features; changing it swaps them.
-            set = function(_, value) Sheet().subclass = value; Opt.Regrant() end,
+            set = function(_, value) Opt.Regrant(function() Sheet().subclass = value end) end,
         }, "subclasses"),
         subclassInfo = {
             type = "description", order = 5.5, fontSize = "medium",
@@ -63,8 +63,7 @@ Opt.custom.identity = {
             desc = "For a subclass that isn't in the list. Its features aren't built in; add them under Abilities and Passives.",
             get = function() return Sheet().subclass end,
             set = function(_, value)
-                Sheet().subclass = value:trim():gsub("[|\n\r]", "")
-                Opt.Regrant()
+                Opt.Regrant(function() Sheet().subclass = value:trim():gsub("[|\n\r]", "") end)
             end,
         },
         option1 = OptionPicker(1), option2 = OptionPicker(2), option3 = OptionPicker(3), option4 = OptionPicker(4),

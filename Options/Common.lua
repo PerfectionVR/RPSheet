@@ -165,9 +165,14 @@ end
 
 -- After a choice that hands things out (class, species, lineage, background,
 -- allegiance, level): add what it grants, then refresh the editor and the sheet.
-function Opt.Regrant()
+-- `change`, when given, makes the choice: a maximum hit points it raises raises the
+-- current hit points by as much, as taking a level does.
+function Opt.Regrant(change)
+    local maxWas = change and RPSheet:MaxHP()
+    if change then change() end
     ns.ApplyGrants(RPSheet:Sheet())
     ns.NormalizeState(RPSheet:State())
+    if maxWas then RPSheet:KeepHPGain(maxWas) end
     ns.RebuildOptions()
     Opt.Changed()
 end
