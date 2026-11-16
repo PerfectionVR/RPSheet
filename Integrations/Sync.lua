@@ -2,12 +2,13 @@
 --  * hovering or targeting a player asks them (addon whisper) for their stats
 --  * your own changes are pushed to your party or raid
 --  * after a login or reload inside a group, the group is asked to send theirs again
--- Received stats are kept for the session only and shown in the TRP3 tooltip.
+-- Received stats are kept for the session only, while their players are around, and
+-- shown in the TRP3 tooltip.
 -- With "Share my stats" off none of this happens: nothing is sent, asked or taken in.
 --
--- The work is in four files loaded before this one: SyncPayload.lua (what is sent, and
--- making safe what is received), SyncSend.lua, SyncReceive.lua and SyncTerms.lua. This
--- one switches it on at login.
+-- The work is in five files loaded before this one: SyncPayload.lua (what is sent, and
+-- making safe what is received), SyncSend.lua, SyncSwitch.lua, SyncReceive.lua and
+-- SyncTerms.lua. This one switches it on at login.
 local _, ns = ...
 local RPSheet = ns.addon
 local S = ns.Sync
@@ -26,6 +27,12 @@ function RPSheet:EnableSync()
         self:QueueBroadcast(count > members)
         members = count
     end)
+    S.EnableSwitch()
     self:QueueBroadcast(true)
     C_Timer.After(S.BROADCAST_DELAY, S.AskGroup)
+    local function Prune()
+        pcall(S.ForgetOld) -- (unit names can be protected in combat; then next time)
+        C_Timer.After(S.PRUNE_EVERY, Prune)
+    end
+    C_Timer.After(S.PRUNE_EVERY, Prune)
 end

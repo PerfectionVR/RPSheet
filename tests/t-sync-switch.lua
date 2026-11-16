@@ -1,6 +1,8 @@
 -- The "Share my stats" switch works both ways (nothing sent, asked or taken in; the
 -- group drops its copy at once), what couldn't be sent while the game blocked addon
--- messages is sent afterwards, and an older message never replaces a newer one.
+-- messages is sent afterwards, and an older message never replaces a newer one; a
+-- switch of settings profile that changes it does the same, and the players outside
+-- the group who were whispered the stats are told to drop them too.
 SYNC_SCRIPT = true
 dofile(ARG3 .. "/t-sync-clients.lua")
 
@@ -229,6 +231,114 @@ Section("the game blocks addon messages for a while", function()
     world:Advance(12)
     Check(Has(bert, anna) and Has(cara, anna), "afterwards the group was asked and answered")
     Check(Has(anna, bert), "and has Anna's stats")
+end)
+
+Section("a settings profile that changes it", function()
+    world:Group({ anna, bert, cara })
+    world:Advance(10)
+    local db = anna.addon.db
+    local profile = db:GetCurrentProfile()
+    -- a new profile shares, like the one before: nothing to say
+    local before = #world.wire
+    anna:Do(db.SetProfile, db, "Quiet")
+    world:Advance(4)
+    Check(not Kinds(anna, before):find("C:", 1, true), "a profile that also shares sends no clear: " .. Kinds(anna, before))
+    Check(Has(anna, bert), "the party keeps Anna's stats")
+    anna:Do(anna.addon.SetSharing, anna.addon, false)
+    world:Advance(2)
+    -- back to one that shares: the stats go out and the party is asked
+    before = #world.wire
+    anna:Do(db.SetProfile, db, profile)
+    world:Advance(5)
+    Eq(anna.addon.db.profile.share, true, "the profile shares")
+    Check(Kinds(anna, before):find("D:PARTY", 1, true) and Kinds(anna, before):find("Q:PARTY", 1, true), "a switch to it shares again: " .. Kinds(anna, before))
+    Check(Has(anna, bert) and Has(bert, anna), "both ways")
+    -- to one that doesn't: the clear goes out at once
+    before = #world.wire
+    anna:Do(db.SetProfile, db, "Quiet")
+    world:Advance(1)
+    Eq(Kinds(anna, before), "C:PARTY", "a switch to a profile that doesn't share sends the clear")
+    Eq(Has(anna, bert), nil, "Bert dropped Anna's stats")
+    Eq(Has(bert, anna), nil, "and Anna forgot the others'")
+    world:Advance(4)
+    Eq(world:Traffic(anna, before), 1, "and nothing else")
+    -- copied over, or reset
+    anna:Do(db.SetProfile, db, profile)
+    world:Advance(5)
+    before = #world.wire
+    anna:Do(db.CopyProfile, db, "Quiet")
+    world:Advance(1)
+    Eq(Kinds(anna, before), "C:PARTY", "a profile copied over this one that doesn't share sends the clear")
+    before = #world.wire
+    anna:Do(db.ResetProfile, db)
+    world:Advance(5)
+    Eq(anna.addon.db.profile.share, true, "a reset profile shares")
+    Check(Kinds(anna, before):find("D:PARTY", 1, true), "and the stats go out again: " .. Kinds(anna, before))
+    Check(Has(anna, bert), "Bert has them")
+end)
+
+Section("players whispered outside the group", function()
+    local dave = world:AddClient({ name = "Dave", trp3 = {} }):Login():OpenSheet()
+    world:Advance(5)
+    dave:Build("PRIEST", "", 2)
+    anna:LeaveGroup()
+    world:Advance(40)
+    -- Bert (in a party with Cara now) and Dave hover Anna and get her stats by whisper
+    bert:Hover(anna); dave:Hover(anna)
+    world:Advance(2)
+    bert:Hover(nil); dave:Hover(nil)
+    Check(Has(anna, bert) and Has(anna, dave), "both have Anna's stats")
+    local before = #world.wire
+    anna:Do(anna.addon.SetSharing, anna.addon, false)
+    world:Advance(2)
+    Eq(Kinds(anna, before), "C:WHISPER C:WHISPER", "switching off alone tells each of them by whisper")
+    Eq(Has(anna, bert), nil, "Bert dropped Anna's stats")
+    Eq(Has(anna, dave), nil, "and so did Dave")
+    -- in a party: the party by its channel, Dave by whisper, nobody twice
+    anna:Do(anna.addon.SetSharing, anna.addon, true)
+    world:Join(anna, bert)
+    world:Advance(40)
+    dave:Hover(anna); bert:Hover(anna)
+    world:Advance(2)
+    dave:Hover(nil); bert:Hover(nil)
+    Check(Has(anna, dave), "Dave asked again")
+    before = #world.wire
+    anna:Do(anna.addon.SetSharing, anna.addon, false)
+    world:Advance(2)
+    Eq(Kinds(anna, before), "C:PARTY C:WHISPER", "the party once, and Dave")
+    Eq(world.wire[#world.wire].target, dave.full, "the whisper is Dave's")
+    Eq(Has(anna, dave), nil, "Dave dropped the stats")
+    -- while the game blocks messages: afterwards
+    anna:Do(anna.addon.SetSharing, anna.addon, true)
+    world:Advance(40)
+    dave:Hover(anna)
+    world:Advance(2)
+    dave:Hover(nil)
+    anna.lockdown = true
+    before = #world.wire
+    anna:Do(anna.addon.SetSharing, anna.addon, false)
+    world:Advance(3)
+    Eq(world:Traffic(anna, before), 0, "nothing while blocked")
+    anna.lockdown = false
+    world:Advance(7)
+    Eq(Kinds(anna, before), "C:PARTY C:WHISPER", "afterwards the party and Dave")
+    Eq(Has(anna, dave), nil, "Dave dropped the stats")
+    -- whispered long ago: Dave dropped the stats by himself, and is not told again
+    anna:Do(anna.addon.SetSharing, anna.addon, true)
+    world:Advance(40)
+    dave:Hover(anna)
+    world:Advance(2)
+    dave:Hover(nil)
+    Check(Has(anna, dave), "Dave has the stats")
+    world:Advance(2400)
+    Eq(Has(anna, dave), nil, "after more than half an hour unheard Dave dropped them himself")
+    before = #world.wire
+    anna:Do(anna.addon.SetSharing, anna.addon, false)
+    world:Advance(2)
+    Eq(Kinds(anna, before), "C:PARTY", "and is not whispered")
+    anna:Do(anna.addon.SetSharing, anna.addon, true)
+    world:Advance(5)
+    dave:Logout()
 end)
 
 world:CheckClean("switch")

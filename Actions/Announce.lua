@@ -19,6 +19,21 @@ function ns.ChannelLabel(channel)
     return ns.CHANNEL_LABEL[Known(channel)]
 end
 
+-- The chat type that reaches the chosen group: in a dungeon finder, raid finder or
+-- battleground group with no party or raid of your own, its instance chat. Nil when
+-- there is no such group.
+local function GroupChat(channel)
+    local home, instance = LE_PARTY_CATEGORY_HOME, LE_PARTY_CATEGORY_INSTANCE
+    if channel == "PARTY" then
+        if IsInGroup(home) then return "PARTY" end
+        if IsInGroup(instance) then return "INSTANCE_CHAT" end
+    elseif IsInRaid(home) then
+        return "RAID"
+    elseif IsInRaid(instance) then
+        return "INSTANCE_CHAT"
+    end
+end
+
 -- `text` reads as a continuation of the character's name: "rolls Stealth: 14 + 5 = 19".
 function RPSheet:Announce(text)
     local channel = Known(self.db.profile.channel)
@@ -31,11 +46,10 @@ function RPSheet:Announce(text)
     local name = ns.Codec.PlainText((self:GetCharacterName():gsub("%c+", " ")))
     -- When the chosen channel can't be used the line is shown to the player alone, with
     -- the reason, so it is never mistaken for an announcement others saw.
-    local why
-    if channel == "PARTY" and not IsInGroup() then
-        why = "you are not in a party"
-    elseif channel == "RAID" and not IsInRaid() then
-        why = "you are not in a raid"
+    local why, chatType = nil, channel
+    if channel == "PARTY" or channel == "RAID" then chatType = GroupChat(channel) end
+    if not chatType then
+        why = channel == "PARTY" and "you are not in a party" or "you are not in a raid"
     elseif channel ~= "SELF" and C_ChatInfo.InChatMessagingLockdown and C_ChatInfo.InChatMessagingLockdown() then
         why = "the game blocks addon chat messages right now"
     end
@@ -53,7 +67,7 @@ function RPSheet:Announce(text)
     -- A line too long for one message goes out as several (Actions/AnnounceSplit.lua),
     -- each starting with the name like the first.
     for _, part in ipairs(ns.SplitChat(text, MAX_CHAT - #lead, MAX_PARTS)) do
-        send(lead .. part, channel)
+        send(lead .. part, chatType)
     end
 end
 

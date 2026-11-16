@@ -38,7 +38,13 @@ end
 -- asks first when it needs to (Actions/RollQuestions.lua), and the menu attacks.
 function RPSheet:Attack(mode, answers)
     local weapon = self:GetWeapon()
-    if not weapon then return end
+    if not weapon then
+        -- (A row or key that was there before the last weapon went.) The attempt still
+        -- settles a rest that could be taken back, like any attack (Actions/RestUndo.lua).
+        if ns.RestUndoExpire then ns.RestUndoExpire() end
+        self:Print("No weapon to attack with: add one under Customize > Weapons, or equip one on the Items tab.")
+        return
+    end
     if self:CantAct(weapon.heal and ("use " .. weapon.name) or "attack") then return end
     local stat = self:WeaponStat(weapon)
     local mod = self:Mod(stat)

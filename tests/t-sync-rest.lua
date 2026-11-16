@@ -1,6 +1,7 @@
 -- Taking a rest back: "/sheet undo" puts the play state back as it was just before the
 -- last rest, tells the channel, and the group sees the old numbers again; it works
--- until the next roll, spell, damage or rest, and never over a change to the character.
+-- until the next roll, spell, attack, damage or rest, and never over a change to the
+-- character or a hand tweak to its numbers in play.
 SYNC_SCRIPT = true
 dofile(ARG3 .. "/t-sync-clients.lua")
 
@@ -193,6 +194,63 @@ Section("never over a change to the character", function()
     Check(Printed(printed):find("Wait for the roll", 1, true), "said so")
     addon.busy = false
     Check(addon:UndoRest(), "afterwards it can")
+    world:Advance(3)
+end)
+
+Section("never over a hand tweak after it", function()
+    -- a bar clicked, a slot spent by hand, inspiration, the weapon in hand: nothing is
+    -- announced, but an undo would revert it too
+    local function Tweaked(label, act, still)
+        Spend()
+        anna:Do(addon.LongRest, addon)
+        world:Advance(1)
+        anna:Do(act)
+        world:Advance(1)
+        local printed, said = #anna.printed, #anna.said
+        Eq(addon:UndoRest(), false, label .. ": the rest can't be taken back")
+        Check(Printed(printed):find("was changed since the rest", 1, true), label .. ": and the player is told why: " .. Printed(printed))
+        Eq(#anna.said, said, label .. ": nothing is announced")
+        Check(still(), label .. ": the tweak is still there")
+    end
+    Tweaked("the hit point bar", function() addon:FindTracker("HP").set(addon:MaxHP() - 5) end,
+        function() return addon:State().hp == addon:MaxHP() - 5 end)
+    local bar
+    for _, tracker in ipairs(addon:GetTrackers()) do if tracker.kind == "pool" or tracker.kind == "resource" then bar = tracker break end end
+    if Check(bar ~= nil, "the character has a resource bar") then
+        Tweaked("a resource bar", function() bar.set(bar.get() - 1) end, function() return bar.get() == bar.max - 1 end)
+    end
+    Tweaked("heroic inspiration", function() addon:State().inspiration = not addon:State().inspiration end,
+        function() return true end)
+    Tweaked("temporary hit points", function() addon:State().tempHP = 4 end, function() return addon:State().tempHP == 4 end)
+    -- a tweak put back as it was leaves nothing an undo would revert: it still works
+    Spend()
+    local before = Picture()
+    anna:Do(addon.LongRest, addon)
+    local hp = addon:State().hp
+    addon:FindTracker("HP").set(hp - 1)
+    addon:FindTracker("HP").set(hp)
+    Check(addon:UndoRest(), "a bar clicked down and up again: the rest can still be taken back")
+    Eq(Picture(), before, "to where it was")
+    world:Advance(3)
+end)
+
+Section("an attack with nothing to attack with", function()
+    Spend()
+    anna:Do(addon.LongRest, addon)
+    world:Advance(1)
+    local weapons = addon:Sheet().weapons
+    local kept = {}
+    for index = #weapons, 1, -1 do kept[#kept + 1] = table.remove(weapons, index) end
+    local after, printed, said = Picture(), #anna.printed, #anna.said
+    anna:Do(addon.Attack, addon)
+    world:Advance(1)
+    Eq(#anna.said, said, "nothing is announced")
+    Check(Printed(printed):find("No weapon to attack with", 1, true), "the player is told why: " .. Printed(printed))
+    printed = #anna.printed
+    Eq(addon:UndoRest(), false, "the attack settles the rest like any other")
+    Check(Printed(printed):find("no rest to take back", 1, true), "and the player is told")
+    Eq(Picture(), after, "nothing changed")
+    for index = #kept, 1, -1 do weapons[#weapons + 1] = kept[index] end
     world:Advance(3)
 end)
 

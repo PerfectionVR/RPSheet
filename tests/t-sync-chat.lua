@@ -238,6 +238,9 @@ Section("every term has a tooltip", function()
     for name, trait in pairs(R.TRAITS) do if type(trait) == "table" and trait.desc then Add("trait", name) end end
     for name in pairs(ns.Glossary) do Add("glossary", name) end
     for _, skill in ipairs(R.SKILLS) do Add("skill", skill.name) end
+    for name in pairs(R.TOOLS) do Add("tool", name) end
+    for name in pairs(R.ITEMS) do Add("item", name) end
+    Add("roll", "initiative"); Add("roll", "spell attack")
     for _, stat in ipairs(R.STATS) do
         Add("check", stat .. " check"); Add("save", stat .. " save"); Add("companion", "companion " .. stat .. " check"); Add("companion", "companion " .. stat .. " save")
     end
@@ -272,6 +275,17 @@ Section("every term has a tooltip", function()
     print(("  %d terms of the rules data checked"):format(total))
     for kind, names in pairs(missing) do Check(false, ("%s terms without a tooltip:%s"):format(kind, names:sub(1, 600))) end
     Eq(#unlinkable, 0, "terms that can't be linked because of a bracket or pipe in the name: " .. table.concat(unlinkable, ", "))
+    -- what the tooltip says of a tool, an item, a magic item and the rolls named in lower case
+    local function Shown(term)
+        local links = Links(ns.LinkTerms(("Anna rolls [%s]: 12"):format(term), "Anna-Realm"))
+        return links[1] and table.concat(bert:HoverLink(links[1].link), " / ") or ""
+    end
+    Check(Shown("Thieves' Tools"):find("Kit. / Checks with it use Dexterity", 1, true), "a tool: its kind and ability: " .. Shown("Thieves' Tools"))
+    Check(Shown("Lute"):find("Instrument.", 1, true), "an instrument: " .. Shown("Lute"))
+    Check(Shown("Rope"):find("Adventuring gear", 1, true), "an item: its kind: " .. Shown("Rope"))
+    Check(Shown("Potion of Healing"):find("Magic item, common", 1, true), "a magic item: its rarity: " .. Shown("Potion of Healing"))
+    Check(Shown("initiative"):find("^Initiative / ") ~= nil, "initiative has a title and a line: " .. Shown("initiative"))
+    Check(Shown("spell attack"):find("^Spell attack / ") ~= nil, "so has a spell attack: " .. Shown("spell attack"))
     -- what the addon marks that is not in the rules data: linked in a line of ours, with the term as the title
     for _, term in ipairs({ "initiative", "spell attack", "My Own Trick", "Beast's Strike" }) do
         local linked = ns.LinkTerms(("Anna rolls [%s]: 12"):format(term), "Anna-Realm")
