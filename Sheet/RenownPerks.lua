@@ -55,6 +55,10 @@ local function Apply(sheet, key, faction, tier, grant, perk)
     else
         entry.effects = CopyTable(grant.effects or {})
         entry.advantage = grant.advantage and CopyTable(grant.advantage) or nil
+        -- Damage types and conditions a blessing protects from (Sheet/Defenses.lua reads them).
+        for _, field in ipairs({ "resist", "immune", "conditionImmune" }) do
+            entry[field] = grant[field] and CopyTable(grant[field]) or nil
+        end
     end
     -- A blessing raises a score only as far as its own ceiling.
     for stat, points in pairs(grant.scores or {}) do

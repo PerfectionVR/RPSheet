@@ -103,6 +103,7 @@ function ns.ApplyPicks(sheet)
             entry.actions = {}
             if item.cost then entry.actions[#entry.actions + 1] = Kit.Spend("Sorcery Points", item.cost) end
             if item.dice then entry.actions[#entry.actions + 1] = Kit.Dice(item.dice[1], item.dice[2], item.dice[3]) end
+            if item.reroll then entry.actions[#entry.actions + 1] = { type = "REROLL", mode = item.reroll } end
         else
             entry.effects = entry.effects or {}
         end

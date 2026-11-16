@@ -77,6 +77,36 @@ for _, key in ipairs(R.PICK_LIST_ORDER) do
     end
 end
 
+-- The origin feat of each Lessons of the First Ones (Sheet/LessonFeats.lua). Any can
+-- be set here; one taken already is said in red.
+local LESSONS = { "Lessons of the First Ones", "Lessons of the First Ones (second)", "Lessons of the First Ones (third)" }
+for index, pick in ipairs(LESSONS) do
+    args.listinvocations.args["lessons" .. index] = {
+        type = "select", order = 900 + index, width = 1.5, name = pick .. ": origin feat",
+        desc = function()
+            local lines = { "The origin feat this invocation gives. Its own choices, if any, are made under Class and feat choices." }
+            local picked = Sheet().featureOptions[pick]
+            local allowed = false
+            for _, name in ipairs(ns.LessonOptions(Sheet(), pick)) do allowed = allowed or name == picked end
+            if picked and R.FEATS[picked] and not allowed then lines[#lines + 1] = RED .. "You have this feat already from elsewhere.|r" end
+            return table.concat(lines, "\n\n")
+        end,
+        hidden = function()
+            for _, each in ipairs(ns.LessonPicks(Sheet())) do
+                if each == pick then return false end
+            end
+            return true
+        end,
+        values = function() return (Opt.ListMap(ns.LessonOptions(Sheet(), pick, true), true)) end,
+        sorting = function() return (select(2, Opt.ListMap(ns.LessonOptions(Sheet(), pick, true), true))) end,
+        get = function() return Sheet().featureOptions[pick] or "" end,
+        set = function(_, value)
+            Sheet().featureOptions[pick] = value ~= "" and value or nil
+            Opt.Regrant()
+        end,
+    }
+end
+
 local function Maneuvers()
     local sheet = Sheet()
     if type(sheet.maneuvers) ~= "table" then sheet.maneuvers = {} end

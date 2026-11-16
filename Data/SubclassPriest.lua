@@ -22,11 +22,11 @@ F["Discipline Domain"] = {
 }
 F["Life Domain"] = {
     AlwaysPrepared("Life Domain", { { 3, "Aid, Bless, Cure Wounds, Lesser Restoration" }, { 5, "Mass Healing Word, Revivify" }, { 7, "Aura of Life, Death Ward" }, { 9, "Greater Restoration, Mass Cure Wounds" } }),
-    Passive(3, "Disciple of Life", "A slotted spell that heals a creature heals 2 + the slot's level more on the turn you cast it."),
+    Passive(3, "Disciple of Life", "A slotted spell that heals a creature heals 2 + the slot's level more on the turn you cast it. The sheet adds it."),
     Ability(3, "Preserve Life", "Magic action. Restore the hit points shown (five times your level), divided among Bloodied creatures within 30 feet, up to half their maximum each.",
         function(level) return { Spend("Channel Divinity"), Dice(0, 4, "", "HEALING", 5 * level) } end),
-    Passive(6, "Blessed Healer", "When a slotted spell of yours heals others, you regain 2 + the slot's level yourself."),
-    Passive(17, "Supreme Healing", "When you would roll dice to heal with a spell or Channel Divinity, use the highest possible result instead."),
+    Passive(6, "Blessed Healer", "When a slotted spell of yours heals others, you regain 2 + the slot's level yourself. The sheet heals you when such a spell is cast."),
+    Passive(17, "Supreme Healing", "When you would roll dice to heal with a spell or Channel Divinity, use the highest possible result instead. The sheet counts those dice at their highest."),
 }
 F["Shadow Domain"] = {
     AlwaysPrepared("Shadow", { { 3, "Crown of Madness, Dissonant Whispers, Mind Spike, Shadow Word: Pain" }, { 5, "Summon Undead, Vampiric Touch" }, { 7, "Evard's Black Tentacles, Psychic Horror" }, { 9, "Dominate Person, Void Eruption" } }),
@@ -37,7 +37,7 @@ F["Shadow Domain"] = {
     Passive(3, "Shadowform active", "Switch on while you are in Shadowform (1 minute). Being incapacitated or a rest switches it off; switch it off yourself when you dismiss it or deal radiant damage with a spell.", nil, true),
     Ability(3, "Void Empowerment", "In Shadowform: the extra damage for a slotted spell that deals psychic or necrotic damage.", { Dice(1, 6) }),
     Limited(6, "Dispersion", "Reaction when an attack hits you: until the end of your next turn you resist all damage, fly 40 feet, and can't act. Afterwards you can spend up to half your Hit Dice to heal. Once per short or long rest. Switches Dispersed on.", 1, { SwitchOn("Dispersed") }, "ALL"),
-    Passive(6, "Dispersed", "Switch on after Dispersion, until the end of your next turn: you resist all damage.", nil,
+    Passive(6, "Dispersed", "Switch on after Dispersion, until the end of your next turn: you resist all damage, and the sheet shows your flying speed of 40 feet.", { Kit.Sets("FLY", 40) },
         { startsOff = true, resist = R.AllDamage() }),
     Passive(17, "Vampiric Embrace", "While in Shadowform, whenever you roll the d6 of extra spell damage, a creature within 30 feet regains that many hit points."),
 }

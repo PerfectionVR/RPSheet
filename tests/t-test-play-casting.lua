@@ -247,20 +247,20 @@ Section("a menu that is not answered ends nothing", function()
     -- since no listed spell is both.
     Build("MAGE", "", 9)
     local state = RPSheet:State()
-    local bless = Learn("Bless")
-    local keepParts, keepRule = R.SPELL_COMPONENTS["Bless"], R.COMPONENT_TARGETS["Bless"]
-    R.SPELL_COMPONENTS["Bless"] = { { item = "Pearl (100 gp)", cost = 10000, consumed = false, qty = 1, each = "target", accept = { Pearl = true } } }
-    R.COMPONENT_TARGETS["Bless"] = { max = 3 }
+    local bless = Learn("Hold Person") -- (Bless asks who it is for: a ward now)
+    local keepParts, keepRule = R.SPELL_COMPONENTS["Hold Person"], R.COMPONENT_TARGETS["Hold Person"]
+    R.SPELL_COMPONENTS["Hold Person"] = { { item = "Pearl (100 gp)", cost = 10000, consumed = false, qty = 1, each = "target", accept = { Pearl = true } } }
+    R.COMPONENT_TARGETS["Hold Person"] = { max = 3 }
     Carry("Pearl (100 gp)", 3)
     RPSheet:StartWard("Stoneskin", 1)
     state.conditions.Concentrating = true
     RPSheet:CastSpell(bless)
-    Check(MENU and MENU.title == "Bless: how many targets?", "the test spell asks how many")
+    Check(MENU and MENU.title == "Hold Person: how many targets?", "the test spell asks how many")
     Check(Passive("Stoneskin (spell)") ~= nil, "the old spell's ward holds while the question is open")
     if MENU then Click(MENU, "2") end
     Check(not Passive("Stoneskin (spell)"), "and ends once the new spell is cast")
     Said("for 2 targets", "the casting names the number")
-    R.SPELL_COMPONENTS["Bless"], R.COMPONENT_TARGETS["Bless"] = keepParts, keepRule
+    R.SPELL_COMPONENTS["Hold Person"], R.COMPONENT_TARGETS["Hold Person"] = keepParts, keepRule
 end)
 
 Section("growing spell", function()

@@ -38,6 +38,9 @@ local function Summary()
     for _, trait in ipairs(ns.OpenTraitChoices(sheet)) do
         lines[#lines + 1] = ("%s%s has a choice to make, under Customize, Lineage, languages, renown.|r"):format(Opt.RED, trait)
     end
+    for _, pick in ipairs(ns.OpenLessons(sheet)) do
+        lines[#lines + 1] = ("%s%s has an origin feat to choose, under Customize, %s.|r"):format(Opt.RED, pick, Opt.CLASS_PICKS_PAGE)
+    end
     -- Each class with the feature picks its own. The choices button below asks for it.
     for _, slot in ipairs(ns.OpenStyleSlots(sheet)) do
         lines[#lines + 1] = ("%sYou have a Fighting Style to choose: use \"%s\" below (or Customize, %s).|r"):format(Opt.RED,

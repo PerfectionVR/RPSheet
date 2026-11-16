@@ -27,13 +27,14 @@ end
 -- The spells of the species or lineage: the ability they are cast with, and an elf's
 -- cantrip (Sheet/LineageCasting.lua). Free here; the page says in red what is missing.
 local function Casts()
-    return ns.LineageCasts(Sheet().species, Sheet().lineage)
+    return ns.LineageAsks(Sheet().species, Sheet().lineage)
 end
 
 local function CastingInfo()
     local sheet, lines = Sheet(), {}
     if ns.LineageStatMissing(sheet) then
-        lines[#lines + 1] = ("%sChoose the ability your %s spells are cast with. Until then the sheet uses the best of the three.|r"):format(Opt.RED, ns.LineageTrait(sheet.species))
+        local what = ns.LineageCasts(sheet.species, sheet.lineage) and (ns.LineageTrait(sheet.species) .. " spells are cast with") or "lineage's save DC uses"
+        lines[#lines + 1] = ("%sChoose the ability your %s. Until then the sheet uses the best of the three.|r"):format(Opt.RED, what)
     end
     if ns.LineageCantrip(sheet) and RPSheet:State().lineageCantripChanged then
         lines[#lines + 1] = ("%sYou exchanged the cantrip since your last long rest: the rules allow one exchange after each long rest.|r"):format(Opt.RED)
@@ -133,9 +134,9 @@ end
 local function TraitPicker(name, order)
     return {
         type = "select", order = order,
-        name = function() return name .. (R.TRAITS[name].choice == "FEAT" and " (origin feat)" or " (skill)") end,
+        name = function() return ns.TraitChoiceLabel(name) end,
         desc = function()
-            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[name] end
+            if R.TRAITS[name].choice ~= "FEAT" then return ns.Glossary[R.TRAITS[name].of or name] end
             local lines = { ns.Glossary[name] or "" }
             for _, feat in ipairs(ns.TraitOptions(Sheet(), name, true)) do
                 lines[#lines + 1] = ("%s%s|r: %s"):format(Opt.GOLD, feat, R.FEATS[feat].desc)
@@ -180,15 +181,26 @@ local args = {
     },
 
     lineageStat = {
-        type = "select", order = 3.1, name = "Ability for its spells",
-        desc = "The ability your species' or lineage's spells and cantrips are cast with: Intelligence, Wisdom or Charisma, chosen with the lineage.",
+        type = "select", order = 3.1,
+        name = function() return "Ability for " .. ns.LineageStatUse(Sheet().species, Sheet().lineage) end,
+        desc = function()
+            local sheet = Sheet()
+            if not ns.LineageCasts(sheet.species, sheet.lineage) then
+                return ("The ability your lineage's save DC uses: %s, chosen with the lineage."):format(ns.LineageStatWords(sheet.species, sheet.lineage))
+            end
+            return "The ability your species' or lineage's spells and cantrips are cast with: Intelligence, Wisdom or Charisma, chosen with the lineage."
+        end,
         hidden = function() return not Casts() end,
         values = function()
-            local values = ns.LineageStatValues()
+            local values = ns.LineageStatValues(Sheet().species, Sheet().lineage)
             values[""] = "Not chosen"
             return values
         end,
-        sorting = { "", "INT", "WIS", "CHA" },
+        sorting = function()
+            local order = { "" }
+            for _, stat in ipairs(ns.LineageStats(Sheet().species, Sheet().lineage)) do order[#order + 1] = stat end
+            return order
+        end,
         get = function() return ns.LineageStatChosen(Sheet()) or "" end,
         set = function(_, value) Sheet().lineageStat = value; Opt.Regrant() end,
     },
@@ -217,6 +229,8 @@ local args = {
     traitSkillful = TraitPicker("Skillful", 4),
     traitKeenSenses = TraitPicker("Keen Senses", 4.1),
     traitVersatile = TraitPicker("Versatile", 4.2),
+    traitDesign = TraitPicker("Specialized Design", 4.3),
+    traitDesign2 = TraitPicker("Specialized Design 2", 4.4),
 
     languageHeader = { type = "header", order = 10, name = "Languages" },
     languageInfo = { type = "description", order = 11, fontSize = "medium", name = LanguageInfo },

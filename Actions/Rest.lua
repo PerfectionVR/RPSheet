@@ -46,12 +46,17 @@ function RPSheet:LongRest()
     EndLasting(self)   -- nor a feature that lasts minutes
     self:EndWards(8)         -- nor a protective spell of 8 hours or less,
     self:EndWards(nil, true) -- nor one that hangs on concentration
+    local waiting = self:WaitingUses() -- a feat's use that takes several rests (Sheet/FeatUses.lua)
     self:ClampState(true) -- also makes first-use-free abilities free again
+    self:InterventionAfterRest() -- unless Wish keeps Divine Intervention spent (Actions/InterventionFlow.lua)
+    self:HoldWaitingUses(waiting)
+    state.chefMeal = nil
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
     state.conditions.Concentrating = nil
     state.petMasteryChanged = nil -- Weapon Mastery picks can be changed again
     state.prepareClosed = nil     -- and so can the prepared spells
+    state.memorizeSwap = nil      -- (so Memorize Spell's one exchange isn't needed)
     state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
     state.cantripSwap = nil       -- and a Mage's exchange of one cantrip (Sheet/CantripSwap.lua)
     ns.ResetRestPicks()           -- and the feat picks that change after a long rest
@@ -69,6 +74,7 @@ end
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
     self:ForgetRefunds()
+    self:OpenMemorize() -- a Mage can replace one prepared spell (Sheet/MemorizeSpell.lua)
     if EndLasting(self) then self:PopulateSoon() end
     if self:EndBenefits() then
         self:ClampState()
@@ -84,6 +90,11 @@ function RPSheet:ShortRest()
             if tracker.get() > before then regained[#regained + 1] = tracker.label end
         end
     end
+    -- Chef: the meal cooked during the rest heals 1d8 more when Hit Dice are spent.
+    -- Tushui Meditation: a rest spent in silent meditation ends with Heroic Inspiration.
+    local state = self:State()
+    state.chefMeal = HasPassive(self:Sheet(), "Chef") or nil
+    if HasPassive(self:Sheet(), "Tushui Meditation") and self:GainInspiration() then regained[#regained + 1] = "Heroic Inspiration" end
     -- Signature Spells: the casting without a slot is back.
     local spells = self:RestoreChosenCastings(true)
     for _, name in ipairs(spells) do regained[#regained + 1] = name .. " without a slot" end
@@ -113,15 +124,26 @@ function RPSheet:SpendHitDie(pool)
     local extra = self:TraitValue("hitDie")
     if type(extra) == "number" then mod = mod + extra end
     local maximum = self:TraitValue("hitDieMax") == true
+    -- The Chef's meal of the last short rest adds 1d8, once.
+    local meal = state.chefMeal == true
     self:RollDice(1, sides, function(rolls)
         if maximum then rolls[1] = sides end
         local healed = math.max(1, rolls[1] + mod)
-        pool.set(pool.get() - 1)
-        state.hp = math.min(self:MaxHP(), (state.hp or 0) + healed)
-        self:ClearDeathSaves()
-        self:Announce(("spends a hit die - %s (now %d/%d HP)"):format(
-            RollText.Dice("healing", rolls, sides, mod), state.hp, self:MaxHP()))
-        self:QueueBroadcast()
-        self:PopulateSoon()
+        local text = RollText.Dice("healing", { rolls[1] }, sides, mod)
+        local function Done()
+            pool.set(pool.get() - 1)
+            state.hp = math.min(self:MaxHP(), (state.hp or 0) + healed)
+            self:ClearDeathSaves()
+            self:Announce(("spends a hit die - %s (now %d/%d HP)"):format(text, state.hp, self:MaxHP()))
+            self:QueueBroadcast()
+            self:PopulateSoon()
+        end
+        if not meal then return Done() end
+        state.chefMeal = nil
+        self:Roll(8, function(extra)
+            healed = healed + extra
+            text = ("%s, %s"):format(text, RollText.Dice(ns.Mark("Chef") .. "'s meal", { extra }, 8, 0))
+            Done()
+        end)
     end)
 end

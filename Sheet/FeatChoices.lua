@@ -2,7 +2,8 @@
 -- Data/FeatChoices.lua). Every feat the character has is an "instance" with an id of
 -- its own, so the same feat taken twice keeps its choices apart:
 --   sheet.featChoices[<id>] = { feat = <feat name>, picks = { [<choice key>] = { [<slot>] = <value> } } }
--- The id is the passive's `auto` key ("level:4", "trait:Versatile"), or "own:<name>"
+-- The id is the passive's `auto` key ("level:4", "trait:Versatile", "lessons:<the
+-- invocation picked>"), or "own:<name>"
 -- for a feat without one (the background's). The choosing happens in the level dialog
 -- (Options/FeatChoices.lua); what a pick does is in Sheet/FeatGrants.lua.
 local _, ns = ...
@@ -44,7 +45,7 @@ function ns.FeatInstances(sheet, override)
         if auto == "" then
             plain[name] = (plain[name] or 0) + 1
             id = plain[name] == 1 and ("own:" .. name) or ("own:%s:%d"):format(name, plain[name])
-        elseif auto:find("^level:") or auto:find("^trait:") then
+        elseif auto:find("^level:") or auto:find("^trait:") or auto:find("^lessons:") then
             id = auto
             if override and override.id == auto then name, replaced = override.name, true end
         end
@@ -189,7 +190,7 @@ local function Blocked(sheet, store, instances, slot, value)
         end
     end
     if choice.kind == "tool" then
-        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value)
+        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value) or ns.TraitTool(sheet, value)
     elseif choice.kind == "mastery" then
         -- Only a kind of weapon the character is proficient with.
         return not ns.SheetWeaponProficient(sheet, value)

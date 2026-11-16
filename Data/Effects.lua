@@ -55,6 +55,9 @@ R.ACTIONS = {
     TOGGLE = "Switch a passive on or off",
     NEXTROLL = "Set advantage or disadvantage on the next roll",
     SLOTS = "Change spell slots", -- for class features only; not offered in the editor
+    EMPTYONLY = "Only with none of a resource left", -- class features only, like SLOTS
+    LOSEHP = "Lose hit points",   -- class features only, like SLOTS
+    REROLL = "Reroll the last spell", -- for Metamagic only (Actions/SpellFeats.lua); not offered either
 }
 R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE", "NEXTROLL" }
 R.NEXT_ROLL_MODES = { ADV = "Advantage", DIS = "Disadvantage" }
@@ -77,6 +80,7 @@ R.TEMPLATES = {
     -- to its own attack and damage rolls; stowed: put away, so not on the sheet
     weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
                base = "", twoHands = false, magic = 0, stowed = false,
+               pact = false, -- the bonded weapon of Pact of the Blade (Sheet/Armoury.lua)
                -- For a weapon of the player's own (no base): whether it is a ranged one, and
                -- what it is worth in copper, for a spell that needs a weapon as a component.
                ranged = false, cost = 0 },
@@ -93,10 +97,13 @@ R.TEMPLATES = {
         slotAdd = 0,                                                   -- DICE: dice added per level of the slot spent above 1st
         strain = "",                                                   -- DICE: a resource; one more die for each use of it since a long rest, none on the first
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
+        reroll = 0, rerollFrom = "",                                   -- DICE: dice showing this or less are rerolled once, and what does it (Sheet/DiceFeats.lua)
+        lowest = 0, lowestFrom = "",                                   -- DICE: dice below this count as this, and what does it
         times = 1,                                                     -- WEAPON
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
         refund = "",                                                   -- SPEND: when it can be taken back ("the check still failed")
         otherwise = "", otherwiseAmount = 0,                           -- SPEND: another resource that pays once this one is used up
+        otherwiseWhile = "",                                           -- SPEND: ...only while the passive of this name is on
         firstFree = false,                                             -- SPEND: waived for the first use after a long rest
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
     },
@@ -104,7 +111,9 @@ R.TEMPLATES = {
 
 
 -- Short names used when describing an effect or action.
-R.AMOUNT_SHORT = { LEVEL = "level", PROF = "proficiency" }
+-- HALFHP (half the maximum hit points) is for a feat's dice only, never an effect:
+-- the maximum is made of effects itself.
+R.AMOUNT_SHORT = { LEVEL = "level", PROF = "proficiency", HALFHP = "half your maximum HP" }
 
 ---------------------------------------------------------------------------
 -- Spells: entered by the player, cast from the sheet

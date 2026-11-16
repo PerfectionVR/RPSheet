@@ -42,7 +42,9 @@ function RPSheet:AC()
     end
     local armor = R.ARMOR[sheet.armor]
     local dex = self:Mod("DEX")
-    if armor.dexCap then dex = math.min(dex, armor.dexCap) end
+    -- Medium Armor Master can raise medium armor's limit (Sheet/FeatRules.lua).
+    local cap = self:ArmorDexCap(armor)
+    if cap then dex = math.min(dex, cap) end
     local ac = armor.ac + dex
     ac = ac + (self:UnarmoredDefense())
     if sheet.shield then ac = ac + R.SHIELD_AC end

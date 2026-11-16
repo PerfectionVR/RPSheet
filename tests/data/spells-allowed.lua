@@ -35,7 +35,7 @@ Allow("the sheet holds one roll for a spell: the one its first effect asks for; 
 -- Components -----------------------------------------------------------------------
 Allow("a holy symbol is an Amulet, Emblem or Reliquary on the gear list", "Bless|component name")
 Allow("the site's divination tools are the sheet's divining tokens, the same thing Augury uses at a lower worth", "Find the Path|component name")
-Allow("the component is a number of arrows or a coin, which the site gives no price for: the sheet still counts them", "Cordon of Arrows|component; Detect Thoughts|component")
+Allow("the component is a number of arrows, which the site gives no price for: the spell plants them, so the sheet counts them", "Cordon of Arrows|component")
 
 -- Wards ----------------------------------------------------------------------------
 Allow("the casting is instantaneous, the feast's benefits last 24 hours", "Heroes' Feast|ward hours")

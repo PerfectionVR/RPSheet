@@ -56,6 +56,8 @@ function RPSheet:GatherMod(profession)
     local mod = self:SkillMod(SKILL.Survival)
     if profession.key == "skinning" then
         mod = math.max(mod, self:Mod("WIS") + self:ProficiencyBonus() + self:Bonus("CHECKS"))
+        -- Honored with Gilneas (Data/FactionPerks.lua).
+        if self:HasPassive("Gilneas Skinning") then mod = mod + 2 end
     end
     return mod, (self:Sheet().skills.Survival or 0) >= 1
 end

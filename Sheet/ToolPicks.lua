@@ -23,6 +23,12 @@ function ns.ToolGranted(sheet, name)
         end
     end
     if R.BACKGROUND_TOOLS[sheet.background] == name then return "background" end
+    -- A class or subclass feature that names it (Assassin's Tools, Implements of Mercy).
+    for _, passive in ipairs(sheet.passives or {}) do
+        for _, tool in ipairs((passive.auto or "") ~= "" and passive.tools or {}) do
+            if tool == name then return "class" end
+        end
+    end
 end
 
 -- True if the tool is picked in one list (a key) the character has.
@@ -44,7 +50,8 @@ end
 -- RPSheet:ToolSource says of the active character, for any sheet.
 function ns.SheetToolProficient(sheet, name)
     return ns.ToolGranted(sheet, name) ~= nil or ns.ToolPicked(sheet, name) or ns.FeatTool(sheet, name)
-        or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) or (sheet.tools ~= nil and sheet.tools[name] == true)
+        or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) or ns.TraitTool(sheet, name)
+        or (sheet.tools ~= nil and sheet.tools[name] == true)
 end
 
 -- A kind the character is proficient with from elsewhere can't be picked as well.
@@ -55,7 +62,7 @@ for _, key in ipairs(LISTS) do
         for _, other in ipairs(LISTS) do
             if other ~= key and PickedIn(whole, other, name) then return "already proficient" end
         end
-        if ns.FeatTool(sheet, name) or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) then return "already proficient" end
+        if ns.FeatTool(sheet, name) or ns.FeatToolPicked(sheet, name) or ns.RenownTool(sheet, name) or ns.TraitTool(whole, name) then return "already proficient" end
     end
 end
 

@@ -62,14 +62,14 @@ local function UseUp(self, wards)
 end
 
 -- `ward` false takes the damage without rolling any ward (it was used this turn);
--- `crit` is true for a critical hit.
-function RPSheet:TakeDamage(amount, damageType, reduction, ward, crit)
+-- `crit` is true for a critical hit; `how` is passed on (Actions/DamageSteps.lua).
+function RPSheet:TakeDamage(amount, damageType, reduction, ward, crit, how)
     local wards = {}
     if ward ~= false and (tonumber(amount) or 0) >= 1 and not (damageType and self:Defenses().immune[damageType]) then
         wards = RolledWards(self, damageType)
     end
     if #wards == 0 then
-        return TakeDamage(self, amount, damageType, reduction, nil, crit)
+        return TakeDamage(self, amount, damageType, reduction, nil, crit, how)
     end
     if self.busy or self:IsRolling() then
         self:Print("Another roll is still going. Take the damage again when it is done.")
@@ -81,7 +81,7 @@ function RPSheet:TakeDamage(amount, damageType, reduction, ward, crit)
         local entry = wards[index]
         if not entry then
             self.busy = false
-            TakeDamage(self, amount, damageType, total, table.concat(notes, "; "), crit)
+            TakeDamage(self, amount, damageType, total, table.concat(notes, "; "), crit, how)
             return UseUp(self, wards)
         end
         local count, sides = entry.option.roll[1], entry.option.roll[2]

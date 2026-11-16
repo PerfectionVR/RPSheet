@@ -1,5 +1,128 @@
 # Changelog
 
+## 0.7.1
+
+- Take damage knows your features that change damage and offers each only while you
+  can use it: Evasion (boxes for a Dexterity save passed or failed), Uncanny Dodge and
+  Superior Hunter's Defense (each spends your reaction, which is back when you say so,
+  roll initiative or rest; the Hunter's resistance stays as a passive for the turn),
+  Heavy Armor Master (a box for an attack hit, in heavy armor), Nose for Trouble (ticked
+  by itself after you roll initiative) and Stagger and Sway (the Delayed Reaction pool
+  grows with each hit and has rows to take it or thin it with Purify). None works
+  while you are incapacitated.
+- "A fall" in the damage menu rolls 1d6 for every 10 feet (20d6 at most), lands you
+  Prone, and counts Slow Fall (asked as a reaction) and Bouncy.
+- Death Ward can be cast on yourself or added under Customize, Defense: the first
+  time damage would drop you to 0 hit points you keep 1 and the spell ends. Relentless
+  Rage rolls its Constitution save by itself when you drop to 0 while raging, and
+  sets your hit points on a success; its DC goes back to 10 after a rest.
+- Indomitable Might: a Strength check or save that totals less than your Strength
+  score counts as the score.
+- Heal opens a menu: type the amount, take your own last healing roll (cast on
+  yourself), or roll a healing spell someone else cast on you, with its slot and their
+  modifier.
+- Class features the sheet now applies by itself:
+  - The Assassin is proficient with the disguise kit and poisoner's kit, the Warrior of
+    Mercy with the herbalism kit, and the Warrior of Mystic Brews with brewer's supplies.
+  - A use bought back with a spell slot, a Rage use or Sorcery Points is paid when the
+    feature's own use is spent: Holy Nimbus, Holy Deliverance, Avenging Angel and Aspect
+    of the Horsemen (5th-level slot), Moonlight Step (2nd-level slot or higher),
+    Intimidating Presence (Rage), Hurl Through Hell and Clairvoyant Combatant (pact
+    slot), Dragon Wings (3 Sorcery Points), and Runic Mastery (4th-level slot while
+    Aspect of the Horsemen is on).
+  - Dragon Wings, Avenging Angel and Aspect of the Horsemen switch on a passive; the
+    wings, Avenging Angel, Dispersion and the Dragon constellation from level 10 show
+    their flying speed.
+  - Rolling initiative gives back Soul Shatter's soul fragment, Archdruid's Wild Shape
+    use and Perfect Focus' Focus Points.
+  - Casting Hunter's Mark from the spell list switches the Hunter's Mark passive on.
+  - Potent Spellcasting adds Wisdom to Cleric and Druid cantrips; a Priest's level 14
+    temporary hit points are an ability. Elemental Affinity and Empowered Evocation add
+    their modifier to the spell's first damage roll. Disciple of Life, Blessed Healer
+    and Supreme Healing work on healing spells, Supreme Healing on Channel Divinity too.
+    Infusion of Light refills Lay on Hands with a radiant spell's dice.
+  - Lay on Hands asks whom it heals and how many points, and offers the conditions it
+    can end. Divine Smite and Paladin's Smite ask whether the target is a fiend or an
+    undead.
+  - Runic Power (Blood) heals you by the Rune Strike's necrotic damage, which the sheet
+    suggests; Runic Mastery (Blood) takes off the hit points it costs. With Aspect of
+    the Horsemen on, both ask which rune's effect to use.
+  - Wild Resurgence is an ability that turns a slot into a Wild Shape use; Nature
+    Magician asks how many uses become a slot and adds it.
+  - Arcane Apotheosis: with Innate Sorcery on, a Metamagic option asks whether it is
+    the free one.
+  - Divine Intervention can cast Wish at level 20, and then stays spent for the 2d4
+    long rests rolled.
+  - Memorize Spell: after a short rest a Mage can put one prepared spell away and
+    prepare another in the spellbook window.
+  - The Dragon constellation counts a d20 of 9 or lower as 10 on Intelligence and
+    Wisdom checks and the save to keep concentrating.
+  - Assassinate has an ability for its first-round damage.
+- Medium Armor Master works: with Dexterity 16 or more, medium armor adds 3 from
+  Dexterity to Armor Class.
+- Feats with uses have bars and rows: Lucky's luck points (a click sets advantage on
+  the next roll), Mage Slayer's Guarded Mind, Arathi Heritage's Lethargy Resilience
+  (back after 1d4 long rests, rolled at the first), Boon of Recovery's Last Stand and
+  pool of ten d10s, Boon of Fate's 2d4 (back when you roll initiative), Chef's treats.
+  Charger, Fingers of Frost, Poisoner and Polearm Master get a row that rolls their
+  damage; Defensive Duelist's Parry switches on Parrying, which adds your proficiency
+  bonus to Armor Class until you switch it off or rest.
+- Weapon attacks apply Great Weapon Master's extra damage with heavy weapons, Boon of
+  Irresistible Offense on a natural 20, Savage Attacker (rolled twice, the better
+  kept), Piercer (the low die rerolled, one more die on a critical hit) and Fists of
+  Fury with light weapons.
+- Tavern Brawler, Unarmed Fighting and the Strike of the Earth-Warder give an Unarmed
+  Strike row with their damage and bonus; a Monk's own strikes take the blessing and
+  the feats.
+- Spells apply Elemental Adept and Clearcasting (a 1 on their damage type counts as
+  2) and Healer (1s on healing dice rerolled). Boon of Spell Recall rolls its d4 and
+  gives the slot back on a match. Empowered Spell and Seeking Spell reroll the spell
+  you just cast.
+- Invocations that cast a spell without a slot put it on your spell list and cast it
+  that way: Armor of Shadows, Mask of Many Faces, Fiendish Vigor (the highest
+  numbers), Gift of the Depths and Legion Summoning (once per long rest) and the
+  others; Pact of the Chain and Pact of the Legion give Find Familiar. Agonizing Blast
+  adds Charisma to Eldritch Blast by itself. A weapon can be ticked as your Pact of
+  the Blade weapon, to attack with Charisma. Lessons of the First Ones' origin feat is
+  asked for in the level dialog, and can be changed under Customize.
+- Trolls have advantage on attacks while Bloodied; an Amani troll regains a Hit Die
+  when it spends Heroic Inspiration, a Zandalari troll gains it on a natural 1, and a
+  draenei's Heroic Presence gives it when a lineage spell is cast. Draconic Flight
+  switches on a flying speed. A Mulgore or Highmountain tauren chooses the ability
+  of its save DC. A mechagnome picks the two tools of Specialized Design.
+- Tushui Meditation gives Heroic Inspiration after a short rest; Honored with Gilneas
+  adds 2 to skinning checks. Chef's short-rest meal adds 1d8 to your next Hit Die.
+- Hex, Hunter's Mark and Divine Favor are cast once: after that a click on the spell
+  rolls the extra die for a hit, without a slot, and a right-click ends it.
+- Spells that act again after their casting keep running on the sheet: a left-click
+  rolls the next attack, bolt, burst or turn's damage with the slot it was cast with
+  (Spiritual Weapon, Moonbeam, Spirit Guardians, Call Lightning, walls and clouds and
+  many more), and a right-click offers every later roll: damage at the end of the
+  target's next turn, healing on later turns, Vampiric Touch's half, Bigby's Hand's
+  other hands, Teleport's mishap, Wish's stress, the bead of Delayed Blast Fireball.
+  Damage that is yours to take (a mishap, Meld into Stone) is taken at once. A running
+  spell ends by hand, with your concentration or with a rest.
+- Spells cast on yourself change your numbers while they last: Armor Class (Mage
+  Armor, Shield, Shield of Faith, Barkskin, Haste and others), maximum and temporary
+  hit points (Aid, Heroes' Feast, Vampiric Blood, Armor of Agathys), speeds (Fly,
+  Longstrider, Spider Climb, Haste and others), dice and advantage on your rolls
+  (Bless, Guidance, Enhance Ability, Foresight, Holy Aura, Pass without Trace,
+  Glibness), and your weapon (Shillelagh, Magic Weapon, Elemental Weapon, Crusader's
+  Mantle, True Strike on the next attack). Advantage on saves against spells, poison
+  or conditions comes with Circle of Power, Protection from Poison and Aura of Purity.
+- Divine Smite, Rune Strike and Toll the Dead ask what the target is; Living Flame
+  asks whether it burns or heals. Sorcerous Burst and Soul Reap roll their extra dice,
+  Magic Missile shows each dart, Hand of Gul'dan and Throw Glaive each damage type,
+  and Steel Wind Strike rolls all five attacks. Bonestorm heals you.
+- Contact Other Plane rolls your own Intelligence save against 15 and the damage on a
+  failure. Innervate gives back a use of Wild Shape and can give you the 4th-level
+  slot. Feral Prowl and Roar of Ursoc switch on one of your Wild Shape forms, and Tree
+  of Life gives its Armor Class, temporary hit points and immunities.
+- Blessing of Argent Fortitude makes you immune to poison damage and to being poisoned.
+- Sixteen 1st-level spells that only listed their facts (Alarm, Grease, Identify,
+  Unseen Servant and others) have a summary of what they do.
+- Detect Thoughts no longer asks for a copper piece: a focus stands in for it.
+
 ## 0.7.0
 
 - Species and lineage cantrips (Sacred Flame, Mind Sliver, Arcane Pulse,

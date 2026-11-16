@@ -416,6 +416,16 @@ wrappers of one method run in reverse load order.
 | `UI.HeaderSection` | `UI/SheetHeader.lua` | `UI/SheetNextRoll.lua` | The "Next roll" rows below the top part. |
 | `RPSheet:SpellDC`, `:SpellAttack` | `Sheet/Derived.lua` | `Actions/Scrolls.lua` | A found scroll's fixed numbers. |
 | `RPSheet:TakeDamage` | `Actions/Damage.lua` | `Actions/WardDamage.lua` | Rolls the dice a protective spell takes off the damage first. |
+| `RPSheet:LongRest`, `:ShortRest`, `:RollCheck`, `ns.ApplyWards` | `Actions/Rest.lua`, `Actions/Dice.lua`, `Sheet/Wards.lua` | `Actions/ReactionState.lua` (before RestUndo) | Gives the reaction back with a rest or initiative; readies Nose for Trouble; Superior Hunter's Defense's resistance. |
+| `RPSheet:DamageExtras` | `Actions/WardDamage.lua` | `Actions/StaggerSway.lua` | Stagger and Sway's reduction and its Delayed Reaction pool. |
+| `RPSheet:CastSpell`, `:UseAbility`, `:ApplyDice` | `Actions/Spells.lua`, `Actions/Abilities.lua`, `Actions/Dice.lua` | `Actions/HealReceived.lua`, `Actions/SpellLater.lua`, `Actions/SpellDiceExtras.lua`, `Actions/SpellAfterCast.lua` | Remembers your last healing roll for Heal; a running spell's click rolls its later roll instead of a new casting; a variant spell asks what it hit; what a spell does once it is announced (shape-shifts, Innervate, Contact Other Plane). |
+| `RPSheet:SpellText`, `:SpellLaterQuiet` | `Actions/Spells.lua`, `Actions/SpellLater.lua` | `Actions/SpellAfterCast.lua` | Rows and dice of spells whose rolls come after the casting. |
+| `RPSheet:EndWards` | `Sheet/Wards.lua` | `Actions/SpellLater.lua` | A running spell ends with the wards that end with it. |
+| `RPSheet:ResolveMode`, `:RollTest`, `:DisadvantageFrom` | `Sheet/RollModes.lua`, `Actions/NextRollBonus.lua` | `Actions/SpellRollBonus.lua` | Bless, Guidance, Glibness, one-roll advantage and a reduced creature's disadvantage. |
+| `RPSheet:AC`, `:ExplainAC` | `Sheet/DerivedDefense.lua`, `Sheet/ExplainDefense.lua` | `Sheet/SpellAC.lua` | Mage Armor's base 13 and Barkskin's floor of 17. |
+| `RPSheet:WeaponStat`, `:WeaponDice`, `:WeaponStyle`, `:StrikeDice` | `Sheet/Armoury.lua`, `Sheet/StyleEffects.lua`, `Sheet/Combat.lua` | `Sheet/SpellWeapons.lua` (loads just before PassCache) | Shillelagh, Magic Weapon, Elemental Weapon, True Strike and the other weapon spells. |
+| `RPSheet:ApplyDice`, `ns.HasFeature` | `Actions/Dice.lua`, `Sheet/Combat.lua` | `Actions/FeatureDice.lua` | Class features that count healing dice at their highest or refill a pool from a spell's dice. |
+| `L.Problem` | `Options/LevelDialogCheck.lua` | `Options/LineageAbility.lua`, `Options/LevelDialogLessons.lua` | Holds the level dialog until the species ability or Lessons of the First Ones' feat is chosen. |
 
 `tests/dupfuncs.py` lists every function defined twice; its output should be exactly
 these. Other places where behaviour is added to something that exists:
@@ -703,3 +713,36 @@ See [tests/README.md](../tests/README.md).
   battleground groups (`S.GroupChannel`), and forgets other players' stats after half
   an hour unless they are in the group.
 
+## Added in 0.7.1
+
+- **Damage as it is taken.** `Actions/DamageSteps.lua` puts the character's damage
+  features in order (flat reductions, then halving or none, then resistance once, then
+  vulnerability); `UI/DamageReactions.lua` shows their boxes in the damage menu and
+  passes what was ticked as `how`, the last argument of `RPSheet:TakeDamage`.
+  `Actions/DamageZero.lua` handles dropping to 0 (Death Ward from
+  `Data/SpellWardDeath.lua`, Relentless Rage), `Actions/Falling.lua` the "A fall" row,
+  `Actions/ReactionState.lua` `state.reactionUsed`, and `Actions/ScoreFloor.lua`
+  Indomitable Might's note. `UI/HealMenu.lua` and `Actions/HealReceived.lua` are the Heal
+  menu.
+- **Spells after their casting.** `Data/SpellLater*.lua` describe what a spell rolls
+  later; `Actions/SpellLater.lua` keeps `state.spellLater` (which run, from which slot)
+  and `Actions/SpellLaterRoll.lua` / `SpellLaterMenu.lua` roll them from the row or its
+  right-click. `Data/SpellVariants.lua` and `Actions/SpellDiceExtras.lua` ask what a
+  spell hit and roll exploding dice and split damage.
+- **Spells on yourself.** `Data/SpellWardEffects.lua`, `SpellWardBoons.lua` and
+  `SpellWardWeapons.lua` extend the protective-spell passives with Armor Class, speed,
+  hit points, roll bonuses and weapon changes; `Sheet/WardStart.lua` applies the hit
+  points when the passive starts.
+- **Class feature flows.** `Actions/AbilityFlows.lua` dispatches `ns.ABILITY_FLOWS[name]`
+  (Paladin, Druid, Sorcerer, Death Knight rune and Divine Intervention flows in their own
+  files); `Actions/SpellFeatures.lua` and `Actions/FeatureDice.lua` add class bonuses to
+  spell and ability dice; `Actions/Initiative.lua` gives uses back on initiative;
+  `Sheet/D20Floor.lua` the Dragon constellation; `Sheet/MemorizeSpell.lua`. A feature
+  may carry `tools = {...}` (Data/FeatureKit.lua), counted by `ns.ToolGranted`.
+- **Feats and traits.** `Data/FeatUses.lua` / `Sheet/FeatUses.lua` give feats bars and
+  rows (`auto = "featuse:<name>"`); `Sheet/DiceFeats.lua` rerolls and raises low dice
+  (`reroll` / `lowest` on DICE steps); `Sheet/WeaponFeats.lua`, `Sheet/UnarmedStrike.lua`,
+  `Actions/SpellFeats.lua` (Spell Recall, the Metamagic REROLL step),
+  `Actions/Inspiration.lua`, `Sheet/FeatRules.lua` (Medium Armor Master's Dexterity cap).
+  Invocation spells: `Data/InvocationSpells.lua`, `Sheet/InvocationSpells.lua`
+  (`auto = "invocation:<name>"`); Lessons of the First Ones: `Sheet/LessonFeats.lua`.

@@ -1,5 +1,6 @@
--- Puts the hand-written summaries (Data/SpellSummaries2.lua to 9) on the core spells
--- of 2nd level and higher, in place of the line of facts Data/SpellsCore.lua builds.
+-- Puts the hand-written summaries (Data/SpellSummaries1.lua to 9) on the core spells
+-- that Data/Spells.lua doesn't already describe, in place of the line of facts
+-- Data/SpellsCore.lua builds.
 -- Only the text changes: level, save, dice and slot growth stay as they were.
 local _, ns = ...
 local R = ns.Rules
@@ -12,7 +13,7 @@ R.SPELL_FACT_LINES = {}
 for name, text in pairs(R.SPELL_SUMMARIES or {}) do
     local spell = R.SPELLS[name]
     -- The setting's own spells keep the summaries written beside them.
-    if spell and spell.level >= 2 and not R.AZEROTH_SPELLS[name] then
+    if spell and spell.level >= 1 and not R.AZEROTH_SPELLS[name] then
         R.SPELL_FACT_LINES[name] = spell.desc
         spell.desc = text
     end

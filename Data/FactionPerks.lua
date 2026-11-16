@@ -12,6 +12,7 @@
 --              kind       "ability" for something to click; a passive when left out
 --              desc       its own wording; `text` when left out
 --              effects, advantage, startsOff   as for a class feature's passive
+--              resist, immune, conditionImmune   damage types and conditions it guards against
 --              uses       uses per long rest, shown as a bar of the same name
 --              scores, scoreMax   ability scores it raises, and how far
 --   }
@@ -54,7 +55,8 @@ P["Exodar"] = {
 P["Gilneas"] = {
     Friendly = { text = "A month with a trainer teaches you Common, Common Sign Language or Leatherworker's Tools.",
         train = { "Common", "Common Sign Language", "Leatherworker's Tools" } },
-    Honored = { text = "+2 to checks made to skin a creature." },
+    Honored = { text = "+2 to checks made to skin a creature.",
+        grant = { name = "Gilneas Skinning", desc = "+2 to checks made to skin a creature. The sheet adds it when you go skinning." } },
     Revered = { text = "Before a quest for Gilneas its leaders grant a charm that conjures animal spirits in worgen shape, three times, until the quest ends." .. ONCE },
     Exalted = { text = "A pack of six worgen skirmishers and their leader joins you for one adventure." .. ONCE },
 }
@@ -93,7 +95,7 @@ P["Tushui"] = {
     Friendly = { text = "A month with a trainer teaches you Pandaren, Brewer's Supplies or Cook's Utensils.",
         train = { "Pandaren", "Brewer's Supplies", "Cook's Utensils" } },
     Honored = { text = "A short rest spent in silent meditation ends with Heroic Inspiration.",
-        grant = { name = "Tushui Meditation" } },
+        grant = { name = "Tushui Meditation", desc = "A short rest spent in silent meditation ends with Heroic Inspiration. The sheet gives it when you finish a short rest." } },
     Revered = { text = "Blessing of Understanding: +2 Wisdom, to at most 22.",
         grant = { name = "Blessing of Understanding", scores = { WIS = 2 }, scoreMax = 22,
             desc = "Your Wisdom is 2 higher, to at most 22. The sheet counts it." } },

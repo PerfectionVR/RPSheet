@@ -10,7 +10,8 @@ P["Argent Dawn"] = {
             desc = "Advantage on saving throws to avoid or end being charmed by a fiend or an undead. The sheet asks what a save is against when you roll one." } },
     Honored = { text = "A long rest in an Argent Dawn sanctuary gives a charm that casts Healing Word once within 7 days." },
     Revered = { text = "Blessing of Argent Fortitude: immune to poison damage and to being poisoned.",
-        grant = { name = "Blessing of Argent Fortitude", desc = "You are immune to poison damage and to the poisoned condition." } },
+        grant = { name = "Blessing of Argent Fortitude", desc = "You are immune to poison damage and to the poisoned condition.",
+            immune = { "poison" }, conditionImmune = { "Poisoned" } } },
     Exalted = { text = "For 15,000 gold the Dawn adds resistance to one damage type of your choice to a rare item you are attuned to, which becomes very rare." },
 }
 P["Cenarion Circle"] = {

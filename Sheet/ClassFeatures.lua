@@ -132,6 +132,7 @@ local function Apply(sheet, feature, key)
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
     entry.limit = feature.limit -- armor that stops it (see Sheet/Limits.lua)
     entry.strike = feature.strike and CopyTable(feature.strike) or nil
+    entry.tools = feature.tools and CopyTable(feature.tools) or nil -- tool proficiencies (Sheet/ToolPicks.lua)
     if not isAbility then ns.CopyDefenses(entry, feature, sheet) end -- damage it resists and the like
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     for stat, points in pairs(feature.scores or {}) do
@@ -174,6 +175,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)
     ns.ApplyPicks(sheet)
+    ns.ApplyLessonFeats(sheet) -- an invocation's origin feat (Sheet/LessonFeats.lua)
     ns.ApplyBeastForms(sheet)
     ns.ApplyToolPicks(sheet)
     ns.ApplyFeatureSkills(sheet)
@@ -186,6 +188,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyPreparedSpells(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
+    ns.ApplyInvocationSpells(sheet) -- an invocation's spell, and Agonizing Blast on a cantrip
     ns.ApplyFeatSpells(sheet)   -- last: a spell the class prepares isn't listed twice
     ns.ApplyWards(sheet)        -- spell protection that is running, and a feat's situation passive
     ns.ApplyRenownPerks(sheet)  -- here, so a blessing's score points follow the reset above

@@ -58,12 +58,13 @@ Try("damage", function()
     Check("the damage menu has no title", #titles == 1 and titles[1] == "Take damage of which type?")
     local labels = {}
     for _, item in ipairs(F.MenuRows()) do labels[#labels + 1] = F.Plain(item.text) end
-    Check(("the damage menu has %d rows for %d damage types"):format(#labels, #R.DAMAGE_TYPES), #labels == #R.DAMAGE_TYPES + 1 + #RPSheet:DamageExtras())
+    Check(("the damage menu has %d rows for %d damage types"):format(#labels, #R.DAMAGE_TYPES), #labels == #R.DAMAGE_TYPES + 2 + #RPSheet:DamageExtras())
     local text = table.concat(labels, "|")
     Check("the menu doesn't say fire is resisted: " .. text, text:find("Fire (resisted)", 1, true))
     Check("the menu doesn't say poison is immune", text:find("Poison (immune)", 1, true))
     Check("the menu doesn't say cold is vulnerable", text:find("Cold (vulnerable)", 1, true))
     Check("the menu has no row without a type", labels[#R.DAMAGE_TYPES + 1] == "No type")
+    Check("the menu has no row for a fall", labels[#R.DAMAGE_TYPES + 2] == "A fall")
 
     -- every row: the box asks, 10 is typed and accepted
     for index, label in ipairs(labels) do
@@ -89,6 +90,8 @@ Try("damage", function()
             Check("the box stays open after Accept", F.popup == nil)
             local lost = max - HP()
             local wanted = (kind == "fire" and 5) or (kind == "poison" and 0) or (kind == "cold" and 20) or 10
+            -- a fall of 10 feet is 1d6
+            if label == "A fall" then wanted = (lost >= 1 and lost <= 6) and lost or "1 to 6" end
             if lost ~= wanted then Problem(("10 %s damage took %d hit points, not %d"):format(tostring(kind or label), lost, wanted)) end
         end
         CheckHidden("damage row " .. label)
@@ -155,17 +158,21 @@ Try("damage", function()
     RPSheet:State().hp = 10
     Tab("Actions")
     ClickPart("Heal", Row("Heal"), "LeftButton")
+    Check("clicking Heal opens no menu", F.menu ~= nil)
+    F.MenuClick("Type the amount")
     Check("clicking Heal opens no box", F.popup ~= nil)
     Check("the heal box asks: " .. tostring(F.PopupText()), (F.PopupText() or ""):find("regain", 1, true))
     F.PopupType("8", true)
     F.Settle()
     Check("healing 8 from 10 gives " .. HP(), HP() == 18)
     ClickPart("Heal", Row("Heal"), "LeftButton")
+    F.MenuClick("Type the amount")
     F.PopupType("9999")
     F.PopupAccept()
     F.Settle()
     Check("healing goes past the maximum", HP() == max)
     ClickPart("Heal", Row("Heal"), "LeftButton")
+    F.MenuClick("Type the amount")
     F.PopupType("-3")
     F.PopupAccept()
     F.Settle()
@@ -222,8 +229,8 @@ Try("damage menu extras", function()
                 Dismiss()
             end
             local rows = Menu()
-            Check(label .. ": the menu has " .. #rows .. " rows", #rows == #R.DAMAGE_TYPES + 1 + extras)
-            for at = #R.DAMAGE_TYPES + 2, #rows do
+            Check(label .. ": the menu has " .. #rows .. " rows", #rows == #R.DAMAGE_TYPES + 2 + extras)
+            for at = #R.DAMAGE_TYPES + 3, #rows do
                 local item = Menu()[at]
                 if item then
                     extraRows = extraRows + 1

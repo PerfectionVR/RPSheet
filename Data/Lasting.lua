@@ -4,7 +4,7 @@
 --   label          what the announcement calls the feature
 --   incapacitated  true: it ends when a condition that incapacitates is ticked
 --                  (Actions/Incapacitated.lua)
--- Every one of them lasts ten minutes or less, so a short or long rest outlasts it
+-- Every one of them lasts an hour or less, so a short or long rest outlasts it
 -- (Actions/Rest.lua).
 local _, ns = ...
 local R = ns.Rules
@@ -19,6 +19,9 @@ R.LASTING = {
     ["Nature's Sanctuary active"] = { label = "Nature's Sanctuary", incapacitated = true },
     -- Ends only when the paladin ends it, or after ten minutes.
     ["Holy Nimbus active"] = { label = "Holy Nimbus" },
+    ["Avenging Angel active"] = { label = "Avenging Angel" },
+    ["Aspect of the Horsemen active"] = { label = "Aspect of the Horsemen" },
+    ["Dragon Wings active"] = { label = "Dragon Wings" },             -- an hour, as long as a short rest
     -- Ten minutes or less too, so a rest outlasts them; the rules don't end them when
     -- you are incapacitated.
     ["Sacred Weapon active"] = { label = "Sacred Weapon" },    -- 10 minutes
@@ -26,4 +29,7 @@ R.LASTING = {
     ["Innate Sorcery active"] = { label = "Innate Sorcery" },  -- 1 minute
     ["Reckless"] = { label = "Reckless Attack" },              -- until your next turn
     ["Dispersed"] = { label = "Dispersion" },                  -- until the end of your next turn
+    -- Species traits and feats (Data/Traits.lua, Data/FeatUses.lua)
+    ["Draconic Flight active"] = { label = "Draconic Flight" }, -- 10 minutes
+    ["Parrying"] = { label = "Parry" },                        -- until your next turn
 }

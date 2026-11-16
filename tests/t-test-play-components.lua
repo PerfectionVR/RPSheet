@@ -8,8 +8,10 @@ local function Qty(name)
     for _, item in ipairs(RPSheet:Sheet().items) do if item.name == name then total = total + item.qty end end
     return total
 end
+-- (and ends the spells still running, whose click would roll instead of casting)
 local function Refill()
     for _, tracker in ipairs(RPSheet:GetTrackers()) do if tracker.kind == "slot" then tracker.set(tracker.max) end end
+    RPSheet:EndSpellsLater()
 end
 -- Casts and says whether the spell went off (something was announced).
 local function Cast(spell, ...)
@@ -73,7 +75,12 @@ Section("missing, carried, used up, worth more", function()
     local bless = Learn("Bless")
     Check(not Cast(bless), "Bless without a holy symbol isn't cast")
     Carry("Emblem")
-    Check(Cast(bless), "an emblem serves as the holy symbol")
+    -- (Bless asks who it is for before it is cast: Data/SpellWardBoons.lua)
+    MENU = false
+    local sent = #SENT
+    RPSheet:CastSpell(bless)
+    if MENU then Click(MENU, "Someone else") end
+    Check(#SENT > sent, "an emblem serves as the holy symbol")
     -- the tooltip
     local lines = table.concat(RPSheet:ComponentHelp(revivify), "\n")
     Check(lines:find("Needs Diamond %(300 gp%), used up by the casting") and lines:find("You carry 1"), "the tooltip counts what is carried (the 1000 gp diamond)")
@@ -136,8 +143,9 @@ Section("weapon and coins", function()
     Check(AnyPrinted("Gentle Repose needs something you don't have: 2 cp", before), "the line names the coins")
     sheet.coins.cp = 1
     Check(not Cast(repose), "1 cp is not enough")
-    Check(Cast(thoughts), "Detect Thoughts with 1 cp")
-    Eq(RPSheet:Coins(), 1, "its coin is kept")
+    sheet.coins.cp = 0
+    Check(Cast(thoughts), "Detect Thoughts needs no coin: a focus stands in for one without a price")
+    sheet.coins.cp = 1
     sheet.coins.sp = 1
     Check(Cast(repose), "Gentle Repose with 11 cp")
     Eq(RPSheet:Coins(), 9, "2 cp are used up")

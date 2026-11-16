@@ -133,9 +133,10 @@ local function Strip(state, keepClasses)
             for field in pairs(entry) do
                 if not KEEP_ENTRY[field] then entry[field] = nil end
             end
-            -- prepared spells were added by hand then; feats were plain passives
+            -- prepared spells were added by hand then; feats were plain passives; an
+            -- invocation's spell was added by hand too
             local auto = entry.auto or ""
-            for _, prefix in ipairs({ "spell", "cantrip", "chosen", "feat", "level", "pick", "maneuver" }) do
+            for _, prefix in ipairs({ "spell", "cantrip", "chosen", "feat", "level", "pick", "maneuver", "invocation" }) do
                 if auto:find("^" .. prefix .. ":") then entry.auto = nil end
             end
         end

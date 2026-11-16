@@ -76,8 +76,8 @@ F["Circle of the Moon"] = {
     Ability(3, "Leave form", "Bonus action. You return to your own shape. The form also ends when you are incapacitated.",
         { Kit.SwitchOff("Cat Form active"), Kit.SwitchOff("Bear Form active") }),
     Passive(6, "Improved Circle Forms", "In Wild Shape your attacks can deal radiant damage, and you add your Wisdom modifier to Constitution saving throws."),
-    Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn (the sheet sets it). Uses equal to your Wisdom modifier per long rest; a slot of 2nd level or higher restores one.",
-        { stat = "WIS" }, { Kit.NextRoll("ADV") }),
+    Limited(10, "Moonlight Step", "Bonus action: teleport up to 30 feet and gain advantage on your next attack this turn (the sheet sets it). Uses equal to your Wisdom modifier per long rest; with none left a use costs a spell slot of 2nd level or higher, which the sheet spends.",
+        { stat = "WIS" }, { Kit.NextRoll("ADV") }, nil, { "2nd-level slot", 1 }),
     Ability(14, "Lunar Form", "Once per turn: extra radiant damage on a target you hit with a Wild Shape form's attack. Moonlight Step can also bring a willing creature within 10 feet along.",
         { Dice(2, 10) }),
 }
@@ -92,8 +92,9 @@ F["Circle of the Stars"] = {
     Ability(3, "Chalice", "Starry Form, Chalice constellation. When you heal with a slotted spell, you or a creature within 30 feet also regains this much.",
         function(level) return { Dice(level >= 10 and 2 or 1, 8, "WIS", "HEALING") } end),
     Passive(3, "Dragon", function(level)
-        return "Starry Form, Dragon constellation. Switch on while it glimmers: on Intelligence and Wisdom checks and concentration saves, a d20 roll of 9 or lower counts as 10." .. (level >= 10 and " You also have a flying speed of 20 feet and can hover." or "")
-    end, nil, true),
+        return "Starry Form, Dragon constellation. Switch on while it glimmers: on Intelligence and Wisdom checks and concentration saves, a d20 roll of 9 or lower counts as 10, which the sheet applies."
+            .. (level >= 10 and " You also have a flying speed of 20 feet and can hover; the sheet shows it." or "")
+    end, function(level) return level >= 10 and { Kit.Sets("FLY", 20) } or {} end, { startsOff = true, flags = { mindFloor = true } }),
     Limited(6, "Cosmic Omen", "After a long rest roll a die. Even (Weal): as a reaction, add the roll to a d20 test of a creature within 30 feet. Odd (Woe): subtract it. Uses equal to your Wisdom modifier per long rest.",
         { stat = "WIS" }, { Dice(1, 6, "", "OTHER") }),
     Passive(10, "Twinkling Constellations", "Archer and Chalice use 2d8, the Dragon lets you fly and hover, and you can change constellation at the start of each turn."),

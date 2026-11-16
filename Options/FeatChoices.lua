@@ -11,7 +11,7 @@ local function Source(instance, sheet)
     local level = instance.id:match("^level:(%d+)$")
     -- With several classes the number stands for a level of one class (Sheet/ClassSlots.lua).
     if level then return sheet and ns.SlotLabel(sheet, tonumber(level)) or ("level " .. level) end
-    return instance.id:match("^trait:(.+)$") or "origin"
+    return instance.id:match("^trait:(.+)$") or instance.id:match("^lessons:(.+)$") or "origin"
 end
 
 -- An inline group for the dialog. `Context` returns the character, the picks being

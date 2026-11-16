@@ -67,7 +67,16 @@ end
 --   a Monk's Martial Arts: either, for simple melee and light martial melee weapons,
 --   without armor or a shield
 -- No weapon adds two abilities at once; where there is a choice the higher one is used.
-function ns.WeaponAbilities(data, sheet)
+-- A melee weapon ticked as the pact weapon of a Warlock with Pact of the Blade can use
+-- Charisma as well.
+function ns.WeaponAbilities(data, sheet, weapon)
+    if weapon and weapon.pact and not data.ranged and sheet and ns.HasPactBlade(sheet) then
+        local list = ns.WeaponAbilities(data, sheet)
+        local with = {}
+        for _, stat in ipairs(list) do with[#with + 1] = stat end
+        with[#with + 1] = "CHA"
+        return with, "pact weapon"
+    end
     if data.props.F then return { "STR", "DEX" }, "finesse" end
     if data.ranged then return { "DEX" }, "ranged" end
     local monkWeapon = data.category == "SIMPLE" or data.props.L
@@ -81,7 +90,7 @@ function RPSheet:WeaponStat(weapon)
     local data = ns.WeaponData(weapon)
     if not data then return weapon.stat end
     local best
-    for _, stat in ipairs((ns.WeaponAbilities(data, self:Sheet()))) do
+    for _, stat in ipairs((ns.WeaponAbilities(data, self:Sheet(), weapon))) do
         if not best or self:Mod(stat) > self:Mod(best) then best = stat end
     end
     return best
@@ -127,9 +136,12 @@ function ns.WeaponPropertyLines(weapon)
     local data, lines = ns.WeaponData(weapon), {}
     if not data then return lines end
     lines[#lines + 1] = ("%s weapon, %s."):format(data.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(data.name))
-    local abilities, why = ns.WeaponAbilities(data, RPSheet:Sheet())
+    local abilities, why = ns.WeaponAbilities(data, RPSheet:Sheet(), weapon)
     if #abilities > 1 then
-        lines[#lines + 1] = ("Attacks with %s, the higher of your Strength and Dexterity (%s)."):format(R.STAT_NAMES[RPSheet:WeaponStat(weapon)], why)
+        local names = {}
+        for _, stat in ipairs(abilities) do names[#names + 1] = R.STAT_NAMES[stat] end
+        local last = table.remove(names)
+        lines[#lines + 1] = ("Attacks with %s, the higher of your %s and %s (%s)."):format(R.STAT_NAMES[RPSheet:WeaponStat(weapon)], table.concat(names, ", "), last, why)
     else
         lines[#lines + 1] = ("Attacks with %s (%s weapon)."):format(R.STAT_NAMES[abilities[1]], why)
     end

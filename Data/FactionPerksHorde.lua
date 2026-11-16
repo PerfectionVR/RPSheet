@@ -15,7 +15,7 @@ P["Dark Talons"] = {
     Friendly = { text = "A month with a trainer teaches you Draconic or History.", train = { "Draconic", "History" } },
     Honored = { text = "Strike of the Earth-Warder: +1 to hit and damage with unarmed strikes, and +1 to the save DC of your grapples and shoves.",
         grant = { name = "Strike of the Earth-Warder",
-            desc = "+1 to attack and damage rolls with unarmed strikes, and +1 to the save DC of your grapples and shoves. Add it yourself: the sheet can't tell an unarmed strike apart." } },
+            desc = "+1 to attack and damage rolls with unarmed strikes, and +1 to the save DC of your grapples and shoves. The sheet adds it to your Unarmed Strike row." } },
     Revered = { text = "Before a quest for the Talons you get a charm of terror with three uses: creatures you choose within 30 feet flee in fear for a minute, Wisdom save DC 15, repeated each turn." .. ONCE },
     Exalted = { text = "A whelp of the black dragonflight joins you for one adventure; its death costs 2d6 renown." .. ONCE },
 }

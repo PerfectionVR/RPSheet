@@ -132,4 +132,8 @@ function ns.ApplyFeatSpells(sheet)
         spell.free, spell.auto = true, PREFIX .. name
         sheet.spells[#sheet.spells + 1] = spell
     end
+    -- This runs last in every upkeep, after the feats and blessings are all on the
+    -- sheet: what they give to click comes now (Sheet/FeatUses.lua, Sheet/UnarmedStrike.lua).
+    ns.ApplyFeatUses(sheet)
+    ns.ApplyUnarmedStrike(sheet)
 end

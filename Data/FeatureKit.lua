@@ -1,6 +1,7 @@
 -- Shorthand for writing class and subclass features as data (see Features.lua and
 -- SubclassFeatures.lua).
 local _, ns = ...
+local R = ns.Rules
 
 local Kit = {}
 ns.FeatureKit = Kit
@@ -19,6 +20,7 @@ end
 -- `extra` can carry:
 --   startsOff = true   switched off until the player turns it on
 --   skills = { ... }   skill proficiencies the feature grants
+--   tools = { ... }    tool proficiencies it grants (Sheet/ToolPicks.lua)
 --   saves = { ... }    saving throw proficiencies it grants
 --   advantage = { ... } rolls it gives advantage on, by their label on the sheet
 --   flags = { ... }    reliable = true (a d20 of 9 or lower counts as 10 on proficient
@@ -48,7 +50,9 @@ end
 --   uses   a number, { {level, uses}, ... } steps, or { stat = "WIS" } for that
 --          ability's modifier (never fewer than 1)
 --   short  what a short rest gives back: a number of uses or "ALL"; nil = long rest only
---   otherwise  { resource, amount }: what a use costs instead once its own are spent
+--   otherwise  { resource, amount, while }: what a use costs instead once its own are
+--              spent (a spell slot, a Rage use); `while` names a passive that has to be
+--              switched on for that. May be function(level, sheet) returning that table.
 function Kit.Limited(level, name, desc, uses, actions, short, otherwise)
     local pool = { name = name, from = level, short = short }
     if type(uses) == "number" then
@@ -61,7 +65,10 @@ function Kit.Limited(level, name, desc, uses, actions, short, otherwise)
     local feature = Kit.Ability(level, name, desc, function(current, sheet)
         local list = type(actions) == "function" and actions(current, sheet) or CopyTable(actions or {})
         local spend = Kit.Spend(name)
-        if otherwise then spend.otherwise, spend.otherwiseAmount = otherwise[1], otherwise[2] end
+        local instead = type(otherwise) == "function" and otherwise(current, sheet) or otherwise
+        if instead then
+            spend.otherwise, spend.otherwiseAmount, spend.otherwiseWhile = instead[1], instead[2], instead[3]
+        end
         table.insert(list, 1, spend)
         return list
     end)
@@ -69,9 +76,24 @@ function Kit.Limited(level, name, desc, uses, actions, short, otherwise)
     return feature
 end
 
+-- An effect that sets a speed to at least `feet` (a flying speed while wings last).
+function Kit.Sets(target, feet)
+    local effect = Kit.Bonus(target, feet)
+    effect.mode = "MIN"
+    return effect
+end
+
 -- Clicking the ability sets the sheet's "Next roll" row.
 function Kit.NextRoll(mode)
     return { type = "NEXTROLL", mode = mode or "ADV" }
+end
+
+-- The bar of a Warlock's Pact Magic slots at a Warlock level: "3rd-level slot", or
+-- "Pact slot (3rd level)" beside another class's slots (Sheet/Trackers.lua).
+function Kit.PactSlotBar(level, sheet)
+    local pact = R.PACT_SLOTS[level]
+    local _, beside = ns.SheetSlots(sheet and sheet.viewOf or sheet or {})
+    return beside and ("Pact slot (%s level)"):format(R.ORDINALS[pact[2]]) or (R.ORDINALS[pact[2]] .. "-level slot"), pact
 end
 
 -- Numbers of a character, for descriptions that quote them. `sheet` is a saved sheet.

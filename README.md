@@ -47,8 +47,11 @@ short summaries in its own words.
 - **Use class features** as clickable abilities with their costs, dice and uses per
   rest, and passives you switch on and off.
 - **Take damage and heal** by amount and type: resistance, vulnerability, immunity,
-  temporary hit points, the concentration save and dropping to 0 are handled. Death
-  saves, conditions and exhaustion are on the sheet.
+  temporary hit points, the concentration save and dropping to 0 are handled, and so
+  are your features that change damage (Evasion, Uncanny Dodge, Heavy Armor Master,
+  Death Ward, Relentless Rage and more) and falling. Heal takes your own healing roll
+  or rolls a healing spell someone else cast on you. Death saves, conditions and
+  exhaustion are on the sheet.
 - **Rest:** short and long rests, and Hit Dice to spend.
 - **Companions and forms:** a Beast Master's companion, Wild Shape forms and
   Metamorphosis, each with their own numbers while they are on.
@@ -285,7 +288,10 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
   one), the concentration save when you take damage, protective spells cast on
   yourself, and spells that can't be cast in a beast form.
 - **Damage:** "Take damage" halves, doubles or ignores the amount as your defenses
-  say, uses temporary hit points first, and handles 0 hit points and death saves.
+  say, uses temporary hit points first, and handles 0 hit points and death saves. Your
+  features that change damage are boxes to tick in its menu while you can use them
+  (a reaction is spent until you say it is back, roll initiative or rest); "A fall"
+  rolls falling damage from the distance.
 - **Items:** equipping armor, a shield or a weapon puts it on the sheet; magic items
   count while equipped and, where they ask for it, attuned; carrying too much holds
   your speed to 5 feet.
@@ -595,6 +601,72 @@ other ten still need that.
 - [x] Themed tick boxes, sliders, dropdowns, typing boxes and scroll bars; the
       settings window and the item browser in the sheet's theme
 
+## State of the rules
+
+"Fully implemented" means the sheet works out and applies by itself every number, roll,
+use, condition and limit the rule gives, and shows in its own words what only the table
+can settle (roleplay, the DM's rulings, what happens to other creatures). Anything not
+listed in the three tables below is fully implemented.
+
+Two things hold for everything, so they are said once here:
+
+- **Time.** The sheet keeps no clock. Whatever lasts a while (a spell's duration,
+  concentration, Rage, a beast form, Sacred Weapon, a blessing for the length of a
+  quest) ends by hand or by a rest; turn-based combat will count it. Concentration
+  itself is tracked: a new spell ends the old one and damage asks for the save.
+- **Played in game.** Only the Warrior, the Mage and the Druid have been played in
+  World of Warcraft so far. The other ten classes run only in the test environment
+  (`tests/`), which builds, levels and clicks all of them.
+
+### Classes
+
+All thirteen classes were checked: their 30 subclasses, 401 features (a core feature
+two classes share is counted for each) and the 81 options of their choices.
+
+| Class | Subclass | Caveat |
+|---|---|---|
+| All | multiclass | Paladin with Death Knight, and Hunter with Demon Hunter, can't be combined: by the rules each pair is one class with different subclasses. |
+| All | multiclass | Weapon Mastery picks from several classes add up, which is one reading of a rule tables disagree on. |
+| Monk | Mystic Brews | Bonus Proficiencies: a Monk already proficient in Performance picks another Monk skill under Customize, Proficiencies. |
+| Rogue | Assassin | Assassin's Tools: the proficiencies are given, but the disguise kit and poisoner's kit themselves are added to the inventory by hand. |
+
+### Spells
+
+All 460 spells on the lists were checked. A spell not named here does what its summary
+says when cast from the sheet, or has nothing a sheet could apply. What a spell does after
+its casting (a later turn's attack or damage, the extra dice of a mark, a mishap) is
+rolled from its row without a slot: a left-click while it runs, or the right-click menu.
+
+| Spells | Caveat |
+|---|---|
+| Aid, Heroes' Feast, Vampiric Blood, Armor of Agathys, Heroism, Power Word Fortify, Consume Soul | Cast on someone else, the hit points they give are theirs to set. Vampiric Blood's extra 1d6 when you regain hit points is rolled by hand. Power Word Fortify's right-click offers your share of an even split; another split is set on the bar by hand. |
+| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame | Healing you receive goes through Heal, which offers your own last healing roll or rolls someone else's spell with healing dice; healing without dice of its own (Heal, the healing part of a damage spell) is typed there. |
+| Beacon of Hope, Rain of Fire | Beacon of Hope's most healing possible isn't applied to healing you receive. Rain of Fire's advantage against a creature in the rain is given with Shift. |
+| Gaseous Form, Tree of Life | The walking speed they take away (Gaseous Form) or hold at 10 feet (Tree of Life) is in the passive's words; the sheet shows your usual speed. |
+| Conjure Minor Elementals, Enlarge/Reduce | Conjure Minor Elementals adds its dice to your melee weapon hits; for another attack at a creature within 15 feet, right-click the spell. A reduced creature's 1d4 less is rolled from the right-click and taken off by hand. |
+| Shapechange, Polymorph, Animal Shapes | The shape-shift isn't put on the sheet: no form is switched on and its numbers aren't used. (Feral Prowl and Roar of Ursoc switch on one of your Wild Shape forms.) |
+| Cordon of Arrows | The arrows or bolts are counted and taken though the site gives them no price: the spell plants them. |
+| Find Familiar, Find Steed, Summon Aberration, Summon Beast, Summon Celestial, Summon Construct, Summon Dragon, Summon Elemental, Summon Fey, Summon Fiend, Summon Undead, Giant Insect, Animate Dead, Create Undead, Animate Objects, Simulacrum, Phantom Steed | The creature's numbers are not on the sheet; the summary names how a higher slot changes them. |
+
+### Traits and passives
+
+Checked: the 53 species traits and 15 lineages, 75 feats and epic boons, 13 Fighting
+Styles, 35 invocations and 10 Metamagic options, 25 maneuvers, and the 92 renown perks
+and blessings. Class passives are in the classes table.
+
+| Kind | Name | Caveat |
+|---|---|---|
+| Feat | Poisoner | The poison doses you brew aren't counted; the Poisoned Weapon row rolls a dose's damage. |
+| Feat | Boon of Irresistible Offense | The natural 20's extra damage is added to weapon rows, not to abilities that attack (Unarmed Strike, Pole Strike). |
+| Feat | Piercer, Savage Attacker | Applied to weapon rows, not to abilities that attack (Pole Strike); "once per turn" is yours to keep. |
+| Feat | Elemental Adept | Spells whose damage type is chosen as they are cast (Chromatic Orb, Dragon's Breath and the like) don't count their 1s as 2s. |
+| Feat | Fists of Fury | Combo Strikes' +1 for each earlier hit on the creature this turn is added by hand. |
+| Feat | Healer | Battle Medic (a creature spends a Hit Die with your healer's kit) is rolled by hand. |
+| Feat | Stagger and Sway | The Delayed Reaction pool's own force damage doesn't add another die to the pool: read literally, the pool would never shrink. |
+| Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
+| Unarmed | Unarmed Fighting (Fighting Style) | A Monk's strikes keep the Martial Arts die, even at the levels where the style's d8 with hands free is larger. |
+| Invocation | Pact of the Blade | The pact weapon is a weapon of yours with "Pact weapon" ticked under Customize, Weapons; its necrotic, psychic or radiant damage is said by hand. |
+
 ## Known limits
 
 Small gaps left in what is built. None is planned; say so if one matters to you.
@@ -618,6 +690,11 @@ Small gaps left in what is built. None is planned; say so if one matters to you.
   from Strength and marked as estimates.
 - **Professions**: the time to build a vehicle is the usual crafting rate, since the
   rules give none.
+- **Typed damage**: `/sheet damage` takes damage without the menu's boxes, so
+  reactions such as Uncanny Dodge and Heavy Armor Master's reduction aren't offered;
+  use the damage menu for those.
+- **Death Ward**: it saves you from damage that would drop you to 0 hit points; an
+  effect that kills without damage is yours to answer by switching the ward off.
 - **Conditions**: disadvantage that depends on the target (Grappled) or on whether
   you can see what frightens you is asked with each roll, not tracked.
 

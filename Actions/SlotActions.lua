@@ -4,7 +4,9 @@
 --               Recovery)
 --   TOPOINTS    turns a slot into Sorcery Points equal to its level (Font of Magic)
 --   FROMPOINTS  makes a slot from Sorcery Points (Font of Magic)
--- The last two use the level set at the sheet's "Cast at" row, or the lowest.
+--   MAKE        adds a slot of the step's `level`, paid for by the ability's other
+--               steps (Nature Magician)
+-- TOPOINTS and FROMPOINTS use the level set at the sheet's "Cast at" row, or the lowest.
 -- ns.PlanSlotAction checks a step before anything is spent and returns
 -- { text = what to announce, apply = function } or nil after telling the player why.
 local _, ns = ...
@@ -12,7 +14,7 @@ local R = ns.Rules
 
 local POINTS = "Sorcery Points"
 local SLOT_COST = { 2, 3, 5, 6, 7 } -- Sorcery Points for a slot of levels 1 to 5
-local HIGHEST = 5                   -- neither feature reaches above 5th-level slots
+local HIGHEST = 5                   -- neither recovery nor Font of Magic reaches above 5th-level slots
 
 ns.SLOT_ACTION_TEXT = {
     RECOVER = "Recover spent spell slots",
@@ -124,8 +126,23 @@ local function FromPoints(self)
     }
 end
 
+-- A slot of a set level; like one made from Sorcery Points it can go above the usual
+-- number until a long rest.
+local function Make(self, level)
+    local tracker = Slots(self)[level or 0]
+    if not tracker then
+        self:Print(("You have no %s spell slots to add one to."):format(R.SPELL_LEVELS[level or 1] and R.SPELL_LEVELS[level]:lower() or "such"))
+        return
+    end
+    return {
+        text = ("makes a %s"):format(tracker.label),
+        apply = function() self:State().slots[level] = tracker.get() + 1 end,
+    }
+end
+
 -- `ability` is the ability the step belongs to: it tells whose feature recovers.
 function ns.PlanSlotAction(self, action, ability)
+    if action.mode == "MAKE" then return Make(self, action.level) end
     if action.mode == "RECOVER" then return Recover(self, ability) end
     if action.mode == "TOPOINTS" then return ToPoints(self) end
     if action.mode == "FROMPOINTS" then return FromPoints(self) end

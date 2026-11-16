@@ -3,7 +3,9 @@
 --     with a bar of the same name when it has uses;
 --   * a trait with a choice stores it in sheet.traitChoices[<name>]; a chosen skill is
 --     made proficient (remembered in sheet.traitGranted so it can be taken back), a
---     chosen feat is a passive marked auto = "trait:<name>".
+--     chosen feat is a passive marked auto = "trait:<name>", a chosen tool counts as a
+--     proficiency while the species has the trait (ns.TraitTool). A trait that asks
+--     for two picks has its second one under a name of its own (`more`).
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -15,7 +17,11 @@ local PREFIX = "trait:"
 local function Traits(character)
     local species, found = R.SPECIES[character.species], {}
     for _, name in ipairs(species and species.traits or {}) do
-        if R.TRAITS[name] then found[name] = R.TRAITS[name] end
+        local trait = R.TRAITS[name]
+        if trait then
+            found[name] = trait
+            if trait.more then found[trait.more] = R.TRAITS[trait.more] end
+        end
     end
     return found
 end
@@ -24,9 +30,29 @@ end
 function ns.TraitChoices(character)
     local species, names = R.SPECIES[character.species], {}
     for _, name in ipairs(species and species.traits or {}) do
-        if R.TRAITS[name] and R.TRAITS[name].choice then names[#names + 1] = name end
+        local trait = R.TRAITS[name]
+        if trait and trait.choice then
+            names[#names + 1] = name
+            if trait.more then names[#names + 1] = trait.more end
+        end
     end
     return names
+end
+
+-- True if a tool is one picked for a species trait the character has.
+function ns.TraitTool(sheet, name)
+    if type(sheet.traitChoices) ~= "table" then return false end
+    for trait, data in pairs(Traits(sheet)) do
+        if data.choice == "TOOL" and sheet.traitChoices[trait] == name then return true end
+    end
+    return false
+end
+
+-- What the dialogs call a trait's choice: "Specialized Design 2 (tool)".
+function ns.TraitChoiceLabel(name)
+    local trait = R.TRAITS[name]
+    local kind = trait.choice == "FEAT" and "origin feat" or trait.choice == "TOOL" and "tool" or "skill"
+    return ("%s (%s)"):format(name, kind)
 end
 
 -- True if the character has a trait with this field set (e.g. "hitDieMax").
@@ -76,6 +102,14 @@ function ns.TraitOptions(sheet, name, free)
         for _, skill in ipairs(pool) do
             if free or skill == current or (sheet.skills[skill] or 0) == 0 then names[#names + 1] = skill end
         end
+    elseif trait.choice == "TOOL" then
+        -- Any tool, but not the trait's other pick, nor one the character has already.
+        local other = trait.more or trait.of
+        for _, tool in ipairs(R.TOOL_ORDER) do
+            local taken = sheet.traitChoices[other or ""] == tool or (ns.ToolGranted(sheet, tool) ~= nil)
+                or (sheet.tools ~= nil and sheet.tools[tool] == true)
+            if free or tool == current or not taken then names[#names + 1] = tool end
+        end
     else
         local key = PREFIX .. name
         for _, feat in ipairs(R.FEAT_NAMES.GENERAL) do
@@ -113,6 +147,8 @@ local function ApplyChoice(sheet, name, trait)
         if choice ~= "" and (sheet.skills[choice] or 0) == 0 then
             sheet.skills[choice], sheet.traitGranted[name] = 1, choice
         end
+    elseif trait.choice == "TOOL" then
+        return -- counted where tools are (ns.TraitTool), so nothing to keep here
     else
         local key = PREFIX .. name
         local passive, index = FindAuto(sheet.passives, key)
@@ -164,6 +200,11 @@ function ns.ApplyTraits(sheet)
             for _, passive in ipairs(sheet.passives) do
                 if passive.name == name and (passive.auto or "") == "" then
                     local choice = sheet.traitChoices[name] or ""
+                    -- A trait of two picks names both.
+                    if trait.more then
+                        local second = sheet.traitChoices[trait.more] or ""
+                        choice = (choice ~= "" and second ~= "") and (choice .. " and " .. second) or ""
+                    end
                     passive.desc = choice ~= "" and ("%s Chosen: %s."):format(ns.Glossary[name] or "", choice)
                         or ("%s Not chosen yet: pick it under Customize, Lineage, languages, renown."):format(ns.Glossary[name] or "")
                 end

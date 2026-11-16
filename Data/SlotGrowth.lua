@@ -107,6 +107,7 @@ G["Lightning Arrow"] = { also = { count = 2, sides = 8, up = 1, kind = "DAMAGE",
 G["Upheaval"] = { also = { count = 1, sides = 12, up = 1, kind = "DAMAGE", word = "bludgeoning damage" } }
 G["Holy Nova"] = { also = { count = 3, sides = 6, up = 1, kind = "HEALING", word = "healing for the others" } }
 G["Leeching Strike"] = { up = 1, also = { count = 3, sides = 4, up = 1, kind = "SELFHEAL", word = "healing" } }
+G["Bonestorm"] = { also = { count = 4, sides = 6, kind = "SELFHEAL", word = "healing for you" } }
 -- Stated only: it comes on a later turn or is one of several choices.
 G["Melf's Acid Arrow"] = { Amount(2, 1, "the later damage is %dd4") }
 G["Searing Smite"] = { Amount(1, 1, "the burning each turn is %dd6") }
