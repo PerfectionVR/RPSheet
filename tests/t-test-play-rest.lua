@@ -286,6 +286,7 @@ Section("a Warlock with another spellcasting class", function()
     Check(AnyPrinted("No spell slot of 3rd level or higher left for Fireball", before), "no 3rd-level slot left")
     -- the shared slots used up: a 1st-level spell takes a Pact slot
     pact.set(1); s1.set(0); s2.set(0)
+    RPSheet:EndSpellsLater() -- a running Hex is clicked for its die, not cast again
     RPSheet:CastSpell(hex)
     Eq(pact.get(), 0, "with the shared slots spent a Pact slot pays")
     -- each class casts with its own ability

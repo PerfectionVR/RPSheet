@@ -7,14 +7,16 @@ local _, ns = ...
 local RPSheet = ns.addon
 local RollText = ns.RollText
 
--- Changes a spell's rolled dice in place, then calls done(notes).
-function RPSheet:SpellFeatDice(spell, chosen, rolls, done)
+-- Changes a spell's rolled dice in place, then calls done(notes). sides is the die
+-- rolled when the target changed it (Toll the Dead's d12), else the spell's own.
+function RPSheet:SpellFeatDice(spell, chosen, rolls, done, sides)
+    sides = sides or spell.sides
     if chosen and chosen.maxDice then
-        for index in ipairs(rolls) do rolls[index] = spell.sides end
+        for index in ipairs(rolls) do rolls[index] = sides end
         return done({ ("highest number on each die, %s"):format(chosen.feature) })
     end
     local upTo, lowest, from = self:SpellDiceRules(spell.dice, ns.SpellDamageType(spell))
-    self:AdjustRolls(rolls, spell.sides, upTo, lowest, from, done)
+    self:AdjustRolls(rolls, sides, upTo, lowest, from, done)
 end
 
 -- Boon of Spell Recall: a slot of level 1 to 4 comes back when a d4 shows its level.

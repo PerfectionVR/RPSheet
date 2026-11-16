@@ -23,6 +23,8 @@ local function Tip(self, spell)
     for _, line in ipairs(self:ComponentHelp(spell)) do lines[#lines + 1] = line end
     if spell.ritual then lines[#lines + 1] = "Right-click: cast it as a ritual. It takes ten minutes longer and uses no slot." end
     if spell.kind == "ATTACK" then lines[#lines + 1] = ns.ROLL_MODE_HELP end
+    -- Rolls it makes after the casting (Actions/SpellLaterMenu.lua).
+    for _, line in ipairs(self:SpellLaterHelp(spell)) do lines[#lines + 1] = line end
     if R.GROWING_SPELLS[spell.name] then
         lines[#lines + 1] = self:GrowingSides(spell)
             and "It is running. Left-click when the target fails its save again: the die grows and the damage is rolled, without a slot. Right-click when it succeeds or the spell runs out: that ends it."
@@ -64,6 +66,8 @@ function UI.SpellSection(self, body)
         -- A spell chosen for a class feature says so.
         local mark = self:ChosenSpellNote(spell)
         if mark then info = info ~= "" and (info .. ", " .. mark) or mark end
+        local running = self:SpellLaterRowNote(spell)
+        if running then info = info ~= "" and (info .. ", " .. running) or running end
         -- (a spell two classes both prepared says whose each one is)
         UI.AddLabel(body, 1, ("%s  %s%s|r"):format(ns.SpellRowName(self:Sheet(), spell), UI.GREY, info),
             function(button) self:CastSpell(spell, ns.RollMode(), button == "RightButton") end, spell.name,

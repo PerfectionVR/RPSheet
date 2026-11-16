@@ -92,6 +92,36 @@
   of its save DC. A mechagnome picks the two tools of Specialized Design.
 - Tushui Meditation gives Heroic Inspiration after a short rest; Honored with Gilneas
   adds 2 to skinning checks. Chef's short-rest meal adds 1d8 to your next Hit Die.
+- Hex, Hunter's Mark and Divine Favor are cast once: after that a click on the spell
+  rolls the extra die for a hit, without a slot, and a right-click ends it.
+- Spells that act again after their casting keep running on the sheet: a left-click
+  rolls the next attack, bolt, burst or turn's damage with the slot it was cast with
+  (Spiritual Weapon, Moonbeam, Spirit Guardians, Call Lightning, walls and clouds and
+  many more), and a right-click offers every later roll: damage at the end of the
+  target's next turn, healing on later turns, Vampiric Touch's half, Bigby's Hand's
+  other hands, Teleport's mishap, Wish's stress, the bead of Delayed Blast Fireball.
+  Damage that is yours to take (a mishap, Meld into Stone) is taken at once. A running
+  spell ends by hand, with your concentration or with a rest.
+- Spells cast on yourself change your numbers while they last: Armor Class (Mage
+  Armor, Shield, Shield of Faith, Barkskin, Haste and others), maximum and temporary
+  hit points (Aid, Heroes' Feast, Vampiric Blood, Armor of Agathys), speeds (Fly,
+  Longstrider, Spider Climb, Haste and others), dice and advantage on your rolls
+  (Bless, Guidance, Enhance Ability, Foresight, Holy Aura, Pass without Trace,
+  Glibness), and your weapon (Shillelagh, Magic Weapon, Elemental Weapon, Crusader's
+  Mantle, True Strike on the next attack). Advantage on saves against spells, poison
+  or conditions comes with Circle of Power, Protection from Poison and Aura of Purity.
+- Divine Smite, Rune Strike and Toll the Dead ask what the target is; Living Flame
+  asks whether it burns or heals. Sorcerous Burst and Soul Reap roll their extra dice,
+  Magic Missile shows each dart, Hand of Gul'dan and Throw Glaive each damage type,
+  and Steel Wind Strike rolls all five attacks. Bonestorm heals you.
+- Contact Other Plane rolls your own Intelligence save against 15 and the damage on a
+  failure. Innervate gives back a use of Wild Shape and can give you the 4th-level
+  slot. Feral Prowl and Roar of Ursoc switch on one of your Wild Shape forms, and Tree
+  of Life gives its Armor Class, temporary hit points and immunities.
+- Blessing of Argent Fortitude makes you immune to poison damage and to being poisoned.
+- Sixteen 1st-level spells that only listed their facts (Alarm, Grease, Identify,
+  Unseen Servant and others) have a summary of what they do.
+- Detect Thoughts no longer asks for a copper piece: a focus stands in for it.
 
 ## 0.7.0
 

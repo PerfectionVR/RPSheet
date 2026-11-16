@@ -12,6 +12,7 @@
 --              kind       "ability" for something to click; a passive when left out
 --              desc       its own wording; `text` when left out
 --              effects, advantage, startsOff   as for a class feature's passive
+--              resist, immune, conditionImmune   damage types and conditions it guards against
 --              uses       uses per long rest, shown as a bar of the same name
 --              scores, scoreMax   ability scores it raises, and how far
 --   }

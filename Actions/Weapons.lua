@@ -88,7 +88,8 @@ function RPSheet:Attack(mode, answers)
                     if mastery then text = text .. ". " .. mastery end
                     return self:Announce(text)
                 end
-                self:RollDice(crit and 2 or 1, strike.sides, function(extra)
+                -- (a spell's strike can have several dice: Sheet/SpellWeapons.lua)
+                self:RollDice((strike.count or 1) * (crit and 2 or 1), strike.sides, function(extra)
                     text = text .. ", " .. RollText.Dice(strike.damage .. " damage", extra, strike.sides, 0)
                     Finish(index + 1)
                 end)

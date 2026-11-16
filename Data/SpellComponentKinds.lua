@@ -20,7 +20,8 @@ Add("Conjure Barrage", { weapon = "any", cost = 1 })
 Add("Conjure Volley", { weapon = "any", cost = 1 })
 Add("Steel Wind Strike", { weapon = "melee", cost = 10 })
 Add("True Strike", { weapon = "proficient", cost = 1 })
-Add("Detect Thoughts", { coins = 1 })
+-- (Detect Thoughts' copper piece is neither priced nor used up: a focus or a component
+-- pouch stands in for it, as for every such component, so it isn't asked for.)
 Add("Gentle Repose", { coins = 2, consumed = true })
 
 -- Ammunition is sold by the bundle; a single piece is listed too, at a twentieth of

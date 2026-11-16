@@ -21,7 +21,7 @@ end
 
 -- `slotLevel` is the level of the slot the casting uses, which can raise the number.
 function RPSheet:SpellBenefits(spell, slotLevel)
-    local earlier = SpellBenefits(self, spell)
+    local earlier = SpellBenefits(self, spell, slotLevel) -- (a ward's strength can follow the slot)
     local rule, word = R.COMPONENT_TARGETS[spell.name], EachWord(spell)
     if earlier or not rule or not word or not self:SpellComponents(spell) then return earlier end
     local most = rule.max + (rule.up or 0) * math.max(0, (slotLevel or spell.level) - spell.level)

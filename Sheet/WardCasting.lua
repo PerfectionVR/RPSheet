@@ -16,15 +16,15 @@ local SpellBenefits, AskBenefit, TakeBenefit = RPSheet.SpellBenefits, RPSheet.As
 -- The picks a casting chooses between, or the earlier answer for any other spell.
 -- (The wards that hung on an earlier concentration spell end when the new one is
 -- cast: RPSheet:CastSpell in Actions/Spells.lua.)
-function RPSheet:SpellBenefits(spell)
+function RPSheet:SpellBenefits(spell, level)
     local ward = R.SPELL_WARDS[spell.name]
-    if not ward then return SpellBenefits(self, spell) end
+    if not ward then return SpellBenefits(self, spell, level) end
     local picks = {}
     for index, option in ipairs(ward) do
         -- A spell with a side for the caster switches that one on; the other side is
         -- for the one it is cast on, who sets it by hand.
         if not ward.cast or ward.cast == index then
-            picks[#picks + 1] = { ward = true, spell = spell.name, index = index, option = option }
+            picks[#picks + 1] = { ward = true, spell = spell.name, index = index, option = option, slot = level }
         end
     end
     return picks
@@ -68,6 +68,9 @@ function RPSheet:TakeBenefit(pick)
     -- CastSpell has just started concentrating on this spell: the old spell's wards go.
     if ward.conc then self:EndWards(nil, true) end
     if not pick.index then return end -- cast on someone else
-    local option = self:StartWard(pick.spell, pick.index)
-    return option and (ns.WardText(option) .. " while it lasts")
+    local option = self:StartWard(pick.spell, pick.index, nil, pick.slot)
+    if not option then return end
+    -- Hit points it adds now, besides what the passive adds (Sheet/WardStart.lua).
+    local now = self:WardStarted(pick.spell, option, pick.slot)
+    return ns.WardText(option) .. " while it lasts" .. (now and (", " .. now) or "")
 end

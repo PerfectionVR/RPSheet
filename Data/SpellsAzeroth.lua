@@ -44,7 +44,7 @@ Spell("Mass Polymorph", 9, "WIS", nil, "Creatures within 30 feet of you that fai
 -- Sorcerer (Evoker)
 Spell("Azure Strike", 1, "ATTACK", { 2, 6 }, "Rays of force at up to two targets, each with its own spell attack: click once per ray. A hit also slows the target by 10 feet.")
 Spell("Ebon Might", 1, nil, nil, "Creatures you choose within 10 feet of you are empowered until the end of your next turn: each of their hits deals 1d4 more force damage.")
-Spell("Living Flame", 1, "ATTACK", { 2, 8 }, "Burn a creature: a spell attack for fire damage. Or heal a creature by 2d6 with no attack roll; the sheet rolls the attack, so roll the healing by hand.")
+Spell("Living Flame", 1, "ATTACK", { 2, 8 }, "Burn a creature: a spell attack for fire damage. Or heal a creature by 2d6 with no attack roll; the sheet asks which.")
 Spell("Dream Breath", 2, nil, { 2, 6 }, "Creatures you choose in a 15-foot cone regain hit points.", HEAL)
 Spell("Eruption", 2, "DEX", { 3, 8 }, "Flames erupt in a 20-foot sphere: fire damage, half on a success.")
 Spell("Blistering Scales", 3, nil, nil, "Bonus action. A willing creature gains +1 AC and five explosive scales: each deals 1d8 fire damage to a creature that hits it in melee.", CONC)
@@ -67,7 +67,7 @@ Spell("Divine Shield", 4, nil, nil, "Reaction when you take damage: you are immu
 -- Warlock
 Spell("Entropic Embrace", 1, nil, nil, "Reaction when both dice of a roll with advantage or disadvantage show the same number: you are cloaked in Void power for the duration. Once on each of your turns you deal 1d4 more necrotic damage, or heal 1d4 more; one more d4 for each slot level above 1st.")
 Spell("Curse of Agony", 2, "CON", { 1, 4 }, "A curse of growing pain: the target takes the psychic damage whether it passes or fails. A success ends the curse; each failure makes the die one size larger, up to a d12. The target saves again at the end of each of its turns: click the spell again for each failed save, right-click to end it.")
-Spell("Hand of Gul'dan", 3, "DEX", { 4, 8 }, "A demonic meteor bursts in a 20-foot sphere: 2d8 fire and 2d8 necrotic damage, rolled together, half on a successful save. A creature that enters the area or ends its turn there later takes 1d8 of each.", CONC)
+Spell("Hand of Gul'dan", 3, "DEX", { 4, 8 }, "A demonic meteor bursts in a 20-foot sphere: 2d8 fire and 2d8 necrotic damage, half on a successful save; the sheet tells the two apart. A creature that enters the area or ends its turn there later takes 1d8 of each.", CONC)
 Spell("Rain of Fire", 3, "DEX", { 3, 8 }, "Hellfire rains into a 20-foot cylinder that you can move on later turns: fire damage, half on a successful save. Your spell attacks against creatures inside have advantage and deal 1d6 more necrotic damage.", CONC)
 
 -- Ranger (Hunter)
@@ -96,7 +96,7 @@ Spell("Death and Decay", 2, "WIS", { 2, 6 }, "Corruption spreads in a 20-foot sp
 Spell("Frostscythe", 2, "CON", { 3, 8 }, "A sweep of icy cold in a 20-foot cone: cold damage, half on a successful save. A failure also slows the creature by 10 feet for a minute.")
 Spell("Leeching Strike", 3, nil, { 3, 8 }, "Bonus action after a melee hit: extra necrotic damage, and you regain 3d4 hit points.")
 Spell("Remorseless Winter", 3, "CON", { 6, 6 }, "You drain the warmth within 30 feet of you: cold damage to creatures you choose, half on a success.")
-Spell("Bonestorm", 5, "CON", { 4, 8 }, "A whirl of bone around you: creatures within 10 feet take necrotic damage, half on a successful save, and you regain 4d6 hit points; raise your bar by that roll by hand.")
+Spell("Bonestorm", 5, "CON", { 4, 8 }, "A whirl of bone around you: creatures within 10 feet take necrotic damage, half on a successful save, and you regain 4d6 hit points, which the sheet adds.")
 
 -- Demon Hunter (from the Demon Hunter subclass)
 Spell("Consume Soul", 1, "CON", { 4, 4 }, "You drain a creature's essence: force damage, half on a successful save, and you gain half of what it takes as temporary hit points.")
@@ -108,7 +108,7 @@ Spell("Fiery Brand", 2, "WIS", { 3, 10 }, "A burning symbol on a creature: fire 
 Spell("Sigil of Flame", 2, "CON", { 2, 8 }, "A sigil appears on a creature: fire damage, half on a success.")
 Spell("Demon Spikes", 3, nil, nil, "Bonus action. +2 AC, and a creature within 5 feet that hits you in melee takes 10 piercing damage.")
 Spell("Metamorphosis", 3, nil, nil, "Bonus action. You take on demonic features and choose one benefit: your force damage dice that show a 1 or 2 count as a 3; your melee weapon hits deal 1d6 more fire damage; or +2 Armor Class and 5 more current and maximum hit points. Casting it asks which, and switches that benefit on under Passives and traits; switch it off there when the spell ends.")
-Spell("Soul Reap", 3, "ATTACK", { 6, 6 }, "A bolt of cosmic matter that ignores cover: force damage on a hit. A 6 on a die adds another die, as many times as your spellcasting modifier; roll those by hand.")
+Spell("Soul Reap", 3, "ATTACK", { 6, 6 }, "A bolt of cosmic matter that ignores cover: force damage on a hit. A 6 on a die adds another die, as many times as your spellcasting modifier; the sheet rolls them.")
 Spell("Chaos Nova", 4, "WIS", { 2, 6 }, "Chaos bursts within 20 feet of you: creatures you choose take the force damage, and those who fail the save are also stunned.")
 Spell("Collapsing Star", 4, "CON", { 4, 12 }, "A blast of Void energy in a 20-foot sphere: force damage to creatures you choose, half on a successful save.")
 Spell("Sigil of Chains", 5, "DEX", { 5, 6 }, "A sigil erupts in a 20-foot sphere: force damage, half on a successful save, and those who fail are dragged toward its centre.")

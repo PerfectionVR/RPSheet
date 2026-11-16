@@ -35,6 +35,10 @@ R.SAVE_ADVANTAGES = {
     -- Renown blessings
     { from = "Blessing of Argent Will", about = { "being Charmed by a fiend or an undead" } },
     { from = "Wildguard Blessing", about = { SPELL } },
+    -- Spells cast on you, while their passive is on (Data/SpellWards.lua)
+    { from = "Circle of Power (spell)", about = { MAGIC } },
+    { from = "Aura of Purity (spell)", about = { "being Blinded", CHARMED, "being Deafened", FRIGHTENED, "being Paralyzed", POISONED, "being Stunned" } },
+    { from = "Protection from Poison (spell)", about = { POISONED } },
     -- Magic items, while they are worn or held (and attuned where they need it)
     { from = "Mantle of Spell Resistance", about = { SPELL } },
     { from = "Ring of Spell Turning", about = { SPELL } },
