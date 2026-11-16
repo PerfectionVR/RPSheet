@@ -1,7 +1,7 @@
--- Sharing stats, part 2: sending. Your own changes go to your party or raid, a little
--- after the change and only when something others see is different; hovering or
--- targeting a player asks them; and what couldn't be sent while the game blocked addon
--- messages is sent once it lets them through again.
+-- Sharing stats, part 2: sending. Your own changes go to your group, a little after
+-- the change and only when something others see is different; hovering or targeting a
+-- player asks them; and what couldn't be sent while the game blocked addon messages is
+-- sent once it lets them through again.
 local _, ns = ...
 local RPSheet = ns.addon
 local S = ns.Sync
@@ -17,39 +17,50 @@ local broadcastQueued, broadcastForced = false, false
 local lastSent, lastChannel       -- what the group was sent last, so the same isn't sent twice
 local lastBroadcast = -S.REPLY_COOLDOWN
 local held = false                -- the game blocks messages, and something waits for it
-local askOwed, clearOwed = false, false
+local owed = {}                   -- what waits: owed.ask, owed.clear
+local whispered = {}              -- [Name-Realm] = when they were last whispered our stats
 
-local function GroupChannel()
-    if not IsInGroup(LE_PARTY_CATEGORY_HOME) then return end
-    return IsInRaid(LE_PARTY_CATEGORY_HOME) and "RAID" or "PARTY"
-end
-
-local function Send(message, distribution, target)
+function S.Send(message, distribution, target)
     RPSheet:SendCommMessage(S.PREFIX, message, distribution, target)
 end
+local Send = S.Send
 
 -- Seconds since the group was last sent our stats.
 function S.SinceBroadcast()
     return GetTime() - lastBroadcast
 end
 
-local Hold
+-- The players who were whispered our stats within the last `seconds`, outside the
+-- group (it hears group messages), and forgets the ones before that.
+function S.Whispered(seconds)
+    local now, group, list = GetTime(), S.GroupNames(), {}
+    for name, at in pairs(whispered) do
+        if now - at > seconds then
+            whispered[name] = nil
+        elseif not group[name] then
+            list[#list + 1] = name
+        end
+    end
+    table.sort(list)
+    return list
+end
 
 -- An answer to one player who asked.
 function RPSheet:SendStats(distribution, target)
     if not S.Sharing() or not S.CanSend() then return end
+    if distribution == "WHISPER" then whispered[target] = GetTime() end
     Send(S.StatMessage(), distribution, target)
 end
 
 -- `force` sends even when nothing changed since the last time: someone new listens.
 function RPSheet:BroadcastToGroup(force)
-    local channel = GroupChannel()
+    local channel = S.GroupChannel()
     if not channel then lastSent = nil return end
     if not S.Sharing() then return end
     local packed = S.StatMessage()
     -- Most clicks on the sheet change nothing others see (a tab, the next roll's mode).
     if packed == lastSent and channel == lastChannel and not force then return end
-    if not S.CanSend() then Hold() return end
+    if not S.CanSend() then S.Hold() return end
     lastSent, lastChannel, lastBroadcast = packed, channel, GetTime()
     Send(packed, channel)
 end
@@ -68,54 +79,43 @@ end
 -- After a login or reload inside a group what the others sent is gone, and they don't
 -- know: ask them all at once. (Members of the other faction can't be asked by whisper.)
 function S.AskGroup()
-    local channel = GroupChannel()
+    local channel = S.GroupChannel()
     if not channel or not S.Sharing() then return end
-    if not S.CanSend() then askOwed = true; Hold() return end
+    if not S.CanSend() then S.Hold("ask") return end
     Send(ns.Codec.Pack("addon", "Q"), channel)
 end
 
--- Tells the group to drop what it has of us. Versions that don't know this message
--- ignore it and keep their copy until they reload.
-local function SendClear()
-    local channel = GroupChannel()
-    if not channel then return end
-    if not S.CanSend() then clearOwed = true; Hold() return end
-    Send(ns.Codec.Pack("addon", "C", S.NextStamp()), channel)
+-- Sharing was switched on or off: what was sent and what waits no longer counts.
+function S.Reset()
+    lastSent, owed.ask, owed.clear = nil, false, false
 end
 
 -- The game blocks addon messages for a while (some encounters) and doesn't say when it
 -- stops: look again every few seconds while something waits, then send it once.
-function Hold()
+-- `what` is "ask" or "clear" when a question or a clear message waits.
+function S.Hold(what)
+    if what then owed[what] = true end
     if held then return end
     held = true
     local function Look()
         if not S.CanSend() then C_Timer.After(RETRY, Look) return end
-        local ask, clear = askOwed, clearOwed
-        held, askOwed, clearOwed = false, false, false
+        local ask, clear = owed.ask, owed.clear
+        held, owed.ask, owed.clear = false, false, false
         if S.Sharing() then
             if ask then S.AskGroup() end
             RPSheet:BroadcastToGroup(true)
         elseif clear then
-            SendClear()
+            S.SendClear()
         end
     end
     C_Timer.After(RETRY, Look)
 end
 
--- The "Share my stats" switch. Off: the group drops its copy at once and what was
--- received is forgotten. On: the group gets the stats and is asked for theirs.
-function RPSheet:SetSharing(on)
-    on = on and true or false
-    local was = S.Sharing()
-    self.db.profile.share = on
-    if on == was then return end
-    lastSent, clearOwed = nil, false
-    if on then
-        self:QueueBroadcast(true)
-        C_Timer.After(BROADCAST_DELAY, S.AskGroup)
-    else
-        S.Forget()
-        SendClear()
+-- Drops the cooldowns that are over, so the list doesn't grow all session.
+function S.ForgetQueries()
+    local now = GetTime()
+    for name, at in pairs(lastQuery) do
+        if now - at >= QUERY_COOLDOWN then lastQuery[name] = nil end
     end
 end
 

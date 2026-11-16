@@ -358,9 +358,11 @@ UI\Minimap.lua
 Integrations\TRP3Tooltip.lua
 Integrations\SyncPayload.lua
 Integrations\SyncSend.lua
+Integrations\SyncSwitch.lua
 Integrations\SyncReceive.lua
 Integrations\SyncTerms.lua
 Integrations\Sync.lua
+Integrations\ChatTerms.lua
 Integrations\ChatLinks.lua
 
 # Settings, character editor and creation wizard

@@ -1,4 +1,4 @@
--- Sharing stats, part 4: questions about a term. A player who clicks another's term in
+-- Sharing stats, part 5: questions about a term. A player who clicks another's term in
 -- chat asks that player's addon how the number is worked out, and gets plain text back.
 local _, ns = ...
 local RPSheet = ns.addon
@@ -8,6 +8,14 @@ local EXPLAIN_COOLDOWN = 1  -- seconds before explaining to the same player agai
 local ASK_TIMEOUT = 5       -- seconds an explanation is waited for
 
 local lastExplain, asked = {}, {} -- per player: last answer given, and the question we asked
+
+-- Drops the cooldowns that are over (see S.ForgetOld).
+function S.ForgetExplained()
+    local now = GetTime()
+    for name, at in pairs(lastExplain) do
+        if now - at >= EXPLAIN_COOLDOWN then lastExplain[name] = nil end
+    end
+end
 
 -- Asks another player's addon how one of their numbers is worked out (a term clicked
 -- in chat). Returns false when the question can't be sent.

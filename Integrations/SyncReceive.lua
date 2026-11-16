@@ -1,5 +1,6 @@
--- Sharing stats, part 3: receiving. What other players send is checked, made safe
--- (SyncPayload.lua) and kept for the session only; the Total RP 3 tooltip shows it.
+-- Sharing stats, part 4: receiving. What other players send is checked, made safe
+-- (SyncPayload.lua) and kept for the session only, and only while they are around:
+-- in the group, or heard from in the last half hour. The Total RP 3 tooltip shows it.
 local _, ns = ...
 local RPSheet = ns.addon
 local S = ns.Sync
@@ -7,6 +8,7 @@ local S = ns.Sync
 local cache = {}     -- [Name-Realm] = the stats that player sent last
 local newest = {}    -- [Name-Realm] = the stamp of the newest thing heard from them
 local lastReply = {} -- [Name-Realm] = when they were last answered
+local heard = {}     -- [Name-Realm] = when anything was last heard from them
 
 function RPSheet:GetCachedStats(fullName)
     return cache[fullName]
@@ -20,6 +22,27 @@ function S.Forget()
         cache[name] = nil
         ns.RefreshTRP3Tooltip(name)
     end
+end
+
+-- Drops the stats of players who are not in the group and weren't heard from for a
+-- while (they left, or walked past once), and the notes kept about them. Someone who
+-- is hovered again is simply asked again.
+function S.ForgetOld()
+    local now, group = GetTime(), S.GroupNames()
+    for name, at in pairs(heard) do
+        if now - at > S.STALE and not group[name] then
+            heard[name], newest[name] = nil, nil
+            if cache[name] then
+                cache[name] = nil
+                ns.RefreshTRP3Tooltip(name)
+            end
+        end
+    end
+    for name, at in pairs(lastReply) do
+        if now - at >= S.REPLY_COOLDOWN then lastReply[name] = nil end
+    end
+    S.ForgetQueries()
+    S.ForgetExplained()
 end
 
 -- False for a message older than one already heard from the same player. One without
@@ -44,7 +67,7 @@ function S.handlers.Q(self, sender, distribution)
             lastReply[sender] = now
             self:SendStats("WHISPER", sender)
         end
-    elseif (distribution == "PARTY" or distribution == "RAID") and S.SinceBroadcast() >= S.REPLY_COOLDOWN then
+    elseif S.GROUP_CHANNELS[distribution] and S.SinceBroadcast() >= S.REPLY_COOLDOWN then
         -- A group member came back from a reload (see S.AskGroup).
         self:QueueBroadcast(true)
     end
@@ -83,5 +106,8 @@ function RPSheet:OnCommReceived(_, message, distribution, sender)
     local ok, kind, data, extra = ns.Codec.Unpack("addon", message)
     if not ok or type(kind) ~= "string" then return end
     local handler = S.handlers[kind]
-    if handler then handler(self, sender, distribution, data, extra) end
+    if handler then
+        heard[sender] = GetTime()
+        handler(self, sender, distribution, data, extra)
+    end
 end

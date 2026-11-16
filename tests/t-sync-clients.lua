@@ -158,7 +158,7 @@ function World:AddClient(who)
     local client = setmetatable({
         world = self, name = who.name, realm = who.realm or "Realm", realmTitle = who.realmTitle,
         faction = who.faction or "Alliance", trp3 = who.trp3 or false, saved = who.saved,
-        oldChatFilters = who.oldChatFilters or false, online = false, group = false, units = {},
+        oldChatFilters = who.oldChatFilters or false, online = false, group = false, instance = false, units = {},
         lockdown = false, combat = false,
     }, Client)
     client.full = client.name .. "-" .. client.realm
@@ -189,6 +189,34 @@ function World:Group(members, raid)
         if client.online then client:Fire("GROUP_ROSTER_UPDATE") end
     end
     return group
+end
+
+-- Puts the clients in one dungeon finder, raid finder or battleground group: the game's
+-- instance group, which a client has beside its own party or raid (`group`).
+function World:Instance(members, raid)
+    local group = { members = {}, raid = raid or false, instance = true }
+    for _, client in ipairs(members) do
+        if client.instance then client:LeaveInstance() end
+        group.members[#group.members + 1] = client
+        client.instance = group
+    end
+    for _, client in ipairs(members) do
+        if client.online then client:Fire("GROUP_ROSTER_UPDATE") end
+    end
+    return group
+end
+
+function Client:LeaveInstance()
+    local group = self.instance
+    if not group then return end
+    for i, member in ipairs(group.members) do
+        if member == self then table.remove(group.members, i) break end
+    end
+    self.instance = false
+    if self.online then self:Fire("GROUP_ROSTER_UPDATE") end
+    for _, member in ipairs(group.members) do
+        if member.online then member:Fire("GROUP_ROSTER_UPDATE") end
+    end
 end
 
 -- Adds a client to the group another one is in.
@@ -262,10 +290,11 @@ local function SenderFor(world, from, to)
 end
 
 local function Recipients(world, from, chatType, target)
-    if chatType == "PARTY" or chatType == "RAID" then
-        if not from.group then return nil, RESULT.NotInGroup end
+    if chatType == "PARTY" or chatType == "RAID" or chatType == "INSTANCE_CHAT" then
+        local group = chatType == "INSTANCE_CHAT" and from.instance or (chatType ~= "INSTANCE_CHAT" and from.group)
+        if not group then return nil, RESULT.NotInGroup end
         local list = {}
-        for _, member in ipairs(from.group.members) do
+        for _, member in ipairs(group.members) do
             if member.online then list[#list + 1] = member end
         end
         return list
@@ -345,7 +374,7 @@ local function ValidUTF8(text)
 end
 VALID_UTF8 = ValidUTF8
 
-local CHAT_EVENT = { EMOTE = "CHAT_MSG_EMOTE", PARTY = "CHAT_MSG_PARTY", RAID = "CHAT_MSG_RAID" }
+local CHAT_EVENT = { EMOTE = "CHAT_MSG_EMOTE", PARTY = "CHAT_MSG_PARTY", RAID = "CHAT_MSG_RAID", INSTANCE_CHAT = "CHAT_MSG_INSTANCE_CHAT" }
 function World:SendChat(from, text, chatType)
     local sent = { from = from, text = text, chatType = chatType, at = self.now }
     self.chatLog[#self.chatLog + 1] = sent
@@ -363,6 +392,9 @@ function World:SendChat(from, text, chatType)
     if chatType == "EMOTE" then
         list = {}
         for _, client in ipairs(self.clients) do if client.online then list[#list + 1] = client end end
+    elseif chatType == "INSTANCE_CHAT" then
+        if not from.instance then self:Violation("instance chat by someone who is not in an instance group") return end
+        list = from.instance.members
     else
         if not from.group or (chatType == "RAID" and not from.group.raid) then
             self:Violation(("chat message to %s by someone who is not in one"):format(chatType)) return
@@ -388,9 +420,10 @@ local function Resolve(client, unit)
     if unit == "player" then return client end
     if client.units[unit] then return client.units[unit] end
     local kind, index = tostring(unit):match("^(%a+)(%d+)$")
-    if client.group and (kind == "party" or kind == "raid") then
+    local group = client.instance or client.group -- the game's units follow the instance group
+    if group and (kind == "party" or kind == "raid") then
         local others = {}
-        for _, member in ipairs(client.group.members) do
+        for _, member in ipairs(group.members) do
             if member ~= client or kind == "raid" then others[#others + 1] = member end
         end
         return others[tonumber(index)]
@@ -481,9 +514,23 @@ local function BuildEnv(client)
         if short and realm == client.realm then return short end
         return name
     end
-    function env.IsInGroup() return client.group ~= false end
-    function env.IsInRaid() return client.group ~= false and client.group.raid end
-    function env.GetNumGroupMembers() return client.group and #client.group.members or 0 end
+    -- The category: 1 the player's own group, 2 the instance group, none either one
+    -- (and for the number of members, the instance group when there is one).
+    local function Of(category)
+        if category == 1 then return client.group end
+        if category == 2 then return client.instance end
+        return client.instance or client.group
+    end
+    function env.IsInGroup(category)
+        if category == nil then return client.group ~= false or client.instance ~= false end
+        return Of(category) ~= false
+    end
+    function env.IsInRaid(category)
+        if category == nil then return (client.group and client.group.raid or client.instance and client.instance.raid) and true or false end
+        local group = Of(category)
+        return group ~= false and group.raid
+    end
+    function env.GetNumGroupMembers(category) local group = Of(category) return group and #group.members or 0 end
 
     -- Addon channel and chat
     env.C_ChatInfo = {
