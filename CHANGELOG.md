@@ -21,6 +21,43 @@
 - Heal opens a menu: type the amount, take your own last healing roll (cast on
   yourself), or roll a healing spell someone else cast on you, with its slot and their
   modifier.
+- Class features the sheet now applies by itself:
+  - The Assassin is proficient with the disguise kit and poisoner's kit, the Warrior of
+    Mercy with the herbalism kit, and the Warrior of Mystic Brews with brewer's supplies.
+  - A use bought back with a spell slot, a Rage use or Sorcery Points is paid when the
+    feature's own use is spent: Holy Nimbus, Holy Deliverance, Avenging Angel and Aspect
+    of the Horsemen (5th-level slot), Moonlight Step (2nd-level slot or higher),
+    Intimidating Presence (Rage), Hurl Through Hell and Clairvoyant Combatant (pact
+    slot), Dragon Wings (3 Sorcery Points), and Runic Mastery (4th-level slot while
+    Aspect of the Horsemen is on).
+  - Dragon Wings, Avenging Angel and Aspect of the Horsemen switch on a passive; the
+    wings, Avenging Angel, Dispersion and the Dragon constellation from level 10 show
+    their flying speed.
+  - Rolling initiative gives back Soul Shatter's soul fragment, Archdruid's Wild Shape
+    use and Perfect Focus' Focus Points.
+  - Casting Hunter's Mark from the spell list switches the Hunter's Mark passive on.
+  - Potent Spellcasting adds Wisdom to Cleric and Druid cantrips; a Priest's level 14
+    temporary hit points are an ability. Elemental Affinity and Empowered Evocation add
+    their modifier to the spell's first damage roll. Disciple of Life, Blessed Healer
+    and Supreme Healing work on healing spells, Supreme Healing on Channel Divinity too.
+    Infusion of Light refills Lay on Hands with a radiant spell's dice.
+  - Lay on Hands asks whom it heals and how many points, and offers the conditions it
+    can end. Divine Smite and Paladin's Smite ask whether the target is a fiend or an
+    undead.
+  - Runic Power (Blood) heals you by the Rune Strike's necrotic damage, which the sheet
+    suggests; Runic Mastery (Blood) takes off the hit points it costs. With Aspect of
+    the Horsemen on, both ask which rune's effect to use.
+  - Wild Resurgence is an ability that turns a slot into a Wild Shape use; Nature
+    Magician asks how many uses become a slot and adds it.
+  - Arcane Apotheosis: with Innate Sorcery on, a Metamagic option asks whether it is
+    the free one.
+  - Divine Intervention can cast Wish at level 20, and then stays spent for the 2d4
+    long rests rolled.
+  - Memorize Spell: after a short rest a Mage can put one prepared spell away and
+    prepare another in the spellbook window.
+  - The Dragon constellation counts a d20 of 9 or lower as 10 on Intelligence and
+    Wisdom checks and the save to keep concentrating.
+  - Assassinate has an ability for its first-round damage.
 
 ## 0.7.0
 

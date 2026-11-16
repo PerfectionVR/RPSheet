@@ -627,27 +627,8 @@ two classes share is counted for each) and the 81 options of their choices.
 |---|---|---|
 | All | multiclass | Paladin with Death Knight, and Hunter with Demon Hunter, can't be combined: by the rules each pair is one class with different subclasses. |
 | All | multiclass | Weapon Mastery picks from several classes add up, which is one reading of a rule tables disagree on. |
-| Death Knight, Druid, Paladin, Shaman, Warlock | Ebon Blade, Moon, Devotion, Holy, Vengeance, Berserker, Fiend, Great Old One | A use bought back with a spell slot or a Rage use (Aspect of the Horsemen, Moonlight Step, Holy Nimbus, Holy Deliverance, Avenging Angel, Intimidating Presence, Hurl Through Hell, Clairvoyant Combatant) isn't offered: spend the slot and add the use on the bar by hand. |
-| Druid, Evoker, Paladin, Priest | Stars, Draconic Sorcery, Vengeance, Shadow | The flying speed while it lasts (Dragon constellation, Dragon Wings, Avenging Angel, Dispersion) isn't shown: add a passive of your own with that speed and switch it on. |
-| Death Knight | Oath of the Ebon Blade | Runic Power: the hit points it gives back are added by hand. Runic Mastery (Blood rune): the hit points you lose for it are taken off by hand. |
-| Death Knight | Oath of the Ebon Blade | Aspect of the Horsemen: using another rune's effect is not offered; Runic Mastery shows only your own rune's. |
-| Demon Hunter, Hunter | class | Hunter's Mark cast from the spell list with a slot doesn't switch on the Hunter's Mark passive (advantage at level 17): switch it on by hand. The class's own ability does. |
-| Demon Hunter | Demon Hunter | Soul Shatter: the soul fragment regained when you roll initiative is added by hand. |
-| Druid | class | Potent Spellcasting: tick "Add spellcasting modifier" on your Druid cantrips yourself. |
-| Druid | class | Wild Resurgence, Archdruid and Nature Magician: the Wild Shape uses and spell slots they trade are changed on the bars by hand. |
-| Druid | Circle of the Stars | Dragon constellation: a d20 of 9 or lower on Intelligence and Wisdom checks and concentration saves isn't raised to 10. |
-| Evoker | class | Arcane Apotheosis: the free Metamagic option still spends Sorcery Points when clicked; give them back by hand. |
-| Evoker | Draconic Sorcery | Elemental Affinity: the resistance counts, but your Charisma modifier on one damage roll is added by hand. Dragon Wings: later uses' 3 Sorcery Points are spent by hand. |
-| Mage | class | Memorize Spell: once you have cast a spell, the prepared-spells window refuses the swap after a short rest; make it under Customize. |
-| Mage | Evoker | Empowered Evocation: your Intelligence modifier on one evocation damage roll is added by hand. |
-| Monk | class | Perfect Focus: the Focus Points regained are applied by hand. |
-| Monk | Mercy, Mystic Brews | The tool proficiency of Implements of Mercy (herbalism kit) and of Bonus Proficiencies (brewer's supplies) isn't given: tick it under Customize, Proficiencies. |
-| Paladin | class | Lay on Hands heals 5 points a click; another amount is changed on the bar by hand. Divine Smite: the extra 1d8 against fiends and undead is rolled by hand. |
-| Paladin | Oath of the Holy | Infusion of Light: the Lay on Hands points it gives back are added by hand. |
-| Priest | class | Blessed Strikes, Potent Spellcasting: tick "Add spellcasting modifier" on your Cleric cantrips yourself; the temporary hit points from level 14 are given by hand. |
-| Priest | class | Divine Intervention: after casting Wish it should stay spent for 2d4 long rests; the sheet refills it at the next one. |
-| Priest | Life Domain | Disciple of Life, Blessed Healer and Supreme Healing are not added to your healing spells: add 2 + the slot's level, or count the dice at their highest, yourself. |
-| Rogue | Assassin | Assassin's Tools: the disguise kit and poisoner's kit proficiencies aren't given (tick them under Customize, Proficiencies). Assassinate: the extra damage equal to your level is added by hand. |
+| Monk | Mystic Brews | Bonus Proficiencies: a Monk already proficient in Performance picks another Monk skill under Customize, Proficiencies. |
+| Rogue | Assassin | Assassin's Tools: the proficiencies are given, but the disguise kit and poisoner's kit themselves are added to the inventory by hand. |
 
 ### Spells
 

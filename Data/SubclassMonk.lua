@@ -7,7 +7,8 @@ local Spend, SwitchOn, Dice, Roll, Bonus = Kit.Spend, Kit.SwitchOn, Kit.Dice, Ki
 local F = R.SUBCLASS_FEATURES
 
 F["Warrior of Mercy"] = {
-    Passive(3, "Implements of Mercy", "Proficiency in Insight and Medicine and with the herbalism kit.", nil, { skills = { "Insight", "Medicine" } }),
+    Passive(3, "Implements of Mercy", "Proficiency in Insight and Medicine and with the herbalism kit.", nil,
+        { skills = { "Insight", "Medicine" }, tools = { "Herbalism Kit" } }),
     Ability(3, "Hand of Harm", "Once per turn when you hit with an unarmed strike: extra necrotic damage.",
         function(level) return { Spend("Focus Points"), Dice(1, Kit.MartialDie(level), "WIS") } end),
     Ability(3, "Hand of Healing", "Magic action: touch a creature to heal it. In place of a Flurry of Blows strike it costs nothing: use Hand of Healing: with Flurry.",
@@ -21,7 +22,8 @@ F["Warrior of Mercy"] = {
         1, { Spend("Focus Points", 5), Dice(4, 10, "WIS", "HEALING") }),
 }
 F["Warrior of Mystic Brews"] = {
-    Passive(3, "Bonus Proficiencies", "Proficiency in Performance and with brewer's supplies.", nil, { skills = { "Performance" } }),
+    Passive(3, "Bonus Proficiencies", "Proficiency in Performance and with brewer's supplies.", nil,
+        { skills = { "Performance" }, tools = { "Brewer's Supplies" } }),
     Passive(3, "Drunken Technique", "When you spend focus on Patient Defense, your speed rises by 10 feet for the turn and you can make one unarmed strike."),
     Passive(6, "Mystic Brew", function(level)
         return ("After a short or long rest with brewer's supplies you make one magical beverage, which only you can drink (1 minute). Its benefit lasts an hour, or 8 hours if you spend 1 Focus Point, or until you drink another. Brews: Cinnamon Dragon, Heavenly Spirit, Refreshing Dip%s. Switch on the brew you drank."):format(

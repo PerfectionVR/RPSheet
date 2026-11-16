@@ -22,8 +22,8 @@ F["Fiend Patron"] = {
         { stat = "CHA" }, { Dice(1, 10, "", "OTHER") }),
     Kit.Choice(10, "Fiendish Resilience", "After each short or long rest choose a damage type other than force. You resist it until you choose another.", RESILIENCE),
     Limited(14, "Hurl Through Hell", function(_, sheet)
-        return ("Once per turn when you hit: the target makes a Charisma save, DC %d, or vanishes through the Lower Planes, taking the roll as psychic damage (unless it is a fiend) and returning incapacitated at the end of your next turn. Once per long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
-    end, 1, { Dice(8, 10) }),
+        return ("Once per turn when you hit: the target makes a Charisma save, DC %d, or vanishes through the Lower Planes, taking the roll as psychic damage (unless it is a fiend) and returning incapacitated at the end of your next turn. Once per long rest; after that a use costs a pact slot, which the sheet spends."):format(Kit.DC(sheet, "CHA"))
+    end, 1, { Dice(8, 10) }, nil, function(level, sheet) return { Kit.PactSlotBar(level, sheet), 1 } end),
 }
 F["Great Old One Patron"] = {
     AlwaysPrepared("Great Old One", { { 3, "Detect Thoughts, Dissonant Whispers, Phantasmal Force, Tasha's Hideous Laughter" }, { 5, "Clairvoyance, Hunger of Hadar" }, { 7, "Confusion, Summon Aberration" }, { 9, "Modify Memory, Telekinesis" } }),
@@ -32,8 +32,8 @@ F["Great Old One Patron"] = {
     end),
     Passive(3, "Psychic Spells", "You can change the damage of your Warlock spells to psychic, and cast enchantments and illusions without words or gestures."),
     Limited(6, "Clairvoyant Combatant", function(_, sheet)
-        return ("When you link minds with Awakened Mind: the creature makes a Wisdom save, DC %d. On a failure it has disadvantage attacking you and you have advantage attacking it while the link lasts. Once per short or long rest, or again by spending a pact slot."):format(Kit.DC(sheet, "CHA"))
-    end, 1, nil, "ALL"),
+        return ("When you link minds with Awakened Mind: the creature makes a Wisdom save, DC %d. On a failure it has disadvantage attacking you and you have advantage attacking it while the link lasts. Once per short or long rest; after that a use costs a pact slot, which the sheet spends."):format(Kit.DC(sheet, "CHA"))
+    end, 1, nil, "ALL", function(level, sheet) return { Kit.PactSlotBar(level, sheet), 1 } end),
     Passive(10, "Eldritch Hex", "You always have Hex prepared, and its target also has disadvantage on saves with the chosen ability."),
     Passive(10, "Thought Shield", "Your thoughts can't be read, you resist psychic damage, and creatures that deal it to you take the same amount.", nil, { resist = { "psychic" } }),
     Passive(14, "Create Thrall", "Summon Aberration can last a minute without concentration; the creature then gains temporary hit points equal to your level plus Charisma modifier and deals your Hex's extra damage once per turn."),
@@ -44,7 +44,7 @@ F["Evoker"] = {
     Passive(3, "Evocation Savant", "Two free evocation spells of 2nd level or lower in your spellbook now, and another each time you gain a new level of spell slots."),
     Passive(3, "Potent Cantrip", "A damaging cantrip still deals half damage when it misses or the target saves, with no other effect."),
     Passive(6, "Sculpt Spells", "When you cast an evocation spell you can protect creatures you can see, one more than the spell's level: they pass the save and take no damage."),
-    Passive(10, "Empowered Evocation", "Add your Intelligence modifier to one damage roll of any evocation spell you cast."),
+    Passive(10, "Empowered Evocation", "Add your Intelligence modifier to one damage roll of any Mage evocation spell you cast. The sheet adds it to the first."),
     Limited(14, "Overchannel", "Deal maximum damage with a damaging spell of level 1 to 5 on the turn you cast it. The first use after a long rest costs nothing. Each later use rolls necrotic damage that you take and that ignores resistance and immunity: 2d12 for each level of the slot, and 1d12 more per level with every further use. Set the slot's level at \"Cast at\" before you click, and lower your HP by the roll. The bar counts the uses.",
         10, { Kit.Strain(Kit.PerSlot(Dice(2, 12)), "Overchannel") }),
 }

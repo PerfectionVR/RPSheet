@@ -23,6 +23,12 @@ function ns.ToolGranted(sheet, name)
         end
     end
     if R.BACKGROUND_TOOLS[sheet.background] == name then return "background" end
+    -- A class or subclass feature that names it (Assassin's Tools, Implements of Mercy).
+    for _, passive in ipairs(sheet.passives or {}) do
+        for _, tool in ipairs((passive.auto or "") ~= "" and passive.tools or {}) do
+            if tool == name then return "class" end
+        end
+    end
 end
 
 -- True if the tool is picked in one list (a key) the character has.

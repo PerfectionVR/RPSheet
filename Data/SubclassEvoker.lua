@@ -38,13 +38,18 @@ F["Draconic Sorcery"] = {
         end
         return steps
     end }),
-    Kit.Choice(6, "Elemental Affinity", "The damage type your draconic magic is attuned to. You resist it, and add your Charisma modifier to one damage roll of a spell that deals it.", {
-        Kit.Option("Acid", "You resist acid damage, and add your Charisma modifier to one damage roll of a spell that deals acid damage.", { resist = { "acid" } }),
-        Kit.Option("Cold", "You resist cold damage, and add your Charisma modifier to one damage roll of a spell that deals cold damage.", { resist = { "cold" } }),
-        Kit.Option("Fire", "You resist fire damage, and add your Charisma modifier to one damage roll of a spell that deals fire damage.", { resist = { "fire" } }),
-        Kit.Option("Lightning", "You resist lightning damage, and add your Charisma modifier to one damage roll of a spell that deals lightning damage.", { resist = { "lightning" } }),
-        Kit.Option("Poison", "You resist poison damage, and add your Charisma modifier to one damage roll of a spell that deals poison damage.", { resist = { "poison" } }),
-    }),
-    Limited(14, "Dragon Wings", "Bonus action: wings give you a flying speed of 60 feet for an hour. Once per long rest; after that it costs 3 Sorcery Points, spent on their bar by hand.", 1),
+    Kit.Choice(6, "Elemental Affinity", "The damage type your draconic magic is attuned to. You resist it, and add your Charisma modifier to one damage roll of a spell that deals it.", (function()
+        local options = {}
+        for _, kind in ipairs({ "acid", "cold", "fire", "lightning", "poison" }) do
+            options[#options + 1] = Kit.Option(kind:sub(1, 1):upper() .. kind:sub(2),
+                ("You resist %s damage, and your Charisma modifier is added to one damage roll of a spell that deals %s damage; the sheet adds it to the first."):format(kind, kind),
+                { resist = { kind } })
+        end
+        return options
+    end)()),
+    Limited(14, "Dragon Wings", "Bonus action: wings give you a flying speed of 60 feet for an hour, or until you dismiss them. Once per long rest; after that a use costs 3 Sorcery Points, which the sheet spends. Switches Dragon Wings active on.", 1,
+        { SwitchOn("Dragon Wings active") }, nil, { "Sorcery Points", 3 }),
+    Passive(14, "Dragon Wings active", "Switch on while your wings last (an hour, or until you dismiss them): the sheet shows your flying speed of 60 feet. A rest switches it off.",
+        { Kit.Sets("FLY", 60) }, true),
     Limited(18, "Dragon Companion", "You can cast Summon Dragon without its material component and make it last a minute without concentration. Once per long rest you can cast it without a slot.", 1),
 }

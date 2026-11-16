@@ -54,7 +54,8 @@ function Feed(group, path, out)
                         seen[k] = true
                     end
                     for k in pairs(values) do
-                        if not seen[k] and k ~= "SLOTS" then Problem(p .. ".sorting leaves out " .. tostring(k)) end
+                        -- Steps of class features only are named but not offered (Data/Effects.lua).
+                        if not seen[k] and k ~= "SLOTS" and k ~= "EMPTYONLY" and k ~= "LOSEHP" then Problem(p .. ".sorting leaves out " .. tostring(k)) end
                     end
                 end
                 if kind == "select" then

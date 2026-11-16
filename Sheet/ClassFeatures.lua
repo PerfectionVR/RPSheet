@@ -132,6 +132,7 @@ local function Apply(sheet, feature, key)
     entry.flags = feature.flags and CopyTable(feature.flags) or nil
     entry.limit = feature.limit -- armor that stops it (see Sheet/Limits.lua)
     entry.strike = feature.strike and CopyTable(feature.strike) or nil
+    entry.tools = feature.tools and CopyTable(feature.tools) or nil -- tool proficiencies (Sheet/ToolPicks.lua)
     if not isAbility then ns.CopyDefenses(entry, feature, sheet) end -- damage it resists and the like
     for _, stat in ipairs(feature.saves or {}) do sheet.saves[stat] = true end
     for stat, points in pairs(feature.scores or {}) do

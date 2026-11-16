@@ -168,15 +168,23 @@ function RPSheet:RollCheck(label, mod, mode, about, answers)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
     -- It covers checks with a tool you are proficient with too.
     local proficient = (self:Sheet().skills[label] or 0) >= 1 or (ns.Rules.TOOLS[label] and self:ToolSource(label) ~= nil)
-    local reliable = proficient and self:FeatureFlag("reliable")
+    -- The Dragon constellation does the same for Intelligence and Wisdom checks (Sheet/D20Floor.lua).
+    local reliable = (proficient and self:FeatureFlag("reliable")) or self:MindFloor(label)
     self:RollTest(mode, function(d20, note, extra)
         if reliable and d20 < 10 then
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
+<<<<<<< HEAD
         local text = ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra)
         -- A total that counts as an ability score (Indomitable Might, Actions/ScoreFloor.lua).
         self:Announce("rolls " .. text .. self:ScoreFloorNote(label, d20 + mod + (extra and extra.value or 0)))
+=======
+        local text = "rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra)
+        -- Rolling initiative gives some features' uses back (Actions/Initiative.lua).
+        local gains = label == "initiative" and self:InitiativeGains()
+        self:Announce(gains and (text .. " - " .. gains) or text)
+>>>>>>> feature/fx-classes
     end)
 end
 

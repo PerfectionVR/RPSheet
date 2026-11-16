@@ -47,8 +47,8 @@ F["Path of the Berserker"] = {
         { conditionImmune = { "Charmed", "Frightened" }, whileOn = "Raging" }),
     Passive(10, "Retaliation", "Reaction when a creature within 5 feet damages you: one melee attack against it with a weapon or an unarmed strike."),
     Limited(14, "Intimidating Presence", function(_, sheet)
-        return ("Bonus action. Creatures you choose within 30 feet make a Wisdom save, DC %d, or are frightened for a minute; they repeat the save at the end of each of their turns. Once per long rest, or again by spending a Rage use."):format(Kit.DC(sheet, "STR"))
-    end, 1),
+        return ("Bonus action. Creatures you choose within 30 feet make a Wisdom save, DC %d, or are frightened for a minute; they repeat the save at the end of each of their turns. Once per long rest; after that a use costs a Rage use, which the sheet spends."):format(Kit.DC(sheet, "STR"))
+    end, 1, nil, nil, { "Rage", 1 }),
 }
 F["War Domain"] = {
     AlwaysPrepared("War Domain", { { 3, "Guiding Bolt, Magic Weapon, Shield of Faith, Spiritual Weapon" }, { 5, "Crusader's Mantle, Spirit Guardians" }, { 7, "Fire Shield, Freedom of Movement" }, { 9, "Hold Monster, Steel Wind Strike" } }),

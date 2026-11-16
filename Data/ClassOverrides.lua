@@ -108,32 +108,29 @@ R.SUBCLASS_FEATURES["Oath of the Ebon Blade"] = {
         function(_, sheet) return { Dice(0, 4, "", "DAMAGE", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
     Ability(3, "Runic Power", function(_, sheet)
         local rune = {
-            Blood = "You regain hit points equal to the necrotic damage your Rune Strike dealt: raise your HP by hand.",
+            Blood = "You regain hit points equal to the necrotic damage your Rune Strike dealt: the sheet asks for it, suggesting your last Rune Strike's roll, and heals you.",
             Frost = "The target and each enemy within 10 feet of it take the roll as cold damage.",
             Unholy = "The target is cursed until the end of your next turn: it subtracts the roll from its next saving throw.",
         }
         return "Right after you cast Rune Strike. " .. (rune[sheet.spec] or "Its effect depends on your rune.")
     end, function(_, sheet)
         local steps = { Spend("Channel Divinity") }
-        if sheet.spec == "Frost" then steps[2] = Dice(2, 6) end
-        if sheet.spec == "Unholy" then steps[2] = Dice(1, 6, "", "OTHER") end
+        for _, step in ipairs(ns.RunicPowerSteps(sheet.spec)) do steps[#steps + 1] = step end
         return steps
     end),
     Passive(7, "Aura of Deathly Endurance", "You and allies in your Aura of Protection resist cold, necrotic and psychic damage.", nil, { resist = { "cold", "necrotic", "psychic" } }),
     Limited(15, "Runic Mastery", function(_, sheet)
         local rune = {
-            Blood = "Reaction when a creature within 10 feet of you is hit: reduce the damage by the amount shown (your level). You then lose that many hit points.",
+            Blood = "Reaction when a creature within 10 feet of you is hit: reduce the damage by the amount shown (your level). You then lose that many hit points, which the sheet takes off.",
             Frost = ("In place of one attack: frost in a 30-foot cone. The roll as cold damage, half on a successful Dexterity save, DC %d."):format(Kit.DC(sheet, "CHA")),
             Unholy = "When you cast Summon Undead it needs no concentration and lasts 1 minute; the spirit gains temporary hit points equal to your level plus Charisma modifier, and the first time it hits each turn it deals extra necrotic damage: the amount shown, half your level rounded up.",
         }
         return "Once per long rest. " .. (rune[sheet.spec] or "Its effect depends on your rune.")
-    end, 1, function(_, sheet)
-        if sheet.spec == "Blood" then return { Dice(0, 4, "LEVEL", "OTHER") } end
-        if sheet.spec == "Frost" then return { Dice(8, 6) } end
-        if sheet.spec == "Unholy" then return { Dice(0, 4, "", "DAMAGE", math.ceil(sheet.level / 2)) } end
-        return {}
-    end),
-    Limited(20, "Aspect of the Horsemen", "Bonus action, for 10 minutes: you can restore Runic Mastery by spending a 4th-level slot, and Runic Power and Runic Mastery can use any rune's effect. Once per long rest, or again by spending a 5th-level slot.", 1),
+    end, 1, function(level, sheet) return ns.RunicMasterySteps(sheet.spec, level) end,
+        nil, { "4th-level slot", 1, "Aspect of the Horsemen active" }), -- a slot pays only while the Aspect is on
+    Limited(20, "Aspect of the Horsemen", "Bonus action, for 10 minutes: Runic Mastery with no use left costs a 4th-level slot or higher (the sheet spends it), and Runic Power and Runic Mastery can use any rune's effect (the sheet asks which). Once per long rest; after that a use costs a 5th-level slot or higher, which the sheet spends. Switches Aspect of the Horsemen active on.", 1,
+        { Kit.SwitchOn("Aspect of the Horsemen active") }, nil, { "5th-level slot", 1 }),
+    Passive(20, "Aspect of the Horsemen active", "Switch on while Aspect of the Horsemen lasts (10 minutes, or until you end it). A rest switches it off.", nil, true),
 }
 -- The rune abilities belong to one specialization each.
 for _, feature in ipairs(R.SUBCLASS_FEATURES["Oath of the Ebon Blade"]) do
@@ -186,5 +183,5 @@ R.SUBCLASS_FEATURES["Demon Hunter"] = {
         Ability(11, "Disrupt", "Cast Counterspell as a reaction without a slot.", { Spend("Soul Fragments", 2) }),
         Ability(11, "Warglaive Mastery", "Bonus action: cast Throw Glaive without a slot.", { Spend("Soul Fragments") }),
         Passive(11, "Illidari Knowledge", "You gain Disrupt and Warglaive Mastery as new ways to spend soul fragments."),
-        Passive(15, "Soul Shatter", "Soul Cleave rolls 2d12. When you roll initiative with no soul fragments you regain one: raise the bar by hand."),
+        Passive(15, "Soul Shatter", "Soul Cleave rolls 2d12. When you roll initiative with no soul fragments you regain one; the sheet gives it back when you roll initiative from it."),
 }

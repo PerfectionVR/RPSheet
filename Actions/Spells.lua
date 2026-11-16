@@ -160,6 +160,9 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
 
     local word, bonus = ns.DiceWord(spell.dice)
     local diceMod = (spell.addMod and self:Mod(self:CastStat(spell)) or 0) + (bonus and self:Bonus(bonus) or 0) + growth.flat
+    -- Class features add to every roll or to one (Actions/SpellFeatures.lua).
+    local featureEvery, featureOnce, featureNote = self:SpellFeatureBonus(spell, slot)
+    diceMod = diceMod + featureEvery
     local parts = {}
     self.busy = true
 
@@ -184,6 +187,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             self:PopulateSoon() -- the row now shows the next die
         end
         for _, note in ipairs(growth.notes) do parts[#parts + 1] = note end
+        parts[#parts + 1] = self:SpellCastFeatures(spell) -- Hunter's Mark switches its passive on
         -- Only one spell can be concentrated on: a new one replaces the old. A few
         -- spells need no concentration with a high enough slot.
         if spell.concentration and not growth.noConcentration then
@@ -218,8 +222,16 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             local label = word == "damage" and critical and "critical damage" or word
             -- A feature can make low force damage dice count as higher.
             local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
-            local note = self:ApplyDice(spell.dice, rolls, diceMod)
-            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
+            -- What a class feature adds to one roll goes on the first (Actions/SpellFeatures.lua).
+            local mod = diceMod + featureOnce
+            local named = featureNote
+            featureOnce, featureNote = 0, featureEvery ~= 0 and featureNote or nil
+            -- ...and what features do to the dice (Actions/FeatureDice.lua).
+            local featured = self:SpellDiceFeatures(spell, slot, rolls, mod)
+            if featured then raised = raised and (raised .. "; " .. featured) or featured end
+            if named then raised = raised and (named .. "; " .. raised) or named end
+            local note = self:ApplyDice(spell.dice, rolls, mod)
+            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, mod) .. (raised and (" [" .. raised .. "]") or "")
                 .. (note and (" (" .. note .. ")") or "")
             after()
         end)
