@@ -11,15 +11,19 @@ local BoxOf = ns.PopupEditBox -- Actions/PopupBox.lua
 
 -- `request` is { heal = true } or { damageType = "fire" } (no type: an empty table).
 -- ward = false leaves the dice of a protective spell out; prompt = a question of its
--- own; crit = true: the hit was a critical one.
+-- own; crit = true: the hit was a critical one; how = what the damage menu was told
+-- about it (Actions/DamageSteps.lua); run = a function given the typed text instead.
 local function Apply(dialog, request)
     local box = BoxOf(dialog)
-    local amount = tonumber(((box and box:GetText()) or ""):match("%d+")) or 0
+    local text = (box and box:GetText()) or ""
+    local amount = tonumber(text:match("%d+")) or 0
     if type(request) ~= "table" then return end
-    if request.heal then
+    if request.run then
+        request.run(text)
+    elseif request.heal then
         RPSheet:Heal(amount)
     else
-        RPSheet:TakeDamage(amount, request.damageType, nil, request.ward, request.crit)
+        RPSheet:TakeDamage(amount, request.damageType, nil, request.ward, request.crit, request.how)
     end
 end
 
@@ -73,6 +77,7 @@ function RPSheet:OpenDamageMenu(owner)
     -- A critical hit only matters to the sheet at 0 hit points, where it is two
     -- failed death saves: the row to say so is only there then.
     local down, crit = self:IsDown() and (self:State().deathFail or 0) < 3, false
+    local how = {} -- what the boxes of the character's own features say (UI/DamageReactions.lua)
     MenuUtil.CreateContextMenu(owner, function(_, root)
         root:CreateTitle("Take damage of which type?")
         if down then
@@ -82,13 +87,20 @@ function RPSheet:OpenDamageMenu(owner)
                 GameTooltip_AddNormalLine(tooltip, "Tick this first when the hit was a critical one: at 0 hit points it counts as two failed death saves.", true)
             end)
         end
+        UI.AddDamageReactions(self, root, how)
         for _, name in ipairs(R.DAMAGE_TYPES) do
             local standing = Standing(defenses, name)
             local label = name:sub(1, 1):upper() .. name:sub(2)
             if standing then label = ("%s |cff909090(%s)|r"):format(label, standing) end
-            root:CreateButton(label, function() self:AskAmount({ damageType = name, crit = crit }) end)
+            root:CreateButton(label, function() self:AskAmount({ damageType = name, crit = crit, how = how }) end)
         end
-        root:CreateButton("No type", function() self:AskAmount({ crit = crit }) end)
+        root:CreateButton("No type", function() self:AskAmount({ crit = crit, how = how }) end)
+        -- Falling damage is rolled from the distance (Actions/Falling.lua).
+        local fall = root:CreateButton("A fall", function() self:AskFall(owner) end)
+        fall:SetTooltip(function(tooltip)
+            GameTooltip_SetTitle(tooltip, "A fall")
+            GameTooltip_AddNormalLine(tooltip, "Type how far you fell: the sheet rolls 1d6 bludgeoning damage for every 10 feet, 20d6 at most, and you land Prone unless you take no damage.", true)
+        end)
         -- What the protective spells that are on call for (Actions/WardDamage.lua).
         for _, extra in ipairs(self:DamageExtras()) do
             root:CreateButton(extra.label, function()
@@ -102,7 +114,8 @@ end
 function UI.AddDamageRows(addon, body)
     local label
     label = UI.AddLabel(body, 0.5, UI.ACCENT .. "Take damage|r", function() addon:OpenDamageMenu(label.frame) end,
-        "Take damage", "Pick the damage type, then type the amount as it was rolled. Immunity leaves nothing, resistance halves it (rounded down), vulnerability doubles it. Temporary HP is used up first, and a spell you concentrate on gets its saving throw. A spell on you that takes dice off the damage is rolled first; it has a row of its own for when it was already used this turn. At 0 hit points damage is a failed death save, and the menu has a box to tick for a critical hit, which is two.\n\nOr type /sheet damage 14 fire, with the word crit after it for a critical hit. To change HP without the rules, click the HP bar.")
-    UI.AddLabel(body, 0.5, UI.ACCENT .. "Heal|r", function() addon:AskAmount({ heal = true }) end,
-        "Heal", "Type the hit points you regain. They stop at your maximum.\n\nOr type /sheet heal 8.")
+        "Take damage", "Pick the damage type, then type the amount as it was rolled. Immunity leaves nothing, resistance halves it (rounded down), vulnerability doubles it. Temporary HP is used up first, and a spell you concentrate on gets its saving throw. A spell on you that takes dice off the damage is rolled first; it has a row of its own for when it was already used this turn. Your own features that change damage (Evasion, Uncanny Dodge, Heavy Armor Master and the like) are boxes to tick before the type; A fall rolls falling damage. At 0 hit points damage is a failed death save, and the menu has a box to tick for a critical hit, which is two.\n\nOr type /sheet damage 14 fire, with the word crit after it for a critical hit. To change HP without the rules, click the HP bar.")
+    local heal
+    heal = UI.AddLabel(body, 0.5, UI.ACCENT .. "Heal|r", function() addon:OpenHealMenu(heal.frame) end,
+        "Heal", "Type the hit points you regain, take your own last healing roll when you cast it on yourself, or roll a healing spell someone else cast on you. Hit points stop at your maximum.\n\nOr type /sheet heal 8.")
 end

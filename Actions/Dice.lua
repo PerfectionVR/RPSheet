@@ -174,7 +174,9 @@ function RPSheet:RollCheck(label, mod, mode, about, answers)
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
-        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra))
+        local text = ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra)
+        -- A total that counts as an ability score (Indomitable Might, Actions/ScoreFloor.lua).
+        self:Announce("rolls " .. text .. self:ScoreFloorNote(label, d20 + mod + (extra and extra.value or 0)))
     end)
 end
 
