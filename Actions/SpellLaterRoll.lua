@@ -36,9 +36,11 @@ function RPSheet:SpellLaterDice(spell, roll, levels)
         found.count, found.sides = (roll.count or 0) + above * (roll.up or 0), roll.sides or 0
         if roll.feature and ns.HasFeature(self:Sheet(), roll.feature) then found.sides = roll.featureSides end
         found.dice = roll.dice or "DAMAGE"
+        -- Temporary hit points for whoever it is on: yours only while its passive is on.
+        if roll.selfWard then found.dice = self:WardOn(spell.name) and "TEMPHP" or "OTHER" end
         found.word = roll.word or ns.DiceWord(found.dice)
         -- What adds to healing rolls adds to these too, as to the casting's.
-        found.mod = (roll.flat or 0) + (roll.addMod and self:Mod(self:CastStat(spell)) or 0)
+        found.mod = (roll.flat or 0) + above * (roll.flatUp or 0) + (roll.addMod and self:Mod(self:CastStat(spell)) or 0)
             + (found.dice == "HEALING" and self:Bonus("HEALING") or 0)
         found.attack, found.save = roll.attack, roll.save
         if roll.also then found.also = { count = roll.also.count + above * (roll.also.up or 0), sides = roll.also.sides, word = roll.also.word } end
@@ -46,25 +48,6 @@ function RPSheet:SpellLaterDice(spell, roll, levels)
     if roll.ticks and run then found.count = found.count + (run.ticks or 0) end
     if roll.levels then found.count = found.count * (levels or 1) end
     return found
-end
-
--- e.g. "2d6 + 3 healing, Dexterity save": for the tooltip and the menu.
-function RPSheet:SpellLaterText(spell, index)
-    local roll = R.SPELL_LATER[spell.name].rolls[index]
-    if roll.tick then return roll.label end
-    if roll.half then return roll.label end
-    local found = self:SpellLaterDice(spell, roll)
-    local parts = {}
-    if found.count > 0 then
-        parts[1] = ("%dd%d%s %s"):format(found.count, found.sides, found.mod ~= 0 and (" " .. ns.Util.Signed(found.mod)) or "", found.word)
-    elseif found.mod ~= 0 then
-        parts[1] = ("%d %s"):format(found.mod, found.word)
-    end
-    if roll.levels then parts[1] = (parts[1] or "") .. " for each level of that spell" end
-    if found.also then parts[#parts + 1] = ("%dd%d %s"):format(found.also.count, found.also.sides, found.also.word) end
-    if found.attack then parts[#parts + 1] = "an attack roll" end
-    if found.save then parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[found.save] or found.save, self:SpellDC(spell) or 8) end
-    return roll.label .. ": " .. (#parts > 0 and table.concat(parts, ", ") or "nothing to roll")
 end
 
 -- Rolls the later roll `index` (the left-click's one when nil). `levels` is the spell
@@ -89,13 +72,13 @@ function RPSheet:RollSpellLater(spell, index, mode, levels)
     end
     if roll.half then
         local half = math.floor(((run and run.dealt) or 0) / 2)
-        local note = self:ApplyDice("SELFHEAL", {}, half)
+        local note = self:ApplyDice(roll.half == "TEMPHP" and "TEMPHP" or "SELFHEAL", {}, half)
         self:Announce(("%s - %d hit points (%s)"):format(head, half, note))
         return self:PopulateSoon()
     end
 
     local found = self:SpellLaterDice(spell, roll, levels)
-    local parts = {}
+    local parts, taken = {}, 0
     if found.save then parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[found.save] or found.save, self:SpellDC(spell) or 8) end
     self.busy = true
     local function finish()
@@ -106,6 +89,8 @@ function RPSheet:RollSpellLater(spell, index, mode, levels)
         end
         self:Announce(head .. (#parts > 0 and (" - " .. table.concat(parts, ", ")) or ""))
         self:PopulateSoon()
+        -- Damage the caster takes is taken now, with their resistances.
+        if roll.toYou and taken > 0 then self:TakeDamage(taken, found.word:match("^(%a+) damage$")) end
     end
     local function alsoRoll()
         local also = found.also
@@ -130,6 +115,7 @@ function RPSheet:RollSpellLater(spell, index, mode, levels)
             local total = found.mod
             for _, value in ipairs(rolls) do total = total + value end
             if found.dice == "DAMAGE" and run then run.dealt = math.max(0, total) end
+            taken = math.max(0, total)
             local note = self:ApplyDice(found.dice, rolls, found.mod)
             parts[#parts + 1] = RollText.Dice(critical and ("critical " .. found.word) or found.word, rolls, found.sides, found.mod)
                 .. (note and (" (" .. note .. ")") or "")
@@ -146,4 +132,13 @@ function RPSheet:RollSpellLater(spell, index, mode, levels)
         parts[#parts + 1] = RollText.Check(label, d20, bonus, note, extra)
         dice(d20 == 20)
     end)
+end
+
+-- True while the passive of the spell's protection is on (Sheet/Wards.lua).
+function RPSheet:WardOn(name)
+    for _, passive in ipairs(self:Sheet().passives) do
+        local _, _, spell = R.WardOf(passive.auto)
+        if spell == name and passive.enabled then return true end
+    end
+    return false
 end

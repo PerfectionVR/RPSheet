@@ -55,6 +55,7 @@ Data\GrowingSpells.lua
 Data\SpellLater.lua
 Data\SpellLaterAreas.lua
 Data\SpellLaterMore.lua
+Data\SpellLaterWeapons.lua
 Data\SpellDetails.lua
 Data\SpellDamage.lua
 Data\SpellSummaries1.lua
@@ -67,6 +68,7 @@ Data\SpellSummaries7.lua
 Data\SpellSummaries8.lua
 Data\SpellSummaries9.lua
 Data\SpellSummaries.lua
+Data\SpellVariants.lua
 Data\SpellFormer.lua
 Data\SpellFormerText.lua
 Data\Conditions.lua
@@ -134,6 +136,9 @@ Data\FactionPerksOrders.lua
 Data\RenownRules.lua
 Data\SpellWards.lua
 Data\SpellWardRolls.lua
+Data\SpellWardEffects.lua
+Data\SpellWardBoons.lua
+Data\SpellWardWeapons.lua
 Data\Professions.lua
 Data\Recipes.lua
 Data\MagicItemsPotions.lua
@@ -192,6 +197,7 @@ Sheet\DefenseText.lua
 Sheet\Defenses.lua
 Sheet\Wards.lua
 Sheet\WardCasting.lua
+Sheet\WardStart.lua
 Sheet\DefensePicks.lua
 Sheet\Tools.lua
 Sheet\Coins.lua
@@ -266,6 +272,8 @@ Sheet\RenownPerks.lua
 Sheet\RenownSummary.lua
 Sheet\Shop.lua
 Sheet\LevelUp.lua
+Sheet\SpellAC.lua
+Sheet\SpellWeapons.lua
 Sheet\PassCache.lua
 
 # Things the character does
@@ -295,6 +303,10 @@ Actions\GrowingSpells.lua
 Actions\SpellLater.lua
 Actions\SpellLaterRoll.lua
 Actions\SpellLaterMenu.lua
+Actions\SpellAfterCast.lua
+Actions\SpellShapes.lua
+Actions\SpellDiceExtras.lua
+Actions\SpellRollBonus.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\RestUndo.lua

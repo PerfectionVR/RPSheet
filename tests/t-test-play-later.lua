@@ -109,6 +109,7 @@ Section("Vampiric Touch heals half; right-click rolls of instant spells", functi
     Eq(Dice(at), "4,4", "the acid's later 2d4")
     -- Wish: the stress counts once per level of the spell cast
     local wish = Learn("Wish")
+    RPSheet:State().conditions.Concentrating = nil -- (the damage taken would ask for a save)
     at = #ROLLED
     RPSheet:CastSpell(wish, nil, true)
     Click(MENU, "(3rd level)")

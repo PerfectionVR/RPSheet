@@ -201,9 +201,13 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             parts[#parts + 1] = self:TakeBenefit(benefit)
             self:PopulateSoon()
         end
-        -- A spell rolled again later starts running (Actions/SpellLater.lua).
+        -- What else the casting does (Actions/SpellAfterCast.lua): a spell rolled again
+        -- later starts running, and a roll that follows the casting is made after it.
+        local followUp
         if not scroll then
-            parts[#parts + 1] = self:StartSpellLater(spell, slot and slot.level, dealt, growth.noConcentration)
+            local note
+            note, followUp = self:AfterSpellCast(spell, slot and slot.level, dealt, growth.noConcentration)
+            parts[#parts + 1] = note
         end
         local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
@@ -214,22 +218,31 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
         self.busy = false
         self:Announce(text)
         self:Refresh()
+        if followUp then followUp() end
     end
 
     -- A natural 20 on the spell attack doubles the dice.
     local function rollDice(critical, after)
         -- Some spells roll their dice only later, on a hit (Data/SpellLater.lua).
         if spell.count <= 0 or self:SpellLaterQuiet(spell) then return after() end
-        self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
-            local label = word == "damage" and critical and "critical damage" or word
-            -- A feature can make low force damage dice count as higher.
-            local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
-            dealt = diceMod
-            for _, roll in ipairs(rolls) do dealt = dealt + roll end
-            local note = self:ApplyDice(spell.dice, rolls, diceMod)
-            parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
-                .. (note and (" (" .. note .. ")") or "")
-            after()
+        -- The target picked for the casting can change the dice (Actions/SpellDiceExtras.lua).
+        local count, sides = self:SpellVariantDice(spell, self:SpellDiceCount(spell) + moreDice)
+        self:RollDice(count * (critical and 2 or 1), sides, function(first)
+            -- A die at its highest can add another (Actions/SpellDiceExtras.lua).
+            self:ExplodeSpellDice(spell, first, sides, function(rolls, burst)
+                local label = word == "damage" and critical and "critical damage" or word
+                -- A feature can make low force damage dice count as higher.
+                local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
+                dealt = diceMod
+                for _, roll in ipairs(rolls) do dealt = dealt + roll end
+                local note = self:ApplyDice(spell.dice, rolls, diceMod)
+                -- Dice of two damage types, or darts, are told apart.
+                local split = self:SpellDiceSplit(spell, rolls, critical)
+                parts[#parts + 1] = RollText.Dice(label, rolls, sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
+                    .. (note and (" (" .. note .. ")") or "") .. (burst and (" (" .. burst .. ")") or "")
+                    .. (split and (" (" .. split .. ")") or "")
+                after()
+            end)
         end)
     end
 

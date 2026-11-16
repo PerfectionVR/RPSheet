@@ -648,34 +648,21 @@ two classes share is counted for each) and the 81 options of their choices.
 ### Spells
 
 All 460 spells on the lists were checked. A spell not named here does what its summary
-says when cast from the sheet, or has nothing a sheet could apply.
+says when cast from the sheet, or has nothing a sheet could apply. What a spell does after
+its casting (a later turn's attack or damage, the extra dice of a mark, a mishap) is
+rolled from its row without a slot: a left-click while it runs, or the right-click menu.
 
 | Spells | Caveat |
 |---|---|
-| Hex, Hunter's Mark, Divine Favor | The summary says to click again for each hit's extra dice, but a second click casts the spell again, spends a slot and ends the first casting. Roll later hits' dice by hand (a Hunter or Demon Hunter uses Hunter's Mark: damage). |
-| Alarm, Animal Friendship, Color Spray, Comprehend Languages, Create or Destroy Water, Detect Evil and Good, Detect Poison and Disease, Disguise Self, Expeditious Retreat, Grease, Identify, Illusory Script, Purify Food and Drink, Silent Image, Tenser's Floating Disk, Unseen Servant | The summary gives only school, range and save, not what the spell does. |
-| Mage Armor, Shield, Shield of Faith, Barkskin, Haste, Blistering Scales, Demon Spikes | Armor Class isn't changed when you are the target: add a passive of your own with the bonus and switch it on while the spell lasts. |
-| Aid, Heroes' Feast, Vampiric Blood | The higher maximum hit points aren't added when you are a target. |
-| Armor of Agathys, Heroism, Power Word Fortify, Consume Soul | The temporary hit points aren't set: the casting names or rolls the amount, the bar is changed by hand. |
-| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame, Bonestorm, Vampiric Touch | Healing is rolled or stated but not added to your own hit points when you are healed: use Heal. Healing on later turns, Living Flame's heal and Vampiric Touch's half are rolled by hand. |
-| Bless, Guidance, Enhance Ability, Pass without Trace, Foresight, Holy Aura, Beacon of Hope, Circle of Power, Aura of Purity, Protection from Poison, Haste, Enlarge/Reduce, Combustion, Rain of Fire, Guided Prayer, Glibness | The bonus die, +10, advantage or Glibness's 15 they give you is not applied by itself: use the "Next roll" row or Shift. Resistances they give are applied. |
+| Aid, Heroes' Feast, Vampiric Blood, Armor of Agathys, Heroism, Power Word Fortify, Consume Soul | Cast on someone else, the hit points they give are theirs to set. Vampiric Blood's extra 1d6 when you regain hit points is rolled by hand. Power Word Fortify's right-click offers your share of an even split; another split is set on the bar by hand. |
+| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame | Healing is rolled or stated but not added to your own hit points when you are healed: use Heal. |
+| Beacon of Hope, Rain of Fire | Beacon of Hope's most healing possible isn't applied to healing you receive. Rain of Fire's advantage against a creature in the rain is given with Shift. |
 | Death Ward | When you would drop to 0 hit points the sheet still takes you there: set 1 hit point by hand. |
-| Longstrider, Expeditious Retreat, Haste, Fly, Spider Climb, Gaseous Form, Wind Walk, Apotheosis, Breath of Eons, Fel Rush, Alter Self | The speed they give isn't shown. |
-| Shillelagh, True Strike, Magic Weapon, Elemental Weapon, Crusader's Mantle, Fount of Moonlight, Conjure Minor Elementals, Ebon Might, Enlarge/Reduce, Entropic Embrace | Your weapon rows don't change: the other ability, the bonus or the extra die is added by hand. |
-| Feral Prowl, Roar of Ursoc, Tree of Life, Shapechange, Polymorph, Animal Shapes | The shape-shift isn't put on the sheet: no form is switched on and its numbers aren't used. |
-| Innervate | The 4th-level slot and the Wild Shape use it gives are added by hand. |
-| Alter Self, Blistering Scales, Breath of Eons, Combustion, Dimension Door, Ebon Might, Enlarge/Reduce, Entropic Embrace, Meld into Stone, Teleport, Web, Wish | Dice for something that happens later or for one option (a mishap, an exploding scale, a natural weapon) are named in the summary and rolled by hand. |
-| Call Lightning, Cloud of Daggers, Moonbeam, Flaming Sphere, Spirit Guardians, Heat Metal, Spiritual Weapon, Flame Blade, Vampiric Touch, Witch Bolt, Eye Beam, Grasping Vine, Bigby's Hand, Mordenkainen's Sword, Conjure Fey, Conjure Celestial, Sunbeam, Void Eruption, Phantasmal Force, Phantasmal Killer, Combustion | The first damage is rolled when cast; the attack or damage on later turns is rolled by hand (a second click casts again and spends a slot). |
-| Cloudkill, Insect Plague, Incendiary Cloud, Wall of Fire, Wall of Thorns, Wall of Ice, Blade Barrier, Evard's Black Tentacles, Hunger of Hadar, Consecration, Conjure Animals, Conjure Woodland Beings, Conjure Elemental, Jallarzi's Storm of Radiance, Yolande's Regal Presence, Mordenkainen's Faithful Hound, Cordon of Arrows, Earthquake, Spike Growth, Hand of Gul'dan, Death and Decay, Storm of Vengeance, Tsunami | Damage to creatures that enter the area or stay in it on later turns is rolled by hand. |
-| Melf's Acid Arrow, Moonfire, Sigil of Flame, Vitriolic Sphere, Searing Smite, Ensnaring Strike, Shadow Word: Pain, Serpent Sting, Emberstorm, Weird, Delayed Blast Fireball | Damage at the end of the target's next turn, burning or a curse each turn, or the bead's growing dice, are rolled by hand. |
-| Divine Smite, Rune Strike, Toll the Dead, Rain of Fire | Extra dice against some targets (fiends and undead, a celestial, a wounded target, those in the rain) are rolled by hand; Toll the Dead rolls d8s, so use d12s yourself against a wounded target. |
-| Sorcerous Burst, Soul Reap | A die that shows its highest number adds another die, which you roll by hand. |
-| Hand of Gul'dan, Throw Glaive, Magic Missile | Two damage types, or several darts, are rolled as one total: split it yourself for a target that resists one type or for darts at different targets. |
-| Steel Wind Strike | One attack and its damage are rolled; the attacks against the other four creatures are rolled by hand. |
-| Bigby's Hand, Ice Knife, Prismatic Spray, Prismatic Wall, Storm of Vengeance, Symbol, Synaptic Static, Void Eruption, Wall of Ice | The sheet shows the first roll the spell asks for; a second save or another effect's roll is in the summary. Ice Knife's burst damage is rolled. |
-| Contact Other Plane | The row shows your spell save DC, but the save is your own Intelligence save against DC 15, and the damage on a failure is yours to take. |
+| Gaseous Form, Tree of Life | The walking speed they take away (Gaseous Form) or hold at 10 feet (Tree of Life) is in the passive's words; the sheet shows your usual speed. |
+| Conjure Minor Elementals, Enlarge/Reduce | Conjure Minor Elementals adds its dice to your melee weapon hits; for another attack at a creature within 15 feet, right-click the spell. A reduced creature's 1d4 less is rolled from the right-click and taken off by hand. |
+| Shapechange, Polymorph, Animal Shapes | The shape-shift isn't put on the sheet: no form is switched on and its numbers aren't used. (Feral Prowl and Roar of Ursoc switch on one of your Wild Shape forms.) |
+| Cordon of Arrows | The arrows or bolts are counted and taken though the site gives them no price: the spell plants them. |
 | Find Familiar, Find Steed, Summon Aberration, Summon Beast, Summon Celestial, Summon Construct, Summon Dragon, Summon Elemental, Summon Fey, Summon Fiend, Summon Undead, Giant Insect, Animate Dead, Create Undead, Animate Objects, Simulacrum, Phantom Steed | The creature's numbers are not on the sheet; the summary names how a higher slot changes them. |
-| Bless, Find the Path, Cordon of Arrows, Detect Thoughts | Components: Bless counts an amulet, emblem or reliquary as its holy symbol; Find the Path uses divining tokens; the arrows and the coin are counted though they have no price. |
 
 ### Traits and passives
 
@@ -709,7 +696,6 @@ and blessings. Class passives are in the classes table.
 | Invocation | Agonizing Blast | Tick "Add spellcasting modifier" on the cantrip yourself. |
 | Invocation | Lessons of the First Ones | The origin feat is added by hand under Customize, Passives. |
 | Metamagic | Empowered Spell, Seeking Spell | The points are spent; the reroll is yours to make. |
-| Renown | Blessing of Argent Fortitude (Argent Dawn) | The immunity to poison damage and to being poisoned isn't applied. |
 | Renown | Tushui Meditation (Tushui) | The Heroic Inspiration after a short rest is ticked by hand. |
 | Renown | Gilneas, Honored | The +2 to checks to skin a creature isn't added. |
 

@@ -5,6 +5,25 @@ local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
 
+-- e.g. "2d6 + 3 healing, Dexterity save": for the tooltip and the menu.
+function RPSheet:SpellLaterText(spell, index)
+    local roll = R.SPELL_LATER[spell.name].rolls[index]
+    if roll.tick then return roll.label end
+    if roll.half then return roll.label end
+    local found = self:SpellLaterDice(spell, roll)
+    local parts = {}
+    if found.count > 0 then
+        parts[1] = ("%dd%d%s %s"):format(found.count, found.sides, found.mod ~= 0 and (" " .. ns.Util.Signed(found.mod)) or "", found.word)
+    elseif found.mod ~= 0 then
+        parts[1] = ("%d %s"):format(found.mod, found.word)
+    end
+    if roll.levels then parts[1] = (parts[1] or "") .. " for each level of that spell" end
+    if found.also then parts[#parts + 1] = ("%dd%d %s"):format(found.also.count, found.also.sides, found.also.word) end
+    if found.attack then parts[#parts + 1] = "an attack roll" end
+    if found.save then parts[#parts + 1] = ("%s save DC %d"):format(R.STAT_NAMES[found.save] or found.save, self:SpellDC(spell) or 8) end
+    return roll.label .. ": " .. (#parts > 0 and table.concat(parts, ", ") or "nothing to roll")
+end
+
 -- Ends the running spell and casts it anew, spending a slot as usual.
 local function Recast(self, spell, mode)
     self:State().spellLater[spell.name] = nil

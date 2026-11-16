@@ -41,14 +41,33 @@ L["Enlarge/Reduce"] = { hours = 0, rolls = { Dice("an enlarged creature's weapon
 L["Entropic Embrace"] = { hours = 0, rolls = {
     Dice("Touch of the Void: you damage a creature", 1, 4, "necrotic damage", { up = 1 }),
     Dice("Touch of the Void: you heal a creature", 1, 4, "healing", { dice = "HEALING", up = 1 }) } }
-L["Meld into Stone"] = { hours = 8, rolls = { Dice("you are forced out of the stone (damage to you)", 6, 6, "force damage") } }
+L["Meld into Stone"] = { hours = 8, rolls = { Dice("you are forced out of the stone (damage to you)", 6, 6, "force damage", { toYou = true }) } }
 L["Web"] = { hours = 1, rolls = { Dice("a creature starts its turn in burning webs", 2, 4, "fire damage") } }
-L["Dimension Door"] = { rolls = { Dice("you arrive in an occupied space (each of you)", 4, 6, "force damage") } }
+L["Dimension Door"] = { rolls = { Dice("you arrive in an occupied space (each of you)", 4, 6, "force damage", { toYou = true }) } }
 L["Teleport"] = { rolls = {
     Dice("the outcome (the DM's roll)", 1, 100, "on the table", { dice = "OTHER" }),
-    Dice("a mishap (each who travels)", 3, 10, "force damage"),
+    Dice("a mishap (each who travels)", 3, 10, "force damage", { toYou = true }),
     Dice("off target: miles away", 2, 12, "miles", { dice = "OTHER" }),
     Dice("off target: direction (1 east, then clockwise)", 1, 8, "direction", { dice = "OTHER" }) } }
 L["Wish"] = { rolls = {
-    Dice("the stress of a spell you cast later", 1, 10, "necrotic damage", { levels = true }),
+    Dice("the stress of a spell you cast later", 1, 10, "necrotic damage", { levels = true, toYou = true }),
     Dice("days your Strength stays 3", 2, 4, "days", { dice = "OTHER" }) } }
+
+-- A second roll the spell asks for --------------------------------------------------------
+L["Prismatic Spray"] = { rolls = {
+    Dice("which ray strikes a creature (8: two rays, rerolling 8s)", 1, 8, "ray", { dice = "OTHER" }),
+    Dice("a red, orange, yellow, green or blue ray", 12, 6, "damage of its colour", { save = "DEX" }),
+    Dice("indigo: its save at the end of each of its turns", 0, 0, nil, { save = "CON" }),
+    Dice("violet: its save at the start of your next turn", 0, 0, nil, { save = "WIS" }) } }
+L["Prismatic Wall"] = { hours = 0, rolls = {
+    Dice("a creature comes within 20 feet: blinded unless it saves", 0, 0, nil, { save = "CON" }),
+    Dice("a red, orange, yellow, green or blue layer", 12, 6, "damage of its colour", { save = "DEX" }),
+    Dice("the indigo or violet layer", 0, 0, nil, { save = "DEX" }) } }
+-- A glyph lasts until it is set off or dispelled: no rest ends it.
+L["Symbol"] = { hours = 100000, rolls = {
+    Dice("Death: a creature in the sphere", 10, 10, "necrotic damage", { save = "CON" }),
+    Dice("Discord, Fear, Sleep or Stunning: a creature in the sphere", 0, 0, nil, { save = "WIS" }),
+    Dice("Pain: a creature in the sphere", 0, 0, nil, { save = "CON" }) } }
+L["Synaptic Static"] = { rolls = {
+    Dice("a muddled creature's attack, check or concentration save (taken off)", 1, 6, "taken off", { dice = "OTHER" }),
+    Dice("its save at the end of each of its turns", 0, 0, nil, { save = "INT" }) } }

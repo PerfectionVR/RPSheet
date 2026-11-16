@@ -12,6 +12,11 @@ local R = ns.Rules
 local RPSheet = ns.addon
 
 local FIELDS = { "resist", "immune", "conditionImmune" }
+-- What else an option can put on its passive: rolls it gives advantage, disadvantage or
+-- a die on (Actions/SpellRollBonus.lua), and flags for Armor Class and weapons
+-- (Sheet/SpellAC.lua, Sheet/SpellWeapons.lua).
+-- oneRoll: the passive switches off after the first roll it gives advantage on.
+local MORE = { "advantage", "disadvantage", "rollDie", "minRoll", "oneRoll" }
 
 -- "resistance to fire damage; can't be Prone": what an option gives, in words.
 function ns.WardText(option)
@@ -49,15 +54,27 @@ local function Fill(passive, ward, option, spell)
     if ward.conc then ends = passive.byOther and "It ends with its caster's concentration, which the sheet can't see. " or "It ends with your concentration. " end
     passive.desc = option.desc or ("On while %s protects you: %s. %s%sClick to switch it off when the spell ends."):format(spell, ns.WardText(option),
         ns.WardRollNote(option), ends)
-    passive.effects = option.effects and CopyTable(option.effects) or (type(passive.effects) == "table" and passive.effects or {})
+    -- What it adds can follow the slot it was cast with (Data/SpellWardEffects.lua).
+    local slot = math.max(passive.slot or 0, R.SPELLS[spell] and R.SPELLS[spell].level or 0)
+    local effects = option.effectsAt and option.effectsAt(slot) or option.effects
+    passive.effects = effects and CopyTable(effects) or (type(passive.effects) == "table" and passive.effects or {})
     for _, field in ipairs(FIELDS) do
         passive[field] = option[field] and CopyTable(option[field]) or nil
     end
+    local strike = option.strikeAt and option.strikeAt(slot) or option.strike
+    passive.strike = strike and CopyTable(strike) or nil
+    for _, field in ipairs(MORE) do
+        local value = option[field]
+        passive[field] = type(value) == "table" and CopyTable(value) or value
+    end
+    local flags = option.flagsAt and option.flagsAt(slot) or option.flags
+    passive.flags = flags and CopyTable(flags) or nil
 end
 
 -- Switches on the ward of a spell's option, in place of any other option of that spell.
--- `byOther` is true when someone else cast it on the character.
-function RPSheet:StartWard(spell, index, byOther)
+-- `byOther` is true when someone else cast it on the character; `slot` is the level
+-- of the slot it was cast with.
+function RPSheet:StartWard(spell, index, byOther, slot)
     local ward, option = R.WardOf(R.WardKey(spell, index))
     if not ward then return end
     local passives, key, found = self:Sheet().passives, R.WardKey(spell, index), nil
@@ -78,6 +95,7 @@ function RPSheet:StartWard(spell, index, byOther)
     found.enabled = true
     found.byOther = byOther and true or nil
     found.owed = nil -- a new casting owes nothing yet (Actions/WardDamage.lua)
+    found.slot = slot -- the slot it was cast with, when what it gives follows that
     Fill(found, ward, option, spell)
     return option
 end

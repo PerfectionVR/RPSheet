@@ -22,7 +22,11 @@
 --     addMod    adds your spellcasting modifier; flat: a number added
 --     also      { count, sides, word, up }: a second roll of another damage type
 --     above     true: only offered when cast with a higher slot; below: only when not
---     half      true: you regain half of the damage the spell dealt last
+--     half      true: you regain half of the damage the spell dealt last; "TEMPHP":
+--               as temporary hit points
+--     flatUp    added to `flat` for each slot level above the spell's own
+--     selfWard  temporary hit points for you while the spell's protection is on you
+--     toYou     the damage is yours: it is taken at once (with your resistances)
 --     levels    true: the dice count once per spell level, chosen from a menu
 --     sequence  (on the entry) true: the left-click goes through the rolls in order,
 --               staying on the last one
