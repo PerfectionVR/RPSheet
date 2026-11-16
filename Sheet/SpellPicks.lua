@@ -1,12 +1,70 @@
 -- The cantrips a character picked in the level dialog (lists in Data/SpellPicks.lua):
 -- sheet.picks["cantrips<Class>"][<name>] = true. Each is put on the spell list marked
--- auto = "cantrip:<name>". Cantrips from a lineage or a feat are not part of this.
+-- auto = "cantrip:<name>". A cantrip the character has from somewhere else (a feature
+-- that always keeps it prepared, a feat, one put on the spell list as not counting)
+-- is not picked as well: no cantrip is on a sheet twice, and a pick that became one
+-- of those is freed for another cantrip.
 local _, ns = ...
 local R = ns.Rules
 
 local PREFIX = "cantrip:"
 
-function ns.ApplySpellPicks(sheet)
+-- { [name] = true } for the cantrips the character knows without picking them.
+-- `sheet` may be the level dialog's stand-in, so a subclass chosen there counts.
+-- The dialog asks once per cantrip each time it is drawn, so the answer is kept for
+-- as long as the same moment lasts; `fresh` works it out anew.
+local kept = {}
+function ns.CantripsElsewhere(sheet, fresh)
+    local now = GetTime()
+    if not fresh and kept.names and kept.time == now and kept.spells == sheet.spells and kept.class == sheet.class
+        and kept.subclass == sheet.subclass and kept.spec == sheet.spec and kept.level == sheet.level
+        and kept.featChoices == sheet.featChoices and kept.species == sheet.species and kept.lineage == sheet.lineage
+        and kept.lineageCantrip == sheet.lineageCantrip then
+        return kept.names
+    end
+    local names = {}
+    for name in pairs(ns.AlwaysPrepared(sheet)) do
+        if R.SPELLS[name].level == 0 then names[name] = true end
+    end
+    -- (and those of the species or lineage: Sheet/LineageSpells.lua)
+    for name in pairs(ns.SpeciesCantrips(sheet)) do
+        if not (sheet.dismissed or {})["species:" .. name] then names[name] = true end
+    end
+    for name, found in pairs(ns.FeatSpells(sheet)) do
+        -- (One the player deleted from the spell list isn't given by the feat any more.)
+        if found.level == 0 and not (sheet.dismissed or {})["feat:" .. name] then names[name] = true end
+    end
+    for _, spell in ipairs(sheet.spells or {}) do
+        local auto = spell.auto or ""
+        -- Entries of the two kinds above are covered there; a stale one is on its way out.
+        if spell.level == 0 and spell.free and not auto:find("^prepared:") and not auto:find("^feat:") then names[spell.name] = true end
+    end
+    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices,
+        species = sheet.species, lineage = sheet.lineage, lineageCantrip = sheet.lineageCantrip }
+    return names
+end
+
+for _, key in pairs(R.CANTRIP_LISTS) do
+    R.PICK_LISTS[key].blocked = function(sheet, name)
+        if ns.CantripsElsewhere(sheet)[name] then return "you know it already" end
+    end
+end
+
+-- True while the active character's Mage has given up a cantrip in the exchange after
+-- a long rest and not yet learned one in its place (Sheet/CantripSwap.lua): that place
+-- is the player's to fill, not a cantrip that happens to be on the spell list.
+local function ExchangeOpen(sheet, key)
+    local RPSheet = ns.addon
+    if key ~= R.CANTRIP_LISTS.Wizard or not RPSheet.db or (sheet.viewOf or sheet) ~= RPSheet:Sheet() then return false end
+    local swap = RPSheet:State().cantripSwap
+    return type(swap) == "table" and type(swap.out) == "string" and not swap.into
+end
+
+-- The cantrips of one class: `sheet` is a character of one class, or a view of one
+-- class of a character with several. That one's spells name their class, and the
+-- cantrips its other classes picked are left alone.
+local function ApplyFor(sheet)
+    local foreign, tag = ns.ForeignPicks(sheet, R.CANTRIP_LISTS), ns.SpellTag(sheet)
     local class = R.CLASSES[sheet.class]
     local key = class and R.CANTRIP_LISTS[class.base]
     local limit = key and ns.PickLimit(key, sheet.class, sheet.level) or 0
@@ -17,9 +75,12 @@ function ns.ApplySpellPicks(sheet)
         picks = sheet.picks[key]
     end
 
-    -- A cantrip the player deleted from the spell list is no longer picked.
+    -- A cantrip the player deleted from the spell list is no longer picked, and neither
+    -- is one the character now knows without picking it: the level dialog asks for another.
+    local elsewhere = limit > 0 and ns.CantripsElsewhere(sheet, true) or {}
+    local stays = ns.OwnEntries(sheet, PREFIX, tag)
     for name in pairs(picks) do
-        if sheet.dismissed[PREFIX .. name] then
+        if (sheet.dismissed[PREFIX .. name] and not stays[name]) or elsewhere[name] then
             picks[name] = nil
             sheet.dismissed[PREFIX .. name] = nil
         end
@@ -29,22 +90,34 @@ function ns.ApplySpellPicks(sheet)
         if items[name] then count = count + 1 end
     end
 
+    local room = limit - (ExchangeOpen(sheet, key) and 1 or 0)
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
-            -- Put there by an earlier pick: it stays only while it is still picked.
-            if picks[spell.name] then have[spell.name] = true else table.remove(sheet.spells, index) end
-        elseif spell.level == 0 and not spell.free and items[spell.name] then
+            -- Put there by an earlier pick: it stays only while it is still picked. One
+            -- that names another class is that class's own (two classes may both know
+            -- a cantrip, each with its own ability).
+            if not ns.SpellIsOf(spell, tag) then
+                -- not this class's
+            elseif picks[spell.name] and not have[spell.name] then
+                have[spell.name] = true
+                if tag then spell.class = tag end
+            elseif spell.class == tag or have[spell.name] or not foreign[spell.name] then
+                -- (one without a class that another class picked is left for that class)
+                table.remove(sheet.spells, index)
+            end
+        elseif spell.level == 0 and not spell.free and items[spell.name] and ns.SpellIsOf(spell, tag) then
             -- Added by hand before cantrips were picked: it counts as a pick while
             -- there is room for one.
-            if picks[spell.name] or count < limit then
+            if picks[spell.name] or count < room then
                 if not picks[spell.name] then
                     picks[spell.name] = true
                     count = count + 1
                 end
                 spell.auto = PREFIX .. spell.name
+                if tag then spell.class = tag end
             end
             have[spell.name] = true
         end
@@ -58,6 +131,12 @@ function ns.ApplySpellPicks(sheet)
     for _, name in ipairs(names) do
         local spell = CopyTable(R.SPELLS[name])
         spell.auto = PREFIX .. name
+        spell.class = tag
         sheet.spells[#sheet.spells + 1] = spell
     end
+    kept = {} -- the spell list changed
+end
+
+function ns.ApplySpellPicks(sheet)
+    ns.ForEachClass(sheet, ApplyFor)
 end

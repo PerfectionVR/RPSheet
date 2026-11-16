@@ -20,13 +20,28 @@ local function Resolve(value, level, sheet)
     return CopyTable(value or {})
 end
 
+-- "Your level" in a class feature is the level in that class. A character of one
+-- class leaves it to the sheet (RPSheet:Amount); for one class of several the number
+-- is written out, as the sheet only knows the whole character's level.
+local function ClassLevels(steps, sheet)
+    if not sheet.viewOf then return steps end
+    for _, step in ipairs(steps) do
+        if step.stat == "LEVEL" and (step.type == nil or step.type == "DICE") then
+            local times = step.type == nil and step.times or 1
+            step.flat, step.stat = (step.flat or 0) + (times or 1) * sheet.level, ""
+        end
+    end
+    return steps
+end
+
 local function Key(prefix, feature)
     return ("%s:%s:%s"):format(prefix, feature.kind, feature.name)
 end
 
--- Calls visit(feature, key) for every feature the character has right now: reached by
--- level, not deleted by the player, and not replaced by its World of Warcraft class.
-local function EachFeature(sheet, visit)
+-- Calls visit(feature, key, sheet) for every feature one class gives right now: reached
+-- by its level, not deleted by the player, and not replaced by its World of Warcraft
+-- class. `sheet` is a character of one class, or a view of one class of a character.
+local function EachClassFeature(sheet, visit)
     local class = R.CLASSES[sheet.class]
     if not class then return end
     local override = R.CLASS_OVERRIDES[sheet.class] or {}
@@ -47,10 +62,28 @@ local function EachFeature(sheet, visit)
             if feature.option and (sheet.featureOptions or {})[feature.option[1]] ~= feature.option[2] then specFits = false end
             if feature.when and not feature.when(sheet) then specFits = false end
             if sheet.level >= feature.level and specFits and not sheet.dismissed[key] and not (skip and skip[feature.name]) then
-                visit(feature, key)
+                visit(feature, key, sheet)
             end
         end
     end
+end
+
+-- The same for every class of the character, each by its own level.
+local function EachFeature(sheet, visit)
+    for _, view in ipairs(ns.ClassViews(sheet)) do EachClassFeature(view, visit) end
+end
+
+-- A feature may be a fixed text or follow the level.
+local function Scales(feature)
+    return type(feature.desc) == "function" or type(feature.effects) == "function" or type(feature.actions) == "function"
+end
+
+-- Two classes can give a feature of the same name (Extra Attack, Unarmored Defense).
+-- They don't add up: the sheet shows one, the one that grows with its class's level
+-- or else the one of the class with the most levels.
+local function Outranks(feature, view, best)
+    if Scales(feature) ~= Scales(best.feature) then return Scales(feature) end
+    return view.level > best.view.level
 end
 
 -- The option the character picked for a feature that offers a choice, or nil.
@@ -88,6 +121,7 @@ local function Apply(sheet, feature, key)
     -- Some features read differently for each specialization.
     if feature.shown then entry.name = feature.shown end
     entry.training = feature.training and CopyTable(feature.training) or nil
+    entry.martial = feature.martial or nil -- proficiency with martial weapons (Sheet/Armoury.lua)
     local desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
     if type(desc) == "function" then desc = desc(sheet.level, sheet) end -- wording that follows the character
     entry.desc = desc
@@ -104,9 +138,9 @@ local function Apply(sheet, feature, key)
         sheet.featureScores[stat] = (sheet.featureScores[stat] or 0) + points
     end
     if isAbility then
-        entry.actions = Resolve(feature.actions, sheet.level, sheet)
+        entry.actions = ClassLevels(Resolve(feature.actions, sheet.level, sheet), sheet)
     else
-        entry.effects = Resolve(feature.effects, sheet.level, sheet)
+        entry.effects = ClassLevels(Resolve(feature.effects, sheet.level, sheet), sheet)
     end
     for _, skill in ipairs(feature.skills or {}) do
         sheet.skills[skill] = math.max(sheet.skills[skill] or 0, 1)
@@ -129,7 +163,14 @@ function ns.ApplyClassFeatures(sheet)
     end
 
     sheet.featureScores = {} -- worked out again from the features the character has
-    EachFeature(sheet, function(feature, key) Apply(sheet, feature, key) end)
+    local chosen = {}
+    EachFeature(sheet, function(feature, key, view)
+        local best = chosen[key]
+        if not best or (best.view ~= view and Outranks(feature, view, best)) then chosen[key] = { feature = feature, view = view } end
+    end)
+    EachFeature(sheet, function(feature, key, view)
+        if chosen[key].view == view then Apply(view, feature, key) end
+    end)
     ns.ApplyFightingStyles(sheet)
     ns.ApplyManeuvers(sheet)
     ns.ApplyPicks(sheet)
@@ -138,6 +179,7 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplyFeatureSkills(sheet)
     ns.ApplyFeatSkills(sheet)
     ns.ApplyFeatChoices(sheet) -- before expertise: a feat's skill can be picked for it
+    ns.ApplyFeatTools(sheet)   -- after the feats' own tools: one isn't picked twice
     ns.ApplyExpertise(sheet)
     ns.ApplySpellPicks(sheet)
     ns.ApplyPreparedPicks(sheet) -- before the always-prepared spells: a pick makes way for one
@@ -145,11 +187,13 @@ function ns.ApplyClassFeatures(sheet)
     ns.ApplySpellbook(sheet)
     ns.ApplySpellChoices(sheet) -- after the spellbook: some are chosen from it
     ns.ApplyFeatSpells(sheet)   -- last: a spell the class prepares isn't listed twice
+    ns.ApplyWards(sheet)        -- spell protection that is running, and a feat's situation passive
     ns.ApplyRenownPerks(sheet)  -- here, so a blessing's score points follow the reset above
 end
 
 -- The features of the character that offer a choice between options, in level order.
--- `sheet` may be a stand-in with class, subclass, level and featureOptions.
+-- `sheet` may be a stand-in with class, subclass, level and featureOptions, or a view
+-- of one class.
 function ns.OptionFeatures(sheet)
     local found = {}
     EachFeature(setmetatable({ dismissed = {} }, { __index = sheet }), function(feature)
@@ -172,7 +216,8 @@ function ns.OpenOptionFeatures(sheet)
 end
 
 -- Resources that come with features of their own (see Kit.Limited in Data/FeatureKit.lua),
--- in the same form as class `pools`.
+-- in the same form as class `pools`. Asked per class (a view) by a character with
+-- several, as each grows with its own class's level.
 function ns.FeaturePools(sheet)
     local pools = {}
     EachFeature(sheet, function(feature)
@@ -182,9 +227,32 @@ function ns.FeaturePools(sheet)
 end
 
 -- The features a character of this class and subclass gains on reaching `level`.
+-- The answer comes from the rules data alone, which doesn't change while the game runs,
+-- and it is asked for hundreds of times when a level dialog opens: each list is made
+-- once and kept. Don't change the list that comes back.
+local gainedAt = {}
 function ns.FeaturesGainedAt(class, subclass, level)
-    local gained = {}
+    local id = ("%s|%s|%s"):format(tostring(class), tostring(subclass), tostring(level))
+    local gained = gainedAt[id]
+    if gained then return gained end
+    gained = {}
     EachFeature({ class = class, subclass = subclass, level = level, dismissed = {} }, function(feature)
+        if feature.level == level then gained[#gained + 1] = feature end
+    end)
+    gainedAt[id] = gained
+    return gained
+end
+
+-- The features one class of a character gains on reaching `level` of that class, for
+-- this character: those that hang on its specialization, on an option it picked or on
+-- something else of the sheet (the kind of beast its companion is) are counted only
+-- when they apply. `view` is the character of one class or a view of one class (it
+-- may carry options picked but not yet saved, in featureOptions); the features it
+-- deleted are listed all the same. Worked out on every call: nothing is kept.
+function ns.FeaturesGainedFor(view, level)
+    local gained = {}
+    local like = setmetatable({ level = level, dismissed = {} }, { __index = view })
+    EachClassFeature(like, function(feature)
         if feature.level == level then gained[#gained + 1] = feature end
     end)
     return gained

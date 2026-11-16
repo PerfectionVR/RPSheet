@@ -13,7 +13,11 @@ ns.defaults = {
         minimap = { hide = false },
         themePreset = "DARK",
         theme = CopyTable(ns.Themes.DARK),
-        window = { width = 300, height = 560 },
+        -- Size and place of each window (the place is added when it is first moved).
+        window = { width = 340, height = 560 },          -- the sheet; 340 is as narrow as it goes (UI/Window.lua)
+        itemWindow = { width = 560, height = 520 },      -- item browser, stable, crafting (UI/ItemBrowser.lua)
+        spellbookWindow = { width = 340, height = 420 }, -- UI/SpellbookWindow.lua
+        preparedWindow = { width = 340, height = 420 },  -- UI/PreparedWindow.lua
     },
     -- Per WoW character.
     char = {
@@ -41,19 +45,29 @@ ns.defaults = {
                 res = {},   -- custom resources, by name
                 pool = {},  -- class resources, by name
                 slots = {}, -- spell slots, by spell level
+                pactSlots = {},   -- a Warlock's slots, when another class's slots are kept beside them (Sheet/MulticlassSlots.lua)
+                hitDiceMore = {}, -- [die size] = Hit Dice left of the classes whose die differs from the first class's
                 freeUsed = {}, -- [ability name] = true: its free first use since a long rest is gone
                 spellUsed = {}, -- [spell name] = true: its one casting without a slot is gone until a rest (Actions/SpellChoices.lua)
                 sheet = {
                     version = 2,
                     level = 1,
                     class = "", subclass = "", spec = "",
+                    -- Classes taken after the first: [class key] = { level, subclass, spec, skill }.
+                    -- `level` above is the whole character's (Sheet/Classes.lua).
+                    classes = {},
+                    lastClass = "", -- the class the last level was taken in, for going back a level
                     fightingStyle = "", fightingStyle2 = "", -- see Rules.FIGHTING_STYLES
                     species = "", lineage = "", size = "M",
+                    lineageStat = "",    -- INT, WIS or CHA: what the spells of the species or lineage are cast with (Sheet/LineageCasting.lua)
+                    lineageCantrip = "", -- a Wizard cantrip an elf took in place of Prestidigitation; "" = Prestidigitation
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
                     renown = {},    -- [faction] = score
+                    renownReached = {},  -- [faction] = lowest score of the highest tier it ever reached (Sheet/RenownRules.lua)
                     renownTraining = {}, -- [faction] = language, tool or skill its trainers taught (Sheet/RenownTraining.lua)
                     renownGranted = {},  -- [faction] = the language or skill that pick added
+                    stronghold = "",     -- the faction whose lands the character's stronghold stands in (Sheet/RenownRules.lua)
                     extraLanguages = 0, -- languages granted by features, on top of the usual three
                     asi = { STR = 0, DEX = 0, CON = 0, INT = 0, WIS = 0, CHA = 0 }, -- points from level-ups
                     background = "", alignment = "",
@@ -71,16 +85,21 @@ ns.defaults = {
                     abilities = {},
                     passives = {},
                     spells = {},
+                    componentsWaived = false, -- true: spells are cast without checking for their priced components (a DM ruling)
                     spellbook = {},      -- [spell name] = true: a Mage's spellbook (Sheet/Spellbook.lua)
                     coins = { pp = 0, gp = 0, ep = 0, sp = 0, cp = 0 }, -- money (Sheet/Coins.lua)
                     items = {},          -- what is carried; entries follow Rules.TEMPLATES.item (Sheet/Inventory.lua)
+                    mounts = {},         -- mounts, vehicles and companion creatures owned; entries follow Rules.TEMPLATES.mount (Sheet/Mounts.lua)
+                    bodyWeight = 0,      -- pounds the character weighs, for what its mount carries; 0 = not said (Sheet/MountLoad.lua)
                     dismissed = {}, -- class features the player deleted: [auto key] = true
                     featureScores = {}, -- [ability] = points a capstone feature adds (worked out, not edited)
+                    defensePicks = {},   -- [passive name] = { damage types chosen for its resistance } (Sheet/DefensePicks.lua)
                     featureOptions = {}, -- [feature name] = option picked for it (Primal Order: "Warden")
                     petMastery = false,  -- the companion's family is one of the Weapon Mastery picks (Sheet/Pet.lua)
                     tools = {},            -- [tool] = true: proficiency ticked by hand (Data/Tools.lua)
                     featSkills = {},       -- [skill] = true: proficiency picked for a feat (Skilled)
                     featSkillGranted = {}, -- [skill] = true where that pick made the skill proficient
+                    featTools = {},        -- [tool] = true: a tool picked in place of one of those skills (Sheet/FeatTools.lua)
                     featChoices = {},      -- [feat instance] = the picks made for a feat's own choices (Sheet/FeatChoices.lua)
                     featGranted = {},      -- [skill] = ranks those picks added (Sheet/FeatGrants.lua)
                     expertise = {},        -- [skill] = true: expertise picked for a class feature
@@ -91,6 +110,11 @@ ns.defaults = {
                     featureSkillGranted = {}, -- [feature name] = skill it made proficient
                     traitChoices = {}, -- [trait name] = the skill or feat picked for it
                     traitGranted = {}, -- [trait name] = skill it made proficient
+                    -- Professions (Sheet/Professions.lua fills in what is missing).
+                    materials = {}, -- [kind] = worth of gathered materials, in copper
+                    recipes = {},   -- ["<profession>:<item name>"] = true: a recipe learned beyond the basic ones
+                    toolsWaived = false, -- true: things are made without checking that the tool is carried (a DM ruling)
+                    fragments = {}, -- { plain, magic, failedAt }: archaeology finds
                 },
             },
         },

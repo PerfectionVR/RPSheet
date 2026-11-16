@@ -1,4 +1,4 @@
--- Loads saved data, wires everything together at login, and handles /sheet.
+-- Loads saved data and wires everything together at login.
 -- This is the last file to load, so everything it calls already exists.
 local ADDON, ns = ...
 local RPSheet = ns.addon
@@ -16,6 +16,9 @@ function RPSheet:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileChanged", SettingsChanged)
     self.db.RegisterCallback(self, "OnProfileCopied", SettingsChanged)
     self.db.RegisterCallback(self, "OnProfileReset", SettingsChanged)
+    -- At logout, before the saved data is written: entries that hold no character go
+    -- (Sheet/Blank.lua).
+    self.db.RegisterCallback(self, "OnDatabaseShutdown", function() ns.DropBlankSheets(self.db.global.sheets) end)
 
     LibStub("AceConfig-3.0"):RegisterOptionsTable(ADDON, ns.options)
     AceConfigDialog:SetDefaultSize(ADDON, 700, 600)
@@ -37,6 +40,7 @@ function RPSheet:OnEnable()
     -- switch to that profile's sheet and refresh the name.
     local function OnProfileChanged()
         if not self:UpdateSheetKey() then self:Refresh() end
+        self:QueueBroadcast() -- another character now, also while the sheet window is closed
         LibStub("AceConfigRegistry-3.0"):NotifyChange(ADDON)
         ns.OfferWizard()
     end
@@ -46,29 +50,8 @@ function RPSheet:OnEnable()
     -- Total RP 3 may finish loading its profile after us; catch up once shortly after
     -- login, then offer the creation wizard if this profile has no character yet.
     C_Timer.After(3, OnProfileChanged)
+    -- The wizard isn't opened in combat: offer it when the fight is over.
+    self:RegisterEvent("PLAYER_REGEN_ENABLED", function() ns.OfferWizard() end)
 end
 
--- /sheet            show or hide the sheet
--- /sheet config     settings and character editor
--- /sheet new        creation wizard
--- /sheet lock       lock or unlock the window
--- /sheet rest       long rest
--- /sheet damage 14 fire   take damage of a type (the type can be left out)
--- /sheet heal 8     regain hit points
-function RPSheet:SlashCommand(input)
-    local command = input:trim():lower()
-    local verb, rest = command:match("^(%a+)%s*(.*)$")
-    if command == "config" then
-        AceConfigDialog:Open(ADDON)
-    elseif command == "lock" then
-        self:ToggleLock()
-    elseif command == "new" then
-        ns.OpenWizard()
-    elseif command == "rest" then
-        self:LongRest()
-    elseif verb == "damage" or verb == "heal" then
-        self:DamageCommand(verb, rest)
-    else
-        self:ToggleWindow()
-    end
-end
+-- (What /sheet does with the words after it: Core/Slash.lua.)

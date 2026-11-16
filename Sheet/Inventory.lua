@@ -25,7 +25,7 @@ function RPSheet:ItemBonus(target)
     for _, item in ipairs(self:Sheet().items or NONE) do
         if #item.effects > 0 and self:ItemActive(item) then
             for _, effect in ipairs(item.effects) do
-                if effect.target == target then total = total + self:EffectValue(effect) end
+                if effect.target == target and ns.EffectMode(effect) == "" then total = total + self:EffectValue(effect) end
             end
         end
     end
@@ -63,6 +63,11 @@ function RPSheet:CarryCapacity()
     return self:Score("STR", true) * (R.CARRY_PER_STRENGTH[sheet.size] or R.CARRY_PER_STRENGTH.M)
 end
 
+-- True while the character carries more than it can.
+function RPSheet:Overloaded()
+    return self:CarriedWeight() > self:CarryCapacity()
+end
+
 ---------------------------------------------------------------------------
 -- Adding and buying
 ---------------------------------------------------------------------------
@@ -70,7 +75,7 @@ end
 -- (Data/Items.lua), otherwise an empty item of that name.
 function ns.NewItem(name)
     local item = CopyTable(R.TEMPLATES.item)
-    item.name = name
+    item.name, item.tracked = name, true -- from here on, an edit is recorded on it
     local known = R.ITEMS[name]
     if not known then return item end
     item.cost, item.weight, item.desc = known.cost, known.weight, known.desc or ""
@@ -82,16 +87,16 @@ function ns.NewItem(name)
     return item
 end
 
--- Adds `quantity` of an item. Plain gear of the same name stacks; a magic item is
--- always an entry of its own, since each is equipped and attuned by itself.
+-- Adds `quantity` of an item. Plain gear of the same name stacks, and so do magic
+-- items that are used up and need no attunement; any other magic item is an entry
+-- of its own, since each is equipped and attuned by itself (Sheet/ItemStacks.lua).
 function RPSheet:AddItem(name, quantity)
     local items = self:Sheet().items
     quantity = math.max(1, math.floor(quantity or 1))
-    for _, item in ipairs(items) do
-        if item.name == name and not item.magic then
-            item.qty = item.qty + quantity
-            return item
-        end
+    local stack = ns.StackFor(items, name)
+    if stack then
+        stack.qty = stack.qty + quantity
+        return stack
     end
     local item = ns.NewItem(name)
     item.qty = quantity
@@ -105,11 +110,19 @@ function ns.ItemPrice(name, quantity)
     return known and known.cost * math.max(1, math.floor(quantity or 1)) or 0
 end
 
--- Pays for a listed item and adds it. False when the character can't afford it.
+-- Pays for a listed item and adds it. False when the character can't afford it, or
+-- when the item has no listed price: nothing is bought for nothing. The price is the
+-- one for whoever the character is buying from (Sheet/Shop.lua).
 function RPSheet:BuyItem(name, quantity)
     quantity = math.max(1, math.floor(quantity or 1))
     local label = quantity > 1 and ("%s x%d"):format(name, quantity) or name
-    if not self:SpendCoins(ns.ItemPrice(name, quantity), label) then return false end
+    local price, percent, faction = self:ItemBuyPrice(name, quantity)
+    if price <= 0 then
+        self:Print(("%s has no listed price, so it can't be bought. Add it instead."):format(name))
+        return false
+    end
+    if percent then label = ("%s, %d%% off with %s"):format(label, percent, faction) end
+    if not self:SpendCoins(price, label) then return false end
     self:AddItem(name, quantity)
     return true
 end
@@ -137,8 +150,18 @@ function ns.NormalizeInventory(sheet, source)
         item.qty, item.cost = Whole(item.qty, 9999), Whole(item.cost, 99999999)
         if not R.RARITIES[item.rarity] then item.rarity = "" end
         if not R.ITEM_LIMITS[item.limit] then item.limit = "" end
+        if not (R.ARMOR_ITEMS[item.base] or R.WEAPONS[item.base] or item.base == R.SHIELD_ITEM or R.AMMO_PIECE[item.base]) then item.base = "" end
+        item.bonus = Whole(item.bonus, 3)
+        if not R.ITEM_VARIANT[item.variant] then item.variant = "" end
+        item.scribed, item.edited, item.tracked = item.scribed == true, item.edited == true, item.tracked == true
         for at = #item.effects, 1, -1 do
-            if not R.EFFECT_TARGETS[item.effects[at].target] then table.remove(item.effects, at) end
+            local effect = item.effects[at]
+            if not R.EFFECT_TARGETS[effect.target] then
+                table.remove(item.effects, at)
+            elseif not R.EFFECT_MODES[effect.mode] then
+                effect.mode = "" -- an unknown way of counting just adds
+            end
         end
     end
+    ns.RefreshItems(sheet) -- what the catalogue has learned since (Sheet/ItemUpkeep.lua)
 end

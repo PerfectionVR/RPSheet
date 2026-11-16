@@ -30,10 +30,10 @@ local args = {
         type = "description", order = 0, fontSize = "medium",
         name = function()
             local sheet = Sheet()
-            local _, maxPrepared = RPSheet:SpellLimits()
-            local _, prepared = RPSheet:SpellCounts()
+            local _, maxPrepared = RPSheet:SpellLimits(ns.BookClass(sheet))
+            local _, prepared = RPSheet:SpellCounts(nil, ns.BookClass(sheet))
             return ("Your spellbook holds the spells of level 1 and higher that you own. You start with six and write in two more each level, chosen when you make the character and when you level; others can be copied in from scrolls and other books. Cantrips are not in the book: they are on the Spells page.\n\nIn the book: %s for level %d by the rules. Prepared: %s.\n\nOnly prepared spells can be cast, except rituals. Open the book from the Actions tab of the sheet to cast and prepare.\n"):format(
-                Count(#ns.SpellbookNames(sheet), ns.SpellbookSize(sheet)), sheet.level, Count(prepared, maxPrepared))
+                Count(#ns.SpellbookNames(sheet), ns.SpellbookSize(sheet)), ns.ListView(sheet, "spellbook").level, Count(prepared, maxPrepared))
         end,
     },
     known = {
@@ -57,6 +57,29 @@ local args = {
         disabled = function() return not R.SPELLS[picked] end,
         func = function()
             ns.SpellbookAdd(Sheet(), picked)
+            picked = ""
+            ns.RebuildOptions()
+            Opt.Changed()
+        end,
+    },
+    copy = {
+        type = "execute", order = 3, width = 1.4,
+        name = function()
+            local known = R.SPELLS[picked]
+            return known and ("Copy it in for %d gp"):format(known.level * R.COPY_SPELL_GOLD) or "Copy it in for gold"
+        end,
+        desc = ("For a spell you found, on a scroll or in another book. Copying takes %d hours and %d gp for each level of the spell, for the inks and what you use up trying it out. The gold is taken from your coins. \"Write it in the book\" is for the spells a level gives you, which cost nothing."):format(
+            R.COPY_SPELL_HOURS, R.COPY_SPELL_GOLD),
+        hidden = function() return #Choices() == 0 and picked == "" end,
+        disabled = function()
+            local known = R.SPELLS[picked]
+            return not known or not RPSheet:CanAfford(known.level * R.COPY_SPELL_GOLD * R.COINS.gp.value)
+        end,
+        func = function()
+            local known = R.SPELLS[picked]
+            if not RPSheet:SpendCoins(known.level * R.COPY_SPELL_GOLD * R.COINS.gp.value, "copying " .. picked) then return end
+            ns.SpellbookAdd(Sheet(), picked)
+            RPSheet:Print(("%s is in your spellbook. Copying it takes %d hours."):format(picked, known.level * R.COPY_SPELL_HOURS))
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()
@@ -86,7 +109,8 @@ table.insert(Opt.rebuilders, function()
             desc = known.desc .. "\n\nTicked: prepared.",
             get = function() return RPSheet:PreparedSpell(name) ~= nil end,
             set = function(_, value)
-                if value then RPSheet:PrepareSpell(name) else RPSheet:UnprepareSpell(name) end
+                if value then RPSheet:PrepareSpell(name, true) else RPSheet:UnprepareSpell(name, true) end
+                ns.RebuildOptions() -- the spell's page under Spells has come or gone
                 Opt.Changed()
             end,
         }
@@ -94,7 +118,7 @@ table.insert(Opt.rebuilders, function()
             type = "execute", order = 10 + index + 0.5, width = 0.7, name = "Remove",
             desc = ("Takes %s out of the book, and off your prepared spells."):format(name),
             func = function()
-                RPSheet:UnprepareSpell(name)
+                RPSheet:UnprepareSpell(name, true)
                 ns.SpellbookRemove(Sheet(), name)
                 ns.ApplySpellChoices(Sheet()) -- a mastered or signature spell is open again
                 ns.RebuildOptions()

@@ -8,15 +8,23 @@ R.AddGear("Adventuring gear",
     .. "Barrel|200|70;Basic Poison|10000|0;Basket|40|2;Bedroll|100|7;Bell|100|0;Blanket|50|3;"
     .. "Block and Tackle|100|5;Book|2500|5;Bucket|5|2;Bullseye Lantern|1000|2;Caltrops|100|2;"
     .. "Candle|1|0;Chain|500|10;Chest|500|25;Climber's Kit|2500|12;Component Pouch|2500|2;"
-    .. "Costume|500|4;Crossbow Bolt Case|100|1;Crowbar|200|5;Fine Clothes|1500|6;Flask|2|1;"
+    .. "Costume|500|4;Crossbow Bolt Case|100|1;Crowbar|200|5;Fine Clothes|1500|6;Flask|2|1;Fuel|100|10;"
     .. "Glass Bottle|200|2;Grappling Hook|200|4;Healer's Kit|500|3;Holy Water|2500|1;"
     .. "Hooded Lantern|500|2;Hunting Trap|500|25;Ink|1000|0;Ink Pen|2|0;Iron Pot|200|10;"
     .. "Iron Spikes|100|5;Jug|2|4;Ladder|10|25;Lamp|50|1;Lock|1000|1;Magnifying Glass|10000|0;"
     .. "Manacles|200|6;Map|100|0;Map or Scroll Case|100|1;Mirror|500|0.5;Net|100|3;Oil|10|1;"
     .. "Paper|20|0;Parchment|10|0;Perfume|500|0;Pole|5|7;Portable Ram|400|35;Pouch|50|1;"
     .. "Quiver|100|1;Rations|50|2;Robe|100|4;Rope|100|5;Sack|1|0.5;Shovel|200|5;"
-    .. "Signal Whistle|5|0;Spyglass|100000|1;String|10|0;Tent|200|20;Tinderbox|50|1;Torch|1|1;"
+    .. "Signal Whistle|5|0;Spellbook|5000|3;Spyglass|100000|1;String|10|0;Tent|200|20;Tinderbox|50|1;Torch|1|1;"
     .. "Traveler's Clothes|200|4;Vial|100|0;Waterskin|20|5")
+
+-- Food and drink, single pieces of what is sold in bundles, and the poisons.
+R.AddGear("Adventuring gear",
+    "Ale (mug)|4|0;Bread (loaf)|2|0;Cheese (wedge)|10|0;Common Wine (bottle)|20|0;Fine Wine (bottle)|1000|0;"
+    .. "Firearm Bullet|30|0.2;Iron Spike|10|0.5;Needle|2|0.02;"
+    .. "Assassin's Blood|15000|0;Burnt Othur Fumes|50000|0;Carrion Crawler Mucus|20000|0;Essence of Ether|30000|0;"
+    .. "Lolth's Sting|20000|0;Malice|25000|0;Midnight Tears|150000|0;Oil of Taggit|40000|0;Pale Tincture|25000|0;"
+    .. "Purple Worm Poison|200000|0;Serpent Venom|20000|0;Torpor|60000|0;Truth Serum|15000|0;Wyvern Poison|120000|0")
 
 -- A pack is bought and carried as one item; its weight is that of everything in it.
 R.AddGear("Packs",

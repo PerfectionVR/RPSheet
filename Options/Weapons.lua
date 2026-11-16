@@ -44,6 +44,21 @@ local function Build(weapon)
                 return not (data and data.versatile)
             end,
         }, self, "twoHands"),
+        ranged = With({
+            type = "toggle", order = 4.6, name = "Ranged weapon",
+            desc = "Tick for a bow, a gun or the like; leave it for a melee weapon. Some spells need a melee weapon as a component.",
+            hidden = function() return IsBasic(weapon) or weapon.heal end,
+        }, self, "ranged"),
+        worth = {
+            type = "input", order = 4.7, width = 0.8, name = "Worth",
+            desc = "What the weapon is worth, written like 5 gp 3 sp. A spell that needs a weapon as a component asks for one worth a few coins at least, so a weapon without a worth (claws, a bite) doesn't serve.",
+            hidden = function() return IsBasic(weapon) or weapon.heal end,
+            get = function() return (weapon.cost or 0) > 0 and ns.CoinText(weapon.cost) or "" end,
+            set = function(_, value)
+                weapon.cost = ns.ParseCoins(value) or 0
+                Opt.Changed()
+            end,
+        },
         custom = {
             type = "execute", order = 9, name = "Make it my own",
             desc = "Turns this into a weapon of your own, so its dice can be changed. It keeps its numbers but loses its properties.",
@@ -51,6 +66,10 @@ local function Build(weapon)
             func = function()
                 local _, sides = RPSheet:WeaponDice(weapon)
                 weapon.stat = RPSheet:WeaponStat(weapon) -- the ability it was using
+                -- It stays the kind of weapon it was, worth what that one costs.
+                local data, listed = ns.WeaponData(weapon), R.ITEMS[weapon.base]
+                weapon.ranged = data ~= nil and data.ranged == true
+                if (weapon.cost or 0) == 0 then weapon.cost = listed and listed.cost or 0 end
                 weapon.sides, weapon.base, weapon.twoHands = sides, "", false
                 Opt.Changed()
             end,
@@ -83,10 +102,10 @@ local function Build(weapon)
                 local limit = RPSheet:MasteryLimit()
                 local used = RPSheet:MasteriesUsed()
                 if limit == 0 then return "Mastery" end
-                return ("Mastery (%s%d of %d used|r)"):format(used > limit and Opt.RED or "", used, limit)
+                return ("Mastery (%s%d of %d used|r)"):format((used > limit or RPSheet:MasteryOver()) and Opt.RED or "", used, limit)
             end,
             desc = function()
-                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature. Your class allows the mastery of a set number of weapons; the count turns red when you go over it." }
+                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature, or the Weapon Master feat for the one kind of weapon chosen for it. Your class allows the mastery of a set number of weapons, and the feat's pick is only for its own kind; the count turns red when you go over either." }
                 for _, name in ipairs(R.MASTERY_ORDER) do
                     if name ~= "" then lines[#lines + 1] = ("|cffffd100%s|r: %s"):format(name, R.MASTERIES[name].desc) end
                 end
@@ -116,10 +135,10 @@ local function Extra(args)
         type = "select", order = 0.5, name = "Basic weapons", width = "double",
         desc = "Every simple and martial weapon with its damage, properties and mastery. Ones your class isn't proficient with are marked.",
         values = function()
-            local class, values = Opt.Sheet().class, {}
+            local sheet, values = Opt.Sheet(), {}
             for _, name in ipairs(R.WEAPON_ORDER) do
                 values[name] = ("%s - %s%s"):format(name, R.WeaponSummary(name),
-                    ns.WeaponProficient(class, name) and "" or " |cffff5555(not proficient)|r")
+                    ns.SheetWeaponProficient(sheet, name) and "" or " |cffff5555(not proficient)|r")
             end
             return values
         end,
@@ -132,9 +151,9 @@ local function Extra(args)
         disabled = function() return not R.WEAPONS[picked] end,
         func = function()
             local sheet = Opt.Sheet()
-            local mastery = RPSheet:MasteriesUsed() < RPSheet:MasteryLimit()
+            local mastery = RPSheet:MasteryRoom(picked)
             sheet.weapons[#sheet.weapons + 1] = ns.NewBasicWeapon(picked,
-                function(stat) return RPSheet:Mod(stat) end, ns.WeaponProficient(sheet.class, picked), mastery)
+                function(stat) return RPSheet:Mod(stat) end, ns.SheetWeaponProficient(sheet, picked), mastery)
             picked = ""
             ns.RebuildOptions()
             Opt.Changed()

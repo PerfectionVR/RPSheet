@@ -30,6 +30,7 @@ function RPSheet:EndConcentration(reason)
     -- A save still waiting for the damage clicks to stop is no longer needed.
     if self.concentrationTimer then self.concentrationTimer:Cancel() end
     self.concentrationDamage, self.concentrationTimer = nil, nil
+    self:EndConcentrationWards() -- protection that hung on the spell (Sheet/Wards.lua)
     self:Announce(("loses %s: %s."):format(ns.Mark("Concentrating"), reason))
     self:QueueBroadcast()
     self:PopulateSoon()
@@ -37,12 +38,26 @@ end
 
 function RPSheet:ToggleCondition(name)
     local conditions = self:State().conditions
+    -- Holding a spell takes a character that can act.
+    if name == "Concentrating" and not conditions[name] and self:Incapacitated() then
+        self:Print(("You can't concentrate on a spell while %s."):format(self:Incapacitated():lower()))
+        return
+    end
     conditions[name] = not conditions[name] or nil
     local term = ns.Mark(name)
-    self:Announce(conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term))
+    local text = conditions[name] and ("is now %s."):format(term) or ("is no longer %s."):format(term)
+    -- Unconscious includes Prone, which stays when the character comes to.
+    if name == "Unconscious" and conditions.Unconscious and not conditions.Prone then
+        conditions.Prone = true
+        text = ("is now %s and %s."):format(term, ns.Mark("Prone"))
+    end
+    self:Announce(text)
+    -- Unticking it by hand ends the spell, and with it the protection it gave.
+    if name == "Concentrating" and not conditions[name] then self:EndConcentrationWards() end
     if conditions[name] and INCAPACITATES[name] then
         self:EndConcentration(name:lower())
         self:LeaveForms(name:lower()) -- a Wild Shape form ends too
+        self:EndForIncapacitated(name) -- and a rage and the like (Actions/Incapacitated.lua)
     end
     self:QueueBroadcast()
     self:PopulateSoon()
@@ -53,7 +68,8 @@ function RPSheet:ChangeExhaustion(delta)
     local level = math.max(0, math.min(R.MAX_EXHAUSTION, self:Exhaustion() + delta))
     if level == self:Exhaustion() then return end
     state.exhaustion = level
-    self:Announce(level == 0 and "is no longer exhausted." or ("is at exhaustion level %d."):format(level))
+    self:Announce(level == 0 and "is no longer exhausted."
+        or ("is at exhaustion level %d%s."):format(level, level >= R.MAX_EXHAUSTION and " and dies of it" or ""))
     self:QueueBroadcast()
     self:PopulateSoon()
 end
@@ -75,25 +91,30 @@ end
 
 -- The Constitution save to keep a spell after taking damage: DC 10, or half the damage
 -- if that is higher, 30 at most. A failure ends the concentration.
-function RPSheet:RollConcentration(damage)
+-- `sure` says whether an advantage that only counts for some spells applies (a spell
+-- that was extended): left out, the sheet asks first (Actions/SaveAdvantages.lua).
+function RPSheet:RollConcentration(damage, sure)
     local dc = math.min(30, math.max(10, math.floor(damage / 2)))
     if self.busy or self:IsRolling() then
         self:Print(("You took %d damage while concentrating: roll a Constitution save, DC %d, to keep the spell."):format(damage, dc))
         return
     end
+    if sure == nil and self:AskConcentration(damage) then return end -- the menu rolls
     local mod = self:SaveMod("CON")
     self.busy = true
-    self:RollD20(self:ResolveMode("CON save", nil), function(d20, note)
+    -- War Caster and the like give advantage on this save alone (Sheet/SaveAdvantages.lua).
+    self:RollD20(self:ResolveMode("CON save", (sure or self:ConcentrationAdvantage()) and "ADV" or nil), function(d20, note)
         self.busy = false
         local kept = d20 + mod >= dc
         if not kept then
             self:State().conditions.Concentrating = nil
+            self:EndConcentrationWards() -- protection that hung on the spell (Sheet/Wards.lua)
             self:QueueBroadcast()
             self:PopulateSoon()
         end
         self:Announce(("took %d damage while concentrating - %s, DC %d: %s"):format(damage,
             ns.RollText.Check(ns.Mark("CON save"), d20, mod, note), dc, kept and "keeps the spell" or "loses the spell"))
-    end)
+    end, true)
 end
 
 -- A menu at the cursor with a tick box per condition.

@@ -1,0 +1,172 @@
+# Plain items (rarity "none"; XPHB, XDMG, WoW), reduced from data/items.json: name|source|type|facts.
+# Left out: the XDMG treasure tables (52 gemstones, 50 art objects, 23 trade goods, 3 trade bars).
+# cp price in copper, lb pounds, spd speed, cap pounds carried, crew, pass passengers,
+# cargo tons, vac/vhp/vdt a vehicle's Armor Class, hit points and damage threshold,
+# vspd miles per hour, pack what a pack or bundle holds.
+Acid|XPHB|G|cp=2500|lb=1
+Airship|XPHB|AIR|cp=4000000|crew=10|pass=20|cargo=1|vac=13|vhp=300|vspd=8
+Alchemist's Fire|XPHB|G|cp=5000|lb=1
+Ale (mug)|XPHB|FD|cp=4
+Amulet|XPHB|SCF|cp=500|lb=1
+Antitoxin|XPHB|G|cp=5000
+Assassin's Blood|XDMG|G|cp=15000
+Backpack|XPHB|G|cp=200|lb=5
+Ball Bearings|XPHB|G|cp=100|lb=2
+Barrel|XPHB|G|cp=200|lb=70
+Basic Poison|XPHB|G|cp=10000
+Basket|XPHB|G|cp=40|lb=2
+Bedroll|XPHB|G|cp=100|lb=7
+Bell|XPHB|G|cp=100
+Blanket|XPHB|G|cp=50|lb=3
+Block and Tackle|XPHB|G|cp=100|lb=5
+Bomb|XDMG|EXP|cp=10000|lb=1
+Book|XPHB|G|cp=2500|lb=5
+Bread (loaf)|XPHB|FD|cp=2
+Bucket|XPHB|G|cp=5|lb=2
+Bullseye Lantern|XPHB|G|cp=1000|lb=2
+Burglar's Pack|XPHB|G|cp=1600|lb=47.5|pack=backpack;ball bearings;bell;candle*10;crowbar;hooded lantern;oil*7;rations*5;rope;tinderbox;waterskin
+Burnt Othur Fumes|XDMG|G|cp=50000
+Caltrops|XPHB|G|cp=100|lb=2
+Camel|XPHB|MNT|cp=5000|spd=50|cap=450
+Candle|XPHB|G|cp=1
+Carriage|XPHB|VEH|cp=10000|lb=600
+Carrion Crawler Mucus|XDMG|G|cp=20000
+Cart|XPHB|VEH|cp=1500|lb=200
+Cenarion War Hippogryph|WoW|MNT|cp=200000
+Chain|XPHB|G|cp=500|lb=10
+Chariot|XPHB|VEH|cp=25000|lb=100
+Cheese (wedge)|XPHB|FD|cp=10
+Chest|XPHB|G|cp=500|lb=25
+Climber's Kit|XPHB|G|cp=2500|lb=12
+Common Wine (bottle)|XPHB|FD|cp=20
+Component Pouch|XPHB|G|cp=2500|lb=2
+Costume|XPHB|G|cp=500|lb=4
+Crossbow Bolt Case|XPHB|G|cp=100|lb=1
+Crowbar|XPHB|G|cp=200|lb=5
+Dice Set|XPHB|GS|cp=10
+Diplomat's Pack|XPHB|G|cp=3900|lb=39|pack=chest;fine clothes;ink;ink pen*5;lamp;map or scroll case*2;oil*4;paper*5;parchment*5;perfume;tinderbox
+Dire Wolf|WoW|MNT|cp=75000|cap=510
+Disguise Kit|XPHB|T|cp=2500|lb=3
+Draft Horse|XPHB|MNT|cp=5000|spd=40|cap=540
+Dragonchess Set|XPHB|GS|cp=100
+Dungeoneer's Pack|XPHB|G|cp=1200|lb=55|pack=backpack;caltrops;crowbar;oil*2;rations*10;rope;tinderbox;torch*10;waterskin
+Dynamite Stick|XDMG|EXP|lb=1
+Elekk|WoW|MNT|cp=40000|cap=510
+Elephant|XPHB|MNT|cp=20000|spd=40|cap=1320
+Emblem|XPHB|SCF|cp=500
+Entertainer's Pack|XPHB|G|cp=4000|lb=58.5|pack=backpack;bedroll;bell;bullseye lantern;costume*3;mirror;oil*8;rations*9;tinderbox;waterskin
+Essence of Ether|XDMG|G|cp=30000
+Exotic Saddle|XPHB|TAH|cp=6000|lb=40
+Explorer's Pack|XPHB|G|cp=1000|lb=55|pack=backpack;bedroll;oil*2;rations*10;rope;tinderbox;torch*10;waterskin
+Feed (per day)|XPHB|TAH|cp=5|lb=10
+Fine Clothes|XPHB|G|cp=1500|lb=6
+Fine Wine (bottle)|XPHB|FD|cp=1000
+Flask|XPHB|G|cp=2|lb=1
+Flying Machine|WoW|AIR|crew=1|pass=0|cargo=0.15|vac=19|vhp=27|vspd=4
+Forgery Kit|XPHB|T|cp=1500|lb=5
+Fragmentation Grenade|XDMG|EXP|lb=1
+Fuel|WoW|G|cp=100|lb=10
+Galley|XPHB|SHP|cp=3000000|crew=80|cargo=150|vac=15|vhp=500|vdt=20|vspd=4
+Giant Goat|WoW|MNT|cp=40000|cap=510
+Giant Hyena|WoW|MNT|cp=75000|cap=480
+Giant Seahorse|WoW|MNT|cp=100000|cap=450
+Glass Bottle|XPHB|G|cp=200|lb=2
+Goblin Trike|WoW|VEH|cp=40000|crew=1|pass=0|cargo=0.3|vac=19|vhp=27|vspd=3
+Grappling Hook|XPHB|G|cp=200|lb=4
+Grenade Launcher|XDMG|G|lb=7
+Gryphon|WoW|MNT|cp=200000|cap=540
+Gunpowder (keg)|XDMG|EXP|cp=25000|lb=20
+Gunpowder (powder horn)|XDMG|EXP|cp=3500|lb=2
+Hawkstrider|WoW|MNT|cp=15000|cap=420
+Healer's Kit|XPHB|G|cp=500|lb=3
+Herbalism Kit|XPHB|T|cp=500|lb=3
+Holy Water|XPHB|G|cp=2500|lb=1
+Hooded Lantern|XPHB|G|cp=500|lb=2
+Hunting Trap|XPHB|G|cp=500|lb=25
+Ink|XPHB|G|cp=1000
+Ink Pen|XPHB|G|cp=2
+Iron Pot|XPHB|G|cp=200|lb=10
+Iron Spike|XPHB|G|cp=10|lb=0.5
+Iron Spikes|XPHB|G|cp=100|lb=5|pack=iron spike*10
+Jug|XPHB|G|cp=2|lb=4
+Keelboat|XPHB|SHP|cp=300000|crew=1|pass=6|cargo=0.5|vac=15|vhp=100|vdt=10|vspd=1
+Kodo|WoW|MNT|cp=10000|cap=450
+Ladder|XPHB|G|cp=10|lb=25
+Lamp|XPHB|G|cp=50|lb=1
+Lock|XPHB|G|cp=1000|lb=1
+Lolth's Sting|XDMG|G|cp=20000
+Longship|XPHB|SHP|cp=1000000|crew=40|pass=150|cargo=10|vac=15|vhp=300|vdt=15|vspd=3
+Magnifying Glass|XPHB|G|cp=10000
+Malice|XDMG|G|cp=25000
+Manacles|XPHB|G|cp=200|lb=6
+Map|XPHB|G|cp=100
+Map or Scroll Case|XPHB|G|cp=100|lb=1
+Mastiff|XPHB|MNT|cp=2500|spd=40|cap=195
+Mechano-Hog|WoW|VEH|cp=400000|crew=1|pass=1|cargo=0.4|vac=19|vhp=27|vspd=4
+Mechanostrider|WoW|MNT|cp=45000|cap=420
+Mekgineer's Chopper|WoW|VEH|cp=400000|crew=1|pass=1|cargo=0.4|vac=19|vhp=27|vspd=4
+Midnight Tears|XDMG|G|cp=150000
+Military Saddle|XPHB|TAH|cp=2000|lb=30
+Mirror|XPHB|G|cp=500|lb=0.5
+Mule|XPHB|MNT|cp=800|spd=40|cap=420
+Navigator's Tools|XPHB|T|cp=2500|lb=2
+Net|XPHB|G|cp=100|lb=3
+Nightsaber|WoW|MNT|cp=75000|cap=510
+Oil|XPHB|G|cp=10|lb=1
+Oil of Taggit|XDMG|G|cp=40000
+Pale Tincture|XDMG|G|cp=25000
+Pandarian Dragon Turtle|WoW|MNT|cp=50000|cap=480
+Paper|XPHB|G|cp=20
+Parchment|XPHB|G|cp=10
+Perfume|XPHB|G|cp=500
+Playing Cards|XPHB|GS|cp=50
+Poisoner's Kit|XPHB|T|cp=5000|lb=2
+Pole|XPHB|G|cp=5|lb=7
+Pony|XPHB|MNT|cp=3000|spd=40|cap=225
+Portable Ram|XPHB|G|cp=400|lb=35
+Pouch|XPHB|G|cp=50|lb=1
+Priest's Pack|XPHB|G|cp=3300|lb=29|pack=backpack;blanket;holy water;lamp;rations*7;robe;tinderbox
+Psychic Blade|XPHB|M|wc=simple|d=1d6|dt=Y|pr=F,T|m=Vex|rg=60/120
+Purple Worm Poison|XDMG|G|cp=200000
+Quiver|XPHB|G|cp=100|lb=1
+Raptor|WoW|MNT|cp=100000|cap=570
+Rations|XPHB|G|cp=50|lb=2
+Reliquary|XPHB|SCF|cp=500|lb=2
+Riding Horse|XPHB|MNT|cp=7500|spd=60|cap=480
+Riding Saddle|XPHB|TAH|cp=1000|lb=25
+Robe|XPHB|G|cp=100|lb=4
+Rope|XPHB|G|cp=100|lb=5
+Rowboat|XPHB|SHP|cp=5000|lb=100|crew=1|pass=3|vac=11|vhp=50|vspd=1.5
+Sack|XPHB|G|cp=1|lb=0.5
+Sailing Ship|XPHB|SHP|cp=1000000|crew=20|pass=20|cargo=100|vac=15|vhp=300|vdt=15|vspd=2
+Scholar's Pack|XPHB|G|cp=4000|lb=22|pack=backpack;book;ink;ink pen;lamp;oil*10;parchment*10;tinderbox
+Serpent Venom|XDMG|G|cp=20000
+Shovel|XPHB|G|cp=200|lb=5
+Signal Whistle|XPHB|G|cp=5
+Sled|XPHB|VEH|cp=2000|lb=300
+Smoke Grenade|XDMG|EXP|cp=5000|lb=2
+Sprig of Mistletoe|XPHB|SCF|cp=100
+Spyglass|XPHB|G|cp=100000|lb=1
+Stabling (per day)|XPHB|TAH|cp=5
+String|XPHB|G|cp=10
+Talbuk|WoW|MNT|cp=15000|cap=480
+Tent|XPHB|G|cp=200|lb=20
+Thieves' Tools|XPHB|T|cp=2500|lb=1
+Three-Dragon Ante Set|XPHB|GS|cp=100
+Tinderbox|XPHB|G|cp=50|lb=1
+Torch|XPHB|G|cp=1|lb=1
+Torpor|XDMG|G|cp=60000
+Traveler's Clothes|XPHB|G|cp=200|lb=4
+Trinket|XPHB|G
+Truth Serum|XDMG|G|cp=15000
+Vial|XPHB|G|cp=100
+Wagon|XPHB|VEH|cp=3500|lb=400
+Warhorse|WoW|MNT|cp=40000|cap=540
+Warhorse|XPHB|MNT|cp=40000|spd=60|cap=540
+Warhorse Skeleton|WoW|MNT|cp=50000|cap=540
+Warship|XPHB|SHP|cp=2500000|crew=60|pass=60|cargo=200|vac=15|vhp=500|vdt=20|vspd=2.5
+Waterskin|XPHB|G|cp=20|lb=5
+Wind Rider|WoW|MNT|cp=200000|cap=450
+Wyvern Poison|XDMG|G|cp=120000
+Yew Wand|XPHB|SCF|cp=1000|lb=1
+Zhevra|WoW|MNT|cp=20000|cap=480

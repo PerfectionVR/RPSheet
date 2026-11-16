@@ -1,5 +1,264 @@
 # Changelog
 
+## 0.7.0
+
+- Species and lineage cantrips (Sacred Flame, Mind Sliver, Arcane Pulse,
+  Prestidigitation, Druidcraft and others) are on your spell list and can be cast. The
+  lineage's level 3 and 5 spells move there too: once per long rest without a slot,
+  and with your slots after that. They use Intelligence, Wisdom or Charisma, chosen
+  with your lineage; characters made before are asked at their next level. High and
+  blood elves can exchange Prestidigitation for another Wizard cantrip under Customize.
+- With two classes, each keeps its own copy of a spell they both prepare, and the
+  Spells pages under Customize name the class.
+- Holy Nimbus, Shadowform, Divine Sense and Nature's Sanctuary switch on a passive when
+  used; being incapacitated ends the last three. A rest ends these and the other
+  short-lived ones (Rage, Superior Defense, Starry Form, Sacred Weapon, Vow of Enmity,
+  Innate Sorcery, Reckless Attack, Dispersion). Holy Nimbus' save advantage counts only
+  while it is on.
+- Weapon Master's extra pick is for its own kind of weapon only and changes once per
+  long rest (as do Boon of Energy Resistance's types); proficiency from feats and
+  Divine or Primal Order counts for it.
+- Inscription Adept: gathered herbs can pay for your feat spells' costly components.
+- The "which spell are you holding?" question has a "Don't ask again" row. A
+  hand-added Wizard cantrip no longer fills a Mage's cantrip exchange by itself.
+- With an empty Fighting Style the Character tab shows one red line, not two.
+- Changing class, subclass, species or background under Customize raises your current
+  hit points when it raises your maximum. An empty Fighting Style is asked for in
+  "Class and feat choices". The level dialog lists only the features that apply to
+  you. Right-click a check, save, skill, tool, initiative or spell attack row to see
+  how its number is worked out. The combat numbers are two to a row, so none wraps in
+  the narrowest window. The coin, damage, heal and materials boxes find their text
+  field however the game names it.
+- Items: the Enspelled Staff is on the Makes tab; magic items no profession can make
+  say why; attunement, consumable, harness and magic make can be hovered; you can't
+  use or drink items while incapacitated; right-clicking an item that needs no
+  attunement says what right-click does; gathering and archaeology rolls use the
+  "Next roll" bonus, and gathering rows warn when your tool isn't with you.
+- Sharing: a settings profile that switches sharing off tells your group, and players
+  who hovered you outside a group are told too; other players' stats are forgotten
+  half an hour after you last heard from them, unless they are in your group; in
+  dungeon finder, raid finder and battleground groups stats are shared with the whole
+  group and Party/Raid announcements go to instance chat. In chat, tools, items,
+  initiative and spell attack can be hovered.
+- Taking back a rest stops working after any change, a bar clicked or a slot spent
+  by hand included. An attack with no weapon ready says so.
+- Every piece of plain gear, pack, spellcasting focus, tool and instrument says what
+  it is for: light radius, what a container holds, the DC of a tool's checks and what
+  it makes, a pack's contents. The item browser's search finds them by it
+  ("stabilize", "pick a lock", "holy symbol").
+- Cordon of Arrows cast with a higher slot plants two more arrows or bolts for each
+  level above 2nd, as many as you carry.
+- A Warlock with Mystic Arcanum reads spell scrolls up to the arcanum's level without
+  a check (6th at Warlock level 11, up to 9th at 17).
+- A cantrip can no longer be taken twice in the level dialog, once as a class cantrip
+  and once through Magic Initiate (True Strike for a Sage Mage, Guidance for an
+  Acolyte Priest), whichever is picked first.
+- Choosing a subclass shows what it is and its features by level, in the creation
+  wizard, the level dialog and Customize. The Mage's Evoker says it is the school
+  of evocation magic, not the Evoker class.
+- Spells already on a character follow corrections to the built-in spells; a spell
+  you changed yourself keeps what you set and offers "Use the built-in spell".
+- Death Knights and Demon Hunters have their own spell lists. A cantrip you have from
+  a feature or feat is no longer picked twice; Circle of the Stars gives Guidance. A
+  Monk chooses its tool in the level dialog; Inscription Adept needs one of its
+  three tools; your own spells can add dice per higher slot. When two classes
+  prepare the same spell each has its own entry, named with its class.
+- Items: a Makes tab in the item browser with every magic make of every weapon,
+  armor, shield and ammunition, to add or buy; every magic item has a recipe except
+  artifacts; recipes are learned per profession; potions stack; a Sell button; the
+  search reads descriptions and kinds and can search every tab; items you changed
+  stay yours while untouched ones follow corrections.
+- A mount carrying more than it can moves 5 feet; animals can be harnessed to a
+  drawn vehicle with a load.
+- Play: a critical hit at 0 hit points counts as two failed death saves; saves and
+  checks rolled by an ability follow the sheet's rules; Grappled and Frightened ask
+  whom you attack or whether your fear is in sight; "Don't ask again" on every roll
+  question, with switches under Customize > Proficiencies; while incapacitated you
+  can't attack, use abilities, cast or read scrolls, and a rage ends; a right-click
+  never does the left-click's job.
+- "Next roll" has rows to add or subtract a die (d4 to d12) or a number for your
+  next d20: Bless, Guidance, Bane, cover.
+- Beast forms count Rampage, Rock, Web, Cacophony and the new Ink Cloud.
+- Sharing: switched off it neither sends nor asks, and your group drops your copy;
+  stats catch up after an encounter that blocked addon messages; long announcements
+  are split into "(continued)" lines instead of cut.
+- Rests can be taken back with `/sheet undo` or a right-click on the rest row. New
+  commands: `/sheet short`, `/sheet tab <name>`, `/sheet items`, `/sheet level`.
+- The saved file no longer keeps an empty sheet for every character and profile seen.
+- The wizard's "carry over" no longer carries the old species' traits and background
+  feat, and shows for characters whose own things are only items, coins or mounts.
+- Fixes found by a random-play tester: slot rows reading "5/4" or "4/5" after
+  Font of Magic, a subclass's always-prepared spell listed twice, the death save row
+  staying after hit points came back, an inventory quantity of 0.
+- Rules data checked against the rules site by script, and corrected:
+  - Spells: Searing, Thunderous, Wrathful and Banishing Smite, Sanctuary and Serpent
+    Sting show the save they force; Earthquake asks for a Dexterity save; Finger of
+    Death adds 30 and Regenerate 15; Ice Storm also rolls its cold damage; Flame
+    Blade, Spiritual Weapon, Mordenkainen's Sword and Conjure Fey add your
+    spellcasting modifier; Blade Ward needs concentration. Spells already on a sheet
+    need adding again for the new save or modifier.
+  - Spell lists: Priests can prepare Blur, Levitate, Haste, Summon Undead, Dominate
+    Person and Dominate Monster and learn Mind Sliver; Mages can write Create Food
+    and Water, Flame Strike and Heroes' Feast into the spellbook; Command and
+    Dissonant Whispers are no longer on the Warlock's own list.
+  - Always-prepared spells now appear on the spell list: Hunter's Mark (Hunter,
+    Demon Hunter), Speak with Animals (Druid), Guiding Bolt (Circle of the Stars),
+    the chosen land's spells (Circle of the Land), Rune Strike (Death Knight) and
+    Contact Other Plane (Warlock).
+  - Classes, species, backgrounds, feats, weapons, armor, prices, mounts and beasts
+    all matched; nothing to correct.
+- 57 more magic items, among them Azeroth's Hearthstone, Judgment Armor and Crown of
+  the Ogre King and seven artifacts (Ashbringer, Doomhammer, Frostmourne, the Helm of
+  Domination, Shalamayne, Sulfuras, the Twin Blades of Azzinoth); food and drink,
+  single bullets and needles, iron spikes and fourteen poisons in the gear list.
+- Sharing with your group:
+  - A character made before Total RP 3 was installed is on your profile at the first
+    login with it, instead of a blank sheet and the wizard.
+  - After a reload in a group you see everyone's stats again without hovering them.
+  - Far fewer messages are sent: only when something others see has changed.
+  - A profile without a character no longer shows an empty Stats block in tooltips.
+  - Announcements with a "|" or a line break in a name, and long lines with accented
+    letters, are no longer refused by chat; item and spell links are no longer
+    broken when their name is also a rules term.
+- `/sheet` with a word it doesn't know lists the commands; `/sheet help` lists them.
+- The creation wizard is offered after combat when the first login was in combat.
+- The sheet rebuilds and the level dialog opens faster for characters with many
+  abilities, spells or classes.
+- Fixes found by running every part of the addon in a test environment:
+  - Levelling: an Epic Boon that raises a score above 20 no longer marks earlier
+    improvements as needing a new choice; taking a level with the suggested subclass
+    no longer leaves you short of prepared spells; hit points from a level's choice
+    are added to your current hit points; a Mage without any of Scholar's skills is
+    no longer asked for an expertise pick nobody can make; expertise left over from
+    another class can be unticked; "Next level in" starts at your first class.
+  - Spells: a scroll does everything its spell does and is only used up once the
+    spell is cast; Magical Cunning restores Pact slots for a multiclass Warlock, who
+    also spends the lowest slot that fits; Warding Bond ends at 0 hit points; in a
+    beast form a Circle of the Moon druid casts only the circle's spells.
+  - Unarmored Defense counts once: with two classes that have it, the first decides.
+  - Items: money typed as "1.5 gp" is refused instead of misread; putting away a
+    plain weapon no longer puts away a named one of the same kind; an item without a
+    price can't be bought for nothing; deleting or selling something you wear takes
+    it off; starting gear of a class or background you changed goes back.
+  - Windows: the last tab or button no longer drops onto a row of its own at some
+    widths; rows no longer end up on top of each other after a rebuild or resize;
+    deleting an entry under Customize can no longer remove a different one; the
+    minimize button works on the spellbook and prepared-spells windows.
+  - New and imported characters no longer inherit the previous one's temporary hit
+    points or rest marks; importing keeps the features you deleted.
+- Saving throws ask what they are against when a trait, feat, blessing, item or
+  companion gives you advantage against it, and roll with advantage when you pick
+  it; Shift-click skips the question. Gnomish Cunning, War Caster and Eldritch Mind
+  apply by themselves.
+- Conditions: Unconscious also makes you Prone; exhaustion counts on death saves;
+  Danger Sense stops while incapacitated; losing a concentration save ends the
+  protection the spell gave.
+- Magic items have prices by rarity and can be bought and sold; faction discounts
+  apply. Customize > Inventory can make a magic variant of plain armor, a shield or
+  a weapon (+1 to +3, adamantine, mithral, silvered, resistance).
+- Spell scrolls: you can only read spells on your class's list, a spell above your
+  level takes a check that can lose the scroll, and scrolls you didn't write cast
+  with fixed numbers.
+- Customize > Defense: one dropdown adds any protective spell someone else cast on
+  you. Cordon of Arrows uses four arrows or bolts.
+- Level-up: one Metamagic option or Eldritch Invocation can be exchanged per level,
+  one maneuver when you learn new ones; a new Customize page sets them freely. A
+  Mage can exchange one cantrip after a long rest in the spellbook window.
+- Creation wizard: any number of extra classes the level allows, each with its
+  specialization and Fighting Style.
+- Arcane Recovery and Natural Recovery each use their own class's level; Weapon
+  Mastery picks from several classes add up.
+- Beast form attacks announce what a hit also does, with its DC; charges and
+  follow-up bites have their own rows.
+- Herbalism, mining, skinning and disenchanting need the tool among your items.
+- Long lists in the item, crafting and stable windows show a page at a time (24 per
+  page); search still looks through the whole tab. The sheet rebuilds less often.
+- Multiclassing: take your next level in another class from the Character tab, or
+  split a new character's levels over several classes in the creation wizard. The
+  sheet checks the ability scores the new class needs, gives its reduced training,
+  and works out hit points, Hit Dice, features, resources, Fighting Style, prepared
+  spells and spell slots class by class; each spell is cast with its own class's
+  ability. Customize has a "More classes" page.
+- Professions can make every magic item their skill opens (over 300 more, each with
+  a recipe), engineers can build powered vehicles, and you can scribe spell scrolls
+  of your own spells and read them with a shift-click. Making something needs the
+  tool in your inventory; "Check that you carry the tool" under Customize >
+  Professions switches that off.
+- Swim, Climb and Fly speeds appear next to Speed when your character has one.
+- "Buying from" at the top of the item browser and the stable names the faction
+  whose merchant is selling; from Honored on, prices drop.
+- A loyal undead companion gives advantage on death saves, a mechanical one rolls
+  1d4 off psychic damage, an aquatic one gives a swim speed. The stable has a
+  "Special" tab for flying carpets, figurines and summoned steeds.
+- Renown: your home faction keeps what it gained from another faction's tier when
+  that score later drops.
+- Spells that need a weapon in hand check your ready weapons; Gentle Repose takes its
+  coins; Astral Projection and Create Undead ask how many targets.
+- Resistance and Time Dilation on yourself are rolled by "Take damage". Warding Bond
+  works for the caster (a damage-menu row) and for the one guarded (Customize >
+  Defense).
+- In a Wild Shape form you use the beast's saving throws where they are better.
+- The level dialog, opened again for a level you already have, only fills in what is
+  open. One cantrip can be exchanged per level (a Mage none).
+- Creation wizard: choices inside a starting gear set (holy symbol, instrument,
+  tools, gaming set) are picked from a dropdown.
+- The settings window, tick boxes, sliders, dropdowns, typing boxes, scroll bars and
+  the item browser follow the sheet's theme.
+- New Trade tab for professions. Your professions follow your tool proficiencies and
+  your skill follows your proficiency bonus. Roll gathering checks (herbalism,
+  mining, skinning, fishing, archaeology) against the region you pick, keep what you
+  gather as materials, and make listed gear and magic items in a crafting window
+  that checks your tools and skill, pays with materials before coins and tells you
+  how long it takes. Enchanters can disenchant; artisan cooks can lay out a feast.
+- Mounts, vehicles and companion creatures: a stable to browse, add and buy them, and
+  a section on the Items tab. Click a mount to ride it and your Speed row shows its
+  speed; flying and swimming mounts need an Exotic Saddle and a mount must be larger
+  than you. Companion creatures have a loyalty score and give their gift at 10.
+- Spells that need a component with a price can only be cast while you carry it, and
+  components the spell uses up are taken from your inventory; one worth more will do.
+  A Reagents tab in the item browser sells them, tooltips say what you need, and
+  "Check spell components" under Customize > Spells switches it off.
+- Every core spell of 2nd level and higher has a short written summary in place of
+  the bare line of facts.
+- Magic items can set an ability score or your speed (Amulet of Health, Gauntlets of
+  Ogre Power, Headband of Intellect, the Belts of Giant Strength, Boots of Striding
+  and Springing), and your own items and passives can too. About fifty more magic
+  items are in the browser.
+- Creating a character: two buttons take your class's and your background's
+  starting gear into the closet and set your gold to what is left over.
+- Levelling: one Mystic Arcanum spell, and one prepared spell for classes that change
+  them by level, can be exchanged per level. Classes that change prepared spells
+  after a long rest have a "Change prepared spells" window on the Actions tab.
+- Skilled can pick tools, Weapon Master unlocks the mastery of its weapon kind, and
+  Inscription Adept gains Glyph of Warding at level 5 and Symbol at level 13.
+- Your own spells and ability dice can have a damage type; force damage from them
+  counts for Metamorphosis: Devourer.
+- Wild Shape: attacks that hit harder after a charge or against a Bloodied target
+  have a second row that rolls it, and a beast's own skill bonus is used when it
+  beats yours.
+- Renown: +1 for a stronghold in a faction's lands, and your home faction rises as
+  the other factions of your side reach each tier. Renown with both the Explorers'
+  League and the Reliquary is flagged in red.
+- Casting a protective spell on yourself (Stoneskin, Protection from Energy, Fire
+  Shield and more) switches on its resistance until a rest, the end of
+  concentration, or you click it off. Heavenly Spirit asks which damage types you
+  resist; Boon of the Night Spirit has a "Shadowy Form" passive.
+- The creation wizard and the level-up window follow your sheet theme.
+- The sheet's smallest width is 340, to fit its six tabs.
+- Carrying more than your capacity holds your speed to 5 feet; the Speed row and
+  its explanation show it.
+- A found spell can be copied into the spellbook for 50 gp per spell level, paid
+  from your coins (Customize > Spellbook). Spells gained by levelling stay free.
+- The companion's Weapon Mastery pick can be changed once per long rest.
+- An inventory item can count as a plain weapon, suit of armor or shield and have a
+  magic bonus (Customize > Inventory, "Counts as"). Equipping it wears or readies it
+  under its own name: magic armor and shields add their bonus to your Armor Class,
+  and a magic weapon comes onto the sheet with its bonus. An item named like one of
+  your own weapons readies and puts away that weapon.
+- A Mage changes prepared spells in the spellbook window only after a long rest:
+  the list is fixed from the first spell cast after it. Customize > Spellbook can
+  still change it at any time.
+
 ## 0.6.0
 
 Switched from the earlier simplified rules to D&D 5e (2024) as used by the

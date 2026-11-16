@@ -12,12 +12,22 @@ local NONE = {}
 
 -- The feat a passive's name stands for, and the choice its name settles:
 -- "Magic Initiate (Cleric)" is Magic Initiate with the Cleric list.
+-- Every passive's name is asked about many times in one rebuild of the sheet. What a
+-- name stands for follows from the rules data alone, so the taking apart is done once
+-- per name: `parsed[name]` is { feat, value }, or false for a name that is no feat.
+local parsed = {}
 function ns.FeatByName(name)
     local feat = R.FEATS[name]
     if feat then return feat end
-    local base, value = (name or ""):match("^(.-) %((.+)%)$")
-    feat = base and R.FEATS[base]
-    if feat and feat.named then return feat, { [feat.named] = value } end
+    local known = parsed[name or ""]
+    if known == nil then
+        local base, value = (name or ""):match("^(.-) %((.+)%)$")
+        feat = base and R.FEATS[base]
+        known = feat and feat.named and { feat, value } or false
+        parsed[name or ""] = known
+    end
+    -- (a table of its own each time: the caller may keep it)
+    if known then return known[1], { [known[1].named] = known[2] } end
 end
 
 local function Asks(feat)
@@ -168,8 +178,21 @@ local function Blocked(sheet, store, instances, slot, value)
             end
         end
     end
+    -- A cantrip the character has from its class or a feature isn't learned again.
+    if choice.kind == "spell" and R.SPELLS[value] and R.SPELLS[value].level == 0 and (slot.picked or NONE)[slot.index] ~= value then
+        for _, spell in ipairs(sheet.spells or NONE) do
+            if spell.name == value and spell.level == 0 and not (spell.auto or ""):find("^feat:") then return true end
+        end
+        -- Nor one picked as a class cantrip (in the level dialog: picked there).
+        for _, key in pairs(R.CANTRIP_LISTS) do
+            if type(sheet.picks) == "table" and type(sheet.picks[key]) == "table" and sheet.picks[key][value] then return true end
+        end
+    end
     if choice.kind == "tool" then
-        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value)
+        return ns.ToolGranted(sheet, value) ~= nil or ns.ToolPicked(sheet, value) or ns.FeatToolPicked(sheet, value)
+    elseif choice.kind == "mastery" then
+        -- Only a kind of weapon the character is proficient with.
+        return not ns.SheetWeaponProficient(sheet, value)
     elseif choice.kind == "skill" then
         -- Already expertise without this feat's help.
         return (sheet.skills[value] or 0) - ((sheet.featGranted or NONE)[value] or 0) >= 2
@@ -204,6 +227,8 @@ function ns.FeatChoiceProgress(store, instances, level)
             end
         end
     end
+    -- A pick that changes after a long rest and was changed since the last one.
+    open = open or ns.RestPickProblem(store, instances)
     return made, total, open
 end
 

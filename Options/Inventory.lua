@@ -1,5 +1,8 @@
 -- "Inventory" page under Customize: one page per carried item. The top of the page
--- (coins, adding and buying) is in Options/InventoryAdd.lua.
+-- (coins, adding and buying) is in Options/InventoryAdd.lua. Changing what an item is
+-- here (anything but how many there are and whether it is worn, attuned or your own
+-- writing) marks it as edited, and the catalogue leaves it alone from then on
+-- (Sheet/ItemUpkeep.lua).
 local _, ns = ...
 local R = ns.Rules
 local RPSheet = ns.addon
@@ -14,13 +17,27 @@ local function Status(item)
     return ("%sIts effects are not counted: %s.|r\n"):format(Opt.RED, why)
 end
 
+-- Makes an option, and the options inside it, mark the item as edited when used.
+local function Edits(option, item)
+    local set, func = option.set, option.func
+    if set then option.set = function(...) item.edited = true; return set(...) end end
+    if func then option.func = function(...) item.edited = true; return func(...) end end
+    for _, inner in pairs(option.args or {}) do Edits(inner, item) end
+    return option
+end
+
+-- What is not a change to the item itself: how many, where it is, selling it.
+local STATE = { qty = true, equipped = true, sell = true, attuned = true, scribed = true, edited = true }
+
 local function Build(item)
     local function self() return item end
     local function IsMagic() return item.magic end
+    -- Listed in the catalogue, or a magic make: something it could follow.
+    local function Listed() return R.ITEMS[item.name] ~= nil or R.ITEM_VARIANT[item.variant or ""] ~= nil end
     local args = {
         status = { type = "description", order = 0.5, fontSize = "medium", name = function() return Status(item) end },
         name = With({ type = "input", order = 1, name = "Name" }, self, "name", true),
-        qty = With({ type = "range", order = 2, min = 0, max = 9999, softMax = 50, step = 1, name = "Quantity" }, self, "qty"),
+        qty = With({ type = "range", order = 2, min = 1, max = 9999, softMax = 50, step = 1, name = "Quantity" }, self, "qty"),
         weight = {
             type = "input", order = 3, width = 0.6, name = "Weight (lb.)", desc = "Pounds for one of them.",
             get = function() return tostring(item.weight) end,
@@ -31,7 +48,7 @@ local function Build(item)
         },
         cost = {
             type = "input", order = 4, width = 0.8, name = "Price",
-            desc = "What one of them costs, written like 5 gp 3 sp. Selling gives back half.",
+            desc = "What one of them costs, written like 5 gp 3 sp. " .. ns.SELL_HELP,
             get = function() return item.cost > 0 and ns.CoinText(item.cost) or "" end,
             set = function(_, value)
                 item.cost = ns.ParseCoins(value) or 0
@@ -49,16 +66,68 @@ local function Build(item)
         },
         sell = {
             type = "execute", order = 6, name = "Sell one",
-            desc = function() return ("Takes one off the list and gives you half its price: %s."):format(ns.CoinText(math.floor(item.cost / 2))) end,
+            desc = function()
+                local price, full = ns.SellPrice(item)
+                if price <= 0 then return "Its price is too small to sell it for anything. " .. ns.SELL_HELP end
+                return ("Takes one off the list and gives you %s: %s. %s"):format(full and "its full worth" or "half its price", ns.CoinText(price), ns.SELL_HELP)
+            end,
             hidden = function() return item.cost <= 0 end,
-            disabled = function() return item.qty <= 0 end,
+            disabled = function() return item.qty <= 0 or ns.SellPrice(item) <= 0 end,
             func = function()
-                item.qty = item.qty - 1
-                RPSheet:AddCoins(math.floor(item.cost / 2), "sold " .. item.name)
+                RPSheet:SellItem(item) -- the last one takes the entry with it
+                ns.RebuildOptions()
+                Opt.Changed()
+            end,
+        },
+        edited = {
+            type = "toggle", order = 6.5, name = "Keep my changes", hidden = function() return not Listed() end,
+            desc = "Ticked as soon as you change the item on this page: it is then yours, and stays as you made it. Untick it to make the item follow the item lists again: its note, effects, rarity, attunement, price and weight are set back to what is listed, now and whenever the lists change.",
+            get = function() return item.edited end,
+            set = function(_, value)
+                item.edited = value
+                if not value then
+                    item.tracked = true
+                    ns.RefreshItems(RPSheet:Sheet())
+                    ns.RebuildOptions() -- its effects may have changed
+                end
                 Opt.Changed()
             end,
         },
         desc = With({ type = "input", order = 7, width = "full", multiline = 2, name = "Note" }, self, "desc", true),
+        base = {
+            type = "select", order = 8, name = "Counts as", width = 1.4,
+            desc = "For a magic or named weapon, suit of armor or shield: the plain thing it is. Equipping the item then puts that armor on, raises the shield or readies the weapon under this item's name. Leave it at None for anything else, and for plain gear, which is known by its name.",
+            values = function()
+                local values = { [""] = "None" }
+                for _, name in ipairs(R.ITEM_NAMES["Armor and shields"]) do values[name] = name end
+                for _, name in ipairs(R.WEAPON_ORDER) do values[name] = name end
+                return values
+            end,
+            sorting = function()
+                local order = { "" }
+                for _, name in ipairs(R.ITEM_NAMES["Armor and shields"]) do order[#order + 1] = name end
+                for _, name in ipairs(R.WEAPON_ORDER) do order[#order + 1] = name end
+                return order
+            end,
+            get = function() return item.base end,
+            set = function(_, value)
+                -- Taken off as what it was, put back on as what it is now.
+                local worn = item.equipped
+                if worn then RPSheet:SetEquipped(item, false) end
+                item.base = value
+                if worn then RPSheet:SetEquipped(item, true) end
+                Opt.Changed()
+            end,
+        },
+        bonus = With({
+            type = "range", order = 9, min = 0, max = 3, step = 1, name = "Magic bonus",
+            desc = "Armor and shields add it to your Armor Class while equipped. A weapon gets it on its attack and damage rolls when the item is first equipped; after that it is set on the weapon, on the Weapons page.",
+            hidden = function() return ns.ItemSlot(item) == nil end,
+        }, self, "bonus"),
+        scribed = With({
+            type = "toggle", order = 9.5, name = "Written by you", hidden = function() return ns.ScrollSpell(item) == nil end,
+            desc = "A scroll you wrote casts with your own spell save DC and spell attack bonus. One that was found or bought casts with the fixed numbers of a scroll of its level.",
+        }, self, "scribed"),
         magicHeader = { type = "header", order = 20, name = "Magic" },
         magic = With({ type = "toggle", order = 21, name = "Magic item" }, self, "magic"),
         rarity = With({
@@ -84,13 +153,16 @@ local function Build(item)
         }, self, "limit"),
     }
     Opt.AddEffectArgs(args, item,
-        "What the item adds to your numbers while it is equipped, and attuned if it requires that. Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing. A magic weapon's own bonus is set on the weapon, on the Weapons page.",
+        "What the item adds to your numbers while it is equipped, and attuned if it requires that. Each effect adds a flat number, a modifier, your level or your proficiency bonus to one thing, or sets an ability score or your speed to a number that counts when it is higher than your own. A magic weapon's own bonus is set on the weapon, on the Weapons page.",
         100)
+    for key, option in pairs(args) do
+        if not STATE[key] then Edits(option, item) end
+    end
     return args
 end
 
 Opt.lists.items = {
     extra = Opt.InventoryExtra,
     order = 5.5, title = "Inventory", noun = "item", template = R.TEMPLATES.item, build = Build,
-    help = "Your money and what you carry. Listed items are added and bought in the item browser; an item of your own is added here as an empty one to fill in. Equip armor, a shield or a basic weapon to wear or ready it; the Defense and Weapons pages can still set those directly.\n",
+    help = "Your money and what you carry. Listed items are added and bought in the item browser; an item of your own is added here as an empty one to fill in. Equip armor, a shield or a weapon to wear or ready it (a weapon of your own goes by its name); the Defense and Weapons pages can still set those directly.\n",
 }

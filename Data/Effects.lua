@@ -76,7 +76,10 @@ R.TEMPLATES = {
     -- twoHands: a versatile weapon held in two hands; magic: a magic weapon's bonus
     -- to its own attack and damage rolls; stowed: put away, so not on the sheet
     weapon = { name = "", stat = "STR", dice = 1, sides = 8, proficient = true, heal = false, style = true, mastery = "",
-               base = "", twoHands = false, magic = 0, stowed = false },
+               base = "", twoHands = false, magic = 0, stowed = false,
+               -- For a weapon of the player's own (no base): whether it is a ranged one, and
+               -- what it is worth in copper, for a spell that needs a weapon as a component.
+               ranged = false, cost = 0 },
     resource = { name = "", flat = 1, stat = "", times = 1, startEmpty = false, shortRest = false },
     ability = { name = "", desc = "", auto = "", actions = {} },
     passive = { name = "", desc = "", auto = "", enabled = true, effects = {} },
@@ -86,6 +89,7 @@ R.TEMPLATES = {
         kind = "ATTACK", stat = "STR", stat2 = "", proficient = true, -- ROLL
         rollFlat = 0,                                                  -- ROLL: a bonus of its own
         count = 1, sides = 6, dice = "DAMAGE", flat = 0,               -- DICE (uses stat too)
+        damage = "",                                                   -- DICE: the damage type, for features that treat one differently (see Rules.DAMAGE_TYPES)
         slotAdd = 0,                                                   -- DICE: dice added per level of the slot spent above 1st
         strain = "",                                                   -- DICE: a resource; one more die for each use of it since a long rest, none on the first
         perSlot = false,                                               -- DICE: dice and flat amount count once per level of the slot spent
@@ -116,11 +120,13 @@ R.TEMPLATES.spell = {
     kind = "NONE", save = "DEX", -- how it is resolved, and the save it forces
     count = 0, sides = 8,      -- dice rolled; a count of 0 rolls nothing
     dice = "DAMAGE",           -- see DICE_KINDS
+    damage = "",               -- its damage type; empty = the listed spell's own (Data/SpellDamage.lua)
     addMod = false,            -- add the spellcasting modifier to the dice
     concentration = false,
     scales = false,            -- cantrip whose dice grow at character levels 5, 11 and 17
     free = false,              -- doesn't count against cantrips known or spells prepared
     auto = "",                 -- "prepared:<name>" for a spell a subclass put there
+    class = "",                -- the class it belongs to, for a character with several (Sheet/ClassSpells.lua)
     up = 0,                    -- dice added for each slot level above the spell's own
     time = "ACTION",           -- what casting takes: ACTION, BONUS, REACTION or LONG
     material = 0,              -- price in gold of a component it needs; consumed = used up
@@ -129,4 +135,6 @@ R.TEMPLATES.spell = {
     hitsUp = 0,                -- more of them for each slot level above the spell's own
     hitsScale = false,         -- a cantrip that makes more of them at character levels 5, 11 and 17
     ritual = false,            -- can be cast as a ritual: no slot, ten minutes longer
+    edited = false,            -- the player changed it under Customize: it keeps those fields (Sheet/SpellRefresh.lua)
+    tracked = false,           -- true once `edited` is kept for it; a copy saved before that is compared once
 }

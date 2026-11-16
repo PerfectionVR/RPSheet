@@ -22,6 +22,12 @@ function ns.ManeuverLimit(subclass, level)
     return Kit.AtLevel(level, R.MANEUVERS_KNOWN) or 0
 end
 
+-- The same for a whole character, whichever of its classes has the subclass.
+function ns.SheetManeuverLimit(sheet)
+    local view = ns.SubclassView(sheet, "Battle Master")
+    return view and ns.ManeuverLimit(view.subclass, view.level) or 0
+end
+
 function ns.ManeuversKnown(sheet)
     local count = 0
     for name in pairs(sheet.maneuvers) do
@@ -33,6 +39,8 @@ end
 -- Puts the chosen maneuvers on the sheet as abilities, with the die and save DC of
 -- the character's level, and takes off those no longer chosen.
 function ns.ApplyManeuvers(sheet)
+    -- The die and the numbers go by the level in the Battle Master's class.
+    sheet = ns.SubclassView(sheet, "Battle Master") or sheet
     local limit = ns.ManeuverLimit(sheet.subclass, sheet.level)
     local wanted = {}
     if limit > 0 then
@@ -47,7 +55,7 @@ function ns.ApplyManeuvers(sheet)
 
     local die = Kit.AtLevel(sheet.level, R.SUPERIORITY_DIE) or 8
     local best = math.max(Mod(sheet, "STR"), Mod(sheet, "DEX"))
-    local dc = 8 + best + math.ceil(sheet.level / 4) + 1
+    local dc = 8 + best + math.ceil(ns.CharacterLevel(sheet) / 4) + 1
     for key, name in pairs(wanted) do
         local maneuver, ability = R.MANEUVERS[name], nil
         for _, entry in ipairs(sheet.abilities) do
@@ -69,15 +77,14 @@ end
 ---------------------------------------------------------------------------
 -- A skill picked for a feature
 ---------------------------------------------------------------------------
--- Features of the character that let it pick a skill, as { name = feature }.
+-- Features of the character that let it pick a skill, as { name = feature }, and the
+-- class each comes from as { name = class key }.
 local function SkillFeatures(sheet)
-    local found = {}
-    for level = 1, sheet.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
-            if feature.skillChoice then found[feature.name] = feature end
-        end
-    end
-    return found
+    local found, from = {}, {}
+    ns.EachGainedFeature(sheet, function(feature, view)
+        if feature.skillChoice then found[feature.name], from[feature.name] = feature, view.class end
+    end)
+    return found, from
 end
 
 -- Names of those features, sorted.
@@ -91,8 +98,9 @@ end
 -- Skills that can be picked for a feature: from its list, not yet proficient.
 -- `skillChoice = "CLASS"` means the class's own skill list.
 function ns.FeatureSkillOptions(sheet, featureName)
-    local feature = SkillFeatures(sheet)[featureName]
-    local class = R.CLASSES[sheet.class]
+    local features, from = SkillFeatures(sheet)
+    local feature = features[featureName]
+    local class = R.CLASSES[from[featureName] or sheet.class]
     local pool = feature and (feature.skillChoice == "CLASS" and class and class.skills or feature.skillChoice) or {}
     local current, names = sheet.featureSkills[featureName], {}
     for _, skill in ipairs(type(pool) == "table" and pool or {}) do
@@ -131,10 +139,13 @@ function ns.ApplyFeatureSkills(sheet)
     end
 end
 
--- True if a maneuver, a feature's skill or a choice of a feat is still to be made.
-function ns.OpenClassChoices(sheet)
-    local limit = ns.ManeuverLimit(sheet.subclass, sheet.level)
+-- True if a maneuver, a feature's skill, a Fighting Style or a choice of a feat is
+-- still to be made.
+-- `exceptStyles` leaves out an empty Fighting Style, which has a line of its own on
+-- the Character tab.
+function ns.OpenClassChoices(sheet, exceptStyles)
+    local limit = ns.SheetManeuverLimit(sheet)
     return (limit > 0 and ns.ManeuversKnown(sheet) ~= limit) or #ns.OpenFeatureSkills(sheet) > 0
         or #ns.OpenOptionFeatures(sheet) > 0 or ns.OpenPicks(sheet) or ns.OpenExpertise(sheet) or ns.OpenFeatSkills(sheet)
-        or ns.OpenFeatChoices(sheet)
+        or ns.OpenFeatChoices(sheet) or (not exceptStyles and #ns.OpenStyleSlots(sheet) > 0)
 end

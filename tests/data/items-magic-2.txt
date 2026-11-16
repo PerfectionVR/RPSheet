@@ -1,0 +1,161 @@
+# Magic items, part 2 of 3 (form: see items-magic-1.txt).
+Hat of Vermin|XDMG|C
+Hat of Wizardry|XDMG|C|a:a wizard|SCF
+Headband of Intellect|XDMG|U|a
+Hearthstone|WoW|U|a
+Helm of Brilliance|XDMG|V|a
+Helm of Comprehending Languages|XDMG|U
+Helm of Domination|WoW|A|a
+Helm of Telepathy|XDMG|U|a
+Helm of Teleportation|XDMG|R|a
+Heward's Handy Haversack|XDMG|R|||5
+Heward's Handy Spice Pouch|XDMG|C
+Horn of Blasting|XDMG|R||INS||horn
+Horn of Silent Alarm|XDMG|C||INS||horn
+Horn of Valhalla, Brass|XDMG|R||INS||horn
+Horn of Valhalla, Bronze|XDMG|V||INS||horn
+Horn of Valhalla, Iron|XDMG|L||INS||horn
+Horn of Valhalla, Silver|XDMG|R||INS||horn
+Horseshoes of a Zephyr|XDMG|V
+Horseshoes of Speed|XDMG|R
+Immovable Rod|XDMG|U||RD|2
+Instrument of Illusions|XDMG|C
+Instrument of Scribing|XDMG|C
+Instrument of the Bards, Anstruth Harp|XDMG|V|a:a bard
+Instrument of the Bards, Canaith Mandolin|XDMG|R|a:a bard
+Instrument of the Bards, Cli Lyre|XDMG|R|a:a bard|INS||lyre
+Instrument of the Bards, Doss Lute|XDMG|U|a:a bard|INS||lute
+Instrument of the Bards, Fochlucan Bandore|XDMG|U|a:a bard|INS
+Instrument of the Bards, Mac-Fuirmidh Cittern|XDMG|U|a:a bard|INS
+Instrument of the Bards, Ollamh Harp|XDMG|L|a:a bard
+Ioun Stone, Absorption|XDMG|V|a
+Ioun Stone, Agility|XDMG|V|a
+Ioun Stone, Awareness|XDMG|R|a
+Ioun Stone, Fortitude|XDMG|V|a
+Ioun Stone, Greater Absorption|XDMG|L|a
+Ioun Stone, Insight|XDMG|V|a
+Ioun Stone, Intellect|XDMG|V|a
+Ioun Stone, Leadership|XDMG|V|a
+Ioun Stone, Mastery|XDMG|L|a
+Ioun Stone, Protection|XDMG|R|a
+Ioun Stone, Regeneration|XDMG|L|a
+Ioun Stone, Reserve|XDMG|R|a
+Ioun Stone, Strength|XDMG|V|a
+Ioun Stone, Sustenance|XDMG|R|a
+Iron Bands of Bilarro|XDMG|R|||1
+Iron Flask|XDMG|L
+Javelin of Lightning|XDMG|U||M|2|javelin
+Judgment Armor|WoW|L||HA|65|plate armor
+Keoghtom's Ointment|XDMG|U
+Lantern of Revealing|XDMG|U
+Life-Staff of the Web Lair|WoW|L|a|M|4
+Lock of Trickery|XDMG|C
+Lute of Thunderous Thumping|XDMG|V||M|2|club
+Mace of Disruption|XDMG|R|a|M|4|mace
+Mace of Smiting|XDMG|R||M|4|mace
+Mace of Terror|XDMG|R|a|M|4|mace
+Mantle of Spell Resistance|XDMG|R|a
+Manual of Bodily Health|XDMG|V|||5
+Manual of Clay Golems|XDMG|V|||5
+Manual of Flesh Golems|XDMG|V|||5
+Manual of Gainful Exercise|XDMG|V|||5
+Manual of Iron Golems|XDMG|V|||5
+Manual of Quickness of Action|XDMG|V|||5
+Manual of Stone Golems|XDMG|V|||5
+Medallion of Thoughts|XDMG|U|a||1
+Mirror of Life Trapping|XDMG|V|||50
+Mystery Key|XDMG|C
+Nature's Mantle|XDMG|U|a:a druid or ranger|SCF
+Necklace of Adaptation|XDMG|U|a||1
+Necklace of Fireballs|XDMG|R|||1
+Necklace of Prayer Beads|XDMG|R|a:a cleric, druid, or paladin||1
+Noggenfogger Elixir|WoW|R||P
+Nolzur's Marvelous Pigments|XDMG|V
+Oil of Etherealness|XDMG|R||P|0.5
+Oil of Sharpness|XDMG|V||P|0.5
+Oil of Slipperiness|XDMG|U||P|0.5
+Orb of Direction|XDMG|C|||3
+Orb of Dragonkind|XDMG|A|a||3
+Orb of Time|XDMG|C|||3
+Pearl of Power|XDMG|U|a:a spellcaster
+Perfume of Bewitching|XDMG|C
+Periapt of Health|XDMG|U|a||1
+Periapt of Proof against Poison|XDMG|R|a||1
+Periapt of Wound Closure|XDMG|U|a||1
+Philosopher's Stone|WoW|V|a:its creator
+Philter of Love|XDMG|U||P|0.5
+Pipe of Smoke Monsters|XDMG|C
+Pipes of Haunting|XDMG|U
+Pipes of the Sewers|XDMG|U|a
+Pole of Angling|XDMG|C
+Pole of Collapsing|XDMG|C
+Portable Hole|XDMG|R
+Pot of Awakening|XDMG|C
+Potion of Acid Resistance|XDMG|U||P|0.5
+Potion of Animal Friendship|XDMG|U||P|0.5
+Potion of Clairvoyance|XDMG|R||P|0.5
+Potion of Climbing|XDMG|C||P|0.5
+Potion of Cloud Giant Strength|XDMG|V||P|0.5
+Potion of Cold Resistance|XDMG|U||P|0.5
+Potion of Comprehension|XDMG|C||P|0.5
+Potion of Diminution|XDMG|R||P|0.5
+Potion of Fire Breath|XDMG|U||P|0.5
+Potion of Fire Giant Strength|XDMG|R||P|0.5
+Potion of Fire Resistance|XDMG|U||P|0.5
+Potion of Flying|XDMG|V||P|0.5
+Potion of Force Resistance|XDMG|U||P|0.5
+Potion of Frost Giant Strength|XDMG|R||P|0.5
+Potion of Gaseous Form|XDMG|R||P|0.5
+Potion of Greater Healing|XDMG|U||P|0.5
+Potion of Greater Invisibility|XDMG|V||P|0.5
+Potion of Growth|XDMG|U||P|0.5
+Potion of Healing|XDMG|C||P|0.5
+Potion of Heroism|XDMG|R||P|0.5
+Potion of Hill Giant Strength|XDMG|U||P|0.5
+Potion of Invisibility|XDMG|R||P|0.5
+Potion of Invulnerability|XDMG|R||P|0.5
+Potion of Lightning Resistance|XDMG|U||P|0.5
+Potion of Longevity|XDMG|V||P|0.5
+Potion of Mana|WoW|C||P
+Potion of Mana (Greater)|WoW|U||P
+Potion of Mana (Superior)|WoW|R||P
+Potion of Mind Reading|XDMG|R||P|0.5
+Potion of Necrotic Resistance|XDMG|U||P|0.5
+Potion of Poison|XDMG|U||P|0.5
+Potion of Poison Resistance|XDMG|U||P|0.5
+Potion of Psychic Resistance|XDMG|U||P|0.5
+Potion of Pugilism|XDMG|U||P|0.5
+Potion of Radiant Resistance|XDMG|U||P|0.5
+Potion of Rejuvenation|WoW|U||P
+Potion of Rejuvenation (Greater)|WoW|R||P
+Potion of Rejuvenation (Superior)|WoW|V||P
+Potion of Speed|XDMG|V||P|0.5
+Potion of Stone Giant Strength|XDMG|R||P|0.5
+Potion of Storm Giant Strength|XDMG|L||P|0.5
+Potion of Superior Healing|XDMG|R||P|0.5
+Potion of Supreme Healing|XDMG|V||P|0.5
+Potion of Thunder Resistance|XDMG|U||P|0.5
+Potion of Vitality|XDMG|V||P|0.5
+Potion of Water Breathing|XDMG|U||P|0.5
+Prosthetic Limb|XDMG|C
+Quaal's Feather Token, Anchor|XDMG|U
+Quaal's Feather Token, Bird|XDMG|R
+Quaal's Feather Token, Fan|XDMG|U
+Quaal's Feather Token, Swan Boat|XDMG|R
+Quaal's Feather Token, Tree|XDMG|U
+Quaal's Feather Token, Whip|XDMG|R
+Quarterstaff of the Acrobat|XDMG|V|a|M|4|quarterstaff
+Quiver of Ehlonna|XDMG|U|||2
+Red Dragon Scale Mail|XDMG|V|a|MA|45|scale mail
+Ring of Acid Resistance|XDMG|R||RG
+Ring of Animal Influence|XDMG|R||RG
+Ring of Cold Resistance|XDMG|R||RG
+Ring of Djinni Summoning|XDMG|L|a|RG
+Ring of Elemental Command (Air)|XDMG|L|a|RG
+Ring of Elemental Command (Earth)|XDMG|L|a|RG
+Ring of Elemental Command (Fire)|XDMG|L|a|RG
+Ring of Elemental Command (Water)|XDMG|L|a|RG
+Ring of Evasion|XDMG|R|a|RG
+Ring of Feather Falling|XDMG|R|a|RG
+Ring of Fire Resistance|XDMG|R||RG
+Ring of Force Resistance|XDMG|R||RG

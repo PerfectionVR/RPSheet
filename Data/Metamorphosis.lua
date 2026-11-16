@@ -26,7 +26,7 @@ local function Benefit(label, took, desc, effects, extra, hp)
 end
 
 Benefit("Devourer", "force damage dice of 1 or 2 count as 3",
-    "On while Metamorphosis fills you with hungering magic. When you roll force damage, a die showing 1 or 2 counts as a 3. The sheet does this for the force spells it knows and for Hunter's Mark: damage.",
+    "On while Metamorphosis fills you with hungering magic. When you roll force damage, a die showing 1 or 2 counts as a 3. The sheet does this for the force spells it knows, for Hunter's Mark: damage, and for your own spells and ability dice whose damage type is set to force.",
     nil, { flags = { forceMin = 3 } })
 Benefit("Havoc", "melee weapon hits deal 1d6 more fire damage",
     "On while Metamorphosis wreathes your weapons in fel fire. Your melee weapon hits deal 1d6 more fire damage, which the sheet rolls with every melee attack.",

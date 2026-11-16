@@ -1,0 +1,78 @@
+# More small lists. toolstat: the ability a tool's check uses (the "Ability:" line of each tool,
+# data/items-base.json and data/items.json, XPHB). carpet: the Carpet of Flying table (data/items.json,
+# XDMG): size, pounds carried, flying speed. The rest is from the setting's book (data/book/book-wow.json,
+# chapter 3): region = the gathering table (levels, DC, worth of a common and of a rare find in gold),
+# disenchant = item rarity, skill bonus needed, residue in gold; profession and companion = headings.
+toolstat|Alchemist's Supplies|INT
+toolstat|Bagpipes|CHA
+toolstat|Brewer's Supplies|INT
+toolstat|Calligrapher's Supplies|DEX
+toolstat|Carpenter's Tools|STR
+toolstat|Cartographer's Tools|WIS
+toolstat|Cobbler's Tools|DEX
+toolstat|Cook's Utensils|WIS
+toolstat|Drum|CHA
+toolstat|Dulcimer|CHA
+toolstat|Flute|CHA
+toolstat|Glassblower's Tools|INT
+toolstat|Horn|CHA
+toolstat|Jeweler's Tools|INT
+toolstat|Leatherworker's Tools|DEX
+toolstat|Lute|CHA
+toolstat|Lyre|CHA
+toolstat|Mason's Tools|STR
+toolstat|Painter's Supplies|WIS
+toolstat|Pan Flute|CHA
+toolstat|Potter's Tools|INT
+toolstat|Shawm|CHA
+toolstat|Smith's Tools|STR
+toolstat|Tinker's Tools|DEX
+toolstat|Viol|CHA
+toolstat|Weaver's Tools|DEX
+toolstat|Woodcarver's Tools|DEX
+toolstat|Dice Set|WIS
+toolstat|Disguise Kit|CHA
+toolstat|Dragonchess Set|WIS
+toolstat|Forgery Kit|DEX
+toolstat|Herbalism Kit|INT
+toolstat|Navigator's Tools|WIS
+toolstat|Playing Cards|WIS
+toolstat|Poisoner's Kit|INT
+toolstat|Thieves' Tools|DEX
+toolstat|Three-Dragon Ante Set|WIS
+carpet|3 by 5 ft|cap=200|fly=80
+carpet|4 by 6 ft|cap=400|fly=60
+carpet|5 by 7 ft|cap=600|fly=40
+carpet|6 by 9 ft|cap=800|fly=30
+region|1-4|dc=10|common=10|rare=25
+region|5-10|dc=12|common=50|rare=100
+region|11-16|dc=15|common=250|rare=500
+region|17-20|dc=17|common=1000|rare=2500
+region|endgame|dc=20|common=5000|rare=7500
+disenchant|Common|3|25
+disenchant|Uncommon|4|100
+disenchant|Rare|5|1000
+disenchant|Very rare|6|10000
+profession|gather|Archaeology
+profession|gather|Fishing
+profession|gather|Herbalism
+profession|gather|Mining
+profession|gather|Skinning
+profession|make|Alchemy
+profession|make|Blacksmithing
+profession|make|Cooking
+profession|make|Enchanting
+profession|make|Engineering
+profession|make|Inscription
+profession|make|Jewelcrafting
+profession|make|Leatherworking
+profession|make|Tailoring
+companion|Aquatic
+companion|Beast
+companion|Dragonkin
+companion|Elemental
+companion|Flying
+companion|Humanoid
+companion|Magic
+companion|Mechanical
+companion|Undead

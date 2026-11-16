@@ -40,17 +40,30 @@ for name, beast in pairs(R.BEASTS) do
     beast.level, beast.moonLevel = Levels(beast)
     local crName = CR_NAMES[beast.cr] or ("%d"):format(beast.cr)
     local skills = #beast.skills > 0 and (" Proficient in " .. table.concat(beast.skills, ", ") .. ".") or ""
+    local saves = {}
+    for _, stat in ipairs(R.STATS) do
+        if beast.saves and beast.saves[stat] then saves[#saves + 1] = R.STAT_NAMES[stat] end
+    end
+    if #saves > 0 then skills = ("%s Proficient in %s saving throws."):format(skills, table.concat(saves, " and ")) end
     beast.desc = ("%s beast, challenge rating %s. Armor Class %d, speed %d feet%s. Strength %d, Dexterity %d, Constitution %d.%s%s%s"):format(
         beast.size, crName, beast.ac, beast.speed, beast.moves and (", " .. beast.moves) or "", beast.str, beast.dex, beast.con,
         SensesText(beast), skills, beast.note and (" " .. beast.note) or "")
     local group = "Challenge rating " .. crName
     if not beast.level then group = ("%s (Circle of the Moon, level %d)"):format(group, beast.moonLevel) end
     items[name] = { desc = beast.desc, level = beast.level, moonLevel = beast.moonLevel, group = group }
-    R.FORMS[R.BeastFormPassive(name)] = {
+    local form = {
         name = name, beast = true, ac = beast.ac, speed = beast.speed,
         scores = { STR = beast.str, DEX = beast.dex, CON = beast.con },
-        senses = beast.senses, skills = beast.skills,
+        senses = beast.senses, skills = beast.skills, skillBonus = beast.bonus, saveBonus = beast.saves,
     }
+    -- Its swimming, climbing and flying speeds as numbers (form.swim, .climb, .fly),
+    -- read from wording such as "climbing and swimming 30 feet".
+    for words, feet in (beast.moves or ""):gmatch("([%a ]+) (%d+) feet") do
+        for word in words:gmatch("%a+") do
+            if R.MOVE_WORDS[word] then form[R.MOVE_WORDS[word]] = tonumber(feet) end
+        end
+    end
+    R.FORMS[R.BeastFormPassive(name)] = form
 end
 -- By challenge rating, then by name, so each rating is one heading in the dialog.
 table.sort(order, function(a, b)

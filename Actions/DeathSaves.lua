@@ -26,21 +26,26 @@ function RPSheet:RollDeathSave()
     end
     -- A Champion's Survivor: advantage, and 18 or 19 count as a 20.
     local survivor = self:HasAdvantage("death save")
-    -- The Durable feat gives the advantage without the rest.
-    self:RollD20((survivor or self:HasAdvantage("death save roll")) and "ADV" or nil, function(d20)
+    -- The Durable feat gives the advantage without the rest, and so does a loyal
+    -- undead companion (RPSheet:AdvantageFrom).
+    local advantage = survivor or self:HasAdvantage("death save roll") or self:AdvantageFrom("death save roll") ~= nil
+    -- Exhaustion weighs on this roll like on any d20; a natural 20 or 1 goes by the die.
+    local penalty = ns.Rules.EXHAUSTION_D20 * self:Exhaustion()
+    self:RollD20(advantage and "ADV" or nil, function(d20)
         local outcome
+        local passed = d20 - penalty >= 10
         if d20 == 20 or (survivor and d20 >= 18) then
             state.hp = 1
             self:ClearDeathSaves()
             outcome = d20 == 20 and "NATURAL 20! Back up with 1 HP" or "counts as a 20 for a Survivor. Back up with 1 HP"
         else
-            if d20 >= 10 then
+            if passed then
                 state.deathPass = math.min(3, state.deathPass + 1)
             else
                 state.deathFail = math.min(3, state.deathFail + (d20 == 1 and 2 or 1))
             end
             outcome = ("%s - %d passed, %d failed"):format(
-                d20 >= 10 and "passed" or (d20 == 1 and "natural 1, two failures" or "failed"),
+                passed and "passed" or (d20 == 1 and "natural 1, two failures" or "failed"),
                 state.deathPass, state.deathFail)
             if state.deathFail >= 3 then
                 outcome = outcome .. ". Dead"
@@ -48,7 +53,7 @@ function RPSheet:RollDeathSave()
                 outcome = outcome .. ". Stable"
             end
         end
-        self:Announce(("rolls a death save: %d (%s)."):format(d20, outcome))
+        self:Announce(("rolls a death save: %d%s (%s)."):format(d20, penalty > 0 and (" - %d for exhaustion"):format(penalty) or "", outcome))
         self:PopulateSoon()
-    end)
+    end, true)
 end

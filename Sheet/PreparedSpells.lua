@@ -6,26 +6,27 @@ local R = ns.Rules
 
 local PREFIX = "prepared:"
 
--- { [auto key] = spell name } for the levels the character has reached.
+-- { [auto key] = spell name } for the levels the character has reached, each class by
+-- its own level, and { [spell name] = class key } for the class that prepares it when
+-- the character has several.
 local function Wanted(sheet)
-    local wanted = {}
-    if not R.CLASSES[sheet.class] then return wanted end
-    for level = 1, sheet.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
-            -- A list, or a function of the sheet for one that follows the specialization.
-            local prepared = feature.prepared
-            if type(prepared) == "function" then prepared = prepared(sheet) end
-            for _, step in ipairs(prepared or {}) do
-                if sheet.level >= step[1] then
-                    for name in step[2]:gmatch("[^,]+") do
-                        name = strtrim(name)
-                        if R.SPELLS[name] and not sheet.dismissed[PREFIX .. name] then wanted[PREFIX .. name] = name end
+    local wanted, from = {}, {}
+    ns.EachGainedFeature(sheet, function(feature, view)
+        -- A list, or a function of the sheet for one that follows the specialization.
+        local prepared = feature.prepared
+        if type(prepared) == "function" then prepared = prepared(view) end
+        for _, step in ipairs(prepared or {}) do
+            if view.level >= step[1] then
+                for name in step[2]:gmatch("[^,]+") do
+                    name = strtrim(name)
+                    if R.SPELLS[name] and not sheet.dismissed[PREFIX .. name] then
+                        wanted[PREFIX .. name], from[name] = name, ns.SpellTag(view)
                     end
                 end
             end
         end
-    end
-    return wanted
+    end)
+    return wanted, from
 end
 
 -- { [spell name] = true } for the same spells. `sheet` may be a stand-in with another
@@ -39,35 +40,31 @@ end
 -- Adds the spells reached, and takes off those of another subclass or a level the
 -- character no longer has. A spell the player added by hand is left as it is.
 function ns.ApplyPreparedSpells(sheet)
-    -- Spells added before higher slots added dice learn how many they add.
-    for _, spell in ipairs(sheet.spells) do
-        local known = R.SPELLS[spell.name]
-        if known and known.ritual and known.level == spell.level then spell.ritual = true end
-        -- ...and what casting them takes.
-        if known and known.level == spell.level then
-            spell.time, spell.material, spell.consumed = known.time, known.material, known.consumed
+    -- Corrections to the listed spells reach the copies on the sheet first.
+    ns.RefreshListedSpells(sheet)
+    local wanted, from = Wanted(sheet)
+    -- A spell another source put on the list (a cantrip that was picked) is listed
+    -- once, whichever of the two came first. With several classes only an entry of the
+    -- same class (or of none) counts: two classes that each prepare the spell each have
+    -- their own, cast with their own ability.
+    local function Listed(name)
+        for _, spell in ipairs(sheet.spells) do
+            if spell.name == name and not (spell.auto or ""):find("^" .. PREFIX) and ns.SpellIsOf(spell, from[name]) then return true end
         end
-        -- Spells that make several attacks learn how many.
-        if known and known.level == spell.level and (known.hits > 1 or known.hitsUp > 0 or known.hitsScale) then
-            spell.hits, spell.hitsUp, spell.hitsScale, spell.desc = known.hits, known.hitsUp, known.hitsScale, known.desc
-        end
-        -- Spells the sheet now rolls more of take the listed dice and summary.
-        local growth = R.SLOT_GROWTH[spell.name]
-        if known and known.level == spell.level and growth and growth.refresh then
-            spell.count, spell.sides, spell.dice, spell.desc = known.count, known.sides, known.dice, known.desc
-        end
-        if known and (spell.up or 0) == 0 and known.level == spell.level and known.sides == spell.sides and known.count == spell.count then
-            spell.up = known.up
-        end
+        return false
     end
-    local wanted = Wanted(sheet)
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
-            if wanted[auto] then have[spell.name] = true else table.remove(sheet.spells, index) end
-        else
+            if wanted[auto] and not Listed(wanted[auto]) then
+                have[wanted[auto]] = true -- (by the spell it stands for: the entry may have been renamed)
+                if from[spell.name] then spell.class = from[spell.name] end
+            else
+                table.remove(sheet.spells, index)
+            end
+        elseif not from[spell.name] or ns.SpellIsOf(spell, from[spell.name]) then
             have[spell.name] = true
         end
     end
@@ -82,6 +79,7 @@ function ns.ApplyPreparedSpells(sheet)
     for _, name in ipairs(names) do
         local spell = CopyTable(R.SPELLS[name])
         spell.free, spell.auto = true, PREFIX .. name
+        spell.class = from[name] -- the class that prepares it, for a character with several
         sheet.spells[#sheet.spells + 1] = spell
     end
 end

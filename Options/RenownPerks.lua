@@ -8,11 +8,22 @@ local Sheet = Opt.Sheet
 
 -- After a change to a renown score: perks the sheet grants follow it. The editor's
 -- lists are only rebuilt when a tier was crossed, so dragging the slider stays smooth.
-function Opt.RenownChanged(before, after)
+-- `before` is what Opt.RenownTiers() gave ahead of the change: one faction's score can
+-- move another's (Sheet/RenownRules.lua), so every faction's tier is compared.
+function Opt.RenownChanged(before)
     ns.ApplyClassFeatures(Sheet()) -- ends with the renown perks, and keeps score points right
     ns.NormalizeState(RPSheet:State())
-    if R.RenownTier(before or 0) ~= R.RenownTier(after or 0) then ns.RebuildOptions() end
+    if before ~= Opt.RenownTiers() then ns.RebuildOptions() end
     Opt.Changed()
+end
+
+-- The tier of every faction as one text, to see whether a change crossed any.
+function Opt.RenownTiers()
+    local tiers = {}
+    for _, faction in ipairs(R.ALL_FACTIONS) do
+        tiers[#tiers + 1] = R.RenownTier((ns.RenownScore(Sheet(), faction)))
+    end
+    return table.concat(tiers, ",")
 end
 
 -- Says what a pick is, so "History" and "Smith's Tools" read apart in the dropdown.
@@ -36,6 +47,31 @@ end
 -- Options to add to a faction's row, after its score and Remove button.
 function Opt.RenownPerkArgs(faction)
     return {
+        -- Only for a faction with lands a stronghold can stand in; one faction at a time.
+        stronghold = {
+            type = "toggle", order = 2.5, width = "full", name = "My stronghold stands in its lands (+1)",
+            desc = ("While your stronghold is in %s, your renown with this faction counts as 1 higher. Ticking it here takes it off any other faction."):format(R.STRONGHOLD_LANDS[faction] or "its lands"),
+            hidden = function() return not R.STRONGHOLD_LANDS[faction] end,
+            get = function() return Sheet().stronghold == faction end,
+            set = function(_, value)
+                local before = Opt.RenownTiers()
+                Sheet().stronghold = value and faction or ""
+                Opt.RenownChanged(before)
+            end,
+        },
+        -- A tier reached once keeps counting for the faction the character started
+        -- with; a slip of the slider can be undone here.
+        reached = {
+            type = "execute", order = 2.7, width = "double",
+            name = function() return ("Forget it was once %s"):format(ns.RenownLostTier(Sheet(), faction) or "higher") end,
+            desc = "The first time a faction of your side reaches a tier, the faction you started with gains renown, and keeps it when the score drops again. The sheet remembers the highest tier this faction reached. If that was a mistake, this goes back to the tier of the score as it is now.",
+            hidden = function() return not ns.RenownLostTier(Sheet(), faction) end,
+            func = function()
+                local before = Opt.RenownTiers()
+                Sheet().renownReached[faction] = nil -- the next upkeep records the tier of the score as it is
+                Opt.RenownChanged(before)
+            end,
+        },
         training = {
             type = "select", order = 3, width = "double", name = "Taught by its trainers",
             desc = "Thirty days with the faction's trainers teaches you one of these. The sheet adds it while your renown is high enough: a language comes on top of the ones you choose, a tool or skill becomes proficient. More than one month of training? Tick the others by hand.",

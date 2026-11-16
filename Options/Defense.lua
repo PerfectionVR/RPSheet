@@ -14,6 +14,9 @@ local function Summary()
         ("Hit points: d%d at level 1, then the average each level, plus your Constitution modifier per level."):format(
             class and class.hitDie or R.DEFAULT_HIT_DIE),
     }
+    if ns.IsMulticlass(sheet) then
+        lines[#lines + 1] = "The levels of a class taken later count with that class's own die, at its average."
+    end
     local armor = R.ARMOR[sheet.armor]
     local training, kind = RPSheet:ArmorTraining(), ns.ArmorKind(sheet.armor)
     if kind and not training[kind] then
@@ -22,10 +25,10 @@ local function Summary()
     if sheet.shield and not training.shield then
         lines[#lines + 1] = ("%sYou have no training with shields: disadvantage on Strength and Dexterity rolls, and you can't cast spells.|r"):format(Opt.RED)
     end
-    if armor.minStr and RPSheet:Score("STR") < armor.minStr then
+    if armor.minStr and RPSheet:Score("STR") < armor.minStr and not ns.ArmorWaives(sheet, "noStrength") then
         lines[#lines + 1] = ("%s%s needs Strength %d, or your speed drops by 10 feet.|r"):format(Opt.RED, armor.name, armor.minStr)
     end
-    if armor.stealth then
+    if armor.stealth and not ns.ArmorWaives(sheet, "noStealth") then
         lines[#lines + 1] = ("%s gives disadvantage on Stealth checks."):format(armor.name)
     end
     if sheet.armor == "NONE" and class and class.unarmored then

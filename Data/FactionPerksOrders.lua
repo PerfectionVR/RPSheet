@@ -7,7 +7,7 @@ local P = R.FACTION_PERKS
 P["Argent Dawn"] = {
     Friendly = { text = "Blessing of Argent Will: advantage on saves against being charmed by a fiend or an undead.",
         grant = { name = "Blessing of Argent Will",
-            desc = "Advantage on saving throws to avoid or end being charmed by a fiend or an undead. Set advantage on the roll yourself when it applies." } },
+            desc = "Advantage on saving throws to avoid or end being charmed by a fiend or an undead. The sheet asks what a save is against when you roll one." } },
     Honored = { text = "A long rest in an Argent Dawn sanctuary gives a charm that casts Healing Word once within 7 days." },
     Revered = { text = "Blessing of Argent Fortitude: immune to poison damage and to being poisoned.",
         grant = { name = "Blessing of Argent Fortitude", desc = "You are immune to poison damage and to the poisoned condition." } },
@@ -18,7 +18,7 @@ P["Cenarion Circle"] = {
     Honored = { text = "A long rest in a Circle sanctuary gives a charm of restoration: three charges for Lesser Restoration (1) or Greater Restoration (2)." },
     Revered = { text = "Wildguard Blessing: advantage on saving throws against spells.",
         grant = { name = "Wildguard Blessing",
-            desc = "Advantage on saving throws against spells. Set advantage on the roll yourself when a spell causes the save." } },
+            desc = "Advantage on saving throws against spells. The sheet asks what a save is against when you roll one." } },
     Exalted = { text = "You are a Guardian of Cenarius, and may buy a war hippogryph mount for 2,000 gold. Both are lost if your renown drops below 50." },
 }
 P["Earthen Ring"] = {

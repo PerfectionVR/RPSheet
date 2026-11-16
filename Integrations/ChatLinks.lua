@@ -12,7 +12,6 @@
 -- A link reads  |Haddon:rpsheet:<Name-Realm>:<term>|h[term]|h . The "addon:" link
 -- type is one the game leaves for addons to handle.
 local _, ns = ...
-local R = ns.Rules
 local RPSheet = ns.addon
 
 local LINK = "addon:rpsheet"
@@ -27,47 +26,15 @@ function ns.PlayerFullName()
     return ("%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
 end
 
----------------------------------------------------------------------------
--- What a term means
----------------------------------------------------------------------------
--- Returns a title and a list of lines, or nil for a term the rules data doesn't know
--- (a player's own ability, for instance).
-function ns.TermInfo(term)
-    if R.MASTERIES[term] then return term, { "Weapon mastery.", R.MASTERIES[term].desc } end
-    for _, condition in ipairs(R.CONDITIONS) do
-        if condition.name == term then return term, { "Condition.", condition.desc } end
-    end
-    local weapon = R.WEAPONS[term]
-    if weapon then
-        local lines = { ("%s weapon, %s."):format(weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(term)) }
-        for _, prop in ipairs(R.WEAPON_PROPERTY_ORDER) do
-            if weapon.props[prop] then
-                lines[#lines + 1] = ("%s: %s"):format(R.WEAPON_PROPERTIES[prop].name, R.WEAPON_PROPERTIES[prop].desc)
-            end
-        end
-        lines[#lines + 1] = ("Mastery, %s: %s"):format(weapon.mastery, R.MASTERIES[weapon.mastery].desc)
-        return term, lines
-    end
-    local spell = R.SPELLS[term]
-    if spell then return term, { R.SPELL_LEVELS[spell.level] .. (spell.concentration and ", concentration." or "."), spell.desc } end
-    if R.FEATS[term] then return term, { "Feat.", R.FEATS[term].desc } end
-    if R.FIGHTING_STYLES[term] then return term, { "Fighting Style.", R.FIGHTING_STYLES[term].desc } end
-    if R.TRAITS[term] and R.TRAITS[term].desc then return term, { R.TRAITS[term].desc } end
-    -- "STR check" and "STR save" read as the ability; so does a companion's own roll.
-    local stat, kind = (term:gsub("^companion ", "")):match("^(%u%u%u) (%l+)$")
-    if stat and R.STAT_NAMES[stat] then
-        local lines = { ns.Glossary[stat] }
-        if kind == "save" then lines[#lines + 1] = ns.Glossary["Saving throw"] end
-        return ("%s %s"):format(R.STAT_NAMES[stat], kind == "save" and "saving throw" or "check"), lines
-    end
-    if ns.Glossary[term] then return term, { ns.Glossary[term] } end
-end
+-- (What a term means, for its tooltip: ns.TermInfo in Integrations/ChatTerms.lua.)
 
 ---------------------------------------------------------------------------
 -- Turning marked terms into links
 ---------------------------------------------------------------------------
 -- Lines the addon itself announces start with one of these after the character's name.
-local OURS = { "rolls %[", "attacks with %[", "uses %[", "casts %[", "is now %[", "is no longer %[" }
+-- The rest of a line that took more than one message starts with the mark of that
+-- (Actions/AnnounceSplit.lua).
+local OURS = { "rolls %[", "attacks with %[", "uses %[", "casts %[", "is now %[", "is no longer %[", "%(continued%) " }
 
 -- Links every marked term in `text` that the rules data knows; in a line that reads
 -- like one of ours, the others too (a player's own ability can be asked about).
@@ -76,7 +43,9 @@ function ns.LinkTerms(text, sender)
     for _, pattern in ipairs(OURS) do
         ours = ours or text:find(pattern) ~= nil
     end
-    return (text:gsub("%[([^%[%]|]+)%]", function(term)
+    return (text:gsub("()%[([^%[%]|]+)%]", function(at, term)
+        -- The name inside a link the game made (an item, a spell) is that link's.
+        if text:sub(at - 2, at - 1) == "|h" then return end
         if ours or ns.TermInfo(term) then
             return ("|H%s:%s:%s|h%s[%s]|r|h"):format(LINK, sender, term, COLOR, term)
         end
@@ -145,8 +114,11 @@ local function OnClick(link)
 end
 
 function ns.EnableChatLinks()
-    for _, event in ipairs({ "CHAT_MSG_EMOTE", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER" }) do
-        ChatFrame_AddMessageEventFilter(event, Filter)
+    -- The game has moved this function; without either, the terms simply stay plain text.
+    local addFilter = (ChatFrameUtil and ChatFrameUtil.AddMessageEventFilter) or ChatFrame_AddMessageEventFilter
+    for _, event in ipairs({ "CHAT_MSG_EMOTE", "CHAT_MSG_PARTY", "CHAT_MSG_PARTY_LEADER", "CHAT_MSG_RAID", "CHAT_MSG_RAID_LEADER",
+        "CHAT_MSG_INSTANCE_CHAT", "CHAT_MSG_INSTANCE_CHAT_LEADER" }) do
+        if addFilter then addFilter(event, Filter) end
     end
     for index = 1, NUM_CHAT_WINDOWS or 10 do
         local frame = _G["ChatFrame" .. index]

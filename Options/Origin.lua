@@ -24,6 +24,23 @@ local function LineageInfo()
     return ("%s%s|r: %s\n"):format(Opt.GOLD, lineage.name, lineage.desc)
 end
 
+-- The spells of the species or lineage: the ability they are cast with, and an elf's
+-- cantrip (Sheet/LineageCasting.lua). Free here; the page says in red what is missing.
+local function Casts()
+    return ns.LineageCasts(Sheet().species, Sheet().lineage)
+end
+
+local function CastingInfo()
+    local sheet, lines = Sheet(), {}
+    if ns.LineageStatMissing(sheet) then
+        lines[#lines + 1] = ("%sChoose the ability your %s spells are cast with. Until then the sheet uses the best of the three.|r"):format(Opt.RED, ns.LineageTrait(sheet.species))
+    end
+    if ns.LineageCantrip(sheet) and RPSheet:State().lineageCantripChanged then
+        lines[#lines + 1] = ("%sYou exchanged the cantrip since your last long rest: the rules allow one exchange after each long rest.|r"):format(Opt.RED)
+    end
+    return #lines > 0 and (table.concat(lines, "\n") .. "\n") or ""
+end
+
 ---------------------------------------------------------------------------
 -- Languages: the common tongue plus two, or three for the unaffiliated, plus
 -- any that features grant.
@@ -73,27 +90,34 @@ local function RenownRow(faction, order)
     local function Score() return Sheet().renown[faction] or 0 end
     local row = {
         type = "group", inline = true, order = order,
+        -- The score that counts: the player's own and what the rules add to it.
         name = function()
-            local tier = R.RenownTier(Score())
-            return ("%s %s%d|r%s"):format(faction, Opt.GOLD, Score(), tier ~= "" and (" - " .. tier) or "")
+            local counted, added = ns.RenownScore(Sheet(), faction)
+            local tier = R.RenownTier(counted)
+            return ("%s %s%d|r%s%s%s"):format(faction, Opt.GOLD, counted, tier ~= "" and (" - " .. tier) or "",
+                #added > 0 and (" (%d of your own)"):format(Score()) or "",
+                ns.RenownRival(Sheet(), faction) and (Opt.RED .. " - rival of another faction you stand with|r") or "")
         end,
         args = {
             score = {
                 type = "range", order = 1, width = "double", min = 0, max = 100, softMax = 50, step = 1, name = "Renown",
+                desc = "The score your DM gave you. What a stronghold or the other factions of your side add is counted on top by the sheet.",
                 get = Score,
                 set = function(_, value)
-                    local before = Score()
+                    local before = Opt.RenownTiers()
                     Sheet().renown[faction] = value
-                    Opt.RenownChanged(before, value) -- the faction's perks follow the score
+                    Opt.RenownChanged(before) -- the perks follow the scores
                 end,
             },
             remove = {
                 type = "execute", order = 2, name = "Remove",
                 func = function()
-                    local before = Score()
+                    local before = Opt.RenownTiers()
                     Sheet().renown[faction] = nil
+                    Sheet().renownReached[faction] = nil -- taken off the sheet: as if never known
+                    if Sheet().stronghold == faction then Sheet().stronghold = "" end
                     ns.RebuildOptions()
-                    Opt.RenownChanged(before, 0)
+                    Opt.RenownChanged(before)
                 end,
             },
         },
@@ -155,6 +179,41 @@ local args = {
         hidden = function() return not Lineages() end,
     },
 
+    lineageStat = {
+        type = "select", order = 3.1, name = "Ability for its spells",
+        desc = "The ability your species' or lineage's spells and cantrips are cast with: Intelligence, Wisdom or Charisma, chosen with the lineage.",
+        hidden = function() return not Casts() end,
+        values = function()
+            local values = ns.LineageStatValues()
+            values[""] = "Not chosen"
+            return values
+        end,
+        sorting = { "", "INT", "WIS", "CHA" },
+        get = function() return ns.LineageStatChosen(Sheet()) or "" end,
+        set = function(_, value) Sheet().lineageStat = value; Opt.Regrant() end,
+    },
+    lineageCantrip = {
+        type = "select", order = 3.2, name = "Lineage cantrip",
+        desc = "You know Prestidigitation, and after each long rest you can exchange it for another Wizard cantrip.",
+        hidden = function() return ns.LineageCantrip(Sheet()) == nil end,
+        values = function()
+            local values = {}
+            for _, name in ipairs(ns.LineageCantripChoices(Sheet())) do values[name] = name end
+            return values
+        end,
+        sorting = function() return ns.LineageCantripChoices(Sheet()) end,
+        get = function() return ns.LineageCantrip(Sheet()) end,
+        set = function(_, value)
+            if value ~= ns.LineageCantrip(Sheet()) then RPSheet:State().lineageCantripChanged = true end
+            Sheet().lineageCantrip = value
+            Opt.Regrant()
+        end,
+    },
+    castingInfo = {
+        type = "description", order = 3.3, fontSize = "medium", name = CastingInfo,
+        hidden = function() return CastingInfo() == "" end,
+    },
+
     traitSkillful = TraitPicker("Skillful", 4),
     traitKeenSenses = TraitPicker("Keen Senses", 4.1),
     traitVersatile = TraitPicker("Versatile", 4.2),
@@ -172,7 +231,16 @@ local args = {
         type = "description", order = 21,
         name = "Standing with a faction: Friendly at 3, Honored at 10, Revered at 25, Exalted at 50. Pick a faction and press Add, then set its score. "
             .. "Each faction has perks of its own; the sheet adds the ones it can work with and takes them off when the score drops.\n"
-            .. "Your DM raises a score. Two rules to remember: a stronghold in a faction's lands adds 1, and the first time another faction of your side reaches a tier, your home faction gains 1, 2, 3 or 5 (Friendly to Exalted).\n",
+            .. "Your DM raises a score. Two rules the sheet counts by itself: a stronghold in a faction's lands adds 1 (tick it on that faction), and the faction your species starts with gains 1, 2, 3 and 5 for each other faction of your side that is Friendly, Honored, Revered and Exalted.\n",
+    },
+    renownRivals = {
+        type = "description", order = 21.5,
+        hidden = function() return not ns.RenownRival(Sheet()) end,
+        name = function()
+            local first, second = ns.RenownRival(Sheet())
+            if not first then return "" end
+            return ("%sYou have renown with both the %s and the %s. They are rivals: a character rises with only one of the two. Set one of them to 0 or remove it.|r\n"):format(Opt.RED, first, second)
+        end,
     },
     addFaction = {
         type = "select", order = 22, name = "Faction",

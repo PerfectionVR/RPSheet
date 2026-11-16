@@ -34,9 +34,18 @@ end
 
 -- Attack: d20 + ability + proficiency, then the weapon's dice + ability.
 -- A natural 20 rolls the damage dice twice. Healing "weapons" skip the d20.
-function RPSheet:Attack(mode)
+-- `answers` is what the player was asked about this attack; without it the sheet
+-- asks first when it needs to (Actions/RollQuestions.lua), and the menu attacks.
+function RPSheet:Attack(mode, answers)
     local weapon = self:GetWeapon()
-    if not weapon then return end
+    if not weapon then
+        -- (A row or key that was there before the last weapon went.) The attempt still
+        -- settles a rest that could be taken back, like any attack (Actions/RestUndo.lua).
+        if ns.RestUndoExpire then ns.RestUndoExpire() end
+        self:Print("No weapon to attack with: add one under Customize > Weapons, or equip one on the Items tab.")
+        return
+    end
+    if self:CantAct(weapon.heal and ("use " .. weapon.name) or "attack") then return end
     local stat = self:WeaponStat(weapon)
     local mod = self:Mod(stat)
     if weapon.heal then
@@ -50,17 +59,21 @@ function RPSheet:Attack(mode)
     local damageMod = mod + self:DamageBonus(stat) + styleDamage
     -- A feature that gives advantage on attacks (switched on) applies by itself.
     -- Conditions count too, and some advantage is for Strength attacks only.
-    mode = self:ResolveMode("attack", mode, stat == "STR" and "STR attack" or nil)
+    local also = stat == "STR" and "STR attack" or nil
+    if not answers then
+        return self:AskRoll("attack", mode, also, function(found) self:Attack(mode, found) end)
+    end
+    mode = self:ResolveMode("attack", mode, also, nil, answers)
     local mastery = self:MasteryNote(weapon)
     local count, sides = self:WeaponDice(weapon)
     local word = ns.DamageWord(weapon)
-    self:RollD20(mode, function(d20, note)
+    self:RollTest(mode, function(d20, note, extra)
         local crit = d20 >= self:CritFrom() -- 20, or lower for a Champion
         self:RollDice(count * (crit and 2 or 1), sides, function(rolls)
             -- Great Weapon Fighting: low damage dice count as higher.
             for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end
             local text = ("attacks with %s - %s, %s"):format(
-                ns.Mark(weapon.name), RollText.Check("to hit", d20, attackMod, note),
+                ns.Mark(weapon.name), RollText.Check("to hit", d20, attackMod, note, extra),
                 RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod))
             -- Dice a feature adds to every melee hit are rolled next, doubled on a critical hit.
             local strikes = self:StrikeDice(weapon)

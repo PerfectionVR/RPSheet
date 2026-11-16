@@ -50,7 +50,7 @@ Spell("Eruption", 2, "DEX", { 3, 8 }, "Flames erupt in a 20-foot sphere: fire da
 Spell("Blistering Scales", 3, nil, nil, "Bonus action. A willing creature gains +1 AC and five explosive scales: each deals 1d8 fire damage to a creature that hits it in melee.", CONC)
 Spell("Emerald Blossom", 3, nil, nil, "Bonus action. A spectral bulb that heals creatures within 10 feet of it while it lasts.", CONC)
 Spell("Breath of Eons", 4, nil, nil, "Bronze dragon magic: you fly 60 feet a turn without provoking opportunity attacks, and curse creatures you pass. A cursed creature takes 1d10 more force damage the next time it is damaged.", CONC)
-Spell("Emberstorm", 4, "CON", { 6, 8 }, "White-hot embers fill a 20-foot sphere: fire damage, half on a success.")
+Spell("Emberstorm", 4, "CON", { 6, 8 }, "White-hot embers fill a 20-foot sphere: fire damage, half on a success. Creatures and flammable objects there start burning, for 1d8 fire damage at the start of each of their turns.")
 Spell("Time Dilation", 4, nil, nil, "Reaction when a creature within 60 feet takes damage: it takes 4d8 less now and loses that many hit points over its next turns instead.")
 Spell("Upheaval", 4, "DEX", { 3, 8 }, "Fiery stones erupt in a 20-foot cylinder: fire damage from the dice plus 1d12 bludgeoning damage, half on a successful save.")
 Spell("Dream Flight", 5, nil, { 5, 4 }, "Green dragon magic: as you move past creatures you can heal them.", With(HEAL, CONC))
@@ -72,7 +72,7 @@ Spell("Rain of Fire", 3, "DEX", { 3, 8 }, "Hellfire rains into a 20-foot cylinde
 
 -- Ranger (Hunter)
 Spell("Freezing Trap", 1, "CON", nil, "An unseen trap on the ground: the first creature to come within 5 feet is frozen in place if it fails the save, for a minute or until it takes damage.", CONC)
-Spell("Serpent Sting", 3, nil, { 4, 6 }, "Bonus action after a weapon hit: extra poison damage, and the target is poisoned for a minute. At the end of each of its turns it makes a Constitution save: 2d6 more poison on a failure, the end of the spell on a success.")
+Spell("Serpent Sting", 3, "CON", { 4, 6 }, "Bonus action after a weapon hit: extra poison damage, and the target is poisoned for a minute. At the end of each of its turns it makes a Constitution save: 2d6 more poison on a failure, the end of the spell on a success.")
 Spell("Explosive Trap", 5, "DEX", { 8, 6 }, "An unseen trap on the ground: it explodes in a 20-foot sphere when a creature comes close. Fire damage on a failed save, none on a success, and a Huge or smaller creature that fails is thrown 20 feet.", CONC)
 
 -- Druid
@@ -108,7 +108,7 @@ Spell("Fiery Brand", 2, "WIS", { 3, 10 }, "A burning symbol on a creature: fire 
 Spell("Sigil of Flame", 2, "CON", { 2, 8 }, "A sigil appears on a creature: fire damage, half on a success.")
 Spell("Demon Spikes", 3, nil, nil, "Bonus action. +2 AC, and a creature within 5 feet that hits you in melee takes 10 piercing damage.")
 Spell("Metamorphosis", 3, nil, nil, "Bonus action. You take on demonic features and choose one benefit: your force damage dice that show a 1 or 2 count as a 3; your melee weapon hits deal 1d6 more fire damage; or +2 Armor Class and 5 more current and maximum hit points. Casting it asks which, and switches that benefit on under Passives and traits; switch it off there when the spell ends.")
-Spell("Soul Reap", 3, "ATTACK", { 6, 6 }, "A bolt of cosmic matter that ignores cover: force damage on a hit.")
+Spell("Soul Reap", 3, "ATTACK", { 6, 6 }, "A bolt of cosmic matter that ignores cover: force damage on a hit. A 6 on a die adds another die, as many times as your spellcasting modifier; roll those by hand.")
 Spell("Chaos Nova", 4, "WIS", { 2, 6 }, "Chaos bursts within 20 feet of you: creatures you choose take the force damage, and those who fail the save are also stunned.")
 Spell("Collapsing Star", 4, "CON", { 4, 12 }, "A blast of Void energy in a 20-foot sphere: force damage to creatures you choose, half on a successful save.")
 Spell("Sigil of Chains", 5, "DEX", { 5, 6 }, "A sigil erupts in a 20-foot sphere: force damage, half on a successful save, and those who fail are dragged toward its centre.")
@@ -125,6 +125,9 @@ Add(R.SPELL_LISTS.Sorcerer, {
 Add(R.SPELL_LISTS.Paladin, { "Consecration", "Guided Prayer", "Divine Shield" })
 Add(R.SPELL_LISTS.Warlock, { "Entropic Embrace", "Curse of Agony", "Hand of Gul'dan", "Rain of Fire" })
 Add(R.SPELL_LISTS.Ranger, { "Freezing Trap", "Serpent Sting", "Explosive Trap" })
+-- Two classes also get a few core spells that their core class doesn't have.
+Add(R.SPELL_LISTS.Cleric, { "Mind Sliver", "Blur", "Levitate", "Haste", "Summon Undead", "Dominate Person", "Dominate Monster" })
+Add(R.SPELL_LISTS.Wizard, { "Create Food and Water", "Flame Strike", "Heroes' Feast" })
 Add(R.SPELL_LISTS.Druid, { "Wrath", "Moonfire", "Feral Prowl", "Roar of Ursoc", "Regrowth", "Starfall", "Innervate", "Tranquility", "Tree of Life" })
 
 R.CLASS_SPELLS = {

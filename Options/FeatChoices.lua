@@ -7,9 +7,10 @@ local Opt = ns.Opt
 local SLOT_LIMIT = 36 -- dropdowns built ahead; more picks than this are not expected
 
 -- Where a feat on the sheet comes from, to tell two of the same feat apart.
-local function Source(instance)
+local function Source(instance, sheet)
     local level = instance.id:match("^level:(%d+)$")
-    if level then return "level " .. level end
+    -- With several classes the number stands for a level of one class (Sheet/ClassSlots.lua).
+    if level then return sheet and ns.SlotLabel(sheet, tonumber(level)) or ("level " .. level) end
     return instance.id:match("^trait:(.+)$") or "origin"
 end
 
@@ -46,8 +47,8 @@ function Opt.FeatChoiceGroup(order, Context)
         group.args["feat" .. index] = {
             type = "header", order = index * 2 - 1,
             name = function()
-                local slot = Slot()
-                return slot and ("%s (%s)"):format(slot.instance.name, Source(slot.instance)) or ""
+                local slot, sheet = Slot()
+                return slot and ("%s (%s)"):format(slot.instance.name, Source(slot.instance, sheet)) or ""
             end,
             hidden = function()
                 local slot, _, _, _, before = Slot()

@@ -29,9 +29,10 @@ function ns.FeatSkillsKnown(sheet)
     return count
 end
 
+-- Tools picked in place of skills count as well (Sheet/FeatTools.lua).
 function ns.OpenFeatSkills(sheet)
     local limit = ns.FeatSkillLimit(sheet)
-    return limit > 0 and ns.FeatSkillsKnown(sheet) ~= limit
+    return limit > 0 and ns.FeatSkillsKnown(sheet) + ns.FeatToolsKnown(sheet) ~= limit
 end
 
 -- Makes the skills picked for feats proficient, and gives back those no longer picked.
@@ -57,19 +58,28 @@ function ns.ExpertiseLimit(sheet)
     if not R.CLASSES[sheet.class] then return 0 end
     local fromFeats = FeatPicks(sheet, "expertisePicks")
     if fromFeats > 0 then count, anySkill = fromFeats, true end
-    for level = 1, sheet.level do
-        for _, feature in ipairs(ns.FeaturesGainedAt(sheet.class, sheet.subclass, level)) do
-            if feature.expertise then
-                count = count + (Kit.AtLevel(sheet.level, feature.expertise.steps) or 0)
-                if feature.expertise.skills then
-                    for _, skill in ipairs(feature.expertise.skills) do allowed[skill] = true end
-                else
-                    anySkill = true
-                end
+    -- Each class's feature counts by the level in that class.
+    ns.EachGainedFeature(sheet, function(feature, view)
+        if feature.expertise then
+            count = count + (Kit.AtLevel(view.level, feature.expertise.steps) or 0)
+            if feature.expertise.skills then
+                for _, skill in ipairs(feature.expertise.skills) do allowed[skill] = true end
+            else
+                anySkill = true
             end
         end
+    end)
+    local limited = (not anySkill and count > 0) and allowed or nil
+    -- Picks held to a set of skills can't outnumber the ones of that set the character
+    -- is proficient in: otherwise a choice is asked for that nothing can answer.
+    if limited then
+        local open = 0
+        for skill in pairs(limited) do
+            if (sheet.skills[skill] or 0) >= 1 then open = open + 1 end
+        end
+        count = math.min(count, open)
     end
-    return count, (not anySkill and count > 0) and allowed or nil
+    return count, count > 0 and limited or nil
 end
 
 function ns.ExpertiseKnown(sheet)

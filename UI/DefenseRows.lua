@@ -21,6 +21,7 @@ local ROWS = {
 function UI.AddDefenseRows(addon, body)
     local defenses = addon:Defenses()
     for _, row in ipairs(ROWS) do
+        -- (`lines` is made with the names; only joining them waits for the mouse)
         local names, lines = ns.DefenseNames(defenses[row.field])
         if #names > 0 then
             local shown
@@ -31,7 +32,7 @@ function UI.AddDefenseRows(addon, body)
                 shown = R.DamageList(names)
             end
             UI.AddLabel(body, 1, ("%s %s%s|r"):format(row.label, UI.ACCENT, shown), nil, row.title,
-                row.tip .. "\n\n" .. table.concat(lines, "\n") .. SWITCH)
+                function() return row.tip .. "\n\n" .. table.concat(lines, "\n") .. SWITCH end)
         end
     end
 end

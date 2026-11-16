@@ -1,0 +1,12 @@
+# Facts about the site's spells that are in their text, found by a pattern in the
+# site's page (see tests/t-conform-spells.lua).
+# plusmod: a roll of the spell adds the caster's spellcasting ability modifier
+plusmod|Arcane Vigor;Bigby's Hand;Conjure Celestial;Conjure Fey;Cure Wounds;Flame Blade;Guided Prayer;Healing Word;Mass Cure Wounds;Mass Healing Word;Mordenkainen's Sword;Prayer of Mending;Shadow Word: Pain;Spiritual Weapon;Tranquility;Void Eruption
+# attacktext: the caster makes an attack roll in the spell's text, though the site's
+# list of attack tags leaves the spell out (read from the ten spells the pattern found)
+attacktext|Conjure Fey;Living Flame
+# savetext: the saving throws the spell's text asks for, where the site's list of
+# save tags says something else (read from the twelve spells whose text and tags name
+# different abilities; in the other ten the text only speaks of saves the spell
+# doesn't force). They take the place of the tags.
+savetext|Earthquake=DEX;Banishing Smite=CHA

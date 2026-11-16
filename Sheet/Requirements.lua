@@ -43,53 +43,83 @@ function ns.ArmorKind(armorKey)
     return armor and armor.name:match("%((%a+)%)")
 end
 
--- Armor keys a character with this training can wear, in the usual order.
--- `current` is always included, so an existing choice stays visible.
-function ns.ArmorChoices(training, current)
-    local values, order = {}, {}
-    for _, key in ipairs(R.ARMOR_ORDER) do
-        local kind = ns.ArmorKind(key)
-        if not kind or training[kind] or key == current then
-            values[key] = R.ARMOR[key].name
-            order[#order + 1] = key
-        end
+-- The same for a whole character: the first class's training, and the smaller part a
+-- class taken later adds (Data/Multiclass.lua).
+function ns.SheetArmorTraining(sheet)
+    local training = ns.ArmorTraining(sheet.class, sheet.passives)
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        for _, kind in ipairs(gained and gained.armor or {}) do training[kind] = true end
     end
-    return values, order
+    return training
 end
 
 function RPSheet:ArmorTraining()
-    return ns.ArmorTraining(self:Sheet().class, self:Sheet().passives)
+    return ns.SheetArmorTraining(self:Sheet())
 end
 
 ---------------------------------------------------------------------------
 -- Weapon mastery
 ---------------------------------------------------------------------------
--- How many weapons the character can use the mastery of.
-function RPSheet:MasteryLimit()
-    local class = self:ClassData()
-    if not class or not self:HasWeaponMastery() then return 0 end
-    return ns.FeatureKit.AtLevel(self:Level(), R.MASTERY_LIMITS[class.base] or {}) or 0
-end
-
--- How many weapons have a mastery set. A companion's family picked for its strike
--- takes one of the picks too (Sheet/Pet.lua).
-function RPSheet:MasteriesUsed()
-    local used = self:PetMastery() and 1 or 0
-    for _, weapon in ipairs(self:Sheet().weapons) do
-        if R.MASTERIES[weapon.mastery] and not weapon.heal then used = used + 1 end
-    end
-    return used
-end
-
--- Weapons whose mastery counts: the first ones in the list, up to the limit.
-function RPSheet:MasteredWeapons()
-    local counted, left = {}, self:MasteryLimit() - (self:PetMastery() and 1 or 0)
-    for _, weapon in ipairs(self:Sheet().weapons) do
-        if R.MASTERIES[weapon.mastery] and not weapon.heal and left > 0 then
-            counted[weapon], left = true, left - 1
+-- How many weapons the character can use the mastery of: what the class's feature
+-- allows, and one for each feat that unlocks a kind of weapon (Weapon Master).
+-- Our reading for several classes: each class's Weapon Mastery is a feature of its
+-- own that lets the character pick so many kinds of weapon, and a class gives its
+-- features at its own level. The multiclassing rules name the features that don't
+-- add up (Extra Attack, the ways to work out Armor Class, Spellcasting) and Weapon
+-- Mastery is not one of them, so the picks of the classes are added together.
+-- A feat's pick is for the one kind of weapon chosen for it, also when the class has
+-- picks of its own: a weapon of that kind uses the feat's pick, any other one of the
+-- class's. Returns the class's picks and how many weapons use them (a companion's
+-- family picked for its strike takes one too, Sheet/Pet.lua), the feats' picks and
+-- how many of their kinds have a weapon with a mastery, and the feats' kinds.
+local function MasteryParts(self)
+    local sheet = self:Sheet()
+    local kinds, fromFeats = ns.FeatMasteryWeapons(sheet)
+    local classPicks = 0
+    if self:ClassData() and self:HasWeaponMastery() then
+        for _, view in ipairs(ns.ClassViews(sheet)) do
+            local base = R.CLASSES[view.class].base
+            classPicks = classPicks + (ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
         end
     end
-    return counted, left
+    local classUsed, featKinds, featUsed = self:PetMastery() and 1 or 0, {}, 0
+    for _, weapon in ipairs(sheet.weapons) do
+        if R.MASTERIES[weapon.mastery] and not weapon.heal then
+            local kind = weapon.base or ""
+            if not kinds[kind] then
+                classUsed = classUsed + 1
+            elseif not featKinds[kind] then
+                featKinds[kind], featUsed = true, featUsed + 1
+            end
+        end
+    end
+    return classPicks, classUsed, fromFeats, featUsed, kinds
+end
+
+function RPSheet:MasteryLimit()
+    local classPicks, _, fromFeats = MasteryParts(self)
+    return classPicks + fromFeats
+end
+
+-- How many of those picks are in use.
+function RPSheet:MasteriesUsed()
+    local _, classUsed, _, featUsed = MasteryParts(self)
+    return classUsed + featUsed
+end
+
+-- True when more weapons have a mastery than the class allows: a feat's pick doesn't
+-- make room for a weapon of another kind.
+function RPSheet:MasteryOver()
+    local classPicks, classUsed = MasteryParts(self)
+    return classUsed > classPicks
+end
+
+-- True when a new weapon of this kind (nil: the companion's strike) can take a mastery.
+function RPSheet:MasteryRoom(kind)
+    local classPicks, classUsed, _, _, kinds = MasteryParts(self)
+    if kind and kinds[kind] then return true end
+    return classUsed < classPicks
 end
 
 ---------------------------------------------------------------------------
@@ -97,7 +127,23 @@ end
 ---------------------------------------------------------------------------
 -- Cantrips known, spells prepared, and the highest spell level the character has
 -- slots for. All zero for a class that doesn't cast.
-function RPSheet:SpellLimits()
+-- With several classes each one has limits of its own, by its own level: `classKey`
+-- asks for one class, and without it the classes are added up (the highest spell
+-- level is then the highest any of them can prepare).
+function RPSheet:SpellLimits(classKey)
+    local sheet = self:Sheet()
+    if ns.IsMulticlass(sheet) then
+        local cantrips, prepared, highest = 0, 0, 0
+        for _, view in ipairs(ns.ClassViews(sheet)) do
+            local class = R.CLASSES[view.class]
+            if class and class.caster and (not classKey or classKey == view.class) then
+                cantrips = cantrips + (ns.FeatureKit.AtLevel(view.level, R.CANTRIPS_KNOWN[class.base] or {}) or 0)
+                prepared = prepared + ((R.SPELLS_PREPARED[class.base] or {})[view.level] or 0)
+                highest = math.max(highest, ns.ClassSpellLevel(class, view.level))
+            end
+        end
+        return cantrips, prepared, highest
+    end
     local class = self:ClassData()
     if not class or not class.caster then return 0, 0, 0 end
     local level = self:Level()
@@ -110,10 +156,13 @@ end
 
 -- How many cantrips and prepared spells are on the sheet. Spells marked as not
 -- counting (always prepared, from a lineage or a feat) are left out; so is `except`.
-function RPSheet:SpellCounts(except)
+-- `classKey` counts only the spells of one class of a character with several.
+function RPSheet:SpellCounts(except, classKey)
     local cantrips, prepared = 0, 0
-    for _, spell in ipairs(self:Sheet().spells) do
-        if spell ~= except and not spell.free and spell.name ~= "" then
+    local sheet = self:Sheet()
+    for _, spell in ipairs(sheet.spells) do
+        local counted = not classKey or ns.SpellClass(sheet, spell) == classKey
+        if spell ~= except and not spell.free and spell.name ~= "" and counted then
             if spell.level == 0 then cantrips = cantrips + 1 else prepared = prepared + 1 end
         end
     end
@@ -121,9 +170,9 @@ function RPSheet:SpellCounts(except)
 end
 
 -- True if one more spell of this level would still fit.
-function RPSheet:SpellFits(level, except)
-    local maxCantrips, maxPrepared, highest = self:SpellLimits()
-    local cantrips, prepared = self:SpellCounts(except)
+function RPSheet:SpellFits(level, except, classKey)
+    local maxCantrips, maxPrepared, highest = self:SpellLimits(classKey)
+    local cantrips, prepared = self:SpellCounts(except, classKey)
     if level == 0 then return cantrips < maxCantrips end
     return level <= highest and prepared < maxPrepared
 end

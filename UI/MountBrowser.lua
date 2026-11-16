@@ -1,0 +1,104 @@
+-- The stable: the item browser (UI/ItemBrowser.lua) on the character's mounts,
+-- vehicles and companion creatures. What is owned, every listed one, and adding,
+-- buying, riding, calling and removing.
+local ADDON, ns = ...
+local R = ns.Rules
+local RPSheet = ns.addon
+local UI = ns.UI
+local AceConfigDialog = LibStub("AceConfigDialog-3.0")
+
+-- The Customize > Mounts and companions page, behind the cog of the stable.
+function ns.OpenMountOptions()
+    AceConfigDialog:Open(ADDON)
+    AceConfigDialog:SelectGroup(ADDON, "customize", "mounts")
+end
+
+-- After a button changed the list. The sheet is rebuilt on the next frame, because
+-- the button is part of what gets rebuilt, and the stable with it; what the button did
+-- may have asked for that already (paying), and it happens once.
+local function Changed(self)
+    ns.RebuildOptions() -- an entry's page under Customize may have come or gone
+    self:ClampState()
+    self:PopulateSoon()
+end
+
+local STABLE = {
+    first = { name = "Owned", tip = "Every mount, vehicle and companion creature you have." },
+    kinds = {
+        { name = "Mounts", kind = "Mounts" }, { name = "Drawn", kind = "Drawn vehicles" },
+        { name = "Powered", kind = "Powered vehicles" }, { name = "Ships", kind = "Ships" },
+        { name = "Companions", kind = "Companions" }, { name = "Special", kind = "Made and summoned" },
+    },
+    empty = "You own no mount, vehicle or companion creature yet. Open another tab to add or buy one.",
+    title = function(self) return ("%s - Stable"):format(self:GetCharacterName()) end,
+    class = function() return nil end,
+    find = function(self, name) return self:OwnedMount(name) end,
+    names = function(kind) return R.MOUNT_NAMES[kind] end,
+    lines = function(self, entry) return UI.MountLines(self, entry.name, entry.item) end,
+    options = function() ns.OpenMountOptions() end,
+    top = function(self, body) UI.AddShopChoice(self, body) end,
+}
+
+function STABLE.standing(self)
+    local riding, companion = self:Riding(), self:Companion()
+    return ("Money %s%s|r     On %s%s|r     Companion out %s%s|r\n%sBuy pays the price from your coins and asks for the seller's standing; Add takes it for nothing, for a gift or a reward. No rule names a price for selling a mount or a vehicle: Remove takes it off the list, and what a buyer pays is between you and the DM. Saddles, feed and fuel are in the item browser, under Gear.|r"):format(
+        UI.ACCENT, ns.CoinText(self:Coins()), UI.ACCENT, riding and riding.name or "foot",
+        UI.ACCENT, companion and companion.name or "none", UI.GREY)
+end
+
+function STABLE.own(self)
+    local entries = {}
+    for _, entry in ipairs(self:Sheet().mounts or {}) do
+        if entry.name ~= "" then entries[#entries + 1] = { name = entry.name, item = entry } end
+    end
+    return entries
+end
+
+function STABLE.marks(_, entry)
+    local owned, marks = entry.item, {}
+    if not owned then return marks end
+    marks[#marks + 1] = "owned"
+    if owned.riding then marks[#marks + 1] = owned.kind == "VEHICLE" and "aboard" or "riding" end
+    if owned.hitched then marks[#marks + 1] = "in harness" end
+    if owned.called then marks[#marks + 1] = "out" end
+    return marks
+end
+
+function STABLE.buttons(self, card, entry, first)
+    local name, owned = entry.name, entry.item
+    if not first then
+        local known = R.MOUNTS[name]
+        -- What it costs from whoever is selling (Sheet/Shop.lua).
+        local price, percent = self:MountBuyPrice(name)
+        local label = known.unsold and "Not for sale" or ns.BuyLabel(price, percent)
+        UI.AddItemButton(card, 0.35, "Add", true, function()
+            self:AddMount(name)
+            Changed(self)
+        end)
+        UI.AddItemButton(card, 0.6, label, not self:MountNotSold(name) and self:CanAfford(price), function()
+            if self:BuyMount(name) then Changed(self) end
+        end)
+        return
+    end
+    if owned.kind == "COMPANION" then
+        UI.AddItemButton(card, 0.5, owned.called and "Dismiss" or "Call", true, function() self:ToggleCompanion(owned) end)
+    else
+        local label = owned.riding and "Get off" or (owned.kind == "VEHICLE" and "Get aboard" or "Ride")
+        UI.AddItemButton(card, 0.5, label, owned.riding or not self:MountRefusal(owned), function() self:ToggleRiding(owned) end)
+        -- An animal goes in harness, a drawn vehicle behind the harnessed animals.
+        if ns.CanPull(owned) or ns.IsDrawn(owned) then
+            UI.AddItemButton(card, 0.5, owned.hitched and "Unharness" or "Harness", true, function()
+                self:SetHitched(owned, not owned.hitched)
+                Changed(self)
+            end)
+        end
+    end
+    UI.AddItemButton(card, 0.45, "Remove", true, function()
+        self:RemoveMount(owned)
+        Changed(self)
+    end)
+end
+
+function RPSheet:ToggleMountBrowser()
+    self:ShowItemBrowser(STABLE)
+end

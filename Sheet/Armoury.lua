@@ -19,13 +19,23 @@ function ns.WeaponProficient(classKey, name)
     return text:find("martial") ~= nil
 end
 
--- Basic weapons a class is proficient with, in the usual order.
-function ns.ProficientWeapons(classKey)
-    local names = {}
-    for _, name in ipairs(R.WEAPON_ORDER) do
-        if ns.WeaponProficient(classKey, name) then names[#names + 1] = name end
+-- The same for a whole character, from every source: the first class's training; a
+-- class taken after the first, which can add the martial weapons (Data/Multiclass.lua);
+-- a class option that does (a Priest's Protector, a Druid's Warden); and the feat
+-- Martial Weapon Training.
+local MARTIAL_FEATS = { ["Martial Weapon Training"] = true }
+function ns.SheetWeaponProficient(sheet, name)
+    if ns.WeaponProficient(sheet.class, name) then return true end
+    local weapon = R.WEAPONS[name]
+    if not weapon or weapon.category == "SIMPLE" then return false end
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        if gained and gained.martial then return true end
     end
-    return names
+    for _, passive in ipairs(sheet.passives or {}) do
+        if passive.martial or (MARTIAL_FEATS[passive.name] and passive.enabled ~= false) then return true end
+    end
+    return false
 end
 
 -- A sheet entry for a basic weapon. `modifier(stat)` gives the character's ability
@@ -86,7 +96,7 @@ function RPSheet:WeaponDice(weapon)
     -- Martial Arts: a monk weapon rolls the Martial Arts die when that is the larger one.
     local sheet = self:Sheet()
     if data and count == 1 and not data.ranged and (data.category == "SIMPLE" or data.props.L) and ns.HasFeature(sheet, "Martial Arts") and ns.Unarmored(sheet) then
-        sides = math.max(sides, ns.FeatureKit.MartialDie(sheet.level))
+        sides = math.max(sides, ns.FeatureKit.MartialDie((ns.BaseView(sheet, "Monk") or sheet).level))
     end
     return count, sides
 end

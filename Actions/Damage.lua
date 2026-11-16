@@ -7,14 +7,15 @@ local R = ns.Rules
 local RPSheet = ns.addon
 
 -- What the damage comes to for this character, and the steps that changed it in words.
-function RPSheet:AdjustDamage(amount, damageType, reduction)
+-- `why` names what the reduction comes from, when that is worth saying.
+function RPSheet:AdjustDamage(amount, damageType, reduction, why)
     local defenses, notes, final = self:Defenses(), {}, amount
     if damageType and defenses.immune[damageType] then
         return 0, { ("none of it gets through (immunity: %s)"):format(defenses.immune[damageType]) }
     end
     if (reduction or 0) > 0 then
         final = math.max(0, final - reduction)
-        notes[#notes + 1] = ("reduced by %d to %d"):format(reduction, final)
+        notes[#notes + 1] = ("reduced by %d to %d%s"):format(reduction, final, (why and why ~= "") and (" (" .. why .. ")") or "")
     end
     if damageType and defenses.resist[damageType] and final > 0 then
         final = math.floor(final / 2)
@@ -27,30 +28,29 @@ function RPSheet:AdjustDamage(amount, damageType, reduction)
     return final, notes
 end
 
--- Damage to a character already at 0 hit points: a failed death save, or death when
--- it is as much as the hit point maximum. Returns the words for the announcement.
-local function HurtWhileDown(state, damage, max)
+-- Damage to a character already at 0 hit points: a failed death save, two when the
+-- hit was a critical one, or death when it is as much as the hit point maximum.
+-- Returns the words for the announcement.
+local function HurtWhileDown(state, damage, max, crit)
     if (state.deathFail or 0) >= 3 then return "Already dead" end
     if damage >= max then
         state.deathFail = 3
         return "Dead: that is as much as their hit point maximum"
     end
     if (state.deathPass or 0) >= 3 then state.deathPass, state.deathFail = 0, 0 end -- no longer stable
-    state.deathFail = math.min(3, (state.deathFail or 0) + 1)
-    if state.deathFail >= 3 then return "A third failed death save: dead" end
-    return ("A failed death save: %d passed, %d failed"):format(state.deathPass or 0, state.deathFail)
+    state.deathFail = math.min(3, (state.deathFail or 0) + (crit and 2 or 1))
+    local what = crit and "A critical hit, two failed death saves" or "A failed death save"
+    if state.deathFail >= 3 then return crit and (what .. ": dead") or "A third failed death save: dead" end
+    return ("%s: %d passed, %d failed"):format(what, state.deathPass or 0, state.deathFail)
 end
 
--- `damageType` is one of Rules.DAMAGE_TYPES or nil for damage without a type;
--- `reduction` is taken off before anything else.
-function RPSheet:TakeDamage(amount, damageType, reduction)
-    amount = math.floor(tonumber(amount) or 0)
-    if amount <= 0 then
-        self:Print("Give the damage as a number above 0, for example /sheet damage 14 fire.")
-        return
-    end
+-- Takes the damage once everything that comes off first is known. `ward` is what a
+-- companion's gift rolled against it: { name, sides, rolled }; `why` says where a
+-- `reduction` comes from; `crit` is true for a critical hit.
+local function Apply(self, amount, damageType, reduction, ward, why, crit)
     local state, max = self:State(), self:MaxHP()
-    local final, notes = self:AdjustDamage(amount, damageType, reduction)
+    local final, notes = self:AdjustDamage(amount, damageType, (reduction or 0) + (ward and ward.rolled or 0), why)
+    if ward then table.insert(notes, 1, ("%s takes 1d%d = %d off"):format(ward.name, ward.sides, ward.rolled)) end
 
     local absorbed = math.min(state.tempHP or 0, final)
     if absorbed > 0 then
@@ -60,7 +60,7 @@ function RPSheet:TakeDamage(amount, damageType, reduction)
     local left, before = final - absorbed, state.hp or max
     local wasDown, ending = before <= 0, nil
     if wasDown then
-        if left > 0 then ending = HurtWhileDown(state, left, max) end
+        if left > 0 then ending = HurtWhileDown(state, left, max, crit) end
     else
         state.hp = math.max(0, before - left)
         if state.hp == 0 then
@@ -87,8 +87,33 @@ function RPSheet:TakeDamage(amount, damageType, reduction)
     elseif final > 0 and state.conditions.Concentrating then
         self:RollConcentration(final)
     end
+    self:EndBondsAtZero() -- a Warding Bond the character cast (Actions/WardDamage.lua)
     self:QueueBroadcast()
     self:PopulateSoon()
+end
+
+-- `damageType` is one of Rules.DAMAGE_TYPES or nil for damage without a type;
+-- `reduction` is taken off before anything else, and `why` says where it comes from.
+-- `crit` is true when the hit was a critical one: the amount is typed as it was
+-- rolled, so that only matters to a character at 0 hit points.
+-- Actions/WardDamage.lua wraps this to roll the wards that take dice off the damage.
+function RPSheet:TakeDamage(amount, damageType, reduction, why, crit)
+    amount = math.floor(tonumber(amount) or 0)
+    if amount <= 0 then
+        self:Print("Give the damage as a number above 0, for example /sheet damage 14 fire.")
+        return
+    end
+    -- A loyal mechanical companion: a die comes off psychic damage each time. Nothing
+    -- is rolled against damage the character is immune to.
+    local sides, companion = self:CompanionWard(damageType)
+    if not sides or self:Defenses().immune[damageType] then return Apply(self, amount, damageType, reduction, nil, why, crit) end
+    if self.busy or self:IsRolling() then
+        self:Print("Another roll is still going. Take the damage again when it is done.")
+        return
+    end
+    self:Roll(sides, function(rolled)
+        Apply(self, amount, damageType, reduction, { name = companion.name, sides = sides, rolled = rolled }, why, crit)
+    end)
 end
 
 -- Regains hit points, up to the maximum.
@@ -112,14 +137,17 @@ function RPSheet:Heal(amount)
 end
 
 -- "/sheet damage 14 fire", "/sheet damage 14", "/sheet damage 28 fire -5" (5 taken
--- off first, as by a ward), "/sheet heal 8".
+-- off first, as by a ward), "/sheet damage 14 fire crit" (a critical hit, with the
+-- word anywhere after the amount), "/sheet heal 8".
 function RPSheet:DamageCommand(verb, rest)
     local amount = tonumber(rest:match("^(%d+)")) or 0
     if verb == "heal" then return self:Heal(amount) end
+    local crit
+    rest, crit = rest:gsub("%f[%a][Cc][Rr][Ii][Tt]%a*", "")
     local damageType = rest:match("^%d+%s+(%a+)")
     if damageType and not R.DAMAGE_TYPE[damageType] then
         self:Print(("\"%s\" is not a damage type. Use one of: %s."):format(damageType, table.concat(R.DAMAGE_TYPES, ", ")))
         return
     end
-    self:TakeDamage(amount, damageType, tonumber(rest:match("%-%s*(%d+)%s*$")))
+    self:TakeDamage(amount, damageType, tonumber(rest:match("%-%s*(%d+)%s*$")), nil, crit > 0)
 end

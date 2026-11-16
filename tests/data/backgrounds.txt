@@ -1,0 +1,18 @@
+# Backgrounds (XPHB; the setting's book adds none), reduced from data/backgrounds.json.
+# A = the equipment option (cp: = coins left, in copper; type: = one of a kind), B = coins alone.
+background|Acolyte|XPHB|stats=int,wis,cha|feat=magic initiate; cleric|skills=insight,religion|tool=calligrapher's supplies|A=book;calligrapher's supplies;holy symbol;parchment*10;robe;cp:800|B=cp:5000
+background|Artisan|XPHB|stats=str,dex,int|feat=crafter|skills=investigation,persuasion|tool=anyArtisansTool|A=type:toolArtisan;pouch*2;traveler's clothes;cp:3200|B=cp:5000
+background|Charlatan|XPHB|stats=dex,con,cha|feat=skilled|skills=deception,sleight of hand|tool=forgery kit|A=forgery kit;costume;fine clothes;cp:1500|B=cp:5000
+background|Criminal|XPHB|stats=dex,con,int|feat=alert|skills=sleight of hand,stealth|tool=thieves' tools|A=dagger*2;thieves' tools;crowbar;pouch*2;traveler's clothes;cp:1600|B=cp:5000
+background|Entertainer|XPHB|stats=str,dex,cha|feat=musician|skills=acrobatics,performance|tool=anyMusicalInstrument|A=type:instrumentMusical;costume*2;mirror;perfume;traveler's clothes;cp:1100|B=cp:5000
+background|Farmer|XPHB|stats=str,con,wis|feat=tough|skills=animal handling,nature|tool=carpenter's tools|A=sickle;carpenter's tools;healer's kit;iron pot;shovel;traveler's clothes;cp:3000|B=cp:5000
+background|Guard|XPHB|stats=str,int,wis|feat=alert|skills=athletics,perception|tool=anyGamingSet|A=spear;light crossbow;bolts (20);type:setGaming;hooded lantern;manacles;quiver;traveler's clothes;cp:1200|B=cp:5000
+background|Guide|XPHB|stats=dex,con,wis|feat=magic initiate; druid|skills=stealth,survival|tool=cartographer's tools|A=shortbow;arrows (20);cartographer's tools;bedroll;quiver;tent;traveler's clothes;cp:300|B=cp:5000
+background|Hermit|XPHB|stats=con,wis,cha|feat=healer|skills=medicine,religion|tool=herbalism kit|A=quarterstaff;herbalism kit;bedroll;book;lamp;oil*3;traveler's clothes;cp:1600|B=cp:5000
+background|Merchant|XPHB|stats=con,int,cha|feat=lucky|skills=animal handling,persuasion|tool=navigator's tools|A=navigator's tools;pouch*2;traveler's clothes;cp:2200|B=cp:5000
+background|Noble|XPHB|stats=str,int,cha|feat=skilled|skills=history,persuasion|tool=anyGamingSet|A=type:setGaming;fine clothes;perfume;cp:2900|B=cp:5000
+background|Sage|XPHB|stats=con,int,wis|feat=magic initiate; wizard|skills=arcana,history|tool=calligrapher's supplies|A=quarterstaff;calligrapher's supplies;book;parchment*8;robe;cp:800|B=cp:5000
+background|Sailor|XPHB|stats=str,dex,wis|feat=tavern brawler|skills=acrobatics,perception|tool=navigator's tools|A=dagger;navigator's tools;rope;traveler's clothes;cp:2000|B=cp:5000
+background|Scribe|XPHB|stats=dex,int,wis|feat=skilled|skills=investigation,perception|tool=calligrapher's supplies|A=calligrapher's supplies;fine clothes;lamp;oil;parchment;cp:2300|B=cp:5000
+background|Soldier|XPHB|stats=str,dex,con|feat=savage attacker|skills=athletics,intimidation|tool=anyGamingSet|A=spear;shortbow;arrows (20);type:setGaming;healer's kit;quiver;traveler's clothes;cp:1400|B=cp:5000
+background|Wayfarer|XPHB|stats=dex,wis,cha|feat=lucky|skills=insight,stealth|tool=thieves' tools|A=dagger*2;thieves' tools;type:setGaming;bedroll;pouch*2;traveler's clothes;cp:1600|B=cp:5000

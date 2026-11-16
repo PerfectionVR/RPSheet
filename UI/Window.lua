@@ -7,7 +7,7 @@ local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetWindow", 1
 
 local TITLE_HEIGHT, PADDING = 22, 8
-local MIN_WIDTH, MIN_HEIGHT = 300, 200 -- narrower than this and the rows and tabs wrap
+local MIN_WIDTH, MIN_HEIGHT = 340, 200 -- narrower than this and the rows and tabs wrap
 local LOCK_ICON = "Interface\\PetBattles\\PetBattle-LockIcon"
 local EDIT_ICON = "Interface\\Buttons\\UI-OptionsButton"
 
@@ -185,7 +185,7 @@ local function Constructor()
         return "Lock window", "Stops the window from being moved or resized, and lets clicks on its title bar, background and edges through to the game. The rows stay clickable."
     end)
     widget.editButton = TitleButton(widget, 2, EDIT_ICON, "OnEditClick", function()
-        return "Edit character", "Stats, armor, weapons, abilities, passives and appearance."
+        return "Settings", "Your character and its levels, everything on the sheet under Customize, general settings, the window's look, import and export."
     end)
 
     widget.minimizeButton = TitleButton(widget, 3, "Interface\\Buttons\\UI-MinusButton-Up", "OnMinimizeClick", function(self)
@@ -204,6 +204,12 @@ local function Constructor()
     sizer:SetScript("OnMouseUp", function()
         frame:StopMovingOrSizing()
         SaveStatus(widget)
+        -- Set the rows out once more at the final size. While the window is dragged a row
+        -- is placed by the height it had a step earlier, so a row whose text wrapped
+        -- differently on the last step would be left lying over the next one.
+        for _, child in ipairs(widget.children) do
+            if child.DoLayout then ns.UI.SetOut(child) end
+        end
     end)
     widget.sizer = sizer
     widget.sizerTexture = sizer:CreateTexture(nil, "OVERLAY")

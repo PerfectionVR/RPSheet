@@ -82,6 +82,13 @@ function RPSheet:EndBenefits()
     return ended
 end
 
+-- The damage type of a spell on the sheet: the one set on it by hand, or the listed
+-- spell's own. Nil when neither says.
+function ns.SpellDamageType(spell)
+    if R.DAMAGE_TYPE[spell.damage or ""] then return spell.damage end
+    return R.SPELL_DAMAGE[spell.name]
+end
+
 -- Raises low force damage dice while a switched-on passive says so (flag forceMin).
 -- Changes `rolls` in place and returns a note for the announcement, or nil.
 function RPSheet:RaiseForceDice(rolls)

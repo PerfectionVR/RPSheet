@@ -4,7 +4,6 @@
 -- of the player's own passives counts as soon as its text says "blindsight out to 30
 -- feet". Damage the character resists is in Sheet/Defenses.lua.
 local _, ns = ...
-local R = ns.Rules
 local RPSheet = ns.addon
 
 local SENSES = { "Darkvision", "Blindsight", "Tremorsense", "Truesight" }

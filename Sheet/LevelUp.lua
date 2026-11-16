@@ -31,35 +31,84 @@ local function Added(before, after)
     return names
 end
 
-function RPSheet:SetLevel(level)
+-- After a change that may have raised the hit point maximum from `oldMax`: the current
+-- hit points grow by as much (a level, a class or subclass changed under Customize).
+-- A lower maximum only caps them, which RPSheet:ClampState does.
+function RPSheet:KeepHPGain(oldMax)
+    local state, gained = self:State(), self:MaxHP() - oldMax
+    if gained > 0 then state.hp = (state.hp or oldMax) + gained end
+end
+
+-- Sets the character's level. The levels gained or lost are those of `classKey`: the
+-- first class when it is left out, one of the character's other classes, or a class
+-- it doesn't have yet, which is then added (Sheet/Classes.lua). Losing the last level
+-- of a later class removes that class; the first class always keeps one level.
+-- `with` may carry what the level dialog picked for a class's first level:
+-- { subclass =, skill =, style =, styleSlot = } (the last two: a Fighting Style and
+-- the slot it goes in, Sheet/FightingStyles.lua).
+function RPSheet:SetLevel(level, classKey, with)
     local sheet, state = self:Sheet(), self:State()
     local old = sheet.level
     level = math.max(1, math.min(R.MAX_LEVEL, level))
+    local key = (R.CLASSES[classKey] and R.CLASSES[sheet.class]) and classKey or sheet.class
+    local first = key == sheet.class
+    local oldClass = ns.ClassLevel(sheet, key) -- 0 for a class it doesn't have yet
+    level = old + math.max(level - old, (first and 1 or 0) - oldClass)
     if level == old then return end
 
     local oldHP, oldBonus = self:MaxHP(), self:ProficiencyBonus()
     local oldNames, oldMaximums = FeatureNames(sheet), TrackerMaximums(self)
+    local oldDice = {}
+    for _, dice in ipairs(ns.HitDice(sheet)) do oldDice[dice.sides] = dice.count end
 
+    local class = R.CLASSES[key]
+    local newClass = oldClass + level - old
+    if not first then
+        if type(sheet.classes) ~= "table" then sheet.classes = {} end
+        if newClass <= 0 then
+            sheet.classes[key] = nil
+        elseif ns.ClassEntry(sheet, key) then
+            sheet.classes[key].level = newClass
+        else
+            -- A hero class comes with its subclass from the start.
+            sheet.classes[key] = { level = newClass, subclass = class.hero and class.subclasses[1] or "", spec = "", skill = "" }
+        end
+        local entry = ns.ClassEntry(sheet, key)
+        if entry and with and with.subclass then entry.subclass = with.subclass end
+        if entry and with and (with.skill or "") ~= "" then entry.skill = with.skill end
+        if entry and with and (with.style or "") ~= "" then ns.SetClassStyle(sheet, key, with.styleSlot, with.style) end
+    end
     sheet.level = level
+    -- Remembered for going back a level; only a character of several classes needs it.
+    sheet.lastClass = (level > old and ns.IsMulticlass(sheet)) and key or ""
     -- Going down: the choices of the lost levels are undone, and a subclass is given
-    -- up below the level it is chosen at.
+    -- up below the level of its class it is chosen at.
     Levels.Trim(sheet)
-    local class = R.CLASSES[sheet.class]
     -- A hero class keeps its subclass: it is fixed when the character is made.
-    if level < R.SUBCLASS_LEVEL and old >= R.SUBCLASS_LEVEL and not (class and class.hero) then sheet.subclass = "" end
+    if newClass > 0 and newClass < R.SUBCLASS_LEVEL and oldClass >= R.SUBCLASS_LEVEL and not (class and class.hero) then
+        ns.SetSubclass(sheet, key, "")
+    end
     ns.ApplyGrants(sheet)
     ns.NormalizeState(state)
 
     -- Going up, current HP and hit dice grow by what was gained. Going down they are
     -- only capped by the new maximums.
     if level > old then
-        state.hp = (state.hp or oldHP) + math.max(0, self:MaxHP() - oldHP)
-        state.hitDice = (state.hitDice or old) + (level - old)
+        self:KeepHPGain(oldHP)
+        for _, tracker in ipairs(self:GetTrackers()) do
+            if tracker.kind == "hitdice" then
+                local before = oldDice[tracker.sides] or 0
+                tracker.set((tracker.get() or before) + math.max(0, tracker.max - before))
+            end
+        end
     end
     self:ClampState()
 
     -- Tell the player what the change did.
     local lines = { ("Level %d -> %d."):format(old, level) }
+    if class and (not first or ns.IsMulticlass(sheet)) then
+        lines[#lines + 1] = ("%s %d -> %d."):format(class.name, oldClass, math.max(0, newClass))
+    end
     if self:MaxHP() ~= oldHP then
         lines[#lines + 1] = ("Maximum HP %d -> %d."):format(oldHP, self:MaxHP())
     end
@@ -84,16 +133,35 @@ function RPSheet:SetLevel(level)
     if #lost > 0 then lines[#lines + 1] = "Lost: " .. table.concat(lost, ", ") .. "." end
 
     local pending = Levels.Pending(sheet)
-    if #pending > 0 then
+    if #pending > 0 and ns.IsMulticlass(sheet) then
+        local names = {}
+        for _, slot in ipairs(pending) do names[#names + 1] = ns.SlotLabel(sheet, slot) end
+        lines[#lines + 1] = ("Choices are waiting on the Character tab for %s."):format(table.concat(names, ", "))
+    elseif #pending > 0 then
         lines[#lines + 1] = ("Choices are waiting on the Character tab for level %s."):format(table.concat(pending, ", "))
     end
-    if level >= R.SUBCLASS_LEVEL and sheet.subclass == "" and self:ClassData() then
-        lines[#lines + 1] = "You can choose a subclass under Customize, Class and origin."
+    for _, view in ipairs(ns.ClassViews(sheet)) do
+        if view.level >= R.SUBCLASS_LEVEL and view.subclass == "" and R.CLASSES[view.class] then
+            lines[#lines + 1] = "You can choose a subclass under Customize, Class and origin."
+            break
+        end
     end
     self:Print(table.concat(lines, " "))
 end
 
+-- The class a level is taken from when going back one: the class the last level was
+-- taken in while that is known, else the last of the later classes.
+function ns.LevelDownClass(sheet)
+    local extras = ns.ExtraClassKeys(sheet)
+    if #extras == 0 then return sheet.class end
+    local last = sheet.lastClass
+    if last == sheet.class and ns.ClassLevel(sheet, last) > 1 then return last end
+    if ns.ClassEntry(sheet, last) then return last end
+    return extras[#extras]
+end
+
 -- Back one level. Everything that level gave is taken off the sheet again.
-function RPSheet:LevelDown()
-    self:SetLevel(self:Level() - 1)
+-- `classKey` names the class that loses it; left out, see ns.LevelDownClass.
+function RPSheet:LevelDown(classKey)
+    self:SetLevel(self:Level() - 1, classKey or ns.LevelDownClass(self:Sheet()))
 end

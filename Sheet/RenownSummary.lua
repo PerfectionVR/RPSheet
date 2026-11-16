@@ -25,7 +25,7 @@ local function Ambassador(sheet, faction)
     local side = SIDE[faction]
     local mine = false
     for _, name in ipairs(side and R.AMBASSADOR_FACTIONS[side] or {}) do
-        if (tonumber(sheet.renown[name]) or 0) < R.RENOWN_TIERS[1][1] then return end
+        if ns.RenownScore(sheet, name) < R.RENOWN_TIERS[1][1] then return end
         mine = mine or name == faction
     end
     return mine and side or nil
@@ -44,8 +44,14 @@ end
 
 -- `accent` is the color code the tier names are written in.
 function ns.RenownSummary(sheet, faction, accent)
-    local score = tonumber(sheet.renown[faction]) or 0
+    local score = ns.RenownScore(sheet, faction)
     local lines, upcoming = {}, nil
+    -- What the rules added to the score, and a rival the character also stands with.
+    lines[#lines + 1] = ns.RenownRuleLine(sheet, faction)
+    local rival = ns.RenownRival(sheet, faction)
+    if rival then
+        lines[#lines + 1] = ("|cffff5555You also have renown with the %s. They are rivals: a character rises with only one of the two.|r"):format(rival)
+    end
     for index = #R.RENOWN_TIERS, 1, -1 do
         local need, tier = R.RENOWN_TIERS[index][1], R.RENOWN_TIERS[index][2]
         if score >= need then

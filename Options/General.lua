@@ -52,9 +52,9 @@ Opt.tabs.general = {
         share = {
             type = "toggle", order = 6, width = "full",
             name = "Share my stats with other RP Sheet users",
-            desc = "Sends your stats to your party or raid, and to RP Sheet users who hover or target you.",
+            desc = "Sends your stats to your party or raid, and to RP Sheet users who hover or target you; asks for theirs in return.\n\nOff works both ways: nothing is sent, nobody is asked, and other players' stats are no longer taken in or shown. Your group is told to drop what it has of you (players on an older version keep it until they reload).",
             get = function() return Profile().share end,
-            set = function(_, value) Profile().share = value; RPSheet:QueueBroadcast() end,
+            set = function(_, value) RPSheet:SetSharing(value) end,
         },
         locked = {
             type = "toggle", order = 7, width = "full",

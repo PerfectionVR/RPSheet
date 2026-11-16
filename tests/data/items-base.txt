@@ -1,0 +1,107 @@
+# Base items (XPHB, XDMG), reduced from data/items-base.json: name|source|type|facts.
+# cp price in copper, lb pounds, wc weapon category, d damage dice, dt damage type letter,
+# d2 versatile dice, pr properties, m mastery, rg range, ac, str Strength needed, st=1
+# Stealth disadvantage, ammo ammunition kind, pack what a bundle holds.
+Alchemist's Supplies|XPHB|AT|cp=5000|lb=8
+Antimatter Rifle|XDMG|R|lb=10|wc=martial|d=6d8|dt=N|pr=AF,RLD,2H|m=Sap|rg=120/360|ammo=energy cell
+Arrow|XPHB|A|cp=5|lb=0.05
+Arrows (20)|XPHB|A|cp=100|lb=1|pack=arrow*20
+Automatic Rifle|XDMG|R|lb=8|wc=martial|d=2d8|dt=P|pr=AF,BF,RLD,2H|m=Slow|rg=80/240|ammo=firearm bullet
+Bagpipes|XPHB|INS|cp=3000|lb=6
+Battleaxe|XPHB|M|cp=1000|lb=4|wc=martial|d=1d8|dt=S|d2=1d10|pr=V|m=Topple
+Blowgun|XPHB|R|cp=1000|lb=1|wc=martial|d=1|dt=P|pr=A,LD|m=Vex|rg=25/100|ammo=needle
+Bolt|XPHB|A|cp=5|lb=0.075
+Bolts (20)|XPHB|A|cp=100|lb=1.5|pack=bolt*20
+Breastplate|XPHB|MA|cp=40000|lb=20|ac=14
+Brewer's Supplies|XPHB|AT|cp=2000|lb=9
+Calligrapher's Supplies|XPHB|AT|cp=1000|lb=5
+Carpenter's Tools|XPHB|AT|cp=800|lb=6
+Cartographer's Tools|XPHB|AT|cp=1500|lb=6
+Chain Mail|XPHB|HA|cp=7500|lb=55|ac=16|str=13|st=1
+Chain Shirt|XPHB|MA|cp=5000|lb=20|ac=13
+Club|XPHB|M|cp=10|lb=2|wc=simple|d=1d4|dt=B|pr=L|m=Slow
+Cobbler's Tools|XPHB|AT|cp=500|lb=5
+Cook's Utensils|XPHB|AT|cp=100|lb=8
+Crystal|XPHB|SCF|cp=1000|lb=1
+Dagger|XPHB|M|cp=200|lb=1|wc=simple|d=1d4|dt=P|pr=F,L,T|m=Nick|rg=20/60
+Dart|XPHB|R|cp=5|lb=0.25|wc=simple|d=1d4|dt=P|pr=F,T|m=Vex|rg=20/60
+Drum|XPHB|INS|cp=600|lb=3
+Dulcimer|XPHB|INS|cp=2500|lb=10
+Energy Cell|XDMG|AF|lb=0.5
+Firearm Bullet|XPHB|A|cp=30|lb=0.2
+Firearm Bullets (10)|XPHB|A|cp=300|lb=2|pack=firearm bullet*10
+Flail|XPHB|M|cp=1000|lb=2|wc=martial|d=1d8|dt=B|m=Sap
+Flute|XPHB|INS|cp=200|lb=1
+Glaive|XPHB|M|cp=2000|lb=6|wc=martial|d=1d10|dt=S|pr=H,R,2H|m=Graze
+Glassblower's Tools|XPHB|AT|cp=3000|lb=5
+Greataxe|XPHB|M|cp=3000|lb=7|wc=martial|d=1d12|dt=S|pr=H,2H|m=Cleave
+Greatclub|XPHB|M|cp=20|lb=10|wc=simple|d=1d8|dt=B|pr=2H|m=Push
+Greatsword|XPHB|M|cp=5000|lb=6|wc=martial|d=2d6|dt=S|pr=H,2H|m=Graze
+Halberd|XPHB|M|cp=2000|lb=6|wc=martial|d=1d10|dt=S|pr=H,R,2H|m=Cleave
+Half Plate Armor|XPHB|MA|cp=75000|lb=40|ac=15|st=1
+Hand Crossbow|XPHB|R|cp=7500|lb=3|wc=martial|d=1d6|dt=P|pr=A,L,LD|m=Vex|rg=30/120|ammo=bolt
+Handaxe|XPHB|M|cp=500|lb=2|wc=simple|d=1d6|dt=S|pr=L,T|m=Vex|rg=20/60
+Heavy Crossbow|XPHB|R|cp=5000|lb=18|wc=martial|d=1d10|dt=P|pr=A,H,LD,2H|m=Push|rg=100/400|ammo=bolt
+Hide Armor|XPHB|MA|cp=1000|lb=12|ac=12
+Horn|XPHB|INS|cp=300|lb=2
+Hunting Rifle|XDMG|R|lb=8|wc=martial|d=2d10|dt=P|pr=AF,RLD,2H|m=Slow|rg=80/240|ammo=firearm bullet
+Javelin|XPHB|M|cp=50|lb=2|wc=simple|d=1d6|dt=P|pr=T|m=Slow|rg=30/120
+Jeweler's Tools|XPHB|AT|cp=2500|lb=2
+Lance|XPHB|M|cp=1000|lb=6|wc=martial|d=1d10|dt=P|pr=H,R,2H|m=Topple
+Laser Pistol|XDMG|R|lb=2|wc=martial|d=3d6|dt=R|pr=AF,RLD|m=Vex|rg=40/120|ammo=energy cell
+Laser Rifle|XDMG|R|lb=7|wc=martial|d=3d8|dt=R|pr=AF,RLD,2H|m=Slow|rg=100/300|ammo=energy cell
+Leather Armor|XPHB|LA|cp=1000|lb=10|ac=11
+Leatherworker's Tools|XPHB|AT|cp=500|lb=5
+Light Crossbow|XPHB|R|cp=2500|lb=5|wc=simple|d=1d8|dt=P|pr=A,LD,2H|m=Slow|rg=80/320|ammo=bolt
+Light Hammer|XPHB|M|cp=200|lb=2|wc=simple|d=1d4|dt=B|pr=L,T|m=Nick|rg=20/60
+Longbow|XPHB|R|cp=5000|lb=2|wc=martial|d=1d8|dt=P|pr=A,H,2H|m=Slow|rg=150/600|ammo=arrow
+Longsword|XPHB|M|cp=1500|lb=3|wc=martial|d=1d8|dt=S|d2=1d10|pr=V|m=Sap
+Lute|XPHB|INS|cp=3500|lb=2
+Lyre|XPHB|INS|cp=3000|lb=2
+Mace|XPHB|M|cp=500|lb=4|wc=simple|d=1d6|dt=B|m=Sap
+Mason's Tools|XPHB|AT|cp=1000|lb=8
+Maul|XPHB|M|cp=1000|lb=10|wc=martial|d=2d6|dt=B|pr=H,2H|m=Topple
+Morningstar|XPHB|M|cp=1500|lb=4|wc=martial|d=1d8|dt=P|m=Sap
+Musket|XPHB|R|cp=50000|lb=10|wc=martial|d=1d12|dt=P|pr=A,LD,2H|m=Slow|rg=40/120|ammo=firearm bullet
+Needle|XPHB|A|cp=2|lb=0.02
+Needles (50)|XPHB|A|cp=100|lb=1|pack=needle*50
+Orb|XPHB|SCF|cp=2000|lb=3
+Padded Armor|XPHB|LA|cp=500|lb=8|ac=11|st=1
+Painter's Supplies|XPHB|AT|cp=1000|lb=5
+Pan Flute|XPHB|INS|cp=1200|lb=2
+Pike|XPHB|M|cp=500|lb=18|wc=martial|d=1d10|dt=P|pr=H,R,2H|m=Push
+Pistol|XPHB|R|cp=25000|lb=3|wc=martial|d=1d10|dt=P|pr=A,LD|m=Vex|rg=30/90|ammo=firearm bullet
+Plate Armor|XPHB|HA|cp=150000|lb=65|ac=18|str=15|st=1
+Potter's Tools|XPHB|AT|cp=1000|lb=3
+Quarterstaff|XPHB|M|cp=20|lb=4|wc=simple|d=1d6|dt=B|d2=1d8|pr=V|m=Topple
+Rapier|XPHB|M|cp=2500|lb=2|wc=martial|d=1d8|dt=P|pr=F|m=Vex
+Revolver|XDMG|R|lb=3|wc=martial|d=2d8|dt=P|pr=AF,RLD|m=Sap|rg=40/120|ammo=firearm bullet
+Ring Mail|XPHB|HA|cp=3000|lb=40|ac=14|st=1
+Rod|XPHB|SCF|cp=1000|lb=2
+Scale Mail|XPHB|MA|cp=5000|lb=45|ac=14|st=1
+Scimitar|XPHB|M|cp=2500|lb=3|wc=martial|d=1d6|dt=S|pr=F,L|m=Nick
+Semiautomatic Pistol|XDMG|R|lb=3|wc=martial|d=2d6|dt=P|pr=AF,RLD|m=Vex|rg=50/150|ammo=firearm bullet
+Shawm|XPHB|INS|cp=200|lb=1
+Shield|XPHB|S|cp=1000|lb=6|ac=2
+Shortbow|XPHB|R|cp=2500|lb=2|wc=simple|d=1d6|dt=P|pr=A,2H|m=Vex|rg=80/320|ammo=arrow
+Shortsword|XPHB|M|cp=1000|lb=2|wc=martial|d=1d6|dt=P|pr=F,L|m=Vex
+Shotgun|XDMG|R|lb=7|wc=martial|d=2d8|dt=P|pr=AF,RLD,2H|m=Push|rg=30/90|ammo=firearm bullet
+Sickle|XPHB|M|cp=100|lb=2|wc=simple|d=1d4|dt=S|pr=L|m=Nick
+Sling|XPHB|R|cp=10|wc=simple|d=1d4|dt=B|pr=A|m=Slow|rg=30/120|ammo=sling bullet
+Sling Bullet|XPHB|A|cp=0.2|lb=0.075
+Sling Bullets (20)|XPHB|A|cp=4|lb=1.5|pack=sling bullet*20
+Smith's Tools|XPHB|AT|cp=2000|lb=8
+Spear|XPHB|M|cp=100|lb=3|wc=simple|d=1d6|dt=P|d2=1d8|pr=T,V|m=Sap|rg=20/60
+Splint Armor|XPHB|HA|cp=20000|lb=60|ac=17|str=15|st=1
+Staff|XPHB|SCF|cp=500|lb=4|wc=simple|d=1d6|dt=B|d2=1d8|pr=V|m=Topple
+Studded Leather Armor|XPHB|LA|cp=4500|lb=13|ac=12
+Tinker's Tools|XPHB|AT|cp=5000|lb=10
+Trident|XPHB|M|cp=500|lb=4|wc=martial|d=1d8|dt=P|d2=1d10|pr=T,V|m=Topple|rg=20/60
+Viol|XPHB|INS|cp=3000|lb=1
+Wand|XPHB|SCF|cp=1000|lb=1
+War Pick|XPHB|M|cp=500|lb=2|wc=martial|d=1d8|dt=P|d2=1d10|pr=V|m=Sap
+Warhammer|XPHB|M|cp=1500|lb=5|wc=martial|d=1d8|dt=B|d2=1d10|pr=V|m=Push
+Weaver's Tools|XPHB|AT|cp=100|lb=5
+Whip|XPHB|M|cp=200|lb=3|wc=martial|d=1d4|dt=S|pr=F,R|m=Slow
+Woodcarver's Tools|XPHB|AT|cp=100|lb=5
+Wooden Staff|XPHB|SCF|cp=500|lb=4|wc=simple|d=1d6|dt=B|d2=1d8|pr=V|m=Topple

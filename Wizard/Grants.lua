@@ -45,6 +45,16 @@ end
 local function ApplyClass(sheet, class)
     for _, stat in ipairs(class.saves) do sheet.saves[stat] = true end
     StartRenown(sheet, R.CLASS_RENOWN[sheet.class])
+    -- A class taken later brings its faction's renown and at most one skill, never its
+    -- saving throws (Data/Multiclass.lua).
+    for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
+        StartRenown(sheet, R.CLASS_RENOWN[key])
+        local gained = R.MULTICLASS[R.CLASSES[key].base]
+        local skill = sheet.classes[key].skill
+        for _, name in ipairs(gained and gained.skill and R.CLASSES[key].skills or {}) do
+            if name == skill then AddSkills(sheet, { skill }) end
+        end
+    end
 end
 
 -- The lineage trait is one passive that follows the chosen lineage. Until a lineage
@@ -66,6 +76,7 @@ local function ApplyLineage(sheet, species)
         passive.desc = ("%s lineage. %s"):format(species.name, option.desc)
         -- Numbers that follow the character, such as a save DC.
         if option.detail then passive.desc = passive.desc .. " " .. option.detail(sheet) end
+        passive.desc = passive.desc .. ns.LineageCastingText(sheet)
         passive.effects = CopyTable(option.effects or {})
         AddSkills(sheet, option.skills)
         StartRenown(sheet, option.renown)

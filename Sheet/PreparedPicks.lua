@@ -30,15 +30,26 @@ local function Taken(sheet, fresh)
     return names
 end
 
+-- A list is shared by the classes of one Player's Handbook class, and not all of them
+-- have every spell on it (Data/SpellLists.lua). A spell the character picked before
+-- that was held to stays its own.
 for _, key in pairs(R.PREPARED_LISTS) do
     R.PICK_LISTS[key].blocked = function(sheet, name)
         if Taken(sheet)[name] then return "always prepared" end
+        local picks = type(sheet.picks) == "table" and sheet.picks[key]
+        if not R.OnClassSpellList(sheet.class, name) and not (type(picks) == "table" and picks[name]) then
+            return ("not a %s spell"):format(R.CLASSES[sheet.class] and R.CLASSES[sheet.class].name or "class")
+        end
     end
 end
 
 -- Sheet upkeep (see Sheet/ClassFeatures.lua). Runs before the always-prepared spells
 -- are put on the sheet, so a pick that became one of them makes way for it.
-function ns.ApplyPreparedPicks(sheet)
+-- `sheet` is a character of one class, or a view of one class of a character with
+-- several: that one's spells name their class, and what its other classes prepared
+-- is left alone.
+local function ApplyFor(sheet)
+    local foreign, tag = ns.ForeignPicks(sheet, R.PREPARED_LISTS), ns.SpellTag(sheet)
     local class = R.CLASSES[sheet.class]
     local key = class and R.PREPARED_LISTS[class.base]
     local limit = key and ns.PickLimit(key, sheet.class, sheet.level) or 0
@@ -52,8 +63,9 @@ function ns.ApplyPreparedPicks(sheet)
 
     -- A spell the player deleted from the spell list is no longer picked, and neither
     -- is one that is always prepared now: the level dialog asks for another.
+    local stays = ns.OwnEntries(sheet, PREFIX, tag)
     for name in pairs(picks) do
-        if sheet.dismissed[PREFIX .. name] or taken[name] then
+        if (sheet.dismissed[PREFIX .. name] and not stays[name]) or taken[name] then
             picks[name] = nil
             sheet.dismissed[PREFIX .. name] = nil
         end
@@ -68,24 +80,32 @@ function ns.ApplyPreparedPicks(sheet)
     local have = {}
     for _, spell in ipairs(sheet.spells) do
         local item, known = items[spell.name], R.SPELLS[spell.name]
-        if (spell.auto or "") == "" and not spell.free and item and known.level == spell.level and not taken[spell.name] then
+        if (spell.auto or "") == "" and not spell.free and item and known.level == spell.level and not taken[spell.name]
+            and ns.SpellIsOf(spell, tag) and (picks[spell.name] or R.OnClassSpellList(sheet.class, spell.name)) then
             if not picks[spell.name] and count < limit and sheet.level >= item.level then
                 picks[spell.name] = true
                 count = count + 1
             end
-            if picks[spell.name] and not have[spell.name] then spell.auto = PREFIX .. spell.name end
+            if picks[spell.name] and not have[spell.name] then
+                spell.auto = PREFIX .. spell.name
+                if tag then spell.class = tag end
+            end
             have[spell.name] = true
         end
     end
 
-    -- Put there by an earlier pick: it stays only while it is still picked.
+    -- Put there by an earlier pick: it stays only while it is still picked. An entry
+    -- that names another class is that class's: two classes that prepare the same
+    -- spell each have their own, cast with their own ability.
     local seen = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
-        if (spell.auto or ""):find("^" .. PREFIX) then
+        if (spell.auto or ""):find("^" .. PREFIX) and ns.SpellIsOf(spell, tag) then
             if picks[spell.name] and items[spell.name] and not seen[spell.name] then
                 seen[spell.name], have[spell.name] = true, true
-            else
+                if tag then spell.class = tag end
+            elseif spell.class == tag or not foreign[spell.name] then
+                -- (one without a class that another class picked is left for that class)
                 table.remove(sheet.spells, index)
             end
         end
@@ -99,7 +119,12 @@ function ns.ApplyPreparedPicks(sheet)
     for _, name in ipairs(names) do
         local spell = CopyTable(R.SPELLS[name])
         spell.auto = PREFIX .. name
+        spell.class = tag
         sheet.spells[#sheet.spells + 1] = spell
     end
     kept = {} -- the spell list changed
+end
+
+function ns.ApplyPreparedPicks(sheet)
+    ns.ForEachClass(sheet, ApplyFor)
 end

@@ -42,6 +42,8 @@ G["Persuasion"] = "Charisma. Influencing others with tact, reason or good manner
 -- General terms
 G["Hit die"] = "The die that sets your hit points. You get its maximum at level 1 and its average each level after, plus your Constitution modifier per level."
 G["Saving throw"] = "A d20 roll to resist a spell, trap, poison or similar threat. You add the ability's modifier, plus your proficiency bonus if you are proficient in that save."
+G["Initiative"] = "A Dexterity check everyone in a fight makes at its start; the order of turns goes from the highest result down."
+G["Spell attack"] = "An attack roll made with a spell: a d20 plus your spellcasting ability modifier and proficiency bonus, against the target's Armor Class."
 G["Proficiency bonus"] = "A bonus that grows with level, from +2 to +6. It is added to anything you are proficient in: saving throws, skills, weapon attacks and spells."
 G["Expertise"] = "Your proficiency bonus is added twice for that skill."
 G["Darkvision"] = "You see in dim light as if it were bright, and in darkness as if it were dim, out to the listed distance."

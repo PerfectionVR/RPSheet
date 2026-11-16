@@ -18,7 +18,9 @@ function UI.AddTabBar(self, body, tabs)
         local button = AceGUI:Create("RPSheetTab")
         button:SetStyle(theme, tab == open)
         button:SetText(tab.name)
-        button:SetRelativeWidth(1 / #tabs)
+        -- A hair under an even share: the shares are added up as they are laid out, and
+        -- rounding can push the sum past the full width, which drops the last tab a row.
+        button:SetRelativeWidth(0.999 / #tabs)
         button:SetCallback("OnClick", function()
             if tab == open then return end
             saved.sheetTab = tab.name

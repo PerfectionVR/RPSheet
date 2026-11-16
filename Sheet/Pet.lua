@@ -7,7 +7,7 @@ local Util = ns.Util
 
 function RPSheet:HasPet()
     local sheet = self:Sheet()
-    return sheet.subclass == "Beast Master" and sheet.level >= 3
+    return ns.SubclassLevel(sheet, "Beast Master") >= 3
 end
 
 -- The family in lower case for announcements ("wolf"), or nil when none is picked.
@@ -27,11 +27,19 @@ function RPSheet:PetRollMod(stat)
     return self:PetMod(stat) + self:ProficiencyBonus()
 end
 
+-- A stand-in for a spell of the class that has the companion, so that the spell
+-- attack modifier and save DC asked for are that class's: a character whose first
+-- spellcasting class is another one casts those spells with another ability.
+local function MasterSpell(self)
+    local view = ns.SubclassView(self:Sheet(), "Beast Master")
+    return view and { class = view.class } or nil
+end
+
 -- The strike's attack bonus (the master's spell attack modifier) and what is added
 -- to its damage die.
 function RPSheet:PetStrikeMods()
     local wisdom = self:Mod("WIS")
-    return self:SpellAttack() or (self:ProficiencyBonus() + wisdom), R.PetBlock(self:Sheet()).flat + wisdom
+    return self:SpellAttack(MasterSpell(self)) or (self:ProficiencyBonus() + wisdom), R.PetBlock(self:Sheet()).flat + wisdom
 end
 
 -- The companion's Armor Class follows its master's Wisdom.
@@ -41,7 +49,7 @@ end
 
 -- The save DC a creature grappled by the strike escapes against.
 function RPSheet:PetGrappleDC()
-    return self:SpellDC() or (8 + self:ProficiencyBonus() + self:Mod("WIS"))
+    return self:SpellDC(MasterSpell(self)) or (8 + self:ProficiencyBonus() + self:Mod("WIS"))
 end
 
 ---------------------------------------------------------------------------
@@ -68,11 +76,18 @@ function RPSheet:PetMasteryNote()
 end
 
 -- Makes the family one of the Weapon Mastery picks, or takes it off again. A pick is
--- only given when one is free. Returns true when something changed.
+-- only given when one is free, and like the picks on weapons it is changed when a long
+-- rest is finished: once it was changed, it stays until the next one. Returns true
+-- when something changed.
 function RPSheet:TogglePetMastery()
-    local sheet = self:Sheet()
+    local sheet, state = self:Sheet(), self:State()
+    if state.petMasteryChanged then
+        self:Print("You already changed this Weapon Mastery pick since your last long rest. Picks are changed when you finish a long rest.")
+        return false
+    end
     if sheet.petMastery then
         sheet.petMastery = false
+        state.petMasteryChanged = true
         return true
     end
     if not R.Pet(sheet) then
@@ -83,12 +98,13 @@ function RPSheet:TogglePetMastery()
         self:Print("You need the Weapon Mastery feature to use the mastery of your companion's strike.")
         return false
     end
-    local used, limit = self:MasteriesUsed(), self:MasteryLimit()
-    if used >= limit then
+    local limit = self:MasteryLimit()
+    if not self:MasteryRoom() then
         self:Print(("All %d of your Weapon Mastery picks are on weapons. Take the mastery off a weapon under Customize, Weapons, then pick your companion's family."):format(limit))
         return false
     end
     sheet.petMastery = true
+    state.petMasteryChanged = true
     return true
 end
 

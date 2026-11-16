@@ -15,6 +15,13 @@ function RPSheet:IsRolling()
     return pending ~= nil
 end
 
+-- A roll still on its way belongs to the character that asked for it: it is dropped
+-- when another character takes its place (RPSheet:ReplaceSheet, a profile switch).
+function RPSheet:ForgetRoll()
+    pending = nil
+    self.busy = false
+end
+
 -- Rolls one die and passes the result to `callback`. Ignored while another roll is waiting.
 function RPSheet:Roll(sides, callback)
     if self.db.profile.channel == "SELF" then
@@ -50,8 +57,8 @@ end
 -- Advantage ("ADV") or disadvantage ("DIS") from the keys held while clicking a roll:
 -- Shift for advantage, Ctrl for disadvantage. Nil for a normal roll.
 -- Without a key held, the "Next roll" row on the sheet decides (see CycleRollMode).
--- Unless that row is locked, it goes back to normal once a d20 has been rolled with
--- it (see RollD20), so an ability that rolls no d20 doesn't use it up.
+-- Unless that row is locked, it goes back to normal once a d20 has been rolled
+-- (see RollD20), so an ability that rolls no d20 doesn't use it up.
 function ns.RollMode()
     if IsShiftKeyDown() then return "ADV" end
     if IsControlKeyDown() then return "DIS" end
@@ -75,15 +82,18 @@ end
 
 -- Rolls a d20, or two with advantage or disadvantage, and passes on the die that
 -- counts plus a note such as " [advantage: 14, 6]" for the announcement.
-function RPSheet:RollD20(mode, callback)
+-- `own` is true for a roll the "Next roll" row has no say in (a death save, the save
+-- to keep a spell): such a roll leaves the row as it is.
+function RPSheet:RollD20(mode, callback, own)
+    -- The "Next roll" row is used up by this roll, unless it is locked: also when a
+    -- condition cancelled its advantage out, since it was the choice for this roll.
+    if self.rollMode and not self.rollModeLocked and not own then
+        self.rollMode = nil
+        self:Refresh()
+    end
     if mode ~= "ADV" and mode ~= "DIS" then
         self:Roll(20, function(d20) callback(d20, "") end)
         return
-    end
-    -- The "Next roll" row is used up by this roll, unless it is locked.
-    if self.rollMode and not self.rollModeLocked then
-        self.rollMode = nil
-        self:Refresh()
     end
     self:RollDice(2, 20, function(rolls)
         local kept = mode == "ADV" and math.max(rolls[1], rolls[2]) or math.min(rolls[1], rolls[2])
@@ -106,9 +116,16 @@ end
 ---------------------------------------------------------------------------
 ns.RollText = {}
 
--- e.g. "Stealth: 14 + 5 = 19", or with a note "Stealth: 14 [advantage: 14, 6] + 5 = 19"
-function ns.RollText.Check(label, d20, mod, note)
-    local text = ("%s: %d%s %s %d = %d"):format(label, d20, note or "", mod >= 0 and "+" or "-", math.abs(mod), d20 + mod)
+-- e.g. "Stealth: 14 + 5 = 19", or with a note "Stealth: 14 [advantage: 14, 6] + 5 = 19".
+-- `extra` is what the "Next roll" bonus added to this roll (Actions/NextRollBonus.lua):
+-- { value = 3, text = "1d4" }, shown as "Stealth: 14 + 5 + 3 [1d4] = 22".
+function ns.RollText.Check(label, d20, mod, note, extra)
+    local more, total = "", d20 + mod
+    if extra then
+        more = (" %s %d [%s]"):format(extra.value >= 0 and "+" or "-", math.abs(extra.value), extra.text)
+        total = total + extra.value
+    end
+    local text = ("%s: %d%s %s %d%s = %d"):format(label, d20, note or "", mod >= 0 and "+" or "-", math.abs(mod), more, total)
     if d20 == 20 then
         text = text .. " (NATURAL 20!)"
     elseif d20 == 1 then
@@ -133,24 +150,31 @@ end
 -- A plain d20 check: ability check, saving throw, skill, initiative, spell attack.
 -- A feature that gives advantage on this roll applies by itself; with disadvantage
 -- chosen on top, the two cancel out.
-function RPSheet:RollCheck(label, mod, mode)
+-- `about` is what a saving throw is against, when that brings advantage; false when
+-- it is nothing the sheet knows of. Left out, the sheet asks what it needs to know
+-- about the roll first (Actions/RollQuestions.lua), and the menu rolls.
+function RPSheet:RollCheck(label, mod, mode, about, answers)
     local failed = self:AutoFail(label)
     if failed then
         self:Announce(("fails the %s without a roll (%s)."):format(ns.Mark(label), ns.Mark(failed)))
         return
     end
+    if not answers then
+        return self:AskRoll(label, mode, nil, function(found) self:RollCheck(label, mod, mode, found.about, found) end,
+            about ~= nil and { about = about } or nil)
+    end
     -- Features, conditions and armor can give advantage or disadvantage by themselves.
-    mode = self:ResolveMode(label, mode)
+    mode = self:ResolveMode(label, mode, nil, nil, answers)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.
     -- It covers checks with a tool you are proficient with too.
     local proficient = (self:Sheet().skills[label] or 0) >= 1 or (ns.Rules.TOOLS[label] and self:ToolSource(label) ~= nil)
     local reliable = proficient and self:FeatureFlag("reliable")
-    self:RollD20(mode, function(d20, note)
+    self:RollTest(mode, function(d20, note, extra)
         if reliable and d20 < 10 then
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
-        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label), d20, mod, note))
+        self:Announce("rolls " .. ns.RollText.Check(ns.Mark(label) .. (about and (" against " .. about) or ""), d20, mod, note, extra))
     end)
 end
 

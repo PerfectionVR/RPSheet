@@ -61,6 +61,7 @@ function RPSheet:ApplyTheme()
     UI.SetColors(theme)
     self.window:SetTheme(theme)
     self:Populate()
+    ns.SkinOpenDialogs() -- the wizard and the level dialog follow the theme too
 end
 
 -- Re-applies everything that comes from the general settings, after the player

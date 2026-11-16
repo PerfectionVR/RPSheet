@@ -70,6 +70,8 @@ function RPSheet:Defenses()
             local trait = R.TRAITS[auto:match("^trait:(.+)$") or ""]
             local feat = ns.FeatByName(name)
             Add(passive, name) -- a class feature carries its own lists
+            -- Damage types the player chose for it (Sheet/DefensePicks.lua).
+            for _, each in ipairs(ns.DefensePicks(sheet, name)) do Note("resist", each, name) end
             Add(feat, name)
             if trait and trait.passive and trait.passive.name == name then
                 Add(trait.passive, name) -- the form a trait switches on
@@ -83,6 +85,11 @@ function RPSheet:Defenses()
                 ns.ReadDefenses(passive.desc, function(field, each) Note(field, each, name) end)
             end
         end
+    end
+    -- Armor made to resist a damage type, while it is worn and attuned (Sheet/ItemVariants.lua).
+    for _, item in ipairs(sheet.items or {}) do
+        local made = ns.ItemDefenses(item)
+        if made and self:ItemActive(item) then Add(made, item.name) end
     end
     -- Damage types picked for a feat.
     for _, instance in ipairs(ns.FeatInstances(sheet)) do
@@ -109,7 +116,3 @@ function ns.DefenseNames(entries)
     return names, lines
 end
 
--- Damage types the character resists, sorted.
-function RPSheet:Resistances()
-    return (ns.DefenseNames(self:Defenses().resist))
-end

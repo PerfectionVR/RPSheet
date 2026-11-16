@@ -11,8 +11,14 @@ local RPSheet = ns.addon
 local BOOK_CLASS = "Wizard" -- the Player's Handbook class that keeps a spellbook
 
 function ns.HasSpellbook(sheet)
-    local class = R.CLASSES[sheet.class]
-    return class ~= nil and class.base == BOOK_CLASS
+    return ns.BaseView(sheet, BOOK_CLASS) ~= nil
+end
+
+-- The class key the book's spells are prepared as when the character has several
+-- classes; nil for a character of one class, whose spells name no class.
+function ns.BookClass(sheet)
+    local view = ns.BaseView(sheet, BOOK_CLASS)
+    return view and view.viewOf and view.class or nil
 end
 
 local function Parts(sheet)
@@ -23,7 +29,7 @@ end
 
 -- Spells the rules put in the book at a level. Spells copied in come on top.
 function ns.SpellbookSize(sheet)
-    return ns.PickLimit("spellbook", sheet.class, sheet.level)
+    return ns.SheetPickLimit(sheet, "spellbook", true)
 end
 
 function ns.InSpellbook(sheet, name)
@@ -74,8 +80,8 @@ end
 -- Spells of the class that could still be written into the book: level 1 and higher,
 -- up to the highest level the character has slots for.
 function ns.SpellbookChoices(sheet, highest)
-    local class, names = R.CLASSES[sheet.class], {}
-    for _, name in ipairs(class and R.SPELL_LISTS[class.base] or {}) do
+    local names = {}
+    for _, name in ipairs(R.ClassSpellList((ns.BaseView(sheet, BOOK_CLASS) or sheet).class)) do
         local level = R.SPELLS[name].level
         if level > 0 and level <= highest and not ns.InSpellbook(sheet, name) then names[#names + 1] = name end
     end
@@ -93,7 +99,8 @@ function ns.ApplySpellbook(sheet)
     for _, name in ipairs(R.SPELL_LISTS[BOOK_CLASS] or {}) do list[name] = true end
     for _, spell in ipairs(sheet.spells) do
         local known = R.SPELLS[spell.name]
-        if known and known.level > 0 and known.level == spell.level and list[spell.name] and not spell.free then
+        if known and known.level > 0 and known.level == spell.level and list[spell.name] and not spell.free
+            and ns.SpellIsOf(spell, ns.BookClass(sheet)) then
             ns.SpellbookAdd(sheet, spell.name)
         end
     end
@@ -115,12 +122,24 @@ function RPSheet:PreparedSpell(name)
     end
 end
 
+-- Prepared spells are changed when a long rest is finished. The sheet keeps no clock,
+-- so that window is open from a long rest until the first spell cast after it.
+-- Returns true, with a message printed, while it is shut.
+local function Shut(self)
+    if not self:State().prepareClosed then return false end
+    self:Print("You change your prepared spells when you finish a long rest. You have cast a spell since, so the list stays as it is until your next one.")
+    return true
+end
+
 -- Prepares a spell from the book, if one more fits. Returns true when it did.
-function RPSheet:PrepareSpell(name)
+-- `free` skips the long rest rule (the Customize page).
+function RPSheet:PrepareSpell(name, free)
     local known = R.SPELLS[name]
     if not known or self:PreparedSpell(name) then return false end
-    if not self:SpellFits(known.level) then
-        local _, maxPrepared, highest = self:SpellLimits()
+    if not free and Shut(self) then return false end
+    local book = ns.BookClass(self:Sheet()) -- with several classes the book's own limits count
+    if not self:SpellFits(known.level, nil, book) then
+        local _, maxPrepared, highest = self:SpellLimits(book)
         if known.level > highest then
             self:Print(("%s is of a level you have no spell slots for."):format(name))
         else
@@ -129,13 +148,16 @@ function RPSheet:PrepareSpell(name)
         return false
     end
     local spells = self:Sheet().spells
-    spells[#spells + 1] = CopyTable(known)
+    local spell = CopyTable(known)
+    spell.class = book
+    spells[#spells + 1] = spell
     return true
 end
 
 -- Takes a spell off the prepared list. One that is always prepared stays.
-function RPSheet:UnprepareSpell(name)
+function RPSheet:UnprepareSpell(name, free)
     local spells = self:Sheet().spells
+    if not free and self:PreparedSpell(name) and Shut(self) then return false end
     for index, spell in ipairs(spells) do
         if spell.name == name then
             if spell.free then

@@ -63,7 +63,9 @@ local function Describe(sheet, instances)
             end
             local text = MARK .. (#made > 0 and table.concat(made, "; ") or "none yet") .. "."
             if #open > 0 then
-                text = ("%s Still to choose: %s. Use \"Class and feat choices\" on the Character tab."):format(text, table.concat(open, ", "))
+                -- The button is named after the maneuvers for a Battle Master (Options/Character.lua).
+                text = ("%s Still to choose: %s. Use \"%s\" on the Character tab."):format(text, table.concat(open, ", "),
+                    ns.SheetManeuverLimit(sheet) > 0 and "Maneuvers" or "Class and feat choices")
             end
             local own = (passive.desc or ""):gsub("%s*" .. MARK .. ".*$", "")
             passive.desc = own ~= "" and (own .. " " .. text) or text
@@ -81,6 +83,19 @@ function ns.ApplyFeatChoices(sheet)
     ApplySkills(sheet, instances)
     ApplyTools(sheet, instances)
     Describe(sheet, instances)
+    ns.NoteRestPicks(sheet) -- a pick that changes after a long rest (Sheet/FeatRestPicks.lua)
+end
+
+-- The kinds of weapon whose mastery property a feat lets the character use
+-- ({ [weapon name] = true }), and how many feats do so.
+function ns.FeatMasteryWeapons(sheet)
+    local kinds, count = {}, 0
+    for _, instance in ipairs(ns.FeatInstances(sheet)) do
+        ns.EachFeatPick(sheet.featChoices, instance, "mastery", function(value)
+            kinds[value], count = true, count + 1
+        end)
+    end
+    return kinds, count
 end
 
 -- True if a tool is one picked for a feat the character has.

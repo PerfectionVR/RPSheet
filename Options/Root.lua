@@ -34,6 +34,12 @@ for key, list in pairs(Opt.lists) do
     customize.args[key] = { type = "group", order = list.order, name = list.title, childGroups = "tree", args = {} }
 end
 
+-- What a list's entry page is called. Two classes that each prepare the same spell
+-- have an entry each: those pages name their class, as the sheet's rows do.
+local PAGE_NAMES = {
+    spells = function(entry) return ns.SpellRowName(Opt.Sheet(), entry) end,
+}
+
 -- One list page: help text, an Add button, and a page per entry with a Delete button.
 local function RebuildList(key, list)
     local args = customize.args[key].args
@@ -54,7 +60,10 @@ local function RebuildList(key, list)
     for index, entry in ipairs(Opt.Sheet()[key]) do
         local page = {
             type = "group", order = index + 1,
-            name = function() return entry.name ~= "" and entry.name or "(unnamed)" end,
+            name = function()
+                if entry.name == "" then return "(unnamed)" end
+                return PAGE_NAMES[key] and PAGE_NAMES[key](entry) or entry.name
+            end,
             args = list.build(entry),
         }
         page.args.delete = {
@@ -62,7 +71,15 @@ local function RebuildList(key, list)
             confirm = true,
             func = function()
                 ns.DismissAuto(Opt.Sheet(), entry)
-                table.remove(Opt.Sheet()[key], index)
+                -- A carried item that is worn or in hand is put away first: its armor
+                -- would stay on and its weapon readied, with no item left to undo it.
+                if key == "items" and entry.equipped then ns.addon:SetEquipped(entry, false) end
+                -- By the entry itself, not its place: the list may have changed since
+                -- this page was built (a spell prepared or an item used on the sheet).
+                local entries = Opt.Sheet()[key]
+                for at = #entries, 1, -1 do
+                    if entries[at] == entry then table.remove(entries, at) end
+                end
                 ns.RebuildOptions()
                 Opt.Changed()
             end,

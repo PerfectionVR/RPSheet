@@ -1,6 +1,9 @@
 -- Lineages: the choice some species make within their lineage trait.
--- Summaries are brief and in our own words. Spells gained at levels 3 and 5 can each
--- be cast once per long rest without a slot.
+-- Summaries are brief and in our own words. `cantrips` are known from level 1; `spells`
+-- are gained at levels 3 and 5 and can each be cast once per long rest without a slot
+-- (Sheet/LineageSpells.lua). They are cast with Intelligence, Wisdom or Charisma, chosen
+-- with the lineage (Sheet/LineageCasting.lua). `swap`: a cantrip that can be exchanged
+-- for another of a class's list after a long rest.
 --   skills      skill proficiencies the lineage grants
 --   darkvision  replaces the species' darkvision range
 --   effects     passive effects (see Data/Effects.lua)
@@ -10,6 +13,9 @@ local _, ns = ...
 local R = ns.Rules
 
 local SPELLS = " Level 3: %s. Level 5: %s."
+-- The abilities the player chooses from for the spells of a species or lineage.
+R.LINEAGE_STATS = { "INT", "WIS", "CHA" }
+local ELF_SWAP = { cantrip = "Prestidigitation", list = "Wizard" }
 
 -- A Tauren lineage's save DC: 8 + proficiency + the Strength, Constitution or Wisdom
 -- modifier. The rules let the player choose one; the sheet takes the highest.
@@ -23,15 +29,17 @@ R.LINEAGES = {
         trait = "Elven Lineage",
         options = {
             { name = "Blood Elf", renown = "Silvermoon City",
-              desc = "You know Prestidigitation and can swap it for another Wizard cantrip after a long rest." .. SPELLS:format("Detect Magic", "Arcane Vigor"), spells = { "Detect Magic", "Arcane Vigor" } },
+              desc = "You know Prestidigitation and can swap it for another Wizard cantrip after a long rest." .. SPELLS:format("Detect Magic", "Arcane Vigor"), spells = { "Detect Magic", "Arcane Vigor" },
+              cantrips = { "Prestidigitation" }, swap = ELF_SWAP },
             { name = "High Elf",
-              desc = "You know Prestidigitation and can swap it for another Wizard cantrip after a long rest." .. SPELLS:format("Detect Magic", "Misty Step"), spells = { "Detect Magic", "Misty Step" } },
+              desc = "You know Prestidigitation and can swap it for another Wizard cantrip after a long rest." .. SPELLS:format("Detect Magic", "Misty Step"), spells = { "Detect Magic", "Misty Step" },
+              cantrips = { "Prestidigitation" }, swap = ELF_SWAP },
             { name = "Night Elf", renown = "Darnassus", skills = { "Stealth" },
               desc = "Proficiency in Stealth, and in dim light or darkness you can Hide as a bonus action." .. SPELLS:format("Longstrider", "Pass without Trace"), spells = { "Longstrider", "Pass without Trace" } },
             { name = "Nightborne", darkvision = 120,
-              desc = "Darkvision out to 120 feet, and you know the Arcane Pulse cantrip." .. SPELLS:format("Faerie Fire", "Darkness"), spells = { "Faerie Fire", "Darkness" } },
+              desc = "Darkvision out to 120 feet, and you know the Arcane Pulse cantrip." .. SPELLS:format("Faerie Fire", "Darkness"), spells = { "Faerie Fire", "Darkness" }, cantrips = { "Arcane Pulse" } },
             { name = "Void Elf", darkvision = 120,
-              desc = "Darkvision out to 120 feet, and you know the Mind Sliver cantrip." .. SPELLS:format("Entropic Embrace", "Misty Step"), spells = { "Entropic Embrace", "Misty Step" } },
+              desc = "Darkvision out to 120 feet, and you know the Mind Sliver cantrip." .. SPELLS:format("Entropic Embrace", "Misty Step"), spells = { "Entropic Embrace", "Misty Step" }, cantrips = { "Mind Sliver" } },
         },
     },
     DRAENEI = {
@@ -39,16 +47,16 @@ R.LINEAGES = {
         options = {
             { name = "Draenei", renown = "Exodar",
               resist = { "necrotic" },
-              desc = "Resistance to necrotic damage, and you know the Spare the Dying cantrip." .. SPELLS:format("Healing Word", "Prayer of Healing"), spells = { "Healing Word", "Prayer of Healing" } },
+              desc = "Resistance to necrotic damage, and you know the Spare the Dying cantrip." .. SPELLS:format("Healing Word", "Prayer of Healing"), spells = { "Healing Word", "Prayer of Healing" }, cantrips = { "Spare the Dying" } },
             { name = "Krokul",
               resist = { "poison" },
-              desc = "Resistance to poison damage, and you know the Poison Spray cantrip." .. SPELLS:format("Ray of Sickness", "Hold Person"), spells = { "Ray of Sickness", "Hold Person" } },
+              desc = "Resistance to poison damage, and you know the Poison Spray cantrip." .. SPELLS:format("Ray of Sickness", "Hold Person"), spells = { "Ray of Sickness", "Hold Person" }, cantrips = { "Poison Spray" } },
             { name = "Lightforged",
               resist = { "radiant" },
-              desc = "Resistance to radiant damage, and you know the Sacred Flame cantrip." .. SPELLS:format("Guiding Bolt", "Aid"), spells = { "Guiding Bolt", "Aid" } },
+              desc = "Resistance to radiant damage, and you know the Sacred Flame cantrip." .. SPELLS:format("Guiding Bolt", "Aid"), spells = { "Guiding Bolt", "Aid" }, cantrips = { "Sacred Flame" } },
             { name = "Man'ari",
               resist = { "fire" },
-              desc = "Resistance to fire damage, and you know the Fire Bolt cantrip." .. SPELLS:format("Hellish Rebuke", "Darkness"), spells = { "Hellish Rebuke", "Darkness" } },
+              desc = "Resistance to fire damage, and you know the Fire Bolt cantrip." .. SPELLS:format("Hellish Rebuke", "Darkness"), spells = { "Hellish Rebuke", "Darkness" }, cantrips = { "Fire Bolt" } },
         },
     },
     TAUREN = {

@@ -20,8 +20,8 @@ local function Text(self, level)
     local slots = self:SlotText(level)
     if slots == "" then
         -- A Warlock's spells above 5th level are Mystic Arcanum: cast without a slot.
-        local class = self:ClassData()
-        slots = class and class.caster == "PACT" and "cast once each, without a slot" or "no slots of this level"
+        local warlock = ns.BaseView(self:Sheet(), "Warlock")
+        slots = warlock and "cast once each, without a slot" or "no slots of this level"
     end
     return ("%s%s|r  %s%s|r"):format(UI.ACCENT, R.SPELL_LEVELS[level], UI.GREY, slots)
 end

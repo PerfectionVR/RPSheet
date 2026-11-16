@@ -70,6 +70,7 @@ function W.AddClosetArgs(args)
         type = "description", order = 2.1, fontSize = "medium",
         name = "Take what your character owns at the start. The closet shows every weapon, suit of armor and piece of gear as a block with what it does; take as many as you like and equip what you have on and at hand. Everything taken goes into your inventory.\n",
     }
+    W.AddGearArgs(args) -- the ready sets of a class and a background (Wizard/StartingGear.lua)
     args.openCloset = {
         type = "execute", order = 2.2, name = "Open the closet", width = "double",
         func = function() W.OpenCloset() end,
@@ -79,6 +80,7 @@ function W.AddClosetArgs(args)
         disabled = function() return next(W.draft.closet) == nil end,
         func = function()
             W.draft.closet, W.draft.worn = {}, {}
+            W.GearCleared() -- a class's or background's set went back too (Wizard/StartingGear.lua)
             W.ClosetChanged()
         end,
     }
@@ -92,7 +94,7 @@ function W.FillInventory(sheet)
         return math.floor(((draft.base[stat] or 10) + (draft.bonus[stat] or 0) - 10) / 2)
     end
     -- A class with Weapon Mastery sets the mastery of as many weapons as it may.
-    local limit = ns.FeatureKit.AtLevel(draft.level, R.MASTERY_LIMITS[R.CLASSES[draft.class].base] or {}) or 0
+    local limit = W.MasteryLimit()
     local function CanMaster()
         local used = 0
         for _, weapon in ipairs(sheet.weapons) do

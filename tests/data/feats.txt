@@ -1,0 +1,93 @@
+# Feats (XPHB and WoW), reduced from data/feats.json.
+# cat: O origin, G general, EB epic boon, FS fighting style (FS:P paladin's, FS:R ranger's).
+# pre: L<level>, abil:<score needed> ("&" = all, " OR " = any), prof:, race:, caster.
+# abil: the scores the feat can raise by 1. rep: 1 = can be taken more than once.
+feat|Ability Score Improvement|XPHB|cat=G|pre=L4|abil=str/dex/con/int/wis/chax2;str/dex/con/int/wis/cha|rep=1
+feat|Actor|XPHB|cat=G|pre=L4 abil:cha13|abil=cha|rep=0
+feat|Alert|XPHB|cat=O|pre=|abil=|rep=0
+feat|Arathi Heritage|WoW|cat=O|pre=race:human|abil=|rep=0
+feat|Archery|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Athlete|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=str/dex|rep=0
+feat|Blessed Warrior|XPHB|cat=FS:P|pre=other:Special|abil=|rep=0
+feat|Blind Fighting|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Boon of Combat Prowess|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Dimensional Travel|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Energy Resistance|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Fate|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Fortitude|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Irresistible Offense|XPHB|cat=EB|pre=L19|abil=str/dex|rep=0
+feat|Boon of Recovery|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Skill|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Speed|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Spell Recall|XPHB|cat=EB|pre=L19 caster|abil=int/wis/cha|rep=0
+feat|Boon of the Night Spirit|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Boon of Truesight|XPHB|cat=EB|pre=L19|abil=str/dex/con/int/wis/cha|rep=0
+feat|Charger|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=str/dex|rep=0
+feat|Chef|XPHB|cat=G|pre=L4|abil=con/wis|rep=0
+feat|Child of the Sea|WoW|cat=O|pre=race:human|abil=|rep=0
+feat|Clearcasting|WoW|cat=G|pre=L4|abil=int|rep=0
+feat|Crafter|XPHB|cat=O|pre=|abil=|rep=0
+feat|Crossbow Expert|XPHB|cat=G|pre=L4 abil:dex13|abil=dex|rep=0
+feat|Crusher|XPHB|cat=G|pre=L4|abil=str/con|rep=0
+feat|Defense|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Defensive Duelist|XPHB|cat=G|pre=L4 abil:dex13|abil=dex|rep=0
+feat|Druidic Warrior|XPHB|cat=FS:R|pre=other:Special|abil=|rep=0
+feat|Dual Wielder|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=str/dex|rep=0
+feat|Dueling|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Durable|XPHB|cat=G|pre=L4|abil=con|rep=0
+feat|Elemental Adept|XPHB|cat=G|pre=L4 caster|abil=int/wis/cha|rep=1
+feat|Elusive Brawler|WoW|cat=G|pre=L4 abil:dex13&wis13|abil=dex/wis|rep=0
+feat|Enveloping Mist|WoW|cat=G|pre=L4 abil:dex13&wis13|abil=dex/wis|rep=0
+feat|Fey-Touched|XPHB|cat=G|pre=L4|abil=int/wis/cha|rep=0
+feat|Fingers of Frost|WoW|cat=G|pre=L4|abil=int|rep=0
+feat|Fists of Fury|WoW|cat=G|pre=L4 abil:dex13&wis13|abil=dex/wis|rep=0
+feat|Grappler|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=str/dex|rep=0
+feat|Great Weapon Fighting|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Great Weapon Master|XPHB|cat=G|pre=L4 abil:str13|abil=str|rep=0
+feat|Healer|XPHB|cat=O|pre=|abil=|rep=0
+feat|Heavily Armored|XPHB|cat=G|pre=L4 prof:armor:medium|abil=con/str|rep=0
+feat|Heavy Armor Master|XPHB|cat=G|pre=L4 prof:armor:heavy|abil=con/str|rep=0
+feat|Hot Streak|WoW|cat=G|pre=L4|abil=int|rep=0
+feat|Inscription Adept|WoW|cat=G|pre=L4 prof:tool:calligrapher's supplies/tool:cartographer's tools/tool:painter's supplies|abil=int/wis/cha|rep=0
+feat|Inspiring Leader|XPHB|cat=G|pre=L4 abil:wis13 OR L4 abil:cha13|abil=wis/cha|rep=0
+feat|Interception|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Keen Mind|XPHB|cat=G|pre=L4 abil:int13|abil=int|rep=0
+feat|Lightly Armored|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Lucky|XPHB|cat=O|pre=|abil=|rep=0
+feat|Mage Slayer|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Magic Initiate|XPHB|cat=O|pre=|abil=|rep=1
+feat|Martial Weapon Training|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Medium Armor Master|XPHB|cat=G|pre=L4 prof:armor:medium|abil=str/dex|rep=0
+feat|Moderately Armored|XPHB|cat=G|pre=L4 prof:armor:light|abil=str/dex|rep=0
+feat|Mounted Combatant|XPHB|cat=G|pre=L4|abil=str/dex/wis|rep=0
+feat|Musician|XPHB|cat=O|pre=|abil=|rep=0
+feat|Observant|XPHB|cat=G|pre=L4 abil:int13 OR L4 abil:wis13|abil=int/wis|rep=0
+feat|Piercer|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Poisoner|XPHB|cat=G|pre=L4|abil=dex/int|rep=0
+feat|Polearm Master|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=dex/str|rep=0
+feat|Protection|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Resilient|XPHB|cat=G|pre=L4|abil=str/dex/con/int/wis/cha|rep=0
+feat|Ritual Caster|XPHB|cat=G|pre=L4 abil:int13 OR L4 abil:wis13 OR L4 abil:cha13|abil=int/wis/cha|rep=0
+feat|Savage Attacker|XPHB|cat=O|pre=|abil=|rep=0
+feat|Sentinel|XPHB|cat=G|pre=L4 abil:str13 OR L4 abil:dex13|abil=str/dex|rep=0
+feat|Shadow-Touched|XPHB|cat=G|pre=L4|abil=int/wis/cha|rep=0
+feat|Sharpshooter|XPHB|cat=G|pre=L4 abil:dex13|abil=dex|rep=0
+feat|Shield Master|XPHB|cat=G|pre=L4 prof:armor:shield|abil=str|rep=0
+feat|Skill Expert|XPHB|cat=G|pre=L4|abil=str/dex/con/int/wis/cha|rep=0
+feat|Skilled|XPHB|cat=O|pre=|abil=|rep=1
+feat|Skulker|XPHB|cat=G|pre=L4 abil:dex13|abil=dex|rep=0
+feat|Slasher|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Speedy|XPHB|cat=G|pre=L4 abil:dex13 OR L4 abil:con13|abil=dex/con|rep=0
+feat|Spell Sniper|XPHB|cat=G|pre=L4 caster|abil=int/wis/cha|rep=0
+feat|Stagger and Sway|WoW|cat=G|pre=L4 abil:dex13&wis13|abil=dex/wis|rep=0
+feat|Tavern Brawler|XPHB|cat=O|pre=|abil=|rep=0
+feat|Telekinetic|XPHB|cat=G|pre=L4|abil=int/wis/cha|rep=0
+feat|Telepathic|XPHB|cat=G|pre=L4|abil=int/wis/cha|rep=0
+feat|Thrown Weapon Fighting|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Tough|XPHB|cat=O|pre=|abil=|rep=0
+feat|Two-Weapon Fighting|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Unarmed Fighting|XPHB|cat=FS|pre=feature:Fighting Style|abil=|rep=0
+feat|Void Warrior|WoW|cat=FS:R|pre=other:Special|abil=|rep=0
+feat|War Caster|XPHB|cat=G|pre=L4 caster|abil=int/wis/cha|rep=0
+feat|Weapon Master|XPHB|cat=G|pre=L4|abil=str/dex|rep=0
+feat|Will to Survive|WoW|cat=O|pre=race:human|abil=|rep=0

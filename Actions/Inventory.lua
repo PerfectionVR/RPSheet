@@ -16,9 +16,13 @@ function RPSheet:ToggleEquipped(item)
     Changed(self)
 end
 
--- Attunes to an item or ends the attunement. No more than three at a time.
+-- Attunes to an item or ends the attunement. No more than three at a time. An item
+-- that asks for none says so, since a right-click on its row does nothing else.
 function RPSheet:ToggleAttuned(item)
-    if not item.attune then return end
+    if not item.attune then
+        self:Print(("%s needs no attunement. A right-click attunes to a magic item that asks for it, or ends that attunement."):format(item.name))
+        return
+    end
     if not item.attuned and #self:AttunedItems() >= R.ATTUNE_LIMIT then
         self:Print(("You are already attuned to %d items. End one attunement first (right-click an attuned item)."):format(R.ATTUNE_LIMIT))
         return
@@ -29,12 +33,34 @@ function RPSheet:ToggleAttuned(item)
     Changed(self)
 end
 
+-- Something drunk: a potion, an elixir, a philter. Drinking one is a bonus action.
+local function Drunk(item)
+    local name = (item.name or ""):lower()
+    return name:find("potion") or name:find("elixir") or name:find("philter") or (item.desc or ""):find("^Drinking") ~= nil
+end
+
 -- Uses one up: a potion drunk, a torch burnt, a ration eaten. The last one takes the
--- entry off the list.
+-- entry off the list. A spell scroll is read instead, which casts its spell and says
+-- so itself (Actions/Scrolls.lua); it is kept when the casting can't go ahead.
+-- Using anything takes an action or a bonus action (a potion), which an incapacitated
+-- character has none of; someone else may still give it one.
 function RPSheet:UseItem(item)
     if item.qty <= 0 then return end
-    item.qty = item.qty - 1
-    self:Announce(("uses %s"):format(ns.Mark(item.name)))
+    local drunk = Drunk(item)
+    -- (a scroll says so itself when it is read)
+    if not ns.ScrollSpell(item) and self:CantAct((drunk and "drink " or "use ") .. item.name) then
+        if drunk then
+            self:Print("Someone else can give it to you with a bonus action: then take it off with Remove in the item browser.")
+        end
+        return
+    end
+    if ns.ScrollSpell(item) then
+        if not self:ReadScroll(item) then return end
+        item.qty = item.qty - 1
+    else
+        item.qty = item.qty - 1
+        self:Announce(("uses %s"):format(ns.Mark(item.name)))
+    end
     if item.qty == 0 then
         if item.equipped then self:SetEquipped(item, false) end
         local items = self:Sheet().items
@@ -77,10 +103,7 @@ end
 ---------------------------------------------------------------------------
 local DIALOG = "RPSHEET_COINS"
 
--- The game has named the box's text field differently over time.
-local function Box(dialog)
-    return dialog.GetEditBox and dialog:GetEditBox() or dialog.EditBox or dialog.editBox
-end
+local Box = ns.PopupEditBox -- Actions/PopupBox.lua
 
 local function Apply(dialog)
     local box = Box(dialog)

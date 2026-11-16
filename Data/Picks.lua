@@ -8,14 +8,20 @@
 --     known   { {level, how many}, ... }
 --     items   { [name] = { desc, level = minimum level, needs = another pick it requires,
 --                          cost = Sorcery Points it spends, dice = { count, sides, stat } } }
+--     swapGroup, swaps   how many picks made at earlier levels may be exchanged when a
+--                        level is gained, counted over the lists of one group; no
+--                        `swaps` means any number (Sheet/PickSwaps.lua)
+--     what    what one pick is called in the level dialog's notes ("spell" when left out)
 -- }
+-- Both lists here let one option be replaced whenever a level of their class is
+-- gained. An invocation another one builds on can't be the one replaced.
 -- A pick with a cost or dice becomes a clickable ability; the others are passives.
 local _, ns = ...
 local R = ns.Rules
 
 R.PICK_LISTS = {
     metamagic = {
-        title = "Metamagic", base = "Sorcerer",
+        title = "Metamagic", base = "Sorcerer", swapGroup = "metamagic", swaps = 1, what = "option",
         known = { { 2, 2 }, { 10, 4 }, { 17, 6 } },
         items = {
             ["Careful Spell"] = { cost = 1, desc = "When a spell of yours forces saves: creatures you choose, up to your Charisma modifier, pass the save automatically and take no damage where a success would halve it." },
@@ -31,7 +37,7 @@ R.PICK_LISTS = {
         },
     },
     invocations = {
-        title = "Eldritch Invocations", base = "Warlock",
+        title = "Eldritch Invocations", base = "Warlock", swapGroup = "invocations", swaps = 1, what = "invocation",
         known = { { 1, 1 }, { 2, 3 }, { 5, 5 }, { 7, 6 }, { 9, 7 }, { 12, 8 }, { 15, 9 }, { 18, 10 } },
         items = {
             ["Agonizing Blast"] = { level = 2, desc = "Add your Charisma modifier to the damage of one damaging Warlock cantrip you know: tick \"Add spellcasting modifier\" on it." },

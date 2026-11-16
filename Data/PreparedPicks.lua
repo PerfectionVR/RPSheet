@@ -33,6 +33,19 @@ local function Caster(base)
     end
 end
 
+-- When a class may exchange a prepared spell for another:
+--   LEVEL     one when it gains a level
+--   REST      any number when it finishes a long rest
+--   REST_ONE  one when it finishes a long rest
+-- The level dialog holds to it through the list's `swaps` (Sheet/PickSwaps.lua); the
+-- changes after a long rest are made from the sheet (Sheet/PrepareRules.lua).
+R.PREPARE_RULES = {
+    Bard = "LEVEL", Sorcerer = "LEVEL", Warlock = "LEVEL",
+    Cleric = "REST", Druid = "REST",
+    Paladin = "REST_ONE", Ranger = "REST_ONE",
+}
+local LEVEL_SWAPS = { LEVEL = 1, REST_ONE = 0 } -- REST: no limit, they all change after a rest anyway
+
 R.PREPARED_LISTS = {} -- [class] = key of its pick list
 for _, base in ipairs({ "Bard", "Cleric", "Druid", "Paladin", "Ranger", "Sorcerer", "Warlock" }) do
     local caster, numbers = Caster(base), R.SPELLS_PREPARED[base]
@@ -59,6 +72,7 @@ for _, base in ipairs({ "Bard", "Cleric", "Druid", "Paladin", "Ranger", "Sorcere
         R.PICK_LISTS[key] = {
             title = "Prepared spells", base = base, custom = true, hideBlocked = true, follows = "subclass",
             known = known, items = items, order = order,
+            swapGroup = key, swaps = LEVEL_SWAPS[R.PREPARE_RULES[base]],
         }
         R.PREPARED_LISTS[base] = key
         R.PICK_LIST_ORDER[#R.PICK_LIST_ORDER + 1] = key

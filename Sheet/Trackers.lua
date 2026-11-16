@@ -32,7 +32,7 @@ end
 --   reset   value after a long rest
 --   short   what a short rest gives back: "ALL", a number of uses, or nil for nothing
 function RPSheet:GetTrackers()
-    local state, sheet, class = self:State(), self:Sheet(), self:ClassData()
+    local state, sheet = self:State(), self:Sheet()
     local list = {}
     local function add(kind, label, max, reset, store, key, short)
         if max <= 0 then return end
@@ -44,35 +44,64 @@ function RPSheet:GetTrackers()
         }
     end
     add("hp", "HP", self:MaxHP(), self:MaxHP(), state, "hp")
-    add("hitdice", "Hit Dice", self:Level(), self:Level(), state, "hitDice")
+    -- Hit Dice: one pool, or one per size of die for classes with different dice
+    -- (Sheet/ClassHitDice.lua). The first class's pool is kept where it always was.
+    for _, dice in ipairs(ns.HitDice(sheet)) do
+        if dice.first then
+            add("hitdice", dice.label, dice.count, dice.count, state, "hitDice")
+        else
+            if type(state.hitDiceMore) ~= "table" then state.hitDiceMore = {} end
+            add("hitdice", dice.label, dice.count, dice.count, state.hitDiceMore, dice.sides)
+        end
+        list[#list].sides = dice.sides
+    end
     -- Class resources, then any the subclass brings (Superiority Dice and the like).
     -- A World of Warcraft class can drop some of its base class's resources and add its own.
-    local override = R.CLASS_OVERRIDES[sheet.class] or {}
-    local dropped = {}
-    for _, name in ipairs(override.removePools or {}) do dropped[name] = true end
-    local sources = {
-        class and class.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[sheet.subclass] or {},
-        ns.FeaturePools(sheet), -- features with uses of their own, such as Divine Intervention
-        ns.LineagePools(sheet), -- a lineage's once-per-rest spells
+    -- Every class of the character brings its own, sized by its own level. Two classes
+    -- with a resource of the same name (Channel Divinity) share one bar: the larger.
+    local views = ns.ClassViews(sheet)
+    local pools, byName, firstDropped = {}, {}, nil
+    local function collect(source, level, dropped)
+        for _, pool in ipairs(source) do
+            if not dropped[pool.name] then
+                local max = PoolMax(self, pool, level)
+                local same = #views > 1 and byName[pool.name]
+                if same then
+                    same.max = math.max(same.max, max)
+                else
+                    local entry = { name = pool.name, max = max, short = pool.short }
+                    pools[#pools + 1], byName[pool.name] = entry, entry
+                end
+            end
+        end
+    end
+    for _, view in ipairs(views) do
+        local viewClass = R.CLASSES[view.class]
+        local override = R.CLASS_OVERRIDES[view.class] or {}
+        local dropped = {}
+        for _, name in ipairs(override.removePools or {}) do dropped[name] = true end
+        firstDropped = firstDropped or dropped
+        local sources = {
+            viewClass and viewClass.pools or {}, override.pools or {}, R.SUBCLASS_POOLS[view.subclass] or {},
+            ns.FeaturePools(view), -- features with uses of their own, such as Divine Intervention
+        }
+        for _, source in ipairs(sources) do collect(source, view.level, dropped) end
+    end
+    local shared = {
         ns.TraitPools(sheet),   -- species traits with uses
         ns.RenownPools(sheet),  -- a faction's blessings with uses
         ns.PetPools(sheet),     -- a Beast Master's companion
     }
-    for _, pools in ipairs(sources) do
-        for _, pool in ipairs(pools) do
-            if not dropped[pool.name] then
-                local max = PoolMax(self, pool, self:Level())
-                add("pool", pool.name, max, max, state.pool, pool.name, pool.short)
-            end
-        end
+    for _, source in ipairs(shared) do collect(source, self:Level(), firstDropped) end
+    for _, pool in ipairs(pools) do
+        add("pool", pool.name, pool.max, pool.max, state.pool, pool.name, pool.short)
     end
     for _, resource in ipairs(sheet.resources) do
         local max = self:Amount(resource.flat, resource.stat, resource.times)
         add("resource", resource.name, max, resource.startEmpty and 0 or max, state.res, resource.name,
             resource.shortRest and "ALL" or nil)
     end
-    local slots = self:SpellSlots()
-    local pact = class and class.caster == "PACT"
+    local slots, pactSlots, pact = ns.SheetSlots(sheet)
     for spellLevel = 1, 9 do
         if slots[spellLevel] then
             -- Slots made from Sorcery Points can go above the usual number (see
@@ -83,6 +112,16 @@ function RPSheet:GetTrackers()
             add("slot", R.ORDINALS[spellLevel] .. "-level slot", math.max(usual, have), usual, state.slots, spellLevel,
                 pact and "ALL" or nil) -- pact magic slots come back on a short rest
             list[#list].usual = usual
+        end
+    end
+    -- A Warlock with another spellcasting class keeps its Pact Magic slots beside the
+    -- shared ones; they come back on a short rest.
+    for spellLevel = 1, 9 do
+        local count = pactSlots and pactSlots[spellLevel]
+        if count and count > 0 then
+            if type(state.pactSlots) ~= "table" then state.pactSlots = {} end
+            add("slot", ("Pact slot (%s level)"):format(R.ORDINALS[spellLevel]), count, count, state.pactSlots, spellLevel, "ALL")
+            list[#list].usual, list[#list].pact = count, true
         end
     end
     return list

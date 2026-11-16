@@ -29,7 +29,7 @@ R.CLASS_OVERRIDES = {
             end),
             Ability(14, "Improved Death Coil", "Once for each use of Death Coil, however many dice you spent: this much more damage. When it heals an undead, add your level instead.",
                 function(_, sheet) return { Dice(0, 4, "", "DAMAGE", math.max(1, Kit.Mod(sheet, "CHA"))) } end),
-            Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) }),
+            ns.SubclassKit.Prepared({ { 2, "Rune Strike" } }, Limited(2, "Runic Smite", "You always have Rune Strike prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) })),
             Limited(5, "Ghostly Stride", "Your Find Steed can call an undead steed: its slam deals necrotic damage. Bonus action of the steed, once per long rest: it and its rider move through creatures and objects this turn as if through difficult terrain. Each takes 1d10 force damage if it ends the turn inside an object.", 1),
             Passive(11, "Runic Strikes", "Your melee weapon and unarmed hits deal 1d8 extra necrotic damage. The sheet rolls it with every melee attack.",
                 nil, { strike = { sides = 8, damage = "necrotic" } }),

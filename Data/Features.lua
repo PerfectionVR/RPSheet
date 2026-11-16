@@ -80,7 +80,7 @@ R.FEATURES = {
 
     Cleric = {
         Kit.Choice(1, "Divine Order", "The sacred role you dedicated yourself to.", {
-            Kit.Option("Protector", "You are proficient with martial weapons and trained with heavy armor.", { training = { "heavy" } }),
+            Kit.Option("Protector", "You are proficient with martial weapons and trained with heavy armor.", { training = { "heavy" }, martial = true }),
             Kit.Option("Thaumaturge", "You know one more Cleric cantrip, and add your Wisdom modifier (at least +1) to Arcana and Religion checks.",
                 { effects = function(_, sheet)
                     local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
@@ -115,14 +115,14 @@ R.FEATURES = {
     },
 
     Druid = {
-        Passive(1, "Druidic", "You know the secret language of druids and always have Speak with Animals prepared."),
+        Prepared({ { 1, "Speak with Animals" } }, Passive(1, "Druidic", "You know the secret language of druids and always have Speak with Animals prepared.")),
         Kit.Choice(1, "Primal Order", "The sacred role you dedicated yourself to.", {
             Kit.Option("Magician", "You know one more Druid cantrip, and add your Wisdom modifier (at least +1) to Arcana and Nature checks.",
                 { effects = function(_, sheet)
                     local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
                     return { Bonus("SKILL:Arcana", bonus), Bonus("SKILL:Nature", bonus) }
                 end }),
-            Kit.Option("Warden", "You are proficient with martial weapons and trained with medium armor.", { training = { "medium" } }),
+            Kit.Option("Warden", "You are proficient with martial weapons and trained with medium armor.", { training = { "medium" }, martial = true }),
         }),
         Ability(2, "Wild Shape", function(level)
             return ("Bonus action. Take a beast form you know (%d known, up to challenge rating %s%s) for %d hours, keeping your hit points and gaining temporary hit points equal to your level. One use comes back on a short rest."):format(
@@ -239,7 +239,9 @@ R.FEATURES = {
         Prepared({ { 2, "Divine Smite" } }, Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) })),
         Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. The sheet adds 1d8 for each slot level above 1st; set a higher slot at \"Cast at\". Add 1d8 more against fiends and undead.",
             { Spend("1st-level slot"), Kit.SlotAdd(Dice(2, 8), 1) }),
-        Ability(3, "Divine Sense", "Bonus action. For 10 minutes you know the location of celestials, fiends and undead within 60 feet.", { Spend("Channel Divinity") }),
+        Ability(3, "Divine Sense", "Bonus action. For 10 minutes, or until you are incapacitated, you know the location of celestials, fiends and undead within 60 feet. Switches Divine Sense active on.",
+            { Spend("Channel Divinity"), SwitchOn("Divine Sense active") }),
+        Passive(3, "Divine Sense active", "Switch on while Divine Sense lasts (10 minutes). Being incapacitated or a rest switches it off.", nil, true),
         ExtraAttack(5),
         Prepared({ { 5, "Find Steed" } }, Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1)),
         Passive(6, "Aura of Protection", function(level)
@@ -256,8 +258,9 @@ R.FEATURES = {
     },
 
     Ranger = {
-        Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on.",
-            { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") }),
+        -- (always prepared as well: the spell on the spell list is the casting with a slot)
+        Prepared({ { 1, "Hunter's Mark" } }, Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on. The spell is always prepared too, for casting it with a slot.",
+            { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") })),
         Passive(1, "Hunter's Mark", function(level)
             return ("Switch on while a creature is marked. Your hits on it deal 1d%d extra force damage (use Hunter's Mark: damage), and you have advantage on Perception and Survival checks to find it.%s"):format(
                 level >= 20 and 10 or 6, level >= 17 and " You have advantage on attack rolls against it, which the sheet applies while this is on." or "")
@@ -338,11 +341,14 @@ R.FEATURES = {
         Limited(2, "Magical Cunning", function(level)
             return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots."
                 or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up."
-        end, 1, function(level)
+        end, 1, function(level, sheet)
             local pact = R.PACT_SLOTS[level]
-            return { { type = "GAIN", resource = R.ORDINALS[pact[2]] .. "-level slot", amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
+            -- Beside another class's spell slots the pact slots have a bar of their own (Sheet/Trackers.lua).
+            local _, beside = ns.SheetSlots(sheet and sheet.viewOf or sheet or {})
+            local bar = beside and ("Pact slot (%s level)"):format(R.ORDINALS[pact[2]]) or (R.ORDINALS[pact[2]] .. "-level slot")
+            return { { type = "GAIN", resource = bar, amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
         end),
-        Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1),
+        Prepared({ { 9, "Contact Other Plane" } }, Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1)),
         Passive(11, "Mystic Arcanum", "You choose one 6th-level spell of your class, and a 7th, 8th and 9th-level one at levels 13, 15 and 17. Each can be cast once per long rest without a slot: click it on your spell list. They are chosen when you level, and you can swap one each level."),
         Passive(20, "Eldritch Master", "Magical Cunning restores all your pact slots."),
     },
