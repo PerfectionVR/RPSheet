@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.1
 
 - Take damage knows your features that change damage and offers each only while you
   can use it: Evasion (boxes for a Dexterity save passed or failed), Uncanny Dodge and
