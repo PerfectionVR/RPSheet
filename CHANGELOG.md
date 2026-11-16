@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+- Species and lineage cantrips (Sacred Flame, Mind Sliver, Arcane Pulse,
+  Prestidigitation, Druidcraft and others) are on your spell list and can be cast. The
+  lineage's level 3 and 5 spells move there too: once per long rest without a slot,
+  and with your slots after that. They use Intelligence, Wisdom or Charisma, chosen
+  with your lineage; characters made before are asked at their next level. High and
+  blood elves can exchange Prestidigitation for another Wizard cantrip under Customize.
+- With two classes, each keeps its own copy of a spell they both prepare, and the
+  Spells pages under Customize name the class.
+- Holy Nimbus, Shadowform, Divine Sense and Nature's Sanctuary switch on a passive when
+  used; being incapacitated ends the last three. A rest ends these and the other
+  short-lived ones (Rage, Superior Defense, Starry Form, Sacred Weapon, Vow of Enmity,
+  Innate Sorcery, Reckless Attack, Dispersion). Holy Nimbus' save advantage counts only
+  while it is on.
+- Weapon Master's extra pick is for its own kind of weapon only and changes once per
+  long rest (as do Boon of Energy Resistance's types); proficiency from feats and
+  Divine or Primal Order counts for it.
+- Inscription Adept: gathered herbs can pay for your feat spells' costly components.
+- The "which spell are you holding?" question has a "Don't ask again" row. A
+  hand-added Wizard cantrip no longer fills a Mage's cantrip exchange by itself.
+- With an empty Fighting Style the Character tab shows one red line, not two.
 - Changing class, subclass, species or background under Customize raises your current
   hit points when it raises your maximum. An empty Fighting Style is asked for in
   "Class and feat choices". The level dialog lists only the features that apply to
