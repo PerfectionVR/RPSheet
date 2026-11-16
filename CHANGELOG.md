@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.7.0
 
 - Species and lineage cantrips (Sacred Flame, Mind Sliver, Arcane Pulse,
   Prestidigitation, Druidcraft and others) are on your spell list and can be cast. The
