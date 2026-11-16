@@ -161,6 +161,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
     local word, bonus = ns.DiceWord(spell.dice)
     local diceMod = (spell.addMod and self:Mod(self:CastStat(spell)) or 0) + (bonus and self:Bonus(bonus) or 0) + growth.flat
     local parts = {}
+    local dealt -- what the dice came to, for a spell that heals by half of it later
     self.busy = true
 
     local function finish()
@@ -200,6 +201,10 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             parts[#parts + 1] = self:TakeBenefit(benefit)
             self:PopulateSoon()
         end
+        -- A spell rolled again later starts running (Actions/SpellLater.lua).
+        if not scroll then
+            parts[#parts + 1] = self:StartSpellLater(spell, slot and slot.level, dealt, growth.noConcentration)
+        end
         local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
         if chosen then text = text .. (" (%s, no slot)"):format(chosen.feature) end
@@ -213,11 +218,14 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
 
     -- A natural 20 on the spell attack doubles the dice.
     local function rollDice(critical, after)
-        if spell.count <= 0 then return after() end
+        -- Some spells roll their dice only later, on a hit (Data/SpellLater.lua).
+        if spell.count <= 0 or self:SpellLaterQuiet(spell) then return after() end
         self:RollDice((self:SpellDiceCount(spell) + moreDice) * (critical and 2 or 1), spell.sides, function(rolls)
             local label = word == "damage" and critical and "critical damage" or word
             -- A feature can make low force damage dice count as higher.
             local raised = spell.dice == "DAMAGE" and ns.SpellDamageType(spell) == "force" and self:RaiseForceDice(rolls)
+            dealt = diceMod
+            for _, roll in ipairs(rolls) do dealt = dealt + roll end
             local note = self:ApplyDice(spell.dice, rolls, diceMod)
             parts[#parts + 1] = RollText.Dice(label, rolls, spell.sides, diceMod) .. (raised and (" [" .. raised .. "]") or "")
                 .. (note and (" (" .. note .. ")") or "")

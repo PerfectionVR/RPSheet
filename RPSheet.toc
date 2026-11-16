@@ -52,8 +52,12 @@ Data\SpellLists.lua
 Data\SpellGroups.lua
 Data\SlotGrowth.lua
 Data\GrowingSpells.lua
+Data\SpellLater.lua
+Data\SpellLaterAreas.lua
+Data\SpellLaterMore.lua
 Data\SpellDetails.lua
 Data\SpellDamage.lua
+Data\SpellSummaries1.lua
 Data\SpellSummaries2.lua
 Data\SpellSummaries3.lua
 Data\SpellSummaries4.lua
@@ -288,6 +292,9 @@ Actions\Spells.lua
 Actions\SlotGrowth.lua
 Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
+Actions\SpellLater.lua
+Actions\SpellLaterRoll.lua
+Actions\SpellLaterMenu.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\RestUndo.lua

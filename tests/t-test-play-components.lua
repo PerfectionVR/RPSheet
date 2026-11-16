@@ -8,8 +8,10 @@ local function Qty(name)
     for _, item in ipairs(RPSheet:Sheet().items) do if item.name == name then total = total + item.qty end end
     return total
 end
+-- (and ends the spells still running, whose click would roll instead of casting)
 local function Refill()
     for _, tracker in ipairs(RPSheet:GetTrackers()) do if tracker.kind == "slot" then tracker.set(tracker.max) end end
+    RPSheet:EndSpellsLater()
 end
 -- Casts and says whether the spell went off (something was announced).
 local function Cast(spell, ...)
