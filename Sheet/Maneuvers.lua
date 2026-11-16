@@ -141,9 +141,11 @@ end
 
 -- True if a maneuver, a feature's skill, a Fighting Style or a choice of a feat is
 -- still to be made.
-function ns.OpenClassChoices(sheet)
+-- `exceptStyles` leaves out an empty Fighting Style, which has a line of its own on
+-- the Character tab.
+function ns.OpenClassChoices(sheet, exceptStyles)
     local limit = ns.SheetManeuverLimit(sheet)
     return (limit > 0 and ns.ManeuversKnown(sheet) ~= limit) or #ns.OpenFeatureSkills(sheet) > 0
         or #ns.OpenOptionFeatures(sheet) > 0 or ns.OpenPicks(sheet) or ns.OpenExpertise(sheet) or ns.OpenFeatSkills(sheet)
-        or ns.OpenFeatChoices(sheet) or #ns.OpenStyleSlots(sheet) > 0
+        or ns.OpenFeatChoices(sheet) or (not exceptStyles and #ns.OpenStyleSlots(sheet) > 0)
 end

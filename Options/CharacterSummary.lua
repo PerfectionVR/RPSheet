@@ -63,7 +63,7 @@ local function Summary()
     for _, warning in ipairs(ns.MulticlassWarnings(sheet)) do
         lines[#lines + 1] = Opt.RED .. warning .. "|r"
     end
-    if ns.OpenClassChoices(sheet) then
+    if ns.OpenClassChoices(sheet, true) then -- (an empty Fighting Style has its own line above)
         -- The button is named after the maneuvers for a Battle Master (see classChoices below).
         lines[#lines + 1] = ("%sYour class or feats have choices to make: use \"%s\" below.|r"):format(Opt.RED,
             ns.SheetManeuverLimit(sheet) > 0 and "Maneuvers" or "Class and feat choices")
