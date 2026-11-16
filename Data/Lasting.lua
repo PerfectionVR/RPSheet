@@ -19,4 +19,11 @@ R.LASTING = {
     ["Nature's Sanctuary active"] = { label = "Nature's Sanctuary", incapacitated = true },
     -- Ends only when the paladin ends it, or after ten minutes.
     ["Holy Nimbus active"] = { label = "Holy Nimbus" },
+    -- Ten minutes or less too, so a rest outlasts them; the rules don't end them when
+    -- you are incapacitated.
+    ["Sacred Weapon active"] = { label = "Sacred Weapon" },    -- 10 minutes
+    ["Vow of Enmity active"] = { label = "Vow of Enmity" },    -- 1 minute
+    ["Innate Sorcery active"] = { label = "Innate Sorcery" },  -- 1 minute
+    ["Reckless"] = { label = "Reckless Attack" },              -- until your next turn
+    ["Dispersed"] = { label = "Dispersion" },                  -- until the end of your next turn
 }

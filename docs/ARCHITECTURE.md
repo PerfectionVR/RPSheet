@@ -681,3 +681,25 @@ See [tests/README.md](../tests/README.md).
 - Anything from another player or a pasted string is untrusted.
 - Calls into Total RP 3 and into the game's newer APIs are guarded (`pcall`, existence
   checks, `issecretvalue`): a missing API must degrade, not error.
+
+## Added with the last fixes before 0.7.0
+
+- `Data/Lasting.lua` lists the passives a feature switches on for a while (Rage,
+  Shadowform, Divine Sense, Holy Nimbus, Sacred Weapon and others): which end when you
+  are incapacitated (`Actions/Incapacitated.lua`) and that every one ends with a rest.
+- `Sheet/LineageCasting.lua` keeps the spellcasting ability chosen for a species or
+  lineage (`sheet.lineageStat`) and an elf's exchanged cantrip; `Sheet/LineageSpells.lua`
+  puts the species' cantrips and its level 3 and 5 spells on the spell list
+  (`auto = "species:<name>"`). `Options/LineageAbility.lua` asks for the ability in the
+  level dialog by wrapping `L.Problem` and the confirm function, so it loads after
+  `Options/LevelDialogApply.lua` and before `Options/LevelDialog.lua`.
+- `Sheet/FeatRestPicks.lua` holds feat choices marked `rest` (Weapon Master, Boon of
+  Energy Resistance) to one change per long rest (`state.restPicks`).
+- `Sheet/HerbComponents.lua` lets Inscription Adept pay a feat spell's priced component
+  with gathered herbs.
+- `Integrations/SyncSwitch.lua` reacts to the share switch and to settings-profile
+  changes; `Integrations/ChatTerms.lua` is the term lookup for chat links (tools and
+  items included). Sync uses the instance channel in dungeon finder, raid finder and
+  battleground groups (`S.GroupChannel`), and forgets other players' stats after half
+  an hour unless they are in the group.
+
