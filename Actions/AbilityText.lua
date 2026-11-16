@@ -30,7 +30,10 @@ function RPSheet:ActionText(action)
         local text = ("Spend %d %s"):format(action.amount, action.resource)
         if action.freeIfFull ~= "" then text = text .. (" (free when %s is full)"):format(action.freeIfFull) end
         if action.firstFree then text = text .. " (free the first time after a long rest)" end
-        if (action.otherwise or "") ~= "" then text = text .. (", or %d %s once that is used up"):format(action.otherwiseAmount, action.otherwise) end
+        if (action.otherwise or "") ~= "" then
+            text = text .. (", or %d %s once that is used up"):format(action.otherwiseAmount, action.otherwise)
+            if (action.otherwiseWhile or "") ~= "" then text = text .. (" while %s is on"):format(action.otherwiseWhile) end
+        end
         if (action.refund or "") ~= "" then text = text .. (" (right-click to take it back if %s)"):format(action.refund) end
         return text
     elseif kind == "GAIN" then
@@ -41,6 +44,10 @@ function RPSheet:ActionText(action)
         return ("%s: %s"):format(R.TOGGLE_MODES[action.mode] or "Flip", action.passive)
     elseif kind == "SLOTS" then
         return ns.SLOT_ACTION_TEXT[action.mode] or "Spell slots"
+    elseif kind == "EMPTYONLY" then
+        return ("Only with no %s left"):format(action.resource)
+    elseif kind == "LOSEHP" then
+        return ("Lose %d hit points"):format(action.amount)
     elseif kind == "NEXTROLL" then
         return ("Next roll: %s"):format(action.mode == "DIS" and "disadvantage" or "advantage")
     end

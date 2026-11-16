@@ -105,6 +105,11 @@ function RPSheet:RollConcentration(damage, sure)
     -- War Caster and the like give advantage on this save alone (Sheet/SaveAdvantages.lua).
     self:RollD20(self:ResolveMode("CON save", (sure or self:ConcentrationAdvantage()) and "ADV" or nil), function(d20, note)
         self.busy = false
+        -- The Dragon constellation: a low die counts as 10 (Sheet/D20Floor.lua).
+        if d20 < 10 and self:ConcentrationFloor() then
+            note = ("%s [rolled %d, counts as 10]"):format(note, d20)
+            d20 = 10
+        end
         local kept = d20 + mod >= dc
         if not kept then
             self:State().conditions.Concentrating = nil

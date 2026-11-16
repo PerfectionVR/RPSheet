@@ -47,11 +47,13 @@ function RPSheet:LongRest()
     self:EndWards(8)         -- nor a protective spell of 8 hours or less,
     self:EndWards(nil, true) -- nor one that hangs on concentration
     self:ClampState(true) -- also makes first-use-free abilities free again
+    self:InterventionAfterRest() -- unless Wish keeps Divine Intervention spent (Actions/InterventionFlow.lua)
     state.tempHP = 0
     state.exhaustion = math.max(0, (state.exhaustion or 0) - 1)
     state.conditions.Concentrating = nil
     state.petMasteryChanged = nil -- Weapon Mastery picks can be changed again
     state.prepareClosed = nil     -- and so can the prepared spells
+    state.memorizeSwap = nil      -- (so Memorize Spell's one exchange isn't needed)
     state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
     state.cantripSwap = nil       -- and a Mage's exchange of one cantrip (Sheet/CantripSwap.lua)
     ns.ResetRestPicks()           -- and the feat picks that change after a long rest
@@ -69,6 +71,7 @@ end
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
     self:ForgetRefunds()
+    self:OpenMemorize() -- a Mage can replace one prepared spell (Sheet/MemorizeSpell.lua)
     if EndLasting(self) then self:PopulateSoon() end
     if self:EndBenefits() then
         self:ClampState()

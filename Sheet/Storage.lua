@@ -122,6 +122,7 @@ function RPSheet:ReplaceSheet(sheet, keepResourceValues)
     -- The questions the character before had stopped (Actions/RollQuestions.lua), its
     -- used-up beast actions and a scroll's spell it had running.
     state.quiet, state.beastUsed, state.growingScrolls, state.scrollSpells = nil, nil, nil, nil
+    state.interventionRests, state.memorizeSwap = nil, nil -- Wish's long rests, Memorize Spell's exchange
     ns.NormalizeState(state)
     ns.ApplyClassFeatures(sheet) -- an imported sheet may come from an older version
     ns.ApplyLineageSpells(sheet)

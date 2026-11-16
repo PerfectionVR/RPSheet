@@ -18,6 +18,8 @@ function RPSheet:UseAbility(ability, mode, answers)
     if self.busy or self:IsRolling() then return end
     -- A companion's strike rolls with its own numbers and riders (Actions/Pet.lua).
     if ns.PetAbility(self, ability, mode) then return end
+    -- Some features ask first: how many points, which rune (Actions/AbilityFlows.lua).
+    if ns.AbilityFlow(self, ability, mode) then return end
     -- No actions while incapacitated; a saving throw of the character's own still rolls.
     if not ns.AbilityKit.OwnSaveOnly(ability) and self:CantAct("use " .. ability.name) then return end
     -- A beast's action that is used up until it recharges or a rest (Actions/BeastUses.lua).
@@ -132,6 +134,9 @@ function RPSheet:UseAbility(ability, mode, answers)
             self:RollDice((count * times + more) * (doubled and 2 or 1), action.sides, function(rolls)
                 -- A feature can make low force damage dice count as higher.
                 local raised = action.damage == "force" and self:RaiseForceDice(rolls)
+                -- ...and some count healing dice at their highest (Actions/FeatureDice.lua).
+                local featured = self:AbilityDiceFeatures(ability, action, rolls, mod)
+                if featured then raised = raised and (raised .. "; " .. featured) or featured end
                 local note = self:ApplyDice(action.dice, rolls, mod)
                 -- Without dice it is a plain amount, such as temporary HP equal to a bonus.
                 local text = #rolls > 0 and RollText.Dice(doubled and "critical damage" or word, rolls, action.sides, mod)
@@ -154,6 +159,12 @@ function RPSheet:UseAbility(ability, mode, answers)
                 parts[#parts + 1] = RollText.Dice(weapon.heal and "healing" or (doubled and "critical damage" or "damage"), rolls, sides, mod)
                 step()
             end)
+        elseif action.type == "LOSEHP" then
+            -- Hit points lost as a price (Runic Mastery), not damage: nothing reduces it.
+            local state, max = self:State(), self:MaxHP()
+            state.hp = math.max(0, (state.hp or max) - action.amount)
+            parts[#parts + 1] = ("loses %d hit points (now %d/%d HP)"):format(action.amount, state.hp, max)
+            step()
         else
             step()
         end

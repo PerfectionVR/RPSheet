@@ -55,6 +55,8 @@ R.ACTIONS = {
     TOGGLE = "Switch a passive on or off",
     NEXTROLL = "Set advantage or disadvantage on the next roll",
     SLOTS = "Change spell slots", -- for class features only; not offered in the editor
+    EMPTYONLY = "Only with none of a resource left", -- class features only, like SLOTS
+    LOSEHP = "Lose hit points",   -- class features only, like SLOTS
 }
 R.ACTION_ORDER = { "ROLL", "DICE", "WEAPON", "SPEND", "GAIN", "EMPTY", "TOGGLE", "NEXTROLL" }
 R.NEXT_ROLL_MODES = { ADV = "Advantage", DIS = "Disadvantage" }
@@ -97,6 +99,7 @@ R.TEMPLATES = {
         resource = "", amount = 1, freeIfFull = "",                    -- SPEND / GAIN / EMPTY
         refund = "",                                                   -- SPEND: when it can be taken back ("the check still failed")
         otherwise = "", otherwiseAmount = 0,                           -- SPEND: another resource that pays once this one is used up
+        otherwiseWhile = "",                                           -- SPEND: ...only while the passive of this name is on
         firstFree = false,                                             -- SPEND: waived for the first use after a long rest
         passive = "", mode = "TOGGLE",                                 -- TOGGLE
     },

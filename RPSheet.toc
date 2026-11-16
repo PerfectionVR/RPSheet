@@ -48,6 +48,7 @@ Data\Feats.lua
 Data\Spells.lua
 Data\SpellsAzeroth.lua
 Data\SpellsCore.lua
+Data\EvocationSpells.lua
 Data\SpellLists.lua
 Data\SpellGroups.lua
 Data\SlotGrowth.lua
@@ -119,6 +120,7 @@ Data\SubclassDruid.lua
 Data\SubclassMonk.lua
 Data\SubclassEvoker.lua
 Data\SubclassWarlockMage.lua
+Data\Runes.lua
 Data\ClassOverrides.lua
 Data\SubclassNotes.lua
 Data\Metamorphosis.lua
@@ -181,6 +183,7 @@ Sheet\Forms.lua
 Sheet\Pet.lua
 Sheet\Metamorphosis.lua
 Sheet\RollModes.lua
+Sheet\D20Floor.lua
 Sheet\SaveAdvantages.lua
 Sheet\Limits.lua
 Sheet\Senses.lua
@@ -251,6 +254,7 @@ Sheet\PrepareChanges.lua
 Sheet\SpellRefresh.lua
 Sheet\PreparedSpells.lua
 Sheet\Spellbook.lua
+Sheet\MemorizeSpell.lua
 Sheet\CantripSwap.lua
 Sheet\Scribing.lua
 Sheet\ScrollReading.lua
@@ -291,6 +295,16 @@ Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
 Actions\RestUndo.lua
+Actions\AbilityFlows.lua
+Actions\FeatureAmount.lua
+Actions\PaladinFlows.lua
+Actions\RuneFlows.lua
+Actions\DruidFlows.lua
+Actions\SorcererFlows.lua
+Actions\InterventionFlow.lua
+Actions\FeatureDice.lua
+Actions\SpellFeatures.lua
+Actions\Initiative.lua
 Actions\BeastUses.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua

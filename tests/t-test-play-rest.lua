@@ -373,28 +373,33 @@ Section("an ability paid with a spell slot", function()
     local smite = Ability("Divine Smite")
     local s1, s2, pact = Slot(1), Slot(2), Slot(2, true)
     if not Check(smite and s1 and s2 and pact, "a Paladin 6 / Warlock 3 has Divine Smite, shared slots and 2nd-level Pact slots") then return end
+    -- The smite asks whether the target is a fiend or an undead (Actions/PaladinFlows.lua).
+    local function Use()
+        RPSheet:UseAbility(smite)
+        Click(MENU, "No")
+    end
     local at = #ROLLED
-    RPSheet:UseAbility(smite)
+    Use()
     Eq(Dice(at), "8,8", "Divine Smite with a 1st-level slot: 2d8")
     Eq(s1.get(), s1.max - 1, "a 1st-level slot is spent")
     Said("uses [Divine Smite] (1 1st-level slot)", "the line names the slot")
     RPSheet.castLevel = 2
     at = #ROLLED
-    RPSheet:UseAbility(smite)
+    Use()
     Eq(Dice(at), "8,8,8", "Cast at 2nd: one die more")
     Eq(s2.get(), s2.max - 1, "a 2nd-level slot is spent")
     Eq(RPSheet.castLevel, nil, "Cast at goes back")
     -- the lowest slot left pays, a Pact slot too
     s1.set(0)
     at = #ROLLED
-    RPSheet:UseAbility(smite)
+    Use()
     Eq(Dice(at), "8,8,8", "with no 1st-level slot a 2nd-level one pays and adds its die")
     s2.set(0)
-    RPSheet:UseAbility(smite)
+    Use()
     Eq(pact.get(), pact.max - 1, "with the shared slots spent a Pact slot pays")
     pact.set(0)
     local before, sent = #PRINTED, #SENT
-    RPSheet:UseAbility(smite)
+    Use()
     Eq(#SENT, sent, "with no slot at all nothing happens")
     Check(AnyPrinted("Not enough 1st-level slot for Divine Smite", before), "and a line says so")
 end)

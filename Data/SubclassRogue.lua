@@ -12,9 +12,12 @@ local function PsionicDie(level)
 end
 
 F["Assassin"] = {
-    Passive(3, "Assassinate", "Advantage on initiative rolls, which the sheet rolls for you. In the first round you have advantage against creatures that haven't acted, and a Sneak Attack hit then deals extra damage equal to your level.",
+    Passive(3, "Assassinate", "Advantage on initiative rolls, which the sheet rolls for you. In the first round you have advantage against creatures that haven't acted, and a Sneak Attack hit then deals extra damage equal to your level: use Assassinate: first round.",
         nil, { advantage = { "initiative" } }),
-    Passive(3, "Assassin's Tools", "You have a disguise kit and a poisoner's kit, and proficiency with both."),
+    Ability(3, "Assassinate: first round", "When your Sneak Attack hits in the first round of a combat: extra damage of the weapon's type, equal to your level.",
+        { Dice(0, 4, "LEVEL", "DAMAGE") }),
+    Passive(3, "Assassin's Tools", "You have a disguise kit and a poisoner's kit, and proficiency with both. The sheet gives the proficiencies.",
+        nil, { tools = { "Disguise Kit", "Poisoner's Kit" } }),
     Passive(9, "Infiltration Expertise", "You can mimic a person's speech and handwriting after an hour of study, and Steady Aim no longer stops you moving."),
     Ability(13, "Envenom Weapons", "Your Poison Cunning Strike also deals this poison damage each time the target fails its save, the repeated ones too. It ignores resistance.",
         { Dice(2, 6) }),

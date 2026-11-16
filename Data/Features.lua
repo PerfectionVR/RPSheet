@@ -100,15 +100,17 @@ R.FEATURES = {
                 return ("Once per turn when you hit with a weapon: %s extra necrotic or radiant damage. Use the Divine Strike ability."):format(level >= 14 and "2d8" or "1d8")
             end),
             Kit.Option("Potent Spellcasting", function(level)
-                return "Add your Wisdom modifier to the damage of your Cleric cantrips: tick \"Add spellcasting modifier\" on them."
-                    .. (level >= 14 and " When a cantrip damages a creature, you or someone within 60 feet gains temporary hit points equal to twice your Wisdom modifier." or "")
+                return "Your Wisdom modifier is added to the damage of your Cleric cantrips; the sheet adds it."
+                    .. (level >= 14 and " When a cantrip damages a creature, you or someone within 60 feet gains temporary hit points equal to twice your Wisdom modifier: use Potent Spellcasting: vitality." or "")
             end),
         }),
+        Kit.For("Blessed Strikes", "Potent Spellcasting", Ability(14, "Potent Spellcasting: vitality", "After a Cleric cantrip of yours damages a creature: you, or a creature within 60 feet, gain temporary hit points equal to twice your Wisdom modifier. The sheet sets yours.",
+            function(_, sheet) return { Dice(0, 4, "", "TEMPHP", math.max(0, 2 * Kit.Mod(sheet, "WIS"))) } end)),
         Kit.For("Blessed Strikes", "Divine Strike", Ability(7, "Divine Strike", "Once per turn when you hit with a weapon: extra necrotic or radiant damage.",
             function(level) return { Dice(level >= 14 and 2 or 1, 8) } end)),
         Limited(10, "Divine Intervention", function(level)
             return "Magic action, once per long rest. Cast any Cleric spell of 5th level or lower without a slot or components."
-                .. (level >= 20 and " You can choose Wish; if you do, this comes back only after 2d4 long rests." or "")
+                .. (level >= 20 and " You can choose Wish: the sheet asks, rolls the 2d4 long rests, and keeps this spent until they have passed." or "")
         end, 1),
         Passive(14, "Improved Blessed Strikes", "Your Blessed Strikes option grows stronger, as its description says."),
         Passive(20, "Greater Divine Intervention", "Divine Intervention can cast Wish, after which it takes 2d4 long rests to return."),
@@ -131,12 +133,13 @@ R.FEATURES = {
         end, { Spend("Wild Shape"), Dice(0, 4, "LEVEL", "TEMPHP") }),
         Ability(2, "Wild Companion", "Magic action. Cast Find Familiar without components by spending a Wild Shape use (this), or a spell slot. The familiar is fey and leaves after a long rest.",
             { Spend("Wild Shape") }),
-        Passive(5, "Wild Resurgence", "Once per turn, with no Wild Shape uses left, you can spend a spell slot to gain one: change the bars by hand."),
+        Ability(5, "Wild Resurgence", "Once per turn, with no Wild Shape uses left: spend a spell slot to gain one. The sheet spends your lowest slot left, or the level set at \"Cast at\".",
+            { { type = "EMPTYONLY", resource = "Wild Shape" }, Spend("1st-level slot"), { type = "GAIN", resource = "Wild Shape", amount = 1 } }),
         Limited(5, "Wild Resurgence: slot", "Spend a Wild Shape use to gain a 1st-level spell slot. Once per long rest.", 1,
             { Spend("Wild Shape"), { type = "GAIN", resource = "1st-level slot", amount = 1 } }),
         Kit.Choice(7, "Elemental Fury", "How the elements flow through you.", {
             Kit.Option("Potent Spellcasting", function(level)
-                return "Add your Wisdom modifier to the damage of your Druid cantrips: tick \"Add spellcasting modifier\" on them." .. (level >= 15 and " Cantrips with a range of 10 feet or more reach 300 feet farther." or "")
+                return "Your Wisdom modifier is added to the damage of your Druid cantrips; the sheet adds it." .. (level >= 15 and " Cantrips with a range of 10 feet or more reach 300 feet farther." or "")
             end),
             Kit.Option("Primal Strike", function(level)
                 return ("Once per turn when you hit with a weapon or a beast form's attack: %s extra cold, fire, lightning or thunder damage. Use the Primal Strike ability."):format(level >= 15 and "2d8" or "1d8")
@@ -146,8 +149,8 @@ R.FEATURES = {
             function(level) return { Dice(level >= 15 and 2 or 1, 8) } end)),
         Passive(15, "Improved Elemental Fury", "Your Elemental Fury option grows stronger, as its description says."),
         Passive(18, "Beast Spells", "You can cast spells while in a Wild Shape form, except ones with a costly or consumed material component. The sheet allows it from here on."),
-        Passive(20, "Archdruid", "When you roll initiative with no Wild Shape uses left you regain one. You age far more slowly."),
-        Limited(20, "Nature Magician", "Turn Wild Shape uses into one spell slot, two slot levels per use. Once per long rest. Change the bars by hand.", 1),
+        Passive(20, "Archdruid", "When you roll initiative with no Wild Shape uses left you regain one; the sheet gives it back when you roll initiative from it. You age far more slowly."),
+        Limited(20, "Nature Magician", "Turn Wild Shape uses into one spell slot, two slot levels per use. Once per long rest. The sheet asks how many uses, spends them and adds the slot.", 1),
     },
 
     Fighter = {
@@ -223,7 +226,7 @@ R.FEATURES = {
         Passive(13, "Deflect Energy", "Deflect Attacks works against attacks of any damage type."),
         Passive(14, "Disciplined Survivor", "You are proficient in all saving throws.", nil, { saves = { "STR", "DEX", "CON", "INT", "WIS", "CHA" } }),
         Ability(14, "Disciplined Survivor: reroll", "When you fail a saving throw: reroll it. You must use the new roll.", { Spend("Focus Points") }),
-        Passive(15, "Perfect Focus", "When you roll initiative without using Uncanny Metabolism and have 3 or fewer Focus Points, you go up to 4. Raise the bar by hand."),
+        Passive(15, "Perfect Focus", "When you roll initiative without using Uncanny Metabolism and have 3 or fewer Focus Points, you go up to 4. The sheet raises the bar when you roll initiative from it."),
         Ability(18, "Superior Defense", "At the start of your turn: for 1 minute, or until you are incapacitated, you resist all damage except force. Switches Superior Defense active on.",
             { Spend("Focus Points", 3), SwitchOn("Superior Defense active") }),
         Passive(18, "Superior Defense active", "Switch on while Superior Defense lasts (1 minute, or until you are incapacitated): you resist all damage except force.",
@@ -232,12 +235,12 @@ R.FEATURES = {
     },
 
     Paladin = {
-        Ability(1, "Lay on Hands", "Bonus action. Heal a creature you touch from your pool. Each click spends 5 points and heals 5; change the bar by hand for other amounts. Spending 5 can instead remove the poisoned condition.",
+        Ability(1, "Lay on Hands", "Bonus action. Heal a creature you touch, or yourself, from your pool: the sheet asks whom and how many points, spends them and heals you when it is you. Spending 5 can instead end the poisoned condition.",
             { Spend("Lay on Hands", 5), Dice(0, 4, "", "HEALING", 5) }),
         WEAPON_MASTERY,
         Passive(2, "Fighting Style", FIGHTING_STYLE),
-        Prepared({ { 2, "Divine Smite" } }, Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) })),
-        Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. The sheet adds 1d8 for each slot level above 1st; set a higher slot at \"Cast at\". Add 1d8 more against fiends and undead.",
+        Prepared({ { 2, "Divine Smite" } }, Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting. The sheet asks whether the target is a fiend or an undead, which takes 1d8 more.", 1, { Dice(2, 8) })),
+        Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. The sheet adds 1d8 for each slot level above 1st; set a higher slot at \"Cast at\". It asks whether the target is a fiend or an undead, which takes 1d8 more.",
             { Spend("1st-level slot"), Kit.SlotAdd(Dice(2, 8), 1) }),
         Ability(3, "Divine Sense", "Bonus action. For 10 minutes, or until you are incapacitated, you know the location of celestials, fiends and undead within 60 feet. Switches Divine Sense active on.",
             { Spend("Channel Divinity"), SwitchOn("Divine Sense active") }),
@@ -253,7 +256,7 @@ R.FEATURES = {
         Passive(10, "Aura of Courage", "You and allies in your aura can't be frightened.", nil, { conditionImmune = { "Frightened" } }),
         Passive(11, "Radiant Strikes", "Your melee weapon and unarmed hits deal 1d8 extra radiant damage. The sheet rolls it with every melee attack.",
             nil, { strike = { sides = 8, damage = "radiant" } }),
-        Passive(14, "Restoring Touch", "When you use Lay on Hands you can spend 5 points per condition to end blinded, charmed, deafened, frightened, paralyzed or stunned."),
+        Passive(14, "Restoring Touch", "When you use Lay on Hands you can spend 5 points per condition to end blinded, charmed, deafened, frightened, paralyzed or stunned. Lay on Hands offers them."),
         Passive(18, "Aura Expansion", "Your Aura of Protection reaches 30 feet."),
     },
 
@@ -262,7 +265,7 @@ R.FEATURES = {
         Prepared({ { 1, "Hunter's Mark" } }, Ability(1, "Hunter's Mark", "Bonus action, a casting of the spell without a slot. Mark a creature you can see within 90 feet for up to an hour (concentration). Switches the mark on. The spell is always prepared too, for casting it with a slot.",
             { Spend("Favored Enemy"), SwitchOn("Hunter's Mark") })),
         Passive(1, "Hunter's Mark", function(level)
-            return ("Switch on while a creature is marked. Your hits on it deal 1d%d extra force damage (use Hunter's Mark: damage), and you have advantage on Perception and Survival checks to find it.%s"):format(
+            return ("Switch on while a creature is marked; casting the spell, with a slot or without, switches it on. Your hits on it deal 1d%d extra force damage (use Hunter's Mark: damage), and you have advantage on Perception and Survival checks to find it.%s"):format(
                 level >= 20 and 10 or 6, level >= 17 and " You have advantage on attack rolls against it, which the sheet applies while this is on." or "")
         end, nil, { startsOff = true, advantage = function(level) return level >= 17 and { "attack" } or nil end }),
         Ability(1, "Hunter's Mark: damage", "The extra force damage when you hit the marked creature.",
@@ -330,7 +333,7 @@ R.FEATURES = {
         end, 1, function(level) return { { type = "GAIN", resource = "Sorcery Points", amount = math.floor(level / 2) } } end),
         Ability(7, "Sorcery Incarnate", "With no Innate Sorcery uses left you can spend 2 Sorcery Points to activate it. While it is active you can use two Metamagic options on one spell.",
             { Spend("Sorcery Points", 2), SwitchOn("Innate Sorcery active") }),
-        Passive(20, "Arcane Apotheosis", "While Innate Sorcery is active, one Metamagic option each turn costs no Sorcery Points."),
+        Passive(20, "Arcane Apotheosis", "While Innate Sorcery is active, one Metamagic option on each of your turns costs no Sorcery Points: clicking a Metamagic option then asks whether it is that free one."),
     },
 
     Warlock = {
@@ -342,10 +345,8 @@ R.FEATURES = {
             return level >= 20 and "Once per long rest, a 1-minute rite restores all your pact slots."
                 or "Once per long rest, a 1-minute rite restores half of your pact slots, rounded up."
         end, 1, function(level, sheet)
-            local pact = R.PACT_SLOTS[level]
             -- Beside another class's spell slots the pact slots have a bar of their own (Sheet/Trackers.lua).
-            local _, beside = ns.SheetSlots(sheet and sheet.viewOf or sheet or {})
-            local bar = beside and ("Pact slot (%s level)"):format(R.ORDINALS[pact[2]]) or (R.ORDINALS[pact[2]] .. "-level slot")
+            local bar, pact = Kit.PactSlotBar(level, sheet)
             return { { type = "GAIN", resource = bar, amount = level >= 20 and pact[1] or math.ceil(pact[1] / 2) } }
         end),
         Prepared({ { 9, "Contact Other Plane" } }, Limited(9, "Contact Patron", "You always have Contact Other Plane prepared. Once per long rest you can cast it without a slot, succeeding on its save.", 1)),
@@ -360,7 +361,7 @@ R.FEATURES = {
         end, { Spend("Arcane Recovery"), Kit.Slots("RECOVER") }),
         Passive(2, "Scholar", "Expertise in one of Arcana, History, Investigation, Medicine, Nature or Religion that you are proficient in. It is chosen when you level.", nil,
             { expertise = { steps = { { 2, 1 } }, skills = { "Arcana", "History", "Investigation", "Medicine", "Nature", "Religion" } } }),
-        Passive(5, "Memorize Spell", "After a short rest you can swap one prepared spell for another from your spellbook."),
+        Passive(5, "Memorize Spell", "After a short rest you can replace one prepared spell with another of 1st level or higher from your spellbook: in the spellbook window, put one away, then prepare the other."),
         Passive(18, "Spell Mastery", "Choose a 1st and a 2nd-level spell from your spellbook with a casting time of an action: they are always prepared and you can cast them at their lowest level without a slot. They are chosen when you level; after a long rest you can swap one."),
         Passive(20, "Signature Spells", "Choose two 3rd-level spells from your spellbook: they are always prepared, and you can cast each once at 3rd level without a slot. That casting comes back on a short or long rest. They are chosen when you level."),
     },
