@@ -323,6 +323,23 @@ Eq(first, 1, "a tab is another list: back to its first page")
 first = Pages.Range(#everything, SHEET, Search.ALL, "healing")
 Eq(first, 1, "a new search too")
 
+-- Plain gear says what it is for (Data/GearNotes.lua), so the search finds it by use.
+for _, kind in ipairs({ "Adventuring gear", "Packs", "Spellcasting focuses", "Tools and instruments" }) do
+    for _, name in ipairs(R.ITEM_NAMES[kind]) do
+        local desc = R.ITEMS[name].desc or ""
+        Check(desc ~= "", name .. " has a description")
+        Check(not (desc:find("%f[%a]nil%f[%A]") or desc:find("%%[sdq]")), name .. ": no odd text in its description")
+    end
+end
+local function Finds(search, name, label)
+    Check(Named(Search.Find(RPSheet, SHEET, Search.ALL, search, true), name) ~= nil, label)
+end
+Finds("stabilize", "Healer's Kit", "\"stabilize\" finds the Healer's Kit")
+Finds("bright light", "Torch", "\"bright light\" finds the torch")
+Finds("pick a lock", "Thieves' Tools", "\"pick a lock\" finds thieves' tools")
+Finds("holy symbol", "Reliquary", "\"holy symbol\" finds the reliquary")
+Finds("tinderbox", "Explorer's Pack", "a pack is found by what is in it")
+
 -- The real window, made of stubs: the search box's state drives what is shown.
 RPSheet.ShowItemBrowser = RealShow
 local state = UI.ItemBrowserState

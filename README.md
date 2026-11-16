@@ -607,12 +607,12 @@ Small gaps left in what is built. None is planned; say so if one matters to you.
   Knight, Hunter with Demon Hunter) can't be combined: by the rules they are one
   class with different subclasses. Weapon Mastery picks from several classes add
   up, which is one reading of a rule tables disagree on.
-- **Spells**: a weapon of your own needs a worth set before it serves as a spell
-  component.
+- **Spells**: a weapon of your own (one not based on a listed weapon) serves as a
+  spell's weapon component only once you set its worth, so that claws or a bite
+  don't count.
 - **Items**: an item saved before your edits were recorded is only refreshed from
   the item lists when it has no effects and an untouched note; newer ones follow the
-  lists unless you changed them. Plain gear has no descriptions, so the item
-  browser's search finds it by name and kind only.
+  lists unless you changed them.
 - **Mounts**: a rider's own weight counts only once it is entered under Customize >
   Mounts and companions; carrying capacities the rules don't list are worked out
   from Strength and marked as estimates.
