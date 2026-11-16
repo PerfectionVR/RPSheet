@@ -130,6 +130,7 @@ Data\FactionPerksOrders.lua
 Data\RenownRules.lua
 Data\SpellWards.lua
 Data\SpellWardRolls.lua
+Data\SpellWardDeath.lua
 Data\Professions.lua
 Data\Recipes.lua
 Data\MagicItemsPotions.lua
@@ -290,11 +291,18 @@ Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
 Actions\SlotActions.lua
 Actions\Rest.lua
+Actions\ReactionState.lua
 Actions\RestUndo.lua
 Actions\BeastUses.lua
 Actions\DeathSaves.lua
 Actions\Damage.lua
 Actions\WardDamage.lua
+Actions\DamageSteps.lua
+Actions\DamageZero.lua
+Actions\StaggerSway.lua
+Actions\Falling.lua
+Actions\HealReceived.lua
+Actions\ScoreFloor.lua
 Actions\Gathering.lua
 Actions\Archaeology.lua
 Actions\Trade.lua
@@ -324,6 +332,8 @@ UI\DialogSkinTree.lua
 UI\Rows.lua
 UI\DefenseRows.lua
 UI\DamageMenu.lua
+UI\DamageReactions.lua
+UI\HealMenu.lua
 UI\SlotLabels.lua
 UI\SpellbookCantrips.lua
 UI\SheetWindow.lua

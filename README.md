@@ -47,8 +47,11 @@ short summaries in its own words.
 - **Use class features** as clickable abilities with their costs, dice and uses per
   rest, and passives you switch on and off.
 - **Take damage and heal** by amount and type: resistance, vulnerability, immunity,
-  temporary hit points, the concentration save and dropping to 0 are handled. Death
-  saves, conditions and exhaustion are on the sheet.
+  temporary hit points, the concentration save and dropping to 0 are handled, and so
+  are your features that change damage (Evasion, Uncanny Dodge, Heavy Armor Master,
+  Death Ward, Relentless Rage and more) and falling. Heal takes your own healing roll
+  or rolls a healing spell someone else cast on you. Death saves, conditions and
+  exhaustion are on the sheet.
 - **Rest:** short and long rests, and Hit Dice to spend.
 - **Companions and forms:** a Beast Master's companion, Wild Shape forms and
   Metamorphosis, each with their own numbers while they are on.
@@ -285,7 +288,10 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
   one), the concentration save when you take damage, protective spells cast on
   yourself, and spells that can't be cast in a beast form.
 - **Damage:** "Take damage" halves, doubles or ignores the amount as your defenses
-  say, uses temporary hit points first, and handles 0 hit points and death saves.
+  say, uses temporary hit points first, and handles 0 hit points and death saves. Your
+  features that change damage are boxes to tick in its menu while you can use them
+  (a reaction is spent until you say it is back, roll initiative or rest); "A fall"
+  rolls falling damage from the distance.
 - **Items:** equipping armor, a shield or a weapon puts it on the sheet; magic items
   count while equipped and, where they ask for it, attuned; carrying too much holds
   your speed to 5 feet.
@@ -632,10 +638,9 @@ two classes share is counted for each) and the 81 options of their choices.
 | Druid | Circle of the Stars | Dragon constellation: a d20 of 9 or lower on Intelligence and Wisdom checks and concentration saves isn't raised to 10. |
 | Evoker | class | Arcane Apotheosis: the free Metamagic option still spends Sorcery Points when clicked; give them back by hand. |
 | Evoker | Draconic Sorcery | Elemental Affinity: the resistance counts, but your Charisma modifier on one damage roll is added by hand. Dragon Wings: later uses' 3 Sorcery Points are spent by hand. |
-| Hunter, Monk, Rogue | class, Hunter | Evasion, Uncanny Dodge and Superior Hunter's Defense: "Take damage" doesn't offer them; enter the damage already halved (or 0). |
 | Mage | class | Memorize Spell: once you have cast a spell, the prepared-spells window refuses the swap after a short rest; make it under Customize. |
 | Mage | Evoker | Empowered Evocation: your Intelligence modifier on one evocation damage roll is added by hand. |
-| Monk | class | Slow Fall and Perfect Focus: the falling damage saved and the Focus Points regained are applied by hand. |
+| Monk | class | Perfect Focus: the Focus Points regained are applied by hand. |
 | Monk | Mercy, Mystic Brews | The tool proficiency of Implements of Mercy (herbalism kit) and of Bonus Proficiencies (brewer's supplies) isn't given: tick it under Customize, Proficiencies. |
 | Paladin | class | Lay on Hands heals 5 points a click; another amount is changed on the bar by hand. Divine Smite: the extra 1d8 against fiends and undead is rolled by hand. |
 | Paladin | Oath of the Holy | Infusion of Light: the Lay on Hands points it gives back are added by hand. |
@@ -643,7 +648,6 @@ two classes share is counted for each) and the 81 options of their choices.
 | Priest | class | Divine Intervention: after casting Wish it should stay spent for 2d4 long rests; the sheet refills it at the next one. |
 | Priest | Life Domain | Disciple of Life, Blessed Healer and Supreme Healing are not added to your healing spells: add 2 + the slot's level, or count the dice at their highest, yourself. |
 | Rogue | Assassin | Assassin's Tools: the disguise kit and poisoner's kit proficiencies aren't given (tick them under Customize, Proficiencies). Assassinate: the extra damage equal to your level is added by hand. |
-| Shaman | class | Indomitable Might: a Strength check or save that totals less than your Strength score isn't raised to it. Relentless Rage: the hit points you stand up with are set by hand. |
 
 ### Spells
 
@@ -657,9 +661,8 @@ says when cast from the sheet, or has nothing a sheet could apply.
 | Mage Armor, Shield, Shield of Faith, Barkskin, Haste, Blistering Scales, Demon Spikes | Armor Class isn't changed when you are the target: add a passive of your own with the bonus and switch it on while the spell lasts. |
 | Aid, Heroes' Feast, Vampiric Blood | The higher maximum hit points aren't added when you are a target. |
 | Armor of Agathys, Heroism, Power Word Fortify, Consume Soul | The temporary hit points aren't set: the casting names or rolls the amount, the bar is changed by hand. |
-| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame, Bonestorm, Vampiric Touch | Healing is rolled or stated but not added to your own hit points when you are healed: use Heal. Healing on later turns, Living Flame's heal and Vampiric Touch's half are rolled by hand. |
+| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame, Bonestorm, Vampiric Touch | Heal offers your own last healing roll and rolls someone else's spell that has healing dice; healing a spell gives without dice of its own (Heal, the healing part of a damage spell) is typed there. Healing on later turns, Living Flame's heal and Vampiric Touch's half are rolled by hand. |
 | Bless, Guidance, Enhance Ability, Pass without Trace, Foresight, Holy Aura, Beacon of Hope, Circle of Power, Aura of Purity, Protection from Poison, Haste, Enlarge/Reduce, Combustion, Rain of Fire, Guided Prayer, Glibness | The bonus die, +10, advantage or Glibness's 15 they give you is not applied by itself: use the "Next roll" row or Shift. Resistances they give are applied. |
-| Death Ward | When you would drop to 0 hit points the sheet still takes you there: set 1 hit point by hand. |
 | Longstrider, Expeditious Retreat, Haste, Fly, Spider Climb, Gaseous Form, Wind Walk, Apotheosis, Breath of Eons, Fel Rush, Alter Self | The speed they give isn't shown. |
 | Shillelagh, True Strike, Magic Weapon, Elemental Weapon, Crusader's Mantle, Fount of Moonlight, Conjure Minor Elementals, Ebon Might, Enlarge/Reduce, Entropic Embrace | Your weapon rows don't change: the other ability, the bonus or the extra die is added by hand. |
 | Feral Prowl, Roar of Ursoc, Tree of Life, Shapechange, Polymorph, Animal Shapes | The shape-shift isn't put on the sheet: no form is switched on and its numbers aren't used. |
@@ -689,8 +692,6 @@ and blessings. Class passives are in the classes table.
 | Species | Tauren Lineage | The save DC uses the highest of Strength, Constitution and Wisdom; the rules let you choose one. |
 | Species | Troll Lineage (Amani, Zandalari), Heroic Presence (Draenei) | The hit die or Heroic Inspiration they give is changed by hand. |
 | Species | Draconic Flight (Dracthyr) | The flying speed isn't shown. |
-| Species | Nose for Trouble (Vulpera) | The first damage after you roll initiative isn't reduced by your level: take it off yourself. |
-| Species | Bouncy (Pandaren) | "Take damage" doesn't know damage came from a fall: halve it yourself. |
 | Species | Specialized Design (Mechagnome) | The two tools are ticked by hand under Customize, Proficiencies. |
 | Feat | Lucky | The luck points have no bar: keep count yourself. |
 | Feat | Mage Slayer, Arathi Heritage, Boon of Recovery, Boon of Fate | Their once-per-rest uses and Boon of Recovery's pool of d10s have no bar; Boon of Fate's 2d4 is rolled by hand. |
@@ -699,7 +700,6 @@ and blessings. Class passives are in the classes table.
 | Feat | Charger, Great Weapon Master, Boon of Irresistible Offense, Fingers of Frost, Poisoner | Their extra damage is added by hand. |
 | Feat | Elemental Adept, Clearcasting, Fists of Fury, Healer, Piercer, Savage Attacker, Tavern Brawler | Rerolls and low dice counted as 2 are not applied to the sheet's rolls. |
 | Feat | Defensive Duelist | The Armor Class from the reaction isn't added. |
-| Feat | Heavy Armor Master, Stagger and Sway | "Take damage" doesn't reduce the damage: enter it already reduced. |
 | Feat | Medium Armor Master | Dexterity in medium armor is still held to +2 for Armor Class. |
 | Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
 | Feat | Polearm Master | The butt strike has no weapon row: make a weapon of your own for it. |

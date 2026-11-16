@@ -68,13 +68,13 @@ R.FEATURES = {
                 level >= 17 and "two different" or "one", level >= 17 and "s" or "", effects)
         end, function(level) return { Dice(level >= 17 and 2 or 1, 10) } end),
         Ability(11, "Relentless Rage", function(level)
-            return ("When you drop to 0 hit points while raging: roll this Constitution save against DC 10, which rises by 5 each time until you rest. On a success you stand with %d hit points: set your HP by hand."):format(2 * level)
+            return ("When damage drops you to 0 hit points while Raging is on, Take damage rolls a Constitution save for you: DC 10, 5 more for each use until you finish a rest. On a success you have %d hit points instead. This row rolls the save by itself, for other cases."):format(2 * level)
         end, { Kit.Roll("SAVE", "CON") }),
         Passive(13, "Improved Brutal Strike", "Brutal Strike gains the Staggering Blow and Sundering Blow effects."),
         Limited(15, "Persistent Rage", "Your rage lasts the full 10 minutes without needing to be extended. Once per long rest, when you roll initiative, you regain all Rage uses.", 1,
             { { type = "GAIN", resource = "Rage", amount = 6 } }),
         Passive(17, "Improved Brutal Strike II", "Brutal Strike deals 2d10 and can apply two different effects."),
-        Passive(18, "Indomitable Might", "If a Strength check or save totals less than your Strength score, use the score instead."),
+        Passive(18, "Indomitable Might", "If a Strength check or save totals less than your Strength score, use the score instead. The sheet applies this to the rolls it makes."),
         Passive(20, "Primal Champion", "Your Strength and Constitution each increase by 4, to a maximum of 25. The sheet applies this.", nil, { scores = { STR = 4, CON = 4 } }),
     },
 
@@ -209,14 +209,14 @@ R.FEATURES = {
             return ("When Deflect Attacks reduces the damage to 0: send it at a creature within 5 feet (60 feet for a ranged attack), which takes the roll unless it passes a Dexterity save, DC %d."):format(Kit.DC(sheet, "WIS"))
         end, function(level) return { Spend("Focus Points"), Dice(2, Kit.MartialDie(level), "DEX") } end),
         Passive(4, "Slow Fall", function(level)
-            return ("Reaction when you fall: reduce the damage by %d."):format(5 * level)
+            return ("Reaction when you fall: reduce the damage by %d. Take damage, A fall offers it."):format(5 * level)
         end),
         ExtraAttack(5),
         Ability(5, "Stunning Strike", function(_, sheet)
             return ("Once per turn when you hit with a monk weapon or unarmed strike: the target makes a Constitution save, DC %d. On a failure it is stunned until the start of your next turn. On a success its speed is halved and the next attack against it has advantage."):format(Kit.DC(sheet, "WIS"))
         end, { Spend("Focus Points") }),
         Passive(6, "Empowered Strikes", "Your unarmed strikes can deal force damage."),
-        Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure."),
+        Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure. Take damage has boxes for it; not while incapacitated."),
         Passive(9, "Acrobatic Movement", "Without armor or a shield you can move along vertical surfaces and across liquids on your turn without falling."),
         Passive(10, "Heightened Focus", "Flurry of Blows makes three strikes, Patient Defense grants temporary hit points, and Step of the Wind can carry a creature along."),
         Passive(10, "Self-Restoration", "At the end of each turn you can end the charmed, frightened or poisoned condition on yourself. Going without food or drink doesn't exhaust you."),
@@ -301,8 +301,8 @@ R.FEATURES = {
         Kit.CunningStrike(5, "Poison", 1, "The target is poisoned for a minute if it fails, repeating the save each turn. Needs a poisoner's kit.", "Constitution"),
         Kit.CunningStrike(5, "Trip", 1, "A Large or smaller target falls prone if it fails.", "Dexterity"),
         Kit.CunningStrike(5, "Withdraw", 1, "Right after the attack you move up to half your speed without provoking opportunity attacks."),
-        Passive(5, "Uncanny Dodge", "Reaction when an attacker you can see hits you: halve the damage."),
-        Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure."),
+        Passive(5, "Uncanny Dodge", "Reaction when an attacker you can see hits you: halve the damage. Take damage offers it while your reaction is free."),
+        Passive(7, "Evasion", "On a Dexterity save for half damage you take none on a success and half on a failure. Take damage has boxes for it; not while incapacitated."),
         Passive(7, "Reliable Talent", "On checks with skills you are proficient in, a d20 roll of 9 or lower counts as a 10. The sheet applies this.", nil, { flags = { reliable = true } }),
         Kit.CunningStrike(14, "Daze", 2, "If it fails, on its next turn the target can only move, or take an action, or take a bonus action.", "Constitution"),
         Kit.CunningStrike(14, "Knock Out", 6, "If it fails, the target is unconscious for a minute or until it takes damage, repeating the save each turn.", "Constitution"),

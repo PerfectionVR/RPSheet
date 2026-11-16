@@ -100,5 +100,5 @@ F["Hunter"] = {
         Kit.Option("Multiattack Defense", "A creature that hits you has disadvantage on its other attacks against you this turn."),
     }),
     Passive(11, "Superior Hunter's Prey", "Once per turn, when you damage the creature under your Hunter's Mark, the spell's extra damage can also hit a different creature within 30 feet of it."),
-    Passive(15, "Superior Hunter's Defense", "Reaction when you take damage: resistance to that damage, and any other of the same type, until the end of the turn."),
+    Passive(15, "Superior Hunter's Defense", "Reaction when you take damage: resistance to that damage, and any other of the same type, until the end of the turn. Take damage offers it while your reaction is free."),
 }

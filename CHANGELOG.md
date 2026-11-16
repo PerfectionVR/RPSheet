@@ -1,5 +1,27 @@
 # Changelog
 
+## Unreleased
+
+- Take damage knows your features that change damage and offers each only while you
+  can use it: Evasion (boxes for a Dexterity save passed or failed), Uncanny Dodge and
+  Superior Hunter's Defense (each spends your reaction, which is back when you say so,
+  roll initiative or rest; the Hunter's resistance stays as a passive for the turn),
+  Heavy Armor Master (a box for an attack hit, in heavy armor), Nose for Trouble (ticked
+  by itself after you roll initiative) and Stagger and Sway (the Delayed Reaction pool
+  grows with each hit and has rows to take it or thin it with Purify). None works
+  while you are incapacitated.
+- "A fall" in the damage menu rolls 1d6 for every 10 feet (20d6 at most), lands you
+  Prone, and counts Slow Fall (asked as a reaction) and Bouncy.
+- Death Ward can be cast on yourself or added under Customize, Defense: the first
+  time damage would drop you to 0 hit points you keep 1 and the spell ends. Relentless
+  Rage rolls its Constitution save by itself when you drop to 0 while raging, and
+  sets your hit points on a success; its DC goes back to 10 after a rest.
+- Indomitable Might: a Strength check or save that totals less than your Strength
+  score counts as the score.
+- Heal opens a menu: type the amount, take your own last healing roll (cast on
+  yourself), or roll a healing spell someone else cast on you, with its slot and their
+  modifier.
+
 ## 0.7.0
 
 - Species and lineage cantrips (Sacred Flame, Mind Sliver, Arcane Pulse,
