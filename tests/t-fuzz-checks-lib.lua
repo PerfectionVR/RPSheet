@@ -129,6 +129,7 @@ Invariant("red lines", function()
     for line in text:gmatch("[^\n]+") do
         if line:find(Opt.RED, 1, true) and not line:find("Hero classes normally start", 1, true) then
             local open = line:find("choices to make", 1, true) or line:find("A choice is waiting", 1, true)
+                or line:find("Fighting Style to choose", 1, true)
             if not (open and State().fuzzOpen) then return "red on the Character tab without a free edit: " .. F.Plain(line) end
         end
     end

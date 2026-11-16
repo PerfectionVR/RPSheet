@@ -220,6 +220,9 @@ Blocked messages and versions:
 - [ ] M30. Both enter an instance or encounter where the game blocks addon messages; A rolls and changes hit points. *No errors; A's announcements are shown to A alone with "the game blocks addon chat messages right now"; B's tooltip stays on the old values.*
 - [ ] M31. The block ends (the encounter is over) and A does nothing. *Within about ten seconds B's tooltip of A is on A's current values.*
 - [ ] M32. A on this version, B on the released 0.6.0. *Stats arrive both ways, by hovering and in a party; when A switches sharing off, B keeps the last copy until B reloads.*
+- [ ] M33. A and B queue for a dungeon together (a party of friends). *Stats arrive over the instance channel: a third player in the instance with the addon sees both; A's Party announcements still go to party chat.*
+- [ ] M34. A queues alone and lands in a dungeon finder group with B. *B's tooltip of A has stats without hovering; A's Party announcements show in instance chat for the whole group.*
+- [ ] M35. A switches sharing off after B hovered A outside any group. *B's tooltip of A loses the Stats section within a few seconds (a whispered clear).*
 
 ## N. Odds and ends
 

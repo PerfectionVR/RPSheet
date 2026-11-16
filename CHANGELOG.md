@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+- Changing class, subclass, species or background under Customize raises your current
+  hit points when it raises your maximum. An empty Fighting Style is asked for in
+  "Class and feat choices". The level dialog lists only the features that apply to
+  you. Right-click a check, save, skill, tool, initiative or spell attack row to see
+  how its number is worked out. The combat numbers are two to a row, so none wraps in
+  the narrowest window. The coin, damage, heal and materials boxes find their text
+  field however the game names it.
+- Items: the Enspelled Staff is on the Makes tab; magic items no profession can make
+  say why; attunement, consumable, harness and magic make can be hovered; you can't
+  use or drink items while incapacitated; right-clicking an item that needs no
+  attunement says what right-click does; gathering and archaeology rolls use the
+  "Next roll" bonus, and gathering rows warn when your tool isn't with you.
+- Sharing: a settings profile that switches sharing off tells your group, and players
+  who hovered you outside a group are told too; other players' stats are forgotten
+  half an hour after you last heard from them, unless they are in your group; in
+  dungeon finder, raid finder and battleground groups stats are shared with the whole
+  group and Party/Raid announcements go to instance chat. In chat, tools, items,
+  initiative and spell attack can be hovered.
+- Taking back a rest stops working after any change, a bar clicked or a slot spent
+  by hand included. An attack with no weapon ready says so.
 - Every piece of plain gear, pack, spellcasting focus, tool and instrument says what
   it is for: light radius, what a container holds, the DC of a tool's checks and what
   it makes, a pack's contents. The item browser's search finds them by it

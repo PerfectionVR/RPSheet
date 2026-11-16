@@ -25,7 +25,7 @@ local function AfterDown(label, level, lostSlot, lostFeatures)
     if ns.OpenClassChoices(sheet) then
         fixes = fixes + 1
         local red = table.concat(T.RedLines(sheet), " ")
-        if not red:find("choices to make") then Problem(label .. ": choices are open but the tab doesn't say so") end
+        if not (red:find("choices to make") or red:find("Fighting Style to choose")) then Problem(label .. ": choices are open but the tab doesn't say so") end
         if not T.Tab("classChoices") then Problem(label .. ": the choices button can't be pressed") end
         FlushTimers()
         T.Finish(label .. " choices")

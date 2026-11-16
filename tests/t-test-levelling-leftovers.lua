@@ -56,6 +56,8 @@ do
     Check("a Warrior has no Fighting Style after the wizard", R.FIGHTING_STYLES[style] ~= nil)
     Try("empty the style", identity.fightingStyle.set, {}, ""); FlushTimers()
     Check("an empty Fighting Style isn't an open choice", ns.OpenClassChoices(sheet))
+    local red = table.concat(T.RedLines(sheet), " ")
+    Check("one red line names the empty Fighting Style, not two", red:find("Fighting Style to choose") and not red:find("choices to make"))
     Check("no choices button for it", T.Tab("classChoices")); FlushTimers()
     Check("the choices dialog didn't open", L.draft ~= nil)
     if L.draft then
