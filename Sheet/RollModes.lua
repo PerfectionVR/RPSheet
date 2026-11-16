@@ -79,6 +79,7 @@ function RPSheet:AdvantageFrom(label)
     local on = self:State().conditions
     if on.Invisible and (IsAttack(label) or label == "initiative") then return "Invisible" end
     if self:CompanionAdvantage(label) then return "your companion" end
+    if self:BloodiedFrenzy(label) then return "Bloodied Frenzy" end
     -- A trait, feat or item that covers every save of that ability (Sheet/SaveAdvantages.lua).
     local always = self:SaveAdvantages(label)
     if always[1] then return always[1].from end

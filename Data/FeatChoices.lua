@@ -10,7 +10,8 @@
 --               feat ({ [key] = { [slot] = value } }), for a choice that follows another
 --     kind      what a pick does: "skill" (proficiency, or expertise if already
 --               proficient), "tool" (proficiency), "spell" (always prepared), "mastery"
---               (a weapon kind whose mastery property can be used); without it the
+--               (a weapon kind whose mastery property can be used), "adept" (a damage
+--               type whose low spell dice count higher: Sheet/DiceFeats.lua); without it the
 --               pick is only shown in the feat's text
 --     once      a "spell" that is also cast once per long rest without a slot
 --     distinct  true when the feat taken again must pick something else here
@@ -163,8 +164,8 @@ Give("Crafter", {
 -- Choices that are only shown
 ---------------------------------------------------------------------------
 Give("Elemental Adept", {
-    choices = { { key = "damage", title = "Damage type", from = { "Acid", "Cold", "Fire", "Lightning", "Thunder" }, distinct = true,
-        desc = "The damage type this feat is for. Taking the feat again needs another type." } },
+    choices = { { key = "damage", kind = "adept", title = "Damage type", from = { "Acid", "Cold", "Fire", "Lightning", "Thunder" }, distinct = true,
+        desc = "The damage type this feat is for: the sheet counts a 1 on your spells' dice of that type as a 2. Taking the feat again needs another type." } },
 })
 Give("Boon of Energy Resistance", {
     choices = { {

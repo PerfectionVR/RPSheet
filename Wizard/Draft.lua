@@ -98,7 +98,8 @@ function W.StepProblem()
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
         if R.LINEAGES[draft.species] and draft.lineage == "" then return "Choose a lineage." end
-        if ns.LineageCasts(draft.species, draft.lineage) and not ns.LineageStatChosen(draft) then
+        if ns.LineageAsks(draft.species, draft.lineage) and not ns.LineageStatChosen(draft) then
+            if not ns.LineageCasts(draft.species, draft.lineage) then return "Choose the ability your lineage's save DC uses." end
             return "Choose the ability your lineage's spells are cast with."
         end
         -- A skill the background gives can't also be a class pick: that pick would be wasted.
@@ -149,7 +150,7 @@ function W.Finish()
     W.ApplyExtras(sheet) -- the other classes; the level above is the whole character's
     sheet.species, sheet.size, sheet.background, sheet.alignment = draft.species, draft.size, draft.background, draft.alignment
     sheet.lineage, sheet.allegiance = draft.lineage, draft.allegiance
-    sheet.lineageStat = ns.LineageCasts(draft.species, draft.lineage) and draft.lineageStat or ""
+    sheet.lineageStat = ns.LineageAsks(draft.species, draft.lineage) and draft.lineageStat or ""
     for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
     sheet.scoreMethod = draft.scoreMethod
     sheet.base, sheet.bonus = CopyTable(draft.base), CopyTable(draft.bonus)

@@ -56,8 +56,9 @@ function RPSheet:ExplainAC()
     local armor = R.ARMOR[sheet.armor]
     local parts = { { armor.name, armor.ac } }
     local dex = self:Mod("DEX")
-    if armor.dexCap then
-        Add(parts, ("Dexterity (at most +%d in this armor)"):format(armor.dexCap), math.min(dex, armor.dexCap))
+    local cap, raisedBy = self:ArmorDexCap(armor)
+    if cap then
+        Add(parts, ("Dexterity (at most +%d in this armor%s)"):format(cap, raisedBy and (", " .. raisedBy) or ""), math.min(dex, cap))
     else
         Add(parts, "Dexterity", dex)
     end

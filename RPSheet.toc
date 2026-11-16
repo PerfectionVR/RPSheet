@@ -72,6 +72,7 @@ Data\Maneuvers.lua
 Data\Forms.lua
 Data\Pets.lua
 Data\Picks.lua
+Data\InvocationSpells.lua
 Data\Beasts.lua
 Data\BeastsCR0.lua
 Data\BeastsCRQuarter.lua
@@ -107,6 +108,7 @@ Data\Glossary.lua
 Data\GlossaryItems.lua
 Data\FeatureKit.lua
 Data\Traits.lua
+Data\FeatUses.lua
 Data\Features.lua
 Data\SubclassFeatures.lua
 Data\SubclassShaman.lua
@@ -209,6 +211,9 @@ Sheet\Professions.lua
 Sheet\CraftTools.lua
 Sheet\Crafting.lua
 Sheet\Combat.lua
+Sheet\FeatRules.lua
+Sheet\DiceFeats.lua
+Sheet\WeaponFeats.lua
 Sheet\FightingStyles.lua
 Sheet\StyleEffects.lua
 Sheet\Armoury.lua
@@ -256,6 +261,10 @@ Sheet\Scribing.lua
 Sheet\ScrollReading.lua
 Sheet\SpellChoices.lua
 Sheet\Traits.lua
+Sheet\FeatUses.lua
+Sheet\UnarmedStrike.lua
+Sheet\InvocationSpells.lua
+Sheet\LessonFeats.lua
 Sheet\RenownRules.lua
 Sheet\RenownTraining.lua
 Sheet\RenownPerks.lua
@@ -285,6 +294,8 @@ Actions\Refunds.lua
 Actions\Conditions.lua
 Actions\SaveAdvantages.lua
 Actions\Spells.lua
+Actions\SpellFeats.lua
+Actions\Inspiration.lua
 Actions\SlotGrowth.lua
 Actions\SpellChoices.lua
 Actions\GrowingSpells.lua
@@ -416,6 +427,7 @@ Options\LevelDialogSkills.lua
 Options\LevelDialogPicks.lua
 Options\LevelDialogApply.lua
 Options\LineageAbility.lua
+Options\LevelDialogLessons.lua
 Options\LevelDialog.lua
 Options\RenownPerks.lua
 Options\Origin.lua

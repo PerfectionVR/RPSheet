@@ -12,6 +12,8 @@ function RPSheet:Amount(flat, source, times)
         value = self:Level()
     elseif source == "PROF" then
         value = self:ProficiencyBonus()
+    elseif source == "HALFHP" then
+        value = math.floor(self:MaxHP() / 2) -- (Boon of Recovery's Last Stand)
     else
         value = self:Mod(source)
     end

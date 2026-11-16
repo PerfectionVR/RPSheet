@@ -39,6 +39,8 @@ local originPage = Page(2, {
     traitSkillful = DraftTraitPicker("Skillful", 3.1),
     traitKeenSenses = DraftTraitPicker("Keen Senses", 3.2),
     traitVersatile = DraftTraitPicker("Versatile", 3.3),
+    traitDesign = DraftTraitPicker("Specialized Design", 3.4),
+    traitDesign2 = DraftTraitPicker("Specialized Design 2", 3.5),
     species = {
         type = "select", order = 1, name = "Species",
         values = Opt.NameMap(R.SPECIES, R.SPECIES_ORDER), sorting = R.SPECIES_ORDER,
@@ -72,11 +74,17 @@ local originPage = Page(2, {
     }, "lineage"),
     -- The ability the spells of the species or lineage are cast with, chosen with it.
     lineageStat = Field({
-        type = "select", order = 2.6, name = "Ability for its spells",
-        desc = "Your species or lineage gives you spells. Choose the ability you cast them with: Intelligence, Wisdom or Charisma. It stays with the lineage.",
-        hidden = function() return not ns.LineageCasts(W.draft.species, W.draft.lineage) end,
-        values = function() return ns.LineageStatValues() end,
-        sorting = R.LINEAGE_STATS,
+        type = "select", order = 2.6,
+        name = function() return "Ability for " .. ns.LineageStatUse(W.draft.species, W.draft.lineage) end,
+        desc = function()
+            if not ns.LineageCasts(W.draft.species, W.draft.lineage) then
+                return ("Your lineage forces saving throws. Choose the ability its DC uses: %s. It stays with the lineage."):format(ns.LineageStatWords(W.draft.species, W.draft.lineage))
+            end
+            return "Your species or lineage gives you spells. Choose the ability you cast them with: Intelligence, Wisdom or Charisma. It stays with the lineage."
+        end,
+        hidden = function() return not ns.LineageAsks(W.draft.species, W.draft.lineage) end,
+        values = function() return ns.LineageStatValues(W.draft.species, W.draft.lineage) end,
+        sorting = function() return ns.LineageStats(W.draft.species, W.draft.lineage) end,
     }, "lineageStat"),
     background = {
         type = "select", order = 3, name = "Background",

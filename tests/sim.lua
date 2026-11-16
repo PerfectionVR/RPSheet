@@ -54,7 +54,7 @@ function Feed(group, path, out)
                         seen[k] = true
                     end
                     for k in pairs(values) do
-                        if not seen[k] and k ~= "SLOTS" then Problem(p .. ".sorting leaves out " .. tostring(k)) end
+                        if not seen[k] and k ~= "SLOTS" and k ~= "REROLL" then Problem(p .. ".sorting leaves out " .. tostring(k)) end
                     end
                 end
                 if kind == "select" then

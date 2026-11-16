@@ -25,6 +25,7 @@ R.MOVE_WORDS = { swimming = "swim", climbing = "climb", flying = "fly" }
 -- effect on that speed, switched on while it lasts, does that.
 R.MOVE_GRANTS = {
     ["Athlete"] = { climb = true },
+    ["Draconic Flight active"] = { fly = true }, -- switched on by the trait, off by hand or a rest
     ["Child of the Sea"] = { swim = true },
     ["Gift of the Depths"] = { swim = true },
     ["Roving"] = { climb = true, swim = true },

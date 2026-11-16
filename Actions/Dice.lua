@@ -163,6 +163,8 @@ function RPSheet:RollCheck(label, mod, mode, about, answers)
         return self:AskRoll(label, mode, nil, function(found) self:RollCheck(label, mod, mode, found.about, found) end,
             about ~= nil and { about = about } or nil)
     end
+    -- Some feats' uses come back when initiative is rolled (Sheet/FeatUses.lua).
+    if label == "initiative" then self:RegainOnInitiative() end
     -- Features, conditions and armor can give advantage or disadvantage by themselves.
     mode = self:ResolveMode(label, mode, nil, nil, answers)
     -- Reliable Talent: on a skill you are proficient in, a low die counts as a 10.

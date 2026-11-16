@@ -1,8 +1,11 @@
 -- Species traits that do more than remind: a choice to make, a number of uses, dice
 -- to roll, or a change to how hit dice heal. Traits not listed here are standing
 -- rules with nothing to track, and stay as passives (see Data/Species.lua).
---   choice   "SKILL" (a skill proficiency) or "FEAT" (an origin feat) to pick
+--   choice   "SKILL" (a skill proficiency), "TOOL" (a tool proficiency) or "FEAT" (an
+--            origin feat) to pick
 --   options  the skills to pick from; any skill when left out
+--   more     the name of a second pick the trait asks for (a trait of its own here,
+--            with `of` naming the trait it belongs to)
 --   uses     uses per long rest: a number, or "PROF" for the proficiency bonus
 --   short    "ALL" if a short rest gives the uses back too
 --   level    character level the trait starts at
@@ -21,6 +24,8 @@ R.TRAITS = {
     ["Skillful"] = { choice = "SKILL" },
     ["Keen Senses"] = { choice = "SKILL", options = { "Insight", "Perception", "Survival" } },
     ["Versatile"] = { choice = "FEAT" },
+    ["Specialized Design"] = { choice = "TOOL", more = "Specialized Design 2" },
+    ["Specialized Design 2"] = { choice = "TOOL", of = "Specialized Design" },
 
     -- Uses and dice
     ["Stonecunning"] = { uses = "PROF", desc = "Bonus action while touching stone: you sense vibrations within 60 feet for 10 minutes. Uses equal to your proficiency bonus per long rest." },
@@ -28,8 +33,11 @@ R.TRAITS = {
         desc = "Dash as a bonus action and gain temporary HP equal to your proficiency bonus. Uses equal to your proficiency bonus, back on a short or long rest." },
     ["Relentless Endurance"] = { uses = 1, actions = { Dice(0, 4, "", "SELFHEAL", 1) },
         desc = "When you would drop to 0 hit points, you drop to 1 instead. Once per long rest. Click it when it happens." },
-    ["Draconic Flight"] = { uses = 1, level = 5, desc = "Bonus action: for 10 minutes you fly at your walking speed. Once per long rest." },
-    ["Heroic Presence"] = { uses = 1, short = "ALL", desc = "When you cast a spell from your Eredar Lineage you gain Heroic Inspiration. Once per rest." },
+    ["Draconic Flight"] = { uses = 1, level = 5, actions = { Kit.SwitchOn("Draconic Flight active") },
+        passive = { name = "Draconic Flight active", startsOff = true,
+                    desc = "On while your wings carry you: a flying speed equal to your walking speed, shown on the sheet. It lasts 10 minutes: switch it off when you land for good. A rest ends it." },
+        desc = "Bonus action: for 10 minutes you fly at your walking speed. Once per long rest. Switches Draconic Flight active on." },
+    ["Heroic Presence"] = { uses = 1, short = "ALL", desc = "When you cast a spell from your Eredar Lineage without Heroic Inspiration, you gain it. Once per rest: the sheet does it when you cast the spell and spends the use." },
     ["Touch of the Grave"] = { uses = 1,
         actions = function(level) return { Dice(math.ceil(level / 4) + 1, 4, "", "DRAIN") } end,
         desc = "When you hit: extra necrotic damage, a d4 per point of your proficiency bonus, and you heal by the same amount. Once per long rest." },

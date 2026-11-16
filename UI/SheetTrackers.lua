@@ -55,8 +55,7 @@ function UI.TrackerSection(self, body)
     end, "Temporary HP", "A buffer that is lost before your real hit points. It doesn't stack and a long rest removes it.\n\n" .. TRACKER_HELP)
 
     self.inspirationLabel = UI.AddLabel(body, 0.5, "", function()
-        state.inspiration = not state.inspiration
-        self:Refresh()
+        self:ToggleInspiration() -- (Actions/Inspiration.lua: an Amani troll regains a Hit Die)
     end, "Heroic Inspiration", ns.Glossary["Heroic Inspiration"] .. "\n\nClick to gain or spend it.")
 
     UI.AddDamageRows(self, body) -- damage by amount and type, with the rules applied

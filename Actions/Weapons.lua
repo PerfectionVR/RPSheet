@@ -69,12 +69,17 @@ function RPSheet:Attack(mode, answers)
     local word = ns.DamageWord(weapon)
     self:RollTest(mode, function(d20, note, extra)
         local crit = d20 >= self:CritFrom() -- 20, or lower for a Champion
-        self:RollDice(count * (crit and 2 or 1), sides, function(rolls)
+        -- Piercer adds a die to a critical hit (Sheet/WeaponFeats.lua).
+        self:RollDice(count * (crit and 2 or 1) + (crit and self:WeaponCritDice(weapon) or 0), sides, function(rolls)
+          -- Feats that reroll the dice or add damage (Sheet/WeaponFeats.lua).
+          self:WeaponFeatDice(weapon, rolls, sides, function(notes)
             -- Great Weapon Fighting: low damage dice count as higher.
             for index, roll in ipairs(rolls) do rolls[index] = math.max(roll, minDie) end
-            local text = ("attacks with %s - %s, %s"):format(
+            local featFlat, featNotes = self:WeaponFeatDamage(weapon, d20)
+            for _, each in ipairs(featNotes) do notes[#notes + 1] = each end
+            local text = ("attacks with %s - %s, %s%s"):format(
                 ns.Mark(weapon.name), RollText.Check("to hit", d20, attackMod, note, extra),
-                RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod))
+                RollText.Dice(crit and ("critical " .. word) or word, rolls, sides, damageMod + featFlat), ns.DiceNotes(notes))
             -- Dice a feature adds to every melee hit are rolled next, doubled on a critical hit.
             local strikes = self:StrikeDice(weapon)
             local function Finish(index)
@@ -89,6 +94,7 @@ function RPSheet:Attack(mode, answers)
                 end)
             end
             Finish(1)
+          end)
         end)
     end)
 end

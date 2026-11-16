@@ -57,6 +57,7 @@ function RPSheet:RollTest(mode, callback)
         self:RefreshRollBonus()
     end
     self:RollD20(mode, function(d20, note)
+        if d20 == 1 then self:NaturalOne() end -- a Zandalari troll's inspiration (Actions/Inspiration.lua)
         if not die and flat == 0 then return callback(d20, note) end
         local words = {}
         if flat ~= 0 then words[1] = ns.Util.Signed(flat) end

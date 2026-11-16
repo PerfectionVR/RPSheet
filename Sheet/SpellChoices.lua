@@ -22,6 +22,9 @@ end
 -- has (an entry of R.SPELL_CHOICES) or comes from a feat, or nil for any other spell.
 function ns.SpellChoice(sheet, name)
     if type(sheet.picks) ~= "table" then return ns.FeatSpellCasting(sheet, name) or ns.LineageSpellCasting(sheet, name) end
+    -- An invocation's spell (Sheet/InvocationSpells.lua).
+    local invoked = ns.InvocationSpellCasting(sheet, name)
+    if invoked then return invoked end
     for _, key in ipairs(R.SPELL_CHOICE_ORDER) do
         local picks = sheet.picks[key]
         if type(picks) == "table" and picks[name] == true and R.PICK_LISTS[key].items[name]
