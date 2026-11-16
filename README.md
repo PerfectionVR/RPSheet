@@ -662,6 +662,7 @@ and blessings. Class passives are in the classes table.
 | Feat | Elemental Adept | Spells whose damage type is chosen as they are cast (Chromatic Orb, Dragon's Breath and the like) don't count their 1s as 2s. |
 | Feat | Fists of Fury | Combo Strikes' +1 for each earlier hit on the creature this turn is added by hand. |
 | Feat | Healer | Battle Medic (a creature spends a Hit Die with your healer's kit) is rolled by hand. |
+| Feat | Stagger and Sway | The Delayed Reaction pool's own force damage doesn't add another die to the pool: read literally, the pool would never shrink. |
 | Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
 | Unarmed | Unarmed Fighting (Fighting Style) | A Monk's strikes keep the Martial Arts die, even at the levels where the style's d8 with hands free is larger. |
 | Invocation | Pact of the Blade | The pact weapon is a weapon of yours with "Pact weapon" ticked under Customize, Weapons; its necrotic, psychic or radiant damage is said by hand. |
@@ -689,6 +690,11 @@ Small gaps left in what is built. None is planned; say so if one matters to you.
   from Strength and marked as estimates.
 - **Professions**: the time to build a vehicle is the usual crafting rate, since the
   rules give none.
+- **Typed damage**: `/sheet damage` takes damage without the menu's boxes, so
+  reactions such as Uncanny Dodge and Heavy Armor Master's reduction aren't offered;
+  use the damage menu for those.
+- **Death Ward**: it saves you from damage that would drop you to 0 hit points; an
+  effect that kills without damage is yours to answer by switching the ward off.
 - **Conditions**: disadvantage that depends on the target (Grappled) or on whether
   you can see what frightens you is asked with each roll, not tracked.
 

@@ -84,7 +84,7 @@
   others; Pact of the Chain and Pact of the Legion give Find Familiar. Agonizing Blast
   adds Charisma to Eldritch Blast by itself. A weapon can be ticked as your Pact of
   the Blade weapon, to attack with Charisma. Lessons of the First Ones' origin feat is
-  chosen under Customize, Metamagic, invocations, maneuvers.
+  asked for in the level dialog, and can be changed under Customize.
 - Trolls have advantage on attacks while Bloodied; an Amani troll regains a Hit Die
   when it spends Heroic Inspiration, a Zandalari troll gains it on a natural 1, and a
   draenei's Heroic Presence gives it when a lineage spell is cast. Draconic Flight
