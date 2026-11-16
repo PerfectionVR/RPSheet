@@ -6,7 +6,7 @@
 dofile(ARG3 .. "/t-test-windows-base.lua")
 Start()
 
-local stats = { tabs = 0, pages = 0, searches = 0, buttons = 0, blocks = 0, widths = 0 }
+local stats = { tabs = 0, pages = 0, searches = 0, buttons = 0, blocks = 0, widths = 0, terms = 0 }
 local function Check(what, ok) if not ok then Problem(what) end end
 
 local function Body() return RPSheet.itemBody end
@@ -108,6 +108,22 @@ local function CheckView(where, firstText)
             CheckText(where .. " block " .. name, text)
             if part.type == "InteractiveLabel" and not F.Plain(text):match("%S") then Problem(where .. ": the block " .. name .. " says nothing") end
             if part.type == "Button" and (part.text:GetText() or "") == "" then Problem(where .. ": the block " .. name .. " has a button without text") end
+            -- a term in the block (attunement, harness...) explains itself when hovered
+            local link, word = (text or ""):match("|H(rpsheet:.-)|h(.-)|h")
+            if link then
+                stats.terms = stats.terms + 1
+                if not (part.frame:GetHyperlinksEnabled() and part.frame:GetScript("OnHyperlinkEnter")) then
+                    Problem(where .. ": the block " .. name .. " has the term " .. F.Plain(word) .. " but can't be hovered")
+                else
+                    Try(where .. " term", F.Fire, part.frame, "OnHyperlinkEnter", link, word)
+                    local lines = F.TooltipLines()
+                    Check(where .. ": the term " .. F.Plain(word) .. " explains nothing", lines and lines[2] and F.Plain(lines[2].text) ~= "")
+                    Try(where .. " term leave", F.Fire, part.frame, "OnHyperlinkLeave")
+                    if GameTooltip:IsShown() then GameTooltip:Hide() end
+                end
+            elseif part.type == "InteractiveLabel" and part.frame:GetHyperlinksEnabled() and not part.events.OnRelease then
+                Problem(where .. ": the block " .. name .. " keeps hover links from a widget it was before")
+            end
         end
         -- the block is as tall as what is in it
         local low = card.frame:GetBottom()
@@ -606,5 +622,6 @@ Try("closet", function()
 end)
 
 SmokeChecks("after the browser tests")
-Finish("browser", ("%d tabs, %d page turns, %d searches, %d block buttons clicked, %d blocks checked, %d widths"):format(
-    stats.tabs, stats.pages, stats.searches, stats.buttons, stats.blocks, stats.widths))
+Check("no block had a term to hover", stats.terms > 0)
+Finish("browser", ("%d tabs, %d page turns, %d searches, %d block buttons clicked, %d blocks checked, %d widths, %d terms hovered"):format(
+    stats.tabs, stats.pages, stats.searches, stats.buttons, stats.blocks, stats.widths, stats.terms))

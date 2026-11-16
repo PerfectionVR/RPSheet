@@ -82,7 +82,12 @@ local function GatheringRows(self, body)
         local mod = self:GatherMod(profession)
         UI.AddLabel(body, 0.5, ("%s%s|r %s%s|r"):format(UI.ACCENT, profession.name, UI.GREY, Signed(mod)),
             function() if dig then self:Dig(ns.RollMode()) else self:Gather(profession, ns.RollMode()) end end,
-            profession.name, function() return ("%s\n\nClick to roll against DC %d.\n%s"):format(profession.desc, region.dc, ns.ROLL_MODE_HELP) end)
+            profession.name, function()
+                -- Like the making rows: what stands in the way now, in red.
+                local missing = self:MissingTool(profession)
+                return ("%s%s\n\nClick to roll against DC %d.\n%s"):format(profession.desc,
+                    missing and ("\n|cffff5555Not now: %s.|r"):format(missing) or "", region.dc, ns.ROLL_MODE_HELP)
+            end)
     end
     local fragments = self:Trade().fragments
     if self:CanPractise(R.PROFESSIONS.archaeology) or fragments.plain + fragments.magic > 0 then

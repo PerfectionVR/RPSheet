@@ -36,14 +36,15 @@ end
 
 -- A d20 check against a DC. `label` is the skill it goes by, `shown` how it is
 -- announced. `done(d20, total, text)` gets the announcement so far and finishes it.
+-- What the "Next roll" rows add counts, like on any check (Actions/NextRollBonus.lua).
 function RPSheet:RollAgainst(label, shown, mod, mode, dc, done)
     local reliable = (self:Sheet().skills[label] or 0) >= 1 and self:FeatureFlag("reliable")
-    self:RollD20(mode, function(d20, note)
+    self:RollTest(mode, function(d20, note, extra)
         if reliable and d20 < 10 then
             note = ("%s [rolled %d, counts as 10]"):format(note, d20)
             d20 = 10
         end
-        done(d20, d20 + mod, ("rolls %s against DC %d"):format(ns.RollText.Check(shown, d20, mod, note), dc))
+        done(d20, d20 + mod + (extra and extra.value or 0), ("rolls %s against DC %d"):format(ns.RollText.Check(shown, d20, mod, note, extra), dc))
     end)
 end
 

@@ -48,7 +48,8 @@ end
 
 -- Colour codes are not words.
 local function Plain(text)
-    return (text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")):lower()
+    -- (a hover link keeps only the words it shows)
+    return (text:gsub("|H.-|h(.-)|h", "%1"):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")):lower()
 end
 
 -- Everything about an entry the search looks at, in small letters. A source can say

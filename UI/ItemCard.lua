@@ -53,7 +53,11 @@ function UI.ItemLines(self, name, item, classKey)
     -- A magic or named item is described by the plain thing it counts as.
     local base = item and ns.ItemBase(item) or name
     local weapon, armor = R.WEAPONS[base], R.ARMOR_ITEMS[base]
-    if base ~= name then lines[#lines + 1] = ("Counts as: %s."):format(base) end
+    if item and ns.ItemVariant(item) then
+        lines[#lines + 1] = ("%s, counts as: %s."):format(ns.Term("Make", "A magic make"), base)
+    elseif base ~= name then
+        lines[#lines + 1] = ("Counts as: %s."):format(base)
+    end
     if weapon then
         lines[#lines + 1] = ("%s weapon: %s. Mastery: %s."):format(
             weapon.category == "SIMPLE" and "Simple" or "Martial", R.WeaponSummary(base), weapon.mastery)
@@ -78,7 +82,11 @@ function UI.ItemLines(self, name, item, classKey)
     local attune = item and item.attune or (known and known.attune)
     if rarity or (item and item.magic) then
         lines[#lines + 1] = ("%sMagic item%s%s|r"):format(R.RARITY_COLORS[rarity] or UI.ACCENT,
-            rarity and (", " .. rarity:lower()) or "", attune and ", requires attunement" or "")
+            rarity and (", " .. rarity:lower()) or "", attune and (", requires " .. ns.Term("Attunement", "attunement")) or "")
+    end
+    local stacks = item and ns.ItemVariant(item) and ns.ItemVariant(item).stacks
+    if R.CONSUMABLES[name] or R.CONSUMABLES[item and item.name or ""] or stacks then
+        lines[#lines + 1] = ns.Term("Consumable", "Used up") .. UI.GREY .. " when it is used.|r"
     end
     local desc = item and item.desc ~= "" and item.desc or (known and known.desc)
     if desc and desc ~= "" then lines[#lines + 1] = desc end

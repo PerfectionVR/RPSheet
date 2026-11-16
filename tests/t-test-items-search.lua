@@ -70,8 +70,9 @@ end
 -- a block: what a new one would be, and Add, Buy, Remove
 local tongue = Named(makes, "Flame Tongue Longsword")
 if Check(tongue ~= nil, "a Flame Tongue Longsword is listed") then
-    local text = table.concat(Run("lines", SHEET.lines, RPSheet, tongue), "\n")
-    Check(text:find("Counts as: Longsword", 1, true) and text:find("Magic item, rare, requires attunement", 1, true) and text:find("2d6 more fire damage", 1, true)
+    -- (the hover links of terms read as their words)
+    local text = table.concat(Run("lines", SHEET.lines, RPSheet, tongue), "\n"):gsub("|H.-|h(.-)|h", "%1"):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+    Check(text:find("A magic make, counts as: Longsword", 1, true) and text:find("Magic item, rare, requires attunement", 1, true) and text:find("2d6 more fire damage", 1, true)
         and text:find("4015 gp", 1, true), "its block: " .. text)
     Gold(0)
     local buttons, list, widths = Card(SHEET, tongue, false)

@@ -27,7 +27,8 @@ local function AddCard(self, body, entry, first)
     card:SetTitle(#marks > 0 and ("%s  %s(%s)|r"):format(entry.name, plain, table.concat(marks, ", ")) or entry.name)
     local lines = B.source.lines and B.source.lines(self, entry) or UI.ItemLines(self, entry.name, entry.item, B.source.class(self))
     for _, line in ipairs(B.source.notes and B.source.notes(self, entry) or {}) do lines[#lines + 1] = line end
-    UI.AddLabel(card, 1, table.concat(lines, "\n"))
+    -- Terms such as attunement and harness in the lines can be hovered.
+    ns.EnableTermLinks(UI.AddLabel(card, 1, table.concat(lines, "\n")))
     B.source.buttons(self, card, entry, first)
     body:AddChild(card)
 end
