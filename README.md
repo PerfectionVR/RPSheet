@@ -595,6 +595,124 @@ other ten still need that.
 - [x] Themed tick boxes, sliders, dropdowns, typing boxes and scroll bars; the
       settings window and the item browser in the sheet's theme
 
+## State of the rules
+
+"Fully implemented" means the sheet works out and applies by itself every number, roll,
+use, condition and limit the rule gives, and shows in its own words what only the table
+can settle (roleplay, the DM's rulings, what happens to other creatures). Anything not
+listed in the three tables below is fully implemented.
+
+Two things hold for everything, so they are said once here:
+
+- **Time.** The sheet keeps no clock. Whatever lasts a while (a spell's duration,
+  concentration, Rage, a beast form, Sacred Weapon, a blessing for the length of a
+  quest) ends by hand or by a rest; turn-based combat will count it. Concentration
+  itself is tracked: a new spell ends the old one and damage asks for the save.
+- **Played in game.** Only the Warrior, the Mage and the Druid have been played in
+  World of Warcraft so far. The other ten classes run only in the test environment
+  (`tests/`), which builds, levels and clicks all of them.
+
+### Classes
+
+All thirteen classes were checked: their 30 subclasses, 401 features (a core feature
+two classes share is counted for each) and the 81 options of their choices.
+
+| Class | Subclass | Caveat |
+|---|---|---|
+| All | multiclass | Paladin with Death Knight, and Hunter with Demon Hunter, can't be combined: by the rules each pair is one class with different subclasses. |
+| All | multiclass | Weapon Mastery picks from several classes add up, which is one reading of a rule tables disagree on. |
+| Death Knight, Druid, Paladin, Shaman, Warlock | Ebon Blade, Moon, Devotion, Holy, Vengeance, Berserker, Fiend, Great Old One | A use bought back with a spell slot or a Rage use (Aspect of the Horsemen, Moonlight Step, Holy Nimbus, Holy Deliverance, Avenging Angel, Intimidating Presence, Hurl Through Hell, Clairvoyant Combatant) isn't offered: spend the slot and add the use on the bar by hand. |
+| Druid, Evoker, Paladin, Priest | Stars, Draconic Sorcery, Vengeance, Shadow | The flying speed while it lasts (Dragon constellation, Dragon Wings, Avenging Angel, Dispersion) isn't shown: add a passive of your own with that speed and switch it on. |
+| Death Knight | Oath of the Ebon Blade | Runic Power: the hit points it gives back are added by hand. Runic Mastery (Blood rune): the hit points you lose for it are taken off by hand. |
+| Death Knight | Oath of the Ebon Blade | Aspect of the Horsemen: using another rune's effect is not offered; Runic Mastery shows only your own rune's. |
+| Demon Hunter, Hunter | class | Hunter's Mark cast from the spell list with a slot doesn't switch on the Hunter's Mark passive (advantage at level 17): switch it on by hand. The class's own ability does. |
+| Demon Hunter | Demon Hunter | Soul Shatter: the soul fragment regained when you roll initiative is added by hand. |
+| Druid | class | Potent Spellcasting: tick "Add spellcasting modifier" on your Druid cantrips yourself. |
+| Druid | class | Wild Resurgence, Archdruid and Nature Magician: the Wild Shape uses and spell slots they trade are changed on the bars by hand. |
+| Druid | Circle of the Stars | Dragon constellation: a d20 of 9 or lower on Intelligence and Wisdom checks and concentration saves isn't raised to 10. |
+| Evoker | class | Arcane Apotheosis: the free Metamagic option still spends Sorcery Points when clicked; give them back by hand. |
+| Evoker | Draconic Sorcery | Elemental Affinity: the resistance counts, but your Charisma modifier on one damage roll is added by hand. Dragon Wings: later uses' 3 Sorcery Points are spent by hand. |
+| Hunter, Monk, Rogue | class, Hunter | Evasion, Uncanny Dodge and Superior Hunter's Defense: "Take damage" doesn't offer them; enter the damage already halved (or 0). |
+| Mage | class | Memorize Spell: once you have cast a spell, the prepared-spells window refuses the swap after a short rest; make it under Customize. |
+| Mage | Evoker | Empowered Evocation: your Intelligence modifier on one evocation damage roll is added by hand. |
+| Monk | class | Slow Fall and Perfect Focus: the falling damage saved and the Focus Points regained are applied by hand. |
+| Monk | Mercy, Mystic Brews | The tool proficiency of Implements of Mercy (herbalism kit) and of Bonus Proficiencies (brewer's supplies) isn't given: tick it under Customize, Proficiencies. |
+| Paladin | class | Lay on Hands heals 5 points a click; another amount is changed on the bar by hand. Divine Smite: the extra 1d8 against fiends and undead is rolled by hand. |
+| Paladin | Oath of the Holy | Infusion of Light: the Lay on Hands points it gives back are added by hand. |
+| Priest | class | Blessed Strikes, Potent Spellcasting: tick "Add spellcasting modifier" on your Cleric cantrips yourself; the temporary hit points from level 14 are given by hand. |
+| Priest | class | Divine Intervention: after casting Wish it should stay spent for 2d4 long rests; the sheet refills it at the next one. |
+| Priest | Life Domain | Disciple of Life, Blessed Healer and Supreme Healing are not added to your healing spells: add 2 + the slot's level, or count the dice at their highest, yourself. |
+| Rogue | Assassin | Assassin's Tools: the disguise kit and poisoner's kit proficiencies aren't given (tick them under Customize, Proficiencies). Assassinate: the extra damage equal to your level is added by hand. |
+| Shaman | class | Indomitable Might: a Strength check or save that totals less than your Strength score isn't raised to it. Relentless Rage: the hit points you stand up with are set by hand. |
+
+### Spells
+
+All 460 spells on the lists were checked. A spell not named here does what its summary
+says when cast from the sheet, or has nothing a sheet could apply.
+
+| Spells | Caveat |
+|---|---|
+| Hex, Hunter's Mark, Divine Favor | The summary says to click again for each hit's extra dice, but a second click casts the spell again, spends a slot and ends the first casting. Roll later hits' dice by hand (a Hunter or Demon Hunter uses Hunter's Mark: damage). |
+| Alarm, Animal Friendship, Color Spray, Comprehend Languages, Create or Destroy Water, Detect Evil and Good, Detect Poison and Disease, Disguise Self, Expeditious Retreat, Grease, Identify, Illusory Script, Purify Food and Drink, Silent Image, Tenser's Floating Disk, Unseen Servant | The summary gives only school, range and save, not what the spell does. |
+| Mage Armor, Shield, Shield of Faith, Barkskin, Haste, Blistering Scales, Demon Spikes | Armor Class isn't changed when you are the target: add a passive of your own with the bonus and switch it on while the spell lasts. |
+| Aid, Heroes' Feast, Vampiric Blood | The higher maximum hit points aren't added when you are a target. |
+| Armor of Agathys, Heroism, Power Word Fortify, Consume Soul | The temporary hit points aren't set: the casting names or rolls the amount, the bar is changed by hand. |
+| Cure Wounds, Healing Word, Mass Healing Word, Mass Cure Wounds, Prayer of Healing, Heal, Regenerate, Aura of Vitality, Regrowth, Dream Breath, Dream Flight, Emerald Blossom, Prayer of Mending, Tranquility, Living Flame, Bonestorm, Vampiric Touch | Healing is rolled or stated but not added to your own hit points when you are healed: use Heal. Healing on later turns, Living Flame's heal and Vampiric Touch's half are rolled by hand. |
+| Bless, Guidance, Enhance Ability, Pass without Trace, Foresight, Holy Aura, Beacon of Hope, Circle of Power, Aura of Purity, Protection from Poison, Haste, Enlarge/Reduce, Combustion, Rain of Fire, Guided Prayer, Glibness | The bonus die, +10, advantage or Glibness's 15 they give you is not applied by itself: use the "Next roll" row or Shift. Resistances they give are applied. |
+| Death Ward | When you would drop to 0 hit points the sheet still takes you there: set 1 hit point by hand. |
+| Longstrider, Expeditious Retreat, Haste, Fly, Spider Climb, Gaseous Form, Wind Walk, Apotheosis, Breath of Eons, Fel Rush, Alter Self | The speed they give isn't shown. |
+| Shillelagh, True Strike, Magic Weapon, Elemental Weapon, Crusader's Mantle, Fount of Moonlight, Conjure Minor Elementals, Ebon Might, Enlarge/Reduce, Entropic Embrace | Your weapon rows don't change: the other ability, the bonus or the extra die is added by hand. |
+| Feral Prowl, Roar of Ursoc, Tree of Life, Shapechange, Polymorph, Animal Shapes | The shape-shift isn't put on the sheet: no form is switched on and its numbers aren't used. |
+| Innervate | The 4th-level slot and the Wild Shape use it gives are added by hand. |
+| Alter Self, Blistering Scales, Breath of Eons, Combustion, Dimension Door, Ebon Might, Enlarge/Reduce, Entropic Embrace, Meld into Stone, Teleport, Web, Wish | Dice for something that happens later or for one option (a mishap, an exploding scale, a natural weapon) are named in the summary and rolled by hand. |
+| Call Lightning, Cloud of Daggers, Moonbeam, Flaming Sphere, Spirit Guardians, Heat Metal, Spiritual Weapon, Flame Blade, Vampiric Touch, Witch Bolt, Eye Beam, Grasping Vine, Bigby's Hand, Mordenkainen's Sword, Conjure Fey, Conjure Celestial, Sunbeam, Void Eruption, Phantasmal Force, Phantasmal Killer, Combustion | The first damage is rolled when cast; the attack or damage on later turns is rolled by hand (a second click casts again and spends a slot). |
+| Cloudkill, Insect Plague, Incendiary Cloud, Wall of Fire, Wall of Thorns, Wall of Ice, Blade Barrier, Evard's Black Tentacles, Hunger of Hadar, Consecration, Conjure Animals, Conjure Woodland Beings, Conjure Elemental, Jallarzi's Storm of Radiance, Yolande's Regal Presence, Mordenkainen's Faithful Hound, Cordon of Arrows, Earthquake, Spike Growth, Hand of Gul'dan, Death and Decay, Storm of Vengeance, Tsunami | Damage to creatures that enter the area or stay in it on later turns is rolled by hand. |
+| Melf's Acid Arrow, Moonfire, Sigil of Flame, Vitriolic Sphere, Searing Smite, Ensnaring Strike, Shadow Word: Pain, Serpent Sting, Emberstorm, Weird, Delayed Blast Fireball | Damage at the end of the target's next turn, burning or a curse each turn, or the bead's growing dice, are rolled by hand. |
+| Divine Smite, Rune Strike, Toll the Dead, Rain of Fire | Extra dice against some targets (fiends and undead, a celestial, a wounded target, those in the rain) are rolled by hand; Toll the Dead rolls d8s, so use d12s yourself against a wounded target. |
+| Sorcerous Burst, Soul Reap | A die that shows its highest number adds another die, which you roll by hand. |
+| Hand of Gul'dan, Throw Glaive, Magic Missile | Two damage types, or several darts, are rolled as one total: split it yourself for a target that resists one type or for darts at different targets. |
+| Steel Wind Strike | One attack and its damage are rolled; the attacks against the other four creatures are rolled by hand. |
+| Bigby's Hand, Ice Knife, Prismatic Spray, Prismatic Wall, Storm of Vengeance, Symbol, Synaptic Static, Void Eruption, Wall of Ice | The sheet shows the first roll the spell asks for; a second save or another effect's roll is in the summary. Ice Knife's burst damage is rolled. |
+| Contact Other Plane | The row shows your spell save DC, but the save is your own Intelligence save against DC 15, and the damage on a failure is yours to take. |
+| Find Familiar, Find Steed, Summon Aberration, Summon Beast, Summon Celestial, Summon Construct, Summon Dragon, Summon Elemental, Summon Fey, Summon Fiend, Summon Undead, Giant Insect, Animate Dead, Create Undead, Animate Objects, Simulacrum, Phantom Steed | The creature's numbers are not on the sheet; the summary names how a higher slot changes them. |
+| Bless, Find the Path, Cordon of Arrows, Detect Thoughts | Components: Bless counts an amulet, emblem or reliquary as its holy symbol; Find the Path uses divining tokens; the arrows and the coin are counted though they have no price. |
+
+### Traits and passives
+
+Checked: the 53 species traits and 15 lineages, 75 feats and epic boons, 13 Fighting
+Styles, 35 invocations and 10 Metamagic options, 25 maneuvers, and the 92 renown perks
+and blessings. Class passives are in the classes table.
+
+| Kind | Name | Caveat |
+|---|---|---|
+| Species | Bloodied Frenzy (Troll) | Advantage on attack rolls while Bloodied isn't applied, though the sheet knows your hit points: use Shift. |
+| Species | Tauren Lineage | The save DC uses the highest of Strength, Constitution and Wisdom; the rules let you choose one. |
+| Species | Troll Lineage (Amani, Zandalari), Heroic Presence (Draenei) | The hit die or Heroic Inspiration they give is changed by hand. |
+| Species | Draconic Flight (Dracthyr) | The flying speed isn't shown. |
+| Species | Nose for Trouble (Vulpera) | The first damage after you roll initiative isn't reduced by your level: take it off yourself. |
+| Species | Bouncy (Pandaren) | "Take damage" doesn't know damage came from a fall: halve it yourself. |
+| Species | Specialized Design (Mechagnome) | The two tools are ticked by hand under Customize, Proficiencies. |
+| Feat | Lucky | The luck points have no bar: keep count yourself. |
+| Feat | Mage Slayer, Arathi Heritage, Boon of Recovery, Boon of Fate | Their once-per-rest uses and Boon of Recovery's pool of d10s have no bar; Boon of Fate's 2d4 is rolled by hand. |
+| Feat | Boon of Spell Recall | The d4 rolled when you cast with a slot isn't rolled; give the slot back by hand on a match. |
+| Feat | Chef | The extra 1d8 when Hit Dice are spent and the treats' temporary hit points are given by hand. |
+| Feat | Charger, Great Weapon Master, Boon of Irresistible Offense, Fingers of Frost, Poisoner | Their extra damage is added by hand. |
+| Feat | Elemental Adept, Clearcasting, Fists of Fury, Healer, Piercer, Savage Attacker, Tavern Brawler | Rerolls and low dice counted as 2 are not applied to the sheet's rolls. |
+| Feat | Defensive Duelist | The Armor Class from the reaction isn't added. |
+| Feat | Heavy Armor Master, Stagger and Sway | "Take damage" doesn't reduce the damage: enter it already reduced. |
+| Feat | Medium Armor Master | Dexterity in medium armor is still held to +2 for Armor Class. |
+| Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
+| Feat | Polearm Master | The butt strike has no weapon row: make a weapon of your own for it. |
+| Unarmed | Tavern Brawler, Unarmed Fighting (Fighting Style), Strike of the Earth-Warder (renown) | Outside the Monk there is no unarmed strike row: make a weapon of your own with the damage and bonus. |
+| Invocation | Armor of Shadows, Ascendant Step, Fiendish Vigor, Gift of the Depths, Legion Summoning, Mask of Many Faces, Master of Myriad Forms, Misty Visions, One with Shadows, Otherworldly Leap, Visions of Distant Realms, Whispers of the Grave | The spell isn't put on your spell list, so there is no free casting to click; Armor of Shadows doesn't change Armor Class and Fiendish Vigor's temporary hit points are set by hand. |
+| Invocation | Pact of the Blade, Pact of the Chain, Pact of the Legion | No pact weapon row and no familiar are added: make the weapon under Customize, Weapons. |
+| Invocation | Agonizing Blast | Tick "Add spellcasting modifier" on the cantrip yourself. |
+| Invocation | Lessons of the First Ones | The origin feat is added by hand under Customize, Passives. |
+| Metamagic | Empowered Spell, Seeking Spell | The points are spent; the reroll is yours to make. |
+| Renown | Blessing of Argent Fortitude (Argent Dawn) | The immunity to poison damage and to being poisoned isn't applied. |
+| Renown | Tushui Meditation (Tushui) | The Heroic Inspiration after a short rest is ticked by hand. |
+| Renown | Gilneas, Honored | The +2 to checks to skin a creature isn't added. |
+
 ## Known limits
 
 Small gaps left in what is built. None is planned; say so if one matters to you.
