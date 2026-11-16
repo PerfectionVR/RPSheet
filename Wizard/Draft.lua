@@ -41,6 +41,7 @@ function W.NewDraft()
         class = "", subclass = "", spec = "", level = 1, classSkills = {},
         classes = {}, -- the classes taken beside the first (Wizard/MoreClasses.lua)
         species = "", lineage = "", size = "M", background = "", allegiance = "",
+        lineageStat = "", -- the ability the lineage's spells are cast with (Sheet/LineageCasting.lua)
         traitChoices = {}, -- picks for species traits such as Skillful and Versatile
         scoreMethod = "POINTBUY",
         base = { STR = 8, DEX = 8, CON = 8, INT = 8, WIS = 8, CHA = 8 },
@@ -97,6 +98,9 @@ function W.StepProblem()
         if not R.SPECIES[draft.species] then return "Choose a species." end
         if not R.BACKGROUNDS[draft.background] then return "Choose a background." end
         if R.LINEAGES[draft.species] and draft.lineage == "" then return "Choose a lineage." end
+        if ns.LineageCasts(draft.species, draft.lineage) and not ns.LineageStatChosen(draft) then
+            return "Choose the ability your lineage's spells are cast with."
+        end
         -- A skill the background gives can't also be a class pick: that pick would be wasted.
         for _, skill in ipairs(R.BACKGROUNDS[draft.background].skills) do
             if draft.classSkills[skill] then
@@ -145,6 +149,7 @@ function W.Finish()
     W.ApplyExtras(sheet) -- the other classes; the level above is the whole character's
     sheet.species, sheet.size, sheet.background, sheet.alignment = draft.species, draft.size, draft.background, draft.alignment
     sheet.lineage, sheet.allegiance = draft.lineage, draft.allegiance
+    sheet.lineageStat = ns.LineageCasts(draft.species, draft.lineage) and draft.lineageStat or ""
     for _, trait in ipairs(ns.TraitChoices(draft)) do sheet.traitChoices[trait] = draft.traitChoices[trait] end
     sheet.scoreMethod = draft.scoreMethod
     sheet.base, sheet.bonus = CopyTable(draft.base), CopyTable(draft.bonus)

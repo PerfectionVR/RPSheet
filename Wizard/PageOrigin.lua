@@ -70,6 +70,14 @@ local originPage = Page(2, {
             return values
         end,
     }, "lineage"),
+    -- The ability the spells of the species or lineage are cast with, chosen with it.
+    lineageStat = Field({
+        type = "select", order = 2.6, name = "Ability for its spells",
+        desc = "Your species or lineage gives you spells. Choose the ability you cast them with: Intelligence, Wisdom or Charisma. It stays with the lineage.",
+        hidden = function() return not ns.LineageCasts(W.draft.species, W.draft.lineage) end,
+        values = function() return ns.LineageStatValues() end,
+        sorting = R.LINEAGE_STATS,
+    }, "lineageStat"),
     background = {
         type = "select", order = 3, name = "Background",
         values = Opt.NameMap(R.BACKGROUNDS, R.BACKGROUND_ORDER), sorting = R.BACKGROUND_ORDER,

@@ -88,7 +88,6 @@ function RPSheet:GetTrackers()
         for _, source in ipairs(sources) do collect(source, view.level, dropped) end
     end
     local shared = {
-        ns.LineagePools(sheet), -- a lineage's once-per-rest spells
         ns.TraitPools(sheet),   -- species traits with uses
         ns.RenownPools(sheet),  -- a faction's blessings with uses
         ns.PetPools(sheet),     -- a Beast Master's companion

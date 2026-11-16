@@ -55,6 +55,7 @@ function RPSheet:LongRest()
     state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
     state.cantripSwap = nil       -- and a Mage's exchange of one cantrip (Sheet/CantripSwap.lua)
     ns.ResetRestPicks()           -- and the feat picks that change after a long rest
+    state.lineageCantripChanged = nil -- and an elf's lineage cantrip (Options/Origin.lua)
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).

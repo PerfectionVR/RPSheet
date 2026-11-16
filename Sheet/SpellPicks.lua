@@ -18,12 +18,17 @@ function ns.CantripsElsewhere(sheet, fresh)
     local now = GetTime()
     if not fresh and kept.names and kept.time == now and kept.spells == sheet.spells and kept.class == sheet.class
         and kept.subclass == sheet.subclass and kept.spec == sheet.spec and kept.level == sheet.level
-        and kept.featChoices == sheet.featChoices then
+        and kept.featChoices == sheet.featChoices and kept.species == sheet.species and kept.lineage == sheet.lineage
+        and kept.lineageCantrip == sheet.lineageCantrip then
         return kept.names
     end
     local names = {}
     for name in pairs(ns.AlwaysPrepared(sheet)) do
         if R.SPELLS[name].level == 0 then names[name] = true end
+    end
+    -- (and those of the species or lineage: Sheet/LineageSpells.lua)
+    for name in pairs(ns.SpeciesCantrips(sheet)) do
+        if not (sheet.dismissed or {})["species:" .. name] then names[name] = true end
     end
     for name, found in pairs(ns.FeatSpells(sheet)) do
         -- (One the player deleted from the spell list isn't given by the feat any more.)
@@ -34,7 +39,8 @@ function ns.CantripsElsewhere(sheet, fresh)
         -- Entries of the two kinds above are covered there; a stale one is on its way out.
         if spell.level == 0 and spell.free and not auto:find("^prepared:") and not auto:find("^feat:") then names[spell.name] = true end
     end
-    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices }
+    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices,
+        species = sheet.species, lineage = sheet.lineage, lineageCantrip = sheet.lineageCantrip }
     return names
 end
 
