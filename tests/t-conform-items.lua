@@ -255,7 +255,9 @@ local function Magic(name, rarity, attune, pounds, fits, bonus)
         siteMagic["variant:" .. variant.title] = true
         Same(key .. "variant rarity", variant.rarity, RARITY[rarity] or rarity)
         Same(key .. "variant attunement", variant.attune and "a" or "", attune ~= "" and "a" or "")
-        Same(key .. "variant fits", variant.fits, FITS[fits] or fits)
+        -- A listed item the addon also makes of a plain one (the Enspelled Staff, of a
+        -- quarterstaff) has no list of kinds on the site.
+        if fits then Same(key .. "variant fits", variant.fits, FITS[fits] or fits) end
         -- A weapon's or a suit's bonus is on the make; a piece of ammunition's is for
         -- the one shot and only said.
         if variant.fits ~= "ammo" then Same(key .. "variant bonus", variant.bonus or 0, tonumber(bonus) or 0) end

@@ -15,7 +15,7 @@ local function MountLines(self, lines, about)
     end
     lines[#lines + 1] = ("%s mount. Speed %s."):format(R.MOUNT_SIZES[about.size] or "Large", ns.MountSpeeds(about) ~= "" and ns.MountSpeeds(about) or "not set")
     if about.capacity > 0 then
-        lines[#lines + 1] = ("Carries %d lb. Hitched to a drawn vehicle it moves %d lb., the vehicle included."):format(about.capacity, about.capacity * R.DRAW_TIMES)
+        lines[#lines + 1] = ("Carries %d lb. In %s to a drawn vehicle it moves %d lb., the vehicle included."):format(about.capacity, ns.Term("Harness", "harness"), about.capacity * R.DRAW_TIMES)
     end
     if (R.SIZE_RANK[about.size] or 3) <= (R.SIZE_RANK[self:Sheet().size] or 2) then
         lines[#lines + 1] = RED .. "Too small for you to ride: a mount has to be at least one size larger than its rider. It can still carry and pull.|r"
@@ -35,7 +35,7 @@ local function VehicleLines(self, lines, about, known)
         end
         return
     end
-    lines[#lines + 1] = ("Pulled by animals. It weighs %d lb.; an animal pulls %d times what it carries, the vehicle included, and a team adds up."):format(about.weight, R.DRAW_TIMES)
+    lines[#lines + 1] = ("Pulled by animals in %s. It weighs %d lb.; an animal pulls %d times what it carries, the vehicle included, and a team adds up."):format(ns.Term("Harness", "harness"), about.weight, R.DRAW_TIMES)
     if about.load > 0 then lines[#lines + 1] = ("Loaded with %d lb."):format(about.load) end
     for _, animal in ipairs(self:Sheet().mounts or {}) do
         if animal.kind == "MOUNT" and animal.name ~= "" and animal.capacity > 0 and not ns.MountIsThing(animal) then
@@ -72,7 +72,10 @@ function UI.MountLines(self, name, entry)
     end
     -- An owned one: in harness, and whether what it carries or pulls is too much.
     if entry then
-        if entry.hitched then lines[#lines + 1] = UI.GREY .. (about.kind == "VEHICLE" and "In harness: your harnessed animals pull it.|r" or "In harness: it pulls your harnessed vehicle.|r") end
+        if entry.hitched then
+            lines[#lines + 1] = ns.Term("Harness", "In harness") .. UI.GREY
+                .. (about.kind == "VEHICLE" and ": your harnessed animals pull it.|r" or ": it pulls your harnessed vehicle.|r")
+        end
         local problem = self:VehicleLoadProblem(entry)
         if not problem and entry.riding and about.kind == "MOUNT" then problem = self:MountHeldNote(entry) end
         if problem and problem ~= "" then lines[#lines + 1] = RED .. problem .. "|r" end

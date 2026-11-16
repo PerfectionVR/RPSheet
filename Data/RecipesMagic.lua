@@ -49,6 +49,10 @@ for _, kind in ipairs({ "Armor", "Weapon" }) do
         R.RECIPE_OPEN[("Enspelled %s (%s)"):format(kind, rarity)] = kind == "Armor" and "the plain suit of armor" or "the plain weapon"
     end
 end
+-- An enspelled staff is made of a quarterstaff, the plain one it turns back into.
+for rarity in pairs(R.MAGIC_CRAFT) do
+    if R.ITEMS[("Enspelled Staff (%s)"):format(rarity)] then R.RECIPE_BASE[("Enspelled Staff (%s)"):format(rarity)] = "Quarterstaff" end
+end
 
 Family("alchemy", { "^Potion of ", "^Oil of ", "Elixir", "^Philter of ", "^Flask of the Titans" }, RARE)
 Add("alchemy", "Perfume of Bewitching;Alchemy Jug;Dust of Disappearance;Dust of Dryness;Keoghtom's Ointment;Philosopher's Stone;Sovereign Glue;Universal Solvent")

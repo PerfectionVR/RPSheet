@@ -112,7 +112,9 @@ function CRAFT.notes(self, entry)
     if base then lines[#lines + 1] = ("%sThat includes the price of the %s it is made from.|r"):format(UI.GREY, base:lower()) end
     if open then lines[#lines + 1] = ("%sThat is the magic alone: %s is bought or made apart, by a profession that makes its kind.|r"):format(UI.GREY, open) end
     if recipe.vehicle then lines[#lines + 1] = UI.GREY .. "Built, it stands with your mounts and vehicles. Building it asks no standing with a faction.|r" end
-    if R.CONSUMABLES[recipe.name] then lines[#lines + 1] = UI.GREY .. "Used up when used: half the usual time and cost.|r" end
+    if R.CONSUMABLES[recipe.name] and not R.CRAFT_FIXED[recipe.name] then
+        lines[#lines + 1] = ("%sAs a %s%s, it takes half the usual time and cost.|r"):format(UI.GREY, ns.Term("Consumable", "consumable"), UI.GREY)
+    end
     if not recipe.basic then
         lines[#lines + 1] = UI.GREY .. (self:RecipeKnown(recipe) and "A recipe you learned.|r"
             or "Not part of the skill itself: it is learned from a trainer, a find or a faction, as the DM says.|r")

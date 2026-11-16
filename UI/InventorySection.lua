@@ -41,6 +41,8 @@ local function ItemTip(self, item)
     if item.attune then
         lines[#lines + 1] = "Right-click: " .. (item.attuned and "end the attunement." or "attune to it.")
         lines[#lines + 1] = "\n" .. ATTUNE_HELP
+    else
+        lines[#lines + 1] = UI.GREY .. "Right-click attunes to a magic item that asks for it; this one doesn't.|r"
     end
     return table.concat(lines, "\n")
 end

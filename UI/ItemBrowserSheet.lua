@@ -66,6 +66,13 @@ function SHEET.words(self, entry)
     return UI.ItemWords(self, entry.name, entry.item)
 end
 
+-- A magic item no profession makes says why (R.NOT_MADE, Data/RecipesFinds.lua).
+function SHEET.notes(_, entry)
+    local why = not entry.variant and R.NOT_MADE[entry.name]
+    if not why then return {} end
+    return { ("%sNo profession makes it: %s.|r"):format(UI.GREY, why) }
+end
+
 function SHEET.own(self)
     local entries = {}
     for _, item in ipairs(self:Sheet().items) do

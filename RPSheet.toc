@@ -103,6 +103,7 @@ Data\Equipment.lua
 Data\FeatChoices.lua
 Data\Example.lua
 Data\Glossary.lua
+Data\GlossaryItems.lua
 Data\FeatureKit.lua
 Data\Traits.lua
 Data\Features.lua

@@ -1,5 +1,6 @@
 -- The named magic makes: armor, weapons and ammunition that exist of every plain
--- item of a kind (a Flame Tongue of any melee weapon, Mariner's Armor of any suit).
+-- item of a kind (a Flame Tongue of any melee weapon, Mariner's Armor of any suit),
+-- and the Enspelled Staff, which is a quarterstaff.
 -- Each is also in the magic item lists as one item without a plain kind; the make
 -- takes its rarity, attunement and words from there, so the two can't drift apart,
 -- and adds what the sheet can count once the plain item is known: the magic bonus,
@@ -68,6 +69,13 @@ Named("Nine Lives Stealer", "weapon", "Nine Lives Stealer %s", { bonus = 2 })
 Named("Holy Avenger", "weapon", "Holy Avenger %s", { bonus = 3 })
 for _, rarity in ipairs({ "Uncommon", "Rare", "Very rare", "Legendary" }) do
     Named(("Enspelled Weapon (%s)"):format(rarity), "weapon", ("Enspelled %%s (%s)"):format(rarity:lower()))
+end
+-- An enspelled staff is a quarterstaff (it fights as one, and turns into a plain one
+-- when its magic fails), so its make is of the quarterstaff alone. Its name says
+-- "Staff" to keep it apart from an Enspelled Weapon made of a quarterstaff, which any
+-- attuned creature can use; the staff asks for a spellcaster.
+for _, rarity in ipairs({ "Uncommon", "Rare", "Very rare", "Legendary" }) do
+    Named(("Enspelled Staff (%s)"):format(rarity), "Quarterstaff", ("Enspelled Staff (%%s, %s)"):format(rarity:lower()))
 end
 -- Melee weapons, swords, and weapons of a few kinds
 Named("Flame Tongue", "melee", "Flame Tongue %s")
