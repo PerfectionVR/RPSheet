@@ -80,7 +80,7 @@ R.FEATURES = {
 
     Cleric = {
         Kit.Choice(1, "Divine Order", "The sacred role you dedicated yourself to.", {
-            Kit.Option("Protector", "You are proficient with martial weapons and trained with heavy armor.", { training = { "heavy" } }),
+            Kit.Option("Protector", "You are proficient with martial weapons and trained with heavy armor.", { training = { "heavy" }, martial = true }),
             Kit.Option("Thaumaturge", "You know one more Cleric cantrip, and add your Wisdom modifier (at least +1) to Arcana and Religion checks.",
                 { effects = function(_, sheet)
                     local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
@@ -122,7 +122,7 @@ R.FEATURES = {
                     local bonus = math.max(1, Kit.Mod(sheet, "WIS"))
                     return { Bonus("SKILL:Arcana", bonus), Bonus("SKILL:Nature", bonus) }
                 end }),
-            Kit.Option("Warden", "You are proficient with martial weapons and trained with medium armor.", { training = { "medium" } }),
+            Kit.Option("Warden", "You are proficient with martial weapons and trained with medium armor.", { training = { "medium" }, martial = true }),
         }),
         Ability(2, "Wild Shape", function(level)
             return ("Bonus action. Take a beast form you know (%d known, up to challenge rating %s%s) for %d hours, keeping your hit points and gaining temporary hit points equal to your level. One use comes back on a short rest."):format(
@@ -239,7 +239,9 @@ R.FEATURES = {
         Prepared({ { 2, "Divine Smite" } }, Limited(2, "Paladin's Smite", "You always have Divine Smite prepared. Once per long rest you can cast it without a slot: this is that casting.", 1, { Dice(2, 8) })),
         Ability(2, "Divine Smite", "Bonus action after you hit with a melee weapon or unarmed strike: radiant damage. The sheet adds 1d8 for each slot level above 1st; set a higher slot at \"Cast at\". Add 1d8 more against fiends and undead.",
             { Spend("1st-level slot"), Kit.SlotAdd(Dice(2, 8), 1) }),
-        Ability(3, "Divine Sense", "Bonus action. For 10 minutes you know the location of celestials, fiends and undead within 60 feet.", { Spend("Channel Divinity") }),
+        Ability(3, "Divine Sense", "Bonus action. For 10 minutes, or until you are incapacitated, you know the location of celestials, fiends and undead within 60 feet. Switches Divine Sense active on.",
+            { Spend("Channel Divinity"), SwitchOn("Divine Sense active") }),
+        Passive(3, "Divine Sense active", "Switch on while Divine Sense lasts (10 minutes). Being incapacitated or a rest switches it off.", nil, true),
         ExtraAttack(5),
         Prepared({ { 5, "Find Steed" } }, Limited(5, "Faithful Steed", "You always have Find Steed prepared. Once per long rest you can cast it without a slot.", 1)),
         Passive(6, "Aura of Protection", function(level)

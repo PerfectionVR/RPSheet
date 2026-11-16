@@ -83,6 +83,7 @@ function ns.ApplyFeatChoices(sheet)
     ApplySkills(sheet, instances)
     ApplyTools(sheet, instances)
     Describe(sheet, instances)
+    ns.NoteRestPicks(sheet) -- a pick that changes after a long rest (Sheet/FeatRestPicks.lua)
 end
 
 -- The kinds of weapon whose mastery property a feat lets the character use

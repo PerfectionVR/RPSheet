@@ -68,26 +68,58 @@ end
 -- features at its own level. The multiclassing rules name the features that don't
 -- add up (Extra Attack, the ways to work out Armor Class, Spellcasting) and Weapon
 -- Mastery is not one of them, so the picks of the classes are added together.
-function RPSheet:MasteryLimit()
-    local class = self:ClassData()
-    local _, fromFeats = ns.FeatMasteryWeapons(self:Sheet())
-    if not class or not self:HasWeaponMastery() then return fromFeats end
-    local total = 0
-    for _, view in ipairs(ns.ClassViews(self:Sheet())) do
-        local base = R.CLASSES[view.class].base
-        total = total + (ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
+-- A feat's pick is for the one kind of weapon chosen for it, also when the class has
+-- picks of its own: a weapon of that kind uses the feat's pick, any other one of the
+-- class's. Returns the class's picks and how many weapons use them (a companion's
+-- family picked for its strike takes one too, Sheet/Pet.lua), the feats' picks and
+-- how many of their kinds have a weapon with a mastery, and the feats' kinds.
+local function MasteryParts(self)
+    local sheet = self:Sheet()
+    local kinds, fromFeats = ns.FeatMasteryWeapons(sheet)
+    local classPicks = 0
+    if self:ClassData() and self:HasWeaponMastery() then
+        for _, view in ipairs(ns.ClassViews(sheet)) do
+            local base = R.CLASSES[view.class].base
+            classPicks = classPicks + (ns.FeatureKit.AtLevel(view.level, R.MASTERY_LIMITS[base] or {}) or 0)
+        end
     end
-    return total + fromFeats
+    local classUsed, featKinds, featUsed = self:PetMastery() and 1 or 0, {}, 0
+    for _, weapon in ipairs(sheet.weapons) do
+        if R.MASTERIES[weapon.mastery] and not weapon.heal then
+            local kind = weapon.base or ""
+            if not kinds[kind] then
+                classUsed = classUsed + 1
+            elseif not featKinds[kind] then
+                featKinds[kind], featUsed = true, featUsed + 1
+            end
+        end
+    end
+    return classPicks, classUsed, fromFeats, featUsed, kinds
 end
 
--- How many weapons have a mastery set. A companion's family picked for its strike
--- takes one of the picks too (Sheet/Pet.lua).
+function RPSheet:MasteryLimit()
+    local classPicks, _, fromFeats = MasteryParts(self)
+    return classPicks + fromFeats
+end
+
+-- How many of those picks are in use.
 function RPSheet:MasteriesUsed()
-    local used = self:PetMastery() and 1 or 0
-    for _, weapon in ipairs(self:Sheet().weapons) do
-        if R.MASTERIES[weapon.mastery] and not weapon.heal then used = used + 1 end
-    end
-    return used
+    local _, classUsed, _, featUsed = MasteryParts(self)
+    return classUsed + featUsed
+end
+
+-- True when more weapons have a mastery than the class allows: a feat's pick doesn't
+-- make room for a weapon of another kind.
+function RPSheet:MasteryOver()
+    local classPicks, classUsed = MasteryParts(self)
+    return classUsed > classPicks
+end
+
+-- True when a new weapon of this kind (nil: the companion's strike) can take a mastery.
+function RPSheet:MasteryRoom(kind)
+    local classPicks, classUsed, _, _, kinds = MasteryParts(self)
+    if kind and kinds[kind] then return true end
+    return classUsed < classPicks
 end
 
 ---------------------------------------------------------------------------

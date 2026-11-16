@@ -19,8 +19,11 @@ function ns.WeaponProficient(classKey, name)
     return text:find("martial") ~= nil
 end
 
--- The same for a whole character: a class taken after the first can add the martial
--- weapons (Data/Multiclass.lua), never more.
+-- The same for a whole character, from every source: the first class's training; a
+-- class taken after the first, which can add the martial weapons (Data/Multiclass.lua);
+-- a class option that does (a Priest's Protector, a Druid's Warden); and the feat
+-- Martial Weapon Training.
+local MARTIAL_FEATS = { ["Martial Weapon Training"] = true }
 function ns.SheetWeaponProficient(sheet, name)
     if ns.WeaponProficient(sheet.class, name) then return true end
     local weapon = R.WEAPONS[name]
@@ -28,6 +31,9 @@ function ns.SheetWeaponProficient(sheet, name)
     for _, key in ipairs(ns.ExtraClassKeys(sheet)) do
         local gained = R.MULTICLASS[R.CLASSES[key].base]
         if gained and gained.martial then return true end
+    end
+    for _, passive in ipairs(sheet.passives or {}) do
+        if passive.martial or (MARTIAL_FEATS[passive.name] and passive.enabled ~= false) then return true end
     end
     return false
 end

@@ -44,6 +44,16 @@ for _, key in pairs(R.CANTRIP_LISTS) do
     end
 end
 
+-- True while the active character's Mage has given up a cantrip in the exchange after
+-- a long rest and not yet learned one in its place (Sheet/CantripSwap.lua): that place
+-- is the player's to fill, not a cantrip that happens to be on the spell list.
+local function ExchangeOpen(sheet, key)
+    local RPSheet = ns.addon
+    if key ~= R.CANTRIP_LISTS.Wizard or not RPSheet.db or (sheet.viewOf or sheet) ~= RPSheet:Sheet() then return false end
+    local swap = RPSheet:State().cantripSwap
+    return type(swap) == "table" and type(swap.out) == "string" and not swap.into
+end
+
 -- The cantrips of one class: `sheet` is a character of one class, or a view of one
 -- class of a character with several. That one's spells name their class, and the
 -- cantrips its other classes picked are left alone.
@@ -74,6 +84,7 @@ local function ApplyFor(sheet)
         if items[name] then count = count + 1 end
     end
 
+    local room = limit - (ExchangeOpen(sheet, key) and 1 or 0)
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
@@ -94,7 +105,7 @@ local function ApplyFor(sheet)
         elseif spell.level == 0 and not spell.free and items[spell.name] and ns.SpellIsOf(spell, tag) then
             -- Added by hand before cantrips were picked: it counts as a pick while
             -- there is room for one.
-            if picks[spell.name] or count < limit then
+            if picks[spell.name] or count < room then
                 if not picks[spell.name] then
                     picks[spell.name] = true
                     count = count + 1

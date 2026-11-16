@@ -47,7 +47,8 @@ function RPSheet:MissingComponents(spell, pick)
     local targets = type(pick) == "table" and pick.targets or nil
     local missing, advice = {}, {}
     for _, part in ipairs(self:SpellComponents(spell) or {}) do
-        if self:ComponentCount(part) < ns.ComponentNeed(part, targets) then
+        -- (herbs may pay for what isn't carried: Sheet/HerbComponents.lua)
+        if self:ComponentCount(part) + self:HerbParts(spell, part) < ns.ComponentNeed(part, targets) then
             missing[#missing + 1] = ns.ComponentText(part, targets)
             if part.weapon then
                 advice.weapon = "Ready such a weapon first; a weapon of your own needs its kind and worth set under Customize, Weapons. "
@@ -93,6 +94,8 @@ function RPSheet:SpendComponents(spell, pick, slotLevel)
                     taken[#taken + 1] = item.name
                     dropped = true
                     self:DropItem(item)
+                elseif self:HerbParts(spell, part) > 0 then
+                    taken[#taken + 1] = self:TakeHerbs(part)
                 end
             end
         end
@@ -125,6 +128,8 @@ function RPSheet:ComponentHelp(spell)
         end
         lines[#lines + 1] = ("Needs %s%s.%s"):format(ns.ComponentText(part), part.consumed and ", used up by the casting" or ", which is kept", have)
         if part.note and not waived then lines[#lines + 1] = GREY .. part.note .. "|r" end
+        local herbs = not waived and self:HerbHelp(spell, part)
+        if herbs then lines[#lines + 1] = GREY .. herbs .. "|r" end
         each = each or part.each ~= nil
     end
     if each and not waived then

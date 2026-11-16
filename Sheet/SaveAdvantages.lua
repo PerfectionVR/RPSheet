@@ -31,9 +31,7 @@ end
 
 -- True when the character has what the entry names, and it may be in effect.
 local function Has(self, owned, entry)
-    if not entry.spent then return owned[entry.from] == true end
-    local tracker = self:FindTracker(entry.spent)
-    return tracker ~= nil and (tracker.get() or 0) < tracker.max
+    return owned[entry.from] == true
 end
 
 local function Covers(entry, stat)
@@ -98,7 +96,8 @@ function RPSheet:SaveAdvantageText(stat)
         lines[#lines + 1] = ("Advantage to keep concentrating (%s)."):format(self:ConcentrationAdvantage())
     end
     for _, choice in ipairs(stat == "CON" and self:ConcentrationChoices() or NONE) do
-        lines[#lines + 1] = ("Advantage to keep concentrating on %s (%s): the sheet asks when damage calls for that save."):format(choice.about, choice.from)
+        local how = self:RollQuiet("holding") and "the question is off, so the sheet rolls without it" or "the sheet asks when damage calls for that save"
+        lines[#lines + 1] = ("Advantage to keep concentrating on %s (%s): %s."):format(choice.about, choice.from, how)
     end
     return #lines > 0 and table.concat(lines, "\n") or nil
 end

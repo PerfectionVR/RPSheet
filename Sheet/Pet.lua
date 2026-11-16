@@ -98,8 +98,8 @@ function RPSheet:TogglePetMastery()
         self:Print("You need the Weapon Mastery feature to use the mastery of your companion's strike.")
         return false
     end
-    local used, limit = self:MasteriesUsed(), self:MasteryLimit()
-    if used >= limit then
+    local limit = self:MasteryLimit()
+    if not self:MasteryRoom() then
         self:Print(("All %d of your Weapon Mastery picks are on weapons. Take the mastery off a weapon under Customize, Weapons, then pick your companion's family."):format(limit))
         return false
     end

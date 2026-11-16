@@ -434,6 +434,33 @@ Section("incapacitated", function()
         Check(not stars.enabled and not Passive("Dragon").enabled, "Paralyzed ends the starry form and its constellation")
         Check(AnySaid("loses Starry Form: paralyzed.", sent), "named once")
     end
+    -- features with no passive before: each switches one on, which the condition ends
+    for _, case in ipairs({ { "PRIEST", "Shadow Domain", 3, "Shadowform" }, { "PALADIN", "Oath of Devotion", 3, "Divine Sense" },
+                            { "DRUID", "Circle of the Land", 14, "Nature's Sanctuary" } }) do
+        Build(case[1], case[2], case[3])
+        local ability, passive = Ability(case[4]), Passive(case[4] .. " active")
+        if Check(ability and passive, case[4] .. " has a passive to switch") then
+            Check(not passive.enabled, case[4] .. ": off until used")
+            RPSheet:UseAbility(ability)
+            Check(passive.enabled, case[4] .. ": using it switches it on")
+            local sent = #SENT
+            RPSheet:ToggleCondition("Unconscious")
+            Check(not passive.enabled and AnySaid("loses " .. case[4] .. ": unconscious.", sent), case[4] .. ": Unconscious ends it, and says so")
+            RPSheet:ToggleCondition("Unconscious")
+            RPSheet:LongRest()
+            RPSheet:UseAbility(ability)
+            RPSheet:ShortRest()
+            Check(not passive.enabled, case[4] .. ": a short rest outlasts it")
+        end
+    end
+    -- Holy Nimbus isn't ended by a condition, only by a click or a rest
+    Build("PALADIN", "Oath of Devotion", 20)
+    if Check(Passive("Holy Nimbus active"), "Holy Nimbus has a passive") then
+        RPSheet:UseAbility(Ability("Holy Nimbus"))
+        RPSheet:ToggleCondition("Stunned")
+        Check(Passive("Holy Nimbus active").enabled, "being stunned leaves Holy Nimbus on")
+        RPSheet:ToggleCondition("Stunned")
+    end
     -- a passive of the player's own with such a name is left alone
     Build("WARRIOR", "", 5)
     table.insert(RPSheet:Sheet().passives, { name = "Raging", desc = "", auto = "", enabled = true, effects = {} })

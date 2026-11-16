@@ -7,9 +7,6 @@
 --   saves          the abilities it covers; every one when left out
 --   concentration  true: only the save to keep a spell, which the sheet rolls itself;
 --                  with `about` as well, only for such a spell, and the sheet asks then
---   spent          the feature lasts a while after it is used and the sheet doesn't
---                  time it: it counts from the moment a use of the resource of this
---                  name is gone until a rest brings it back
 -- An entry with neither `about` nor `concentration` always counts.
 local _, ns = ...
 local R = ns.Rules
@@ -29,9 +26,9 @@ R.SAVE_ADVANTAGES = {
     { from = "Arathi Heritage", about = { CHARMED } },
     { from = "War Caster", concentration = true },
     { from = "Eldritch Mind", concentration = true },
-    -- Class features: a metamagic option, and a paladin's aura for ten minutes
+    -- Class features: a metamagic option, and a paladin's aura while it is switched on
     { from = "Extended Spell", concentration = true, about = { "a spell you extended" } },
-    { from = "Holy Nimbus", about = { "a fiend or an undead" }, spent = "Holy Nimbus" },
+    { from = "Holy Nimbus active", about = { "a fiend or an undead" } },
     -- Companion creatures
     { from = "Dragonkin companion", about = { FRIGHTENED } },
     { from = "Elemental companion", about = { "Exhaustion" } },

@@ -39,8 +39,9 @@ F["Circle of the Land"] = {
         conditionImmune = { "Poisoned" },
         resist = function(_, sheet) return LAND_WARD[(sheet.featureOptions or {})["Circle of the Land Spells"]] end,
     }),
-    Ability(14, "Nature's Sanctuary", "Magic action. Spectral trees fill a 15-foot cube within 120 feet for a minute: you and allies have half cover there, and allies gain your Nature's Ward resistance. A bonus action moves it up to 60 feet.",
-        { Spend("Wild Shape") }),
+    Ability(14, "Nature's Sanctuary", "Magic action. Spectral trees fill a 15-foot cube within 120 feet for a minute: you and allies have half cover there, and allies gain your Nature's Ward resistance. A bonus action moves it up to 60 feet. The trees vanish early if you are incapacitated. Switches Nature's Sanctuary active on.",
+        { Spend("Wild Shape"), SwitchOn("Nature's Sanctuary active") }),
+    Passive(14, "Nature's Sanctuary active", "Switch on while the spectral trees stand (1 minute). Being incapacitated or a rest switches it off.", nil, true),
 }
 F["Circle of the Moon"] = {
     AlwaysPrepared("Circle of the Moon", { { 3, "Cure Wounds, Moonbeam, Starry Wisp" }, { 5, "Conjure Animals" }, { 7, "Fount of Moonlight" }, { 9, "Mass Cure Wounds" } }),

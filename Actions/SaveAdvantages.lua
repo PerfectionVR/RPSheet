@@ -13,7 +13,8 @@ function RPSheet:AskConcentration(damage)
     -- Advantage that is there anyway, or that something would cancel out: nothing to ask.
     local plain = self:ResolveMode("CON save", self:ConcentrationAdvantage() and "ADV" or nil)
     if plain == self:ResolveMode("CON save", "ADV") then return false end
-    if not (MenuUtil and MenuUtil.CreateContextMenu) then
+    -- Not asked (no menu, or the question stopped for this character): rolled without it.
+    if not (MenuUtil and MenuUtil.CreateContextMenu) or self:RollQuiet("holding") then
         self:Print(("The save to keep your spell was rolled without advantage: you have it for %s (%s)."):format(choices[1].about, choices[1].from))
         return false
     end
@@ -28,6 +29,13 @@ function RPSheet:AskConcentration(damage)
             end)
         end
         root:CreateButton("Another spell", function() self:RollConcentration(damage, false) end)
+        root:CreateDivider()
+        root:CreateButton("Don't ask again for this character", function()
+            self:SetRollQuiet("holding", true)
+            self:Print("The sheet won't ask this again for this character. Customize > Proficiencies turns the question back on.")
+            self:Print(("The save to keep your spell was rolled without advantage: you have it for %s (%s)."):format(choices[1].about, choices[1].from))
+            self:RollConcentration(damage, false)
+        end)
     end)
     return true
 end

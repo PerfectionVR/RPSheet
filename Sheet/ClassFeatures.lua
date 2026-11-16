@@ -121,6 +121,7 @@ local function Apply(sheet, feature, key)
     -- Some features read differently for each specialization.
     if feature.shown then entry.name = feature.shown end
     entry.training = feature.training and CopyTable(feature.training) or nil
+    entry.martial = feature.martial or nil -- proficiency with martial weapons (Sheet/Armoury.lua)
     local desc = feature.bySpec and feature.bySpec[sheet.spec] or feature.desc
     if type(desc) == "function" then desc = desc(sheet.level, sheet) end -- wording that follows the character
     entry.desc = desc

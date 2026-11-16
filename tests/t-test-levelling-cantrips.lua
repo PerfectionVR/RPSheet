@@ -195,6 +195,26 @@ do
     Check(RPSheet:ChangeCantrip(offered[1]) == true, "the exchange can't be finished")
     NoneTwice(sheet, "Mage after the exchange")
     T.Check("Mage after the exchange")
+
+    -- A Wizard cantrip added by hand, beyond the ones known, doesn't fill the place a
+    -- cantrip given up in the exchange leaves: the player picks what comes in.
+    state.prepareClosed, state.cantripSwap = nil, nil
+    local extra
+    for _, name in ipairs(R.PICK_LISTS[KEY].order) do
+        if not sheet.picks[KEY][name] and not ns.CantripsElsewhere(sheet, true)[name] then extra = name break end
+    end
+    sheet.spells[#sheet.spells + 1] = CopyTable(R.SPELLS[extra]) -- counting, not picked
+    Upkeep(sheet)
+    Check(not sheet.picks[KEY][extra], extra .. " added by hand beyond the limit became a pick")
+    known = RPSheet:BookCantrips()
+    Check(RPSheet:ChangeCantrip(known[1]) == true, "a cantrip can't be given up after the next long rest")
+    Upkeep(sheet)
+    Check(not sheet.picks[KEY][extra], extra .. ", added by hand, took the place of the cantrip given up")
+    local _, open = RPSheet:BookCantrips()
+    Check(#open > 0, "the exchange offers nothing after the hand-added cantrip")
+    Check(RPSheet:ChangeCantrip(extra) == true and sheet.picks[KEY][extra], "the hand-added cantrip can't be learned in the exchange")
+    Upkeep(sheet)
+    NoneTwice(sheet, "Mage after learning the hand-added cantrip")
 end
 
 local problems = 0

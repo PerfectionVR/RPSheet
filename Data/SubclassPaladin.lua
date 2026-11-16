@@ -15,7 +15,9 @@ F["Oath of Devotion"] = {
         function(_, sheet) return { Bonus("ATTACK", math.max(1, Kit.Mod(sheet, "CHA"))) } end, true),
     Passive(7, "Aura of Devotion", "You and allies in your Aura of Protection can't be charmed.", nil, { conditionImmune = { "Charmed" } }),
     Passive(15, "Smite of Protection", "When you cast Divine Smite, you and allies in your aura have half cover until the start of your next turn."),
-    Limited(20, "Holy Nimbus", "Bonus action, for 10 minutes: advantage on saves forced by fiends and undead, enemies that start their turn in your aura take radiant damage equal to your Charisma modifier plus proficiency bonus, and the aura is filled with sunlight. Once per long rest, or again by spending a 5th-level slot.", 1),
+    Limited(20, "Holy Nimbus", "Bonus action, for 10 minutes: advantage on saves forced by fiends and undead, enemies that start their turn in your aura take radiant damage equal to your Charisma modifier plus proficiency bonus, and the aura is filled with sunlight. Once per long rest, or again by spending a 5th-level slot. Switches Holy Nimbus active on.", 1,
+        { SwitchOn("Holy Nimbus active") }),
+    Passive(20, "Holy Nimbus active", "Switch on while Holy Nimbus lasts (10 minutes, or until you end it): saves forced by a fiend or an undead are asked about and rolled with advantage. A rest switches it off.", nil, true),
 }
 F["Oath of the Holy"] = {
     AlwaysPrepared("Oath of the Holy", { { 3, "Cure Wounds, Healing Word" }, { 5, "Lesser Restoration, Prayer of Healing" }, { 9, "Dispel Magic, Mass Healing Word" }, { 13, "Aura of Life, Death Ward" }, { 17, "Greater Restoration, Mass Cure Wounds" } }),

@@ -102,10 +102,10 @@ local function Build(weapon)
                 local limit = RPSheet:MasteryLimit()
                 local used = RPSheet:MasteriesUsed()
                 if limit == 0 then return "Mastery" end
-                return ("Mastery (%s%d of %d used|r)"):format(used > limit and Opt.RED or "", used, limit)
+                return ("Mastery (%s%d of %d used|r)"):format((used > limit or RPSheet:MasteryOver()) and Opt.RED or "", used, limit)
             end,
             desc = function()
-                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature, or the Weapon Master feat for the one kind of weapon chosen for it. Your class allows the mastery of a set number of weapons; the count turns red when you go over it." }
+                local lines = { "The mastery property of this kind of weapon. You need the Weapon Mastery feature, or the Weapon Master feat for the one kind of weapon chosen for it. Your class allows the mastery of a set number of weapons, and the feat's pick is only for its own kind; the count turns red when you go over either." }
                 for _, name in ipairs(R.MASTERY_ORDER) do
                     if name ~= "" then lines[#lines + 1] = ("|cffffd100%s|r: %s"):format(name, R.MASTERIES[name].desc) end
                 end
@@ -151,7 +151,7 @@ local function Extra(args)
         disabled = function() return not R.WEAPONS[picked] end,
         func = function()
             local sheet = Opt.Sheet()
-            local mastery = RPSheet:MasteriesUsed() < RPSheet:MasteryLimit()
+            local mastery = RPSheet:MasteryRoom(picked)
             sheet.weapons[#sheet.weapons + 1] = ns.NewBasicWeapon(picked,
                 function(stat) return RPSheet:Mod(stat) end, ns.SheetWeaponProficient(sheet, picked), mastery)
             picked = ""

@@ -14,6 +14,8 @@
 --               pick is only shown in the feat's text
 --     once      a "spell" that is also cast once per long rest without a slot
 --     distinct  true when the feat taken again must pick something else here
+--     rest      true when it can be changed after a long rest, once per rest
+--               (Sheet/FeatRestPicks.lua)
 --     text      wording for the feat's text, with %s for the picks
 --     desc      tooltip in the dialog
 -- }, ... }
@@ -166,7 +168,7 @@ Give("Elemental Adept", {
 })
 Give("Boon of Energy Resistance", {
     choices = { {
-        key = "resist", kind = "resist", title = "Resistance", count = 2, text = "Resistance to %s damage",
+        key = "resist", kind = "resist", title = "Resistance", count = 2, text = "Resistance to %s damage", rest = true,
         from = { "Acid", "Cold", "Fire", "Lightning", "Necrotic", "Poison", "Psychic", "Radiant", "Thunder" },
         desc = "A damage type you resist. Both can be changed after a long rest.",
     } },
@@ -177,6 +179,6 @@ for _, name in ipairs(R.WEAPON_ORDER) do
     if R.WEAPONS[name].mastery then MASTERY_WEAPONS[#MASTERY_WEAPONS + 1] = name end
 end
 Give("Weapon Master", {
-    choices = { { key = "weapon", title = "Weapon kind", kind = "mastery", from = MASTERY_WEAPONS,
+    choices = { { key = "weapon", title = "Weapon kind", kind = "mastery", from = MASTERY_WEAPONS, rest = true,
         desc = "The kind of weapon whose mastery property you can use, on top of any your class gives. Only kinds you are proficient with are offered. It can be changed after a long rest. Set the mastery on the weapon itself under Customize, Weapons." } },
 })

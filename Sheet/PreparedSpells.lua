@@ -44,23 +44,27 @@ function ns.ApplyPreparedSpells(sheet)
     ns.RefreshListedSpells(sheet)
     local wanted, from = Wanted(sheet)
     -- A spell another source put on the list (a cantrip that was picked) is listed
-    -- once, whichever of the two came first.
-    local others = {}
-    for _, spell in ipairs(sheet.spells) do
-        if not (spell.auto or ""):find("^" .. PREFIX) then others[spell.name] = true end
+    -- once, whichever of the two came first. With several classes only an entry of the
+    -- same class (or of none) counts: two classes that each prepare the spell each have
+    -- their own, cast with their own ability.
+    local function Listed(name)
+        for _, spell in ipairs(sheet.spells) do
+            if spell.name == name and not (spell.auto or ""):find("^" .. PREFIX) and ns.SpellIsOf(spell, from[name]) then return true end
+        end
+        return false
     end
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
         local auto = spell.auto or ""
         if auto:find("^" .. PREFIX) then
-            if wanted[auto] and not others[wanted[auto]] then
+            if wanted[auto] and not Listed(wanted[auto]) then
                 have[wanted[auto]] = true -- (by the spell it stands for: the entry may have been renamed)
                 if from[spell.name] then spell.class = from[spell.name] end
             else
                 table.remove(sheet.spells, index)
             end
-        else
+        elseif not from[spell.name] or ns.SpellIsOf(spell, from[spell.name]) then
             have[spell.name] = true
         end
     end

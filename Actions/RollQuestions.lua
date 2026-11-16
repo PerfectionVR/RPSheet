@@ -32,6 +32,11 @@ ns.ROLL_QUESTIONS = {
       cautious = true,
       reminder = "Frightened: rolled with disadvantage, as with the source of your fear in sight. Shift-click when it is out of sight, to cancel it out.",
       help = "While Frightened you have disadvantage on attacks and ability checks as long as the source of your fear is in line of sight. Ticked, the sheet asks. Unticked, it rolls with disadvantage and says so." },
+    -- Asked by the sheet itself when damage calls for the save to keep a spell
+    -- (Actions/SaveAdvantages.lua), never before a d20 the player rolls.
+    { key = "holding", setting = "Ask which spell you hold when damage calls for a save",
+      fits = function() return false end,
+      help = "Some advantages on the save to keep concentrating only count for some spells, such as one you extended. Ticked, the sheet asks which spell you hold when you take damage. Unticked, it rolls without that advantage and says so." },
 }
 
 -- The questions this character has stopped: state.quiet[key] = true.
