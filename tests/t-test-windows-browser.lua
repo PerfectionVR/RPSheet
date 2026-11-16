@@ -534,6 +534,7 @@ end)
 Try("empty scrolls tab", function()
     local fighter = NewCharacter("WARRIOR", nil, nil, 2, 1)
     fighter.skills.Arcana = 1
+    fighter.species, fighter.lineage = "HUMAN", "" -- (a draenei's lineage cantrip could be scribed)
     Use(fighter)
     Check("this character has spells to scribe", #RPSheet:ScribeSpells() == 0 and RPSheet:ScribeWays() ~= nil)
     RPSheet:ShowCrafting()

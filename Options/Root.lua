@@ -34,6 +34,12 @@ for key, list in pairs(Opt.lists) do
     customize.args[key] = { type = "group", order = list.order, name = list.title, childGroups = "tree", args = {} }
 end
 
+-- What a list's entry page is called. Two classes that each prepare the same spell
+-- have an entry each: those pages name their class, as the sheet's rows do.
+local PAGE_NAMES = {
+    spells = function(entry) return ns.SpellRowName(Opt.Sheet(), entry) end,
+}
+
 -- One list page: help text, an Add button, and a page per entry with a Delete button.
 local function RebuildList(key, list)
     local args = customize.args[key].args
@@ -54,7 +60,10 @@ local function RebuildList(key, list)
     for index, entry in ipairs(Opt.Sheet()[key]) do
         local page = {
             type = "group", order = index + 1,
-            name = function() return entry.name ~= "" and entry.name or "(unnamed)" end,
+            name = function()
+                if entry.name == "" then return "(unnamed)" end
+                return PAGE_NAMES[key] and PAGE_NAMES[key](entry) or entry.name
+            end,
             args = list.build(entry),
         }
         page.args.delete = {

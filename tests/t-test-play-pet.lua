@@ -87,6 +87,17 @@ Section("a beast of the land", function()
     Hunter(6, "Bear")
     Eq(Tracker("Pet HP").max, 5 + 5 * 6 + 6, "a Tenacity pet at level 6")
     Eq(RPSheet:MaxHP(), ns.DiceHitPoints(RPSheet:Sheet()) + 6 * RPSheet:OwnMod("CON") + 6, "and its master has more too")
+    -- the bonus is the Hunter level (6 at Hunter level 6, one more each Hunter level),
+    -- not the character's: a level of another class adds nothing to it
+    Hunter(10, "Bear", { extras = { { class = "WARRIOR", level = 4 } } }) -- (10 in all)
+    local tenacity = Passive("Pet Specialization: Tenacity")
+    if Check(tenacity and tenacity.enabled, "Tenacity with a level of another class") then
+        local with = RPSheet:MaxHP()
+        tenacity.enabled = false
+        Eq(with - RPSheet:MaxHP(), 6, "Hunter 6 + Warrior 4: the master gains 6, not 10")
+        tenacity.enabled = true
+        Eq(Tracker("Pet HP").max, 5 + 5 * 6 + 6, "and the companion goes by the Hunter level too")
+    end
     -- below level 3: none
     Hunter(2, "Bear")
     Check(not RPSheet:HasPet() and not Tracker("Pet HP"), "no companion below level 3")

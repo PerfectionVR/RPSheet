@@ -80,7 +80,7 @@ F["Beast Master"] = {
     When(PetSpec("F"), Ability(6, "Pet Specialization: Ferocity", "While your companion is within 60 feet: when it is Bloodied and hits with its strike, you and it each regain hit points equal to your Wisdom modifier. Clicking heals you; raise the Pet HP bar by the same amount.",
         { Dice(0, 4, "WIS", "SELFHEAL") })),
     When(PetSpec("F"), Limited(6, "Companion: Haste", "Your companion uses its action to cast Haste on itself and on you. Once per long rest.", 1)),
-    Passive(6, "Pet Specialization: Tenacity", "While your companion is within 60 feet, your hit point maximum is higher by your level, and so is your companion's (its bar counts it already). Switch this off while it is farther away.",
+    Passive(6, "Pet Specialization: Tenacity", "While your companion is within 60 feet, your hit point maximum is higher by your Hunter level, and so is your companion's (its bar counts it already). Switch this off while it is farther away.",
         { Bonus("HP", 0, "LEVEL") }, { when = PetSpec("T") }),
     When(PetSpec("T"), Limited(6, "Companion: Stoneskin", "Your companion uses its action to cast Stoneskin on itself and on you. Once per long rest.", 1)),
     Passive(7, "Exceptional Training", "When you command your beast with a bonus action it can also Dash, Disengage, Dodge or Help as its own bonus action, and its attacks can deal force damage."),

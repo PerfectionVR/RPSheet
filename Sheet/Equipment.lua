@@ -51,13 +51,14 @@ local function ReadyWeapon(sheet, item, on, modifier, canMaster)
         end
     end
     if found or not on or not R.WEAPONS[base] then return end
-    local weapon = ns.NewBasicWeapon(base, modifier, ns.SheetWeaponProficient(sheet, base), canMaster())
+    local weapon = ns.NewBasicWeapon(base, modifier, ns.SheetWeaponProficient(sheet, base), canMaster(base))
     weapon.name, weapon.magic = item.name, item.bonus or 0
     sheet.weapons[#sheet.weapons + 1] = weapon
 end
 
 -- Equips an item of `sheet` or puts it away. `modifier(stat)` gives the character's
--- ability modifiers and `canMaster()` says whether a new weapon may take a mastery.
+-- ability modifiers and `canMaster(kind)` says whether a new weapon of that kind may
+-- take a mastery.
 function ns.EquipItem(sheet, item, on, modifier, canMaster)
     item.equipped = on
     local slot = ns.ItemSlot(item)
@@ -112,7 +113,7 @@ end
 function RPSheet:SetEquipped(item, on)
     ns.EquipItem(self:Sheet(), item, on,
         function(stat) return self:Mod(stat) end,
-        function() return self:MasteriesUsed() < self:MasteryLimit() end)
+        function(kind) return self:MasteryRoom(kind) end)
     -- The weapon in hand may just have been put away.
     local state, count = self:State(), #ns.ReadyWeapons(self:Sheet())
     if (state.weapon or 1) > math.max(1, count) then state.weapon = 1 end

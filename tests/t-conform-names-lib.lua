@@ -64,6 +64,7 @@ Names.EXTRA = {
     ["Monk/Flurry of Blows"] = Of("Monk's Focus", PART),
     ["Monk/Patient Defense"] = Of("Monk's Focus", PART),
     ["Monk/Step of the Wind"] = Of("Monk's Focus", PART),
+    ["Paladin/Divine Sense active"] = Of("Channel Divinity", SWITCH),
     ["Paladin/Divine Smite"] = Of("Paladin's Smite", "the spell cast with a slot; the feature's own entry is the free casting"),
     ["Demon Hunter/Double Jump"] = Of("Soul Fragments", PART),
     ["Demon Hunter/Soul Cleave"] = Of("Soul Fragments", PART),

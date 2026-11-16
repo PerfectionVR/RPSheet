@@ -1,62 +1,103 @@
--- The spells a lineage grants at levels 3 and 5 (see Data/Lineages.lua). Each can be
--- cast once per long rest without a slot, so each is a clickable ability with a bar
--- of one use. They are marked auto = "lineagespell:<name>".
+-- The spells a species or its lineage gives (`cantrips` and `spells` in
+-- Data/Lineages.lua and Data/Species.lua): cantrips from level 1, and a spell at levels
+-- 3 and 5 that is cast once per long rest without a slot, and with slots like any
+-- other. All are always prepared and count against no limit. They are on the spell
+-- list marked auto = "species:<name>" and are cast with the ability the player chose
+-- with the lineage: sheet.lineageStat ("INT", "WIS" or "CHA", Sheet/LineageCasting.lua).
+-- The casting without a slot goes through ns.SpellChoice (Sheet/SpellChoices.lua,
+-- Actions/SpellChoices.lua), as a feat's does.
 local _, ns = ...
 local R = ns.Rules
 
 local LEVELS = { 3, 5 }
-local PREFIX = "lineagespell:"
+local PREFIX = "species:"
+local OLD = "lineagespell:" -- these spells were abilities with a bar of one use before
 
--- { { name = "Misty Step", level = 5 }, ... } for the spells the character has reached
--- and not deleted.
-local function Spells(sheet)
-    local _, option = R.Lineage(sheet.species, sheet.lineage)
-    local species = R.SPECIES[sheet.species]
+-- { { name =, level = <character level>, once = true for the levelled ones } } for the
+-- spells the character's species and lineage give at its level, cantrips first.
+-- `sheet` may be the wizard's draft or the level dialog's stand-in.
+function ns.SpeciesSpells(sheet)
     local list = {}
-    -- From the chosen lineage, or from the species itself (Haranir Magic).
-    for index, name in ipairs(option and option.spells or species and species.spells or {}) do
+    local from = ns.LineageSource(sheet.species, sheet.lineage)
+    if not from then return list end
+    for _, name in ipairs(from.cantrips or {}) do
+        -- An elf may have learned another Wizard cantrip in place of Prestidigitation.
+        if from.swap and name == from.swap.cantrip then name = ns.LineageCantrip(sheet) end
+        if R.SPELLS[name] then list[#list + 1] = { name = name, level = 1 } end
+    end
+    for index, name in ipairs(from.spells or {}) do
         local level = LEVELS[index]
-        if level and sheet.level >= level and not sheet.dismissed[PREFIX .. name] then
-            list[#list + 1] = { name = name, level = level }
-        end
+        if level and (sheet.level or 1) >= level and R.SPELLS[name] then list[#list + 1] = { name = name, level = level, once = true } end
     end
     return list
 end
 
--- Their bars, in the same form as class `pools` (see Data/Classes.lua).
-function ns.LineagePools(sheet)
-    local pools = {}
-    for _, spell in ipairs(Spells(sheet)) do
-        pools[#pools + 1] = { name = spell.name, from = spell.level, steps = { { spell.level, 1 } } }
+-- { [name] = true } for the cantrips among them.
+function ns.SpeciesCantrips(sheet)
+    local names = {}
+    for _, given in ipairs(ns.SpeciesSpells(sheet)) do
+        if R.SPELLS[given.name].level == 0 then names[given.name] = true end
     end
-    return pools
+    return names
 end
 
--- Puts the lineage's spells on the sheet and takes off those of another lineage or
--- of a level the character no longer has.
-function ns.ApplyLineageSpells(sheet)
-    local current = {}
-    for _, spell in ipairs(Spells(sheet)) do current[PREFIX .. spell.name] = spell end
-
-    for index = #sheet.abilities, 1, -1 do
-        local auto = sheet.abilities[index].auto or ""
-        if auto:find("^" .. PREFIX) then
-            if current[auto] then
-                current[auto] = nil -- already there
-            else
-                table.remove(sheet.abilities, index)
-            end
+-- How a spell is cast without a slot because the lineage gives it, in the form of an
+-- entry of R.SPELL_CHOICES, or nil.
+function ns.LineageSpellCasting(sheet, name)
+    for _, given in ipairs(type(sheet.species) == "string" and ns.SpeciesSpells(sheet) or {}) do
+        if given.name == name and given.once and not (sheet.dismissed or {})[PREFIX .. name] then
+            local trait = ns.LineageTrait(sheet.species)
+            return {
+                feature = trait, spellLevel = R.SPELLS[name].level, once = true, mark = "lineage",
+                note = ("%s: always prepared. You cast it once without a spell slot; a long rest brings that casting back. Other castings spend a slot."):format(trait),
+            }
         end
     end
-    -- In the order the lineage gives them, so the level 3 spell comes before the level 5 one.
-    for _, spell in ipairs(Spells(sheet)) do
-        local key = PREFIX .. spell.name
-        if current[key] then
-            sheet.abilities[#sheet.abilities + 1] = {
-                name = spell.name, auto = key,
-                desc = ("Lineage spell, gained at level %d. Cast it once per long rest without a spell slot; you can also cast it with your slots."):format(spell.level),
-                actions = { ns.FeatureKit.Spend(spell.name) },
-            }
+end
+
+-- The ability a spell is cast with if the species or lineage put it on the list, or nil.
+function ns.SpeciesSpellStat(sheet, spell)
+    if (spell.auto or "") ~= PREFIX .. (spell.name or "") then return end
+    return ns.LineageCastStat(sheet)
+end
+
+-- Sheet upkeep: keeps the spell list in step with the species and lineage, and takes
+-- off the abilities these spells were before.
+function ns.ApplyLineageSpells(sheet)
+    for index = #sheet.abilities, 1, -1 do
+        if (sheet.abilities[index].auto or ""):find("^" .. OLD) then table.remove(sheet.abilities, index) end
+    end
+    local wanted = {}
+    for _, given in ipairs(ns.SpeciesSpells(sheet)) do
+        -- One the player deleted from the spell list stays off.
+        if not sheet.dismissed[PREFIX .. given.name] then wanted[given.name] = true end
+    end
+    -- A spell another source put on the list (a class, a feat) isn't listed twice.
+    local have = {}
+    for _, spell in ipairs(sheet.spells) do
+        local auto = spell.auto or ""
+        if auto ~= "" and not auto:find("^" .. PREFIX) and wanted[spell.name] and R.SPELLS[spell.name].level == spell.level then
+            have[spell.name] = true
+        end
+    end
+    for index = #sheet.spells, 1, -1 do
+        local spell = sheet.spells[index]
+        local auto = spell.auto or ""
+        local own = auto:match("^" .. PREFIX .. "(.+)$")
+        if own then
+            if wanted[own] and not have[own] then have[own] = true else table.remove(sheet.spells, index) end
+        elseif auto == "" and wanted[spell.name] and R.SPELLS[spell.name].level == spell.level and not have[spell.name] then
+            -- Added by hand before: from now on it belongs to the lineage.
+            spell.auto, spell.free = PREFIX .. spell.name, true
+            have[spell.name] = true
+        end
+    end
+    for _, given in ipairs(ns.SpeciesSpells(sheet)) do
+        if wanted[given.name] and not have[given.name] then
+            local spell = CopyTable(R.SPELLS[given.name])
+            spell.free, spell.auto = true, PREFIX .. given.name
+            sheet.spells[#sheet.spells + 1] = spell
+            have[given.name] = true
         end
     end
 end

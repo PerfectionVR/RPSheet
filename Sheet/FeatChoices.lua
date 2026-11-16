@@ -227,6 +227,8 @@ function ns.FeatChoiceProgress(store, instances, level)
             end
         end
     end
+    -- A pick that changes after a long rest and was changed since the last one.
+    open = open or ns.RestPickProblem(store, instances)
     return made, total, open
 end
 

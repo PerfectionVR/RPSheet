@@ -7,14 +7,7 @@
 local _, ns = ...
 local RPSheet = ns.addon
 
--- The switched-on passives of class features that end, by the name of the passive,
--- with what the announcement calls them.
-local ENDS = {
-    ["Raging"] = "Rage",
-    ["Superior Defense active"] = "Superior Defense",
-    ["Full of Stars"] = "Starry Form",
-    ["Dragon"] = "Starry Form",
-}
+local R = ns.Rules
 
 -- True, after telling the player why, when the character can't do `what` ("attack",
 -- "use Second Wind") because of a condition that incapacitates.
@@ -35,7 +28,9 @@ function RPSheet:EndForIncapacitated(condition)
         if ability.name == "Persistent Rage" and (ability.auto or "") ~= "" then persistent = true end
     end
     for _, passive in ipairs(sheet.passives) do
-        local label = passive.enabled and (passive.auto or "") ~= "" and ENDS[passive.name]
+        -- The switched-on passives of class features that end so (Data/Lasting.lua).
+        local lasting = passive.enabled and (passive.auto or "") ~= "" and R.LASTING[passive.name]
+        local label = lasting and lasting.incapacitated and lasting.label
         if label and not (label == "Rage" and persistent and condition ~= "Unconscious") then
             passive.enabled = false
             if not seen[label] then

@@ -221,13 +221,21 @@ Section("Holy Nimbus and Extended Spell", function()
         Check(not MENU, "no menu")
         RPSheet:UseAbility(nimbus)
         Eq(uses.get(), 0, "its use is spent")
+        Check(Passive("Holy Nimbus active") and Passive("Holy Nimbus active").enabled, "and its passive switched on")
         Eq(D20s(function() RPSheet:RollCheck("WIS save", mod) end), 0, "once it is used a save asks")
         Check(MENU and MENU.title == "WIS save: what is it against?", "what it is against")
         Rolls(3, 15)
         Eq(D20s(function() Click(MENU, "Against a fiend or an undead") end), 2, "a fiend or an undead: advantage")
         Said("rolls [WIS save] against a fiend or an undead: 15 [advantage: 3, 15]", "the line says so")
-        Check(RPSheet:SaveAdvantageText("DEX"):find("Advantage against a fiend or an undead (Holy Nimbus)", 1, true), "every save's tooltip names it")
+        Check(RPSheet:SaveAdvantageText("DEX"):find("Advantage against a fiend or an undead (Holy Nimbus active)", 1, true), "every save's tooltip names it")
+        -- switched off by a click: the use stays spent, the question is gone
+        Passive("Holy Nimbus active").enabled = false
+        MENU = false
+        Eq(D20s(function() RPSheet:RollCheck("WIS save", mod) end), 1, "switched off, a save asks nothing though the use is still spent")
+        Check(not MENU, "no menu")
+        Passive("Holy Nimbus active").enabled = true
         RPSheet:LongRest()
+        Check(not Passive("Holy Nimbus active").enabled, "a long rest switches it off")
         MENU = false
         Eq(D20s(function() RPSheet:RollCheck("WIS save", mod) end), 1, "after a long rest it is off again")
         Check(not MENU, "no menu")
@@ -245,6 +253,19 @@ Section("Holy Nimbus and Extended Spell", function()
     Eq(D20s(function() Click(MENU, "A spell you extended") end), 2, "one that was extended: advantage")
     Said("keeps the spell", "and it is kept")
     Eq(D20s(function() Click(MENU, "Another spell") end), 1, "another spell: a plain save")
+    -- the question can be stopped from its menu, and is then rolled plainly
+    state.conditions.Concentrating = true
+    MENU = false
+    RPSheet:TakeDamage(4)
+    local before = #PRINTED
+    Eq(D20s(function() Click(MENU, "Don't ask again") end), 1, "stopping the question rolls the save at once, without advantage")
+    Check(RPSheet:RollQuiet("holding") and AnyPrinted("won't ask this again", before), "the question is stopped, and a line says so")
+    Check(RPSheet:SaveAdvantageText("CON"):find("the question is off", 1, true), "the tooltip says the question is off")
+    state.conditions.Concentrating = true
+    MENU = false
+    Eq(D20s(function() RPSheet:TakeDamage(4) end), 1, "stopped: the next save rolls at once")
+    Check(not MENU, "no menu")
+    RPSheet:SetRollQuiet("holding", false)
     Check(RPSheet:SaveAdvantageText("CON"):find("Advantage to keep concentrating on a spell you extended (Extended Spell)", 1, true), "the Constitution save's tooltip names it")
     local always, asked = RPSheet:SaveAdvantages("CON save")
     Eq(#always + #asked, 0, "it is no advantage on other Constitution saves")

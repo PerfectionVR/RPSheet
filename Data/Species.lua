@@ -6,7 +6,9 @@ local R = ns.Rules
 -- Species
 -- Traits are listed by name and become passives on the sheet. A trait with `effects`
 -- changes numbers by itself; one with a choice, uses or dice is in Data/Traits.lua.
--- `spells` are learned at levels 3 and 5 and cast once per long rest without a slot.
+-- `spells` are learned at levels 3 and 5 and cast once per long rest without a slot,
+-- `cantrips` known from level 1, both from the trait `spellTrait` (see Data/Lineages.lua
+-- for a species whose lineage gives them).
 ---------------------------------------------------------------------------
 R.SPECIES = {
     DRACTHYR  = { name = "Dracthyr", sizes = { "M" }, speed = 30, darkvision = 60,
@@ -23,13 +25,15 @@ R.SPECIES = {
     FORSAKEN  = { name = "Forsaken", sizes = { "S", "M" }, speed = 30, darkvision = 60,
                   traits = { "Deathly Endurance", "Everlasting", "Touch of the Grave", "Will of the Forsaken" } },
     GNOME     = { name = "Gnome", sizes = { "S" }, speed = 30, darkvision = 60,
-                  traits = { "Gnomish Cunning", "Gnomish Lineage" } },
+                  traits = { "Gnomish Cunning", "Gnomish Lineage" },
+                  spellTrait = "Gnomish Lineage", cantrips = { "Mending", "Prestidigitation" } },
     GOBLIN    = { name = "Goblin", sizes = { "S" }, speed = 30, darkvision = 60,
                   traits = { "Fey Ancestry", "Fury of the Small", "Nimble Escape" } },
     HARANIR   = { name = "Haranir", sizes = { "M" }, speed = 30, darkvision = 120,
                   traits = { "Gift of the World Tree", "Haranir Magic" },
                   skills = { "Nature", "Survival" }, -- granted by Gift of the World Tree
-                  spells = { "Entangle", "Spike Growth" } }, -- Haranir Magic, at levels 3 and 5
+                  spellTrait = "Haranir Magic", cantrips = { "Druidcraft", "Thorn Whip" },
+                  spells = { "Entangle", "Spike Growth" } }, -- at levels 3 and 5
     HUMAN     = { name = "Human", sizes = { "S", "M" }, speed = 30,
                   traits = { "Resourceful", "Skillful", "Versatile" } },
     MECHAGNOME = { name = "Mechagnome", sizes = { "S" }, speed = 30,

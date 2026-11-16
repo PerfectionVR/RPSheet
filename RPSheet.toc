@@ -66,6 +66,7 @@ Data\SpellSummaries.lua
 Data\SpellFormer.lua
 Data\SpellFormerText.lua
 Data\Conditions.lua
+Data\Lasting.lua
 Data\Combat.lua
 Data\Maneuvers.lua
 Data\Forms.lua
@@ -195,6 +196,7 @@ Sheet\ItemUpkeep.lua
 Sheet\ItemStacks.lua
 Sheet\SpellComponents.lua
 Sheet\ComponentKinds.lua
+Sheet\HerbComponents.lua
 Sheet\ComponentAmmo.lua
 Sheet\ComponentTargets.lua
 Sheet\SetEffects.lua
@@ -238,8 +240,10 @@ Sheet\BeastForms.lua
 Sheet\Expertise.lua
 Sheet\FeatChoices.lua
 Sheet\FeatGrants.lua
+Sheet\FeatRestPicks.lua
 Sheet\FeatTools.lua
 Sheet\FeatSpells.lua
+Sheet\LineageCasting.lua
 Sheet\LineageSpells.lua
 Sheet\PreparedPicks.lua
 Sheet\PrepareRules.lua
@@ -411,6 +415,7 @@ Options\LevelDialogPoints.lua
 Options\LevelDialogSkills.lua
 Options\LevelDialogPicks.lua
 Options\LevelDialogApply.lua
+Options\LineageAbility.lua
 Options\LevelDialog.lua
 Options\RenownPerks.lua
 Options\Origin.lua

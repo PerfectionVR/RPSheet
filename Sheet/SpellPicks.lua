@@ -18,12 +18,17 @@ function ns.CantripsElsewhere(sheet, fresh)
     local now = GetTime()
     if not fresh and kept.names and kept.time == now and kept.spells == sheet.spells and kept.class == sheet.class
         and kept.subclass == sheet.subclass and kept.spec == sheet.spec and kept.level == sheet.level
-        and kept.featChoices == sheet.featChoices then
+        and kept.featChoices == sheet.featChoices and kept.species == sheet.species and kept.lineage == sheet.lineage
+        and kept.lineageCantrip == sheet.lineageCantrip then
         return kept.names
     end
     local names = {}
     for name in pairs(ns.AlwaysPrepared(sheet)) do
         if R.SPELLS[name].level == 0 then names[name] = true end
+    end
+    -- (and those of the species or lineage: Sheet/LineageSpells.lua)
+    for name in pairs(ns.SpeciesCantrips(sheet)) do
+        if not (sheet.dismissed or {})["species:" .. name] then names[name] = true end
     end
     for name, found in pairs(ns.FeatSpells(sheet)) do
         -- (One the player deleted from the spell list isn't given by the feat any more.)
@@ -34,7 +39,8 @@ function ns.CantripsElsewhere(sheet, fresh)
         -- Entries of the two kinds above are covered there; a stale one is on its way out.
         if spell.level == 0 and spell.free and not auto:find("^prepared:") and not auto:find("^feat:") then names[spell.name] = true end
     end
-    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices }
+    kept = { names = names, time = now, spells = sheet.spells, class = sheet.class, subclass = sheet.subclass, spec = sheet.spec, level = sheet.level, featChoices = sheet.featChoices,
+        species = sheet.species, lineage = sheet.lineage, lineageCantrip = sheet.lineageCantrip }
     return names
 end
 
@@ -42,6 +48,16 @@ for _, key in pairs(R.CANTRIP_LISTS) do
     R.PICK_LISTS[key].blocked = function(sheet, name)
         if ns.CantripsElsewhere(sheet)[name] then return "you know it already" end
     end
+end
+
+-- True while the active character's Mage has given up a cantrip in the exchange after
+-- a long rest and not yet learned one in its place (Sheet/CantripSwap.lua): that place
+-- is the player's to fill, not a cantrip that happens to be on the spell list.
+local function ExchangeOpen(sheet, key)
+    local RPSheet = ns.addon
+    if key ~= R.CANTRIP_LISTS.Wizard or not RPSheet.db or (sheet.viewOf or sheet) ~= RPSheet:Sheet() then return false end
+    local swap = RPSheet:State().cantripSwap
+    return type(swap) == "table" and type(swap.out) == "string" and not swap.into
 end
 
 -- The cantrips of one class: `sheet` is a character of one class, or a view of one
@@ -74,6 +90,7 @@ local function ApplyFor(sheet)
         if items[name] then count = count + 1 end
     end
 
+    local room = limit - (ExchangeOpen(sheet, key) and 1 or 0)
     local have = {}
     for index = #sheet.spells, 1, -1 do
         local spell = sheet.spells[index]
@@ -94,7 +111,7 @@ local function ApplyFor(sheet)
         elseif spell.level == 0 and not spell.free and items[spell.name] and ns.SpellIsOf(spell, tag) then
             -- Added by hand before cantrips were picked: it counts as a pick while
             -- there is room for one.
-            if picks[spell.name] or count < limit then
+            if picks[spell.name] or count < room then
                 if not picks[spell.name] then
                     picks[spell.name] = true
                     count = count + 1

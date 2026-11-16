@@ -59,6 +59,8 @@ ns.defaults = {
                     lastClass = "", -- the class the last level was taken in, for going back a level
                     fightingStyle = "", fightingStyle2 = "", -- see Rules.FIGHTING_STYLES
                     species = "", lineage = "", size = "M",
+                    lineageStat = "",    -- INT, WIS or CHA: what the spells of the species or lineage are cast with (Sheet/LineageCasting.lua)
+                    lineageCantrip = "", -- a Wizard cantrip an elf took in place of Prestidigitation; "" = Prestidigitation
                     allegiance = "", -- ALLIANCE, HORDE or NEUTRAL
                     languages = {}, -- [language] = true
                     renown = {},    -- [faction] = score

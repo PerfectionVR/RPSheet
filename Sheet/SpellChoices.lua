@@ -21,7 +21,7 @@ end
 -- How a spell of the character is cast if it was chosen for a feature the character
 -- has (an entry of R.SPELL_CHOICES) or comes from a feat, or nil for any other spell.
 function ns.SpellChoice(sheet, name)
-    if type(sheet.picks) ~= "table" then return ns.FeatSpellCasting(sheet, name) end
+    if type(sheet.picks) ~= "table" then return ns.FeatSpellCasting(sheet, name) or ns.LineageSpellCasting(sheet, name) end
     for _, key in ipairs(R.SPELL_CHOICE_ORDER) do
         local picks = sheet.picks[key]
         if type(picks) == "table" and picks[name] == true and R.PICK_LISTS[key].items[name]
@@ -31,8 +31,9 @@ function ns.SpellChoice(sheet, name)
             if not how.book or ns.InSpellbook(sheet, name) then return how end
         end
     end
-    -- A feat's spell with a casting of its own (Sheet/FeatSpells.lua).
-    return ns.FeatSpellCasting(sheet, name)
+    -- A feat's or a lineage's spell with a casting of its own (Sheet/FeatSpells.lua,
+    -- Sheet/LineageSpells.lua).
+    return ns.FeatSpellCasting(sheet, name) or ns.LineageSpellCasting(sheet, name)
 end
 
 -- Sheet upkeep (see Sheet/ClassFeatures.lua): drops the picks that stopped being

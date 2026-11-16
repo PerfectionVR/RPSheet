@@ -1,5 +1,6 @@
 -- Resting: long rests, short rests, and spending hit dice to heal.
 local _, ns = ...
+local R = ns.Rules
 local RPSheet = ns.addon
 local RollText = ns.RollText
 
@@ -22,11 +23,27 @@ local function EndFormAfter(self, hours)
     end
 end
 
+-- What a class feature switched on for ten minutes or less (Data/Lasting.lua) is over
+-- once the rest is.
+local function EndLasting(self)
+    local ended, seen = {}, {}
+    for _, passive in ipairs(self:Sheet().passives) do
+        local lasting = passive.enabled and (passive.auto or "") ~= "" and R.LASTING[passive.name]
+        if lasting then
+            passive.enabled = false
+            if not seen[lasting.label] then seen[lasting.label], ended[#ended + 1] = true, lasting.label end
+        end
+    end
+    if #ended > 0 then self:Print(("Over during the rest: %s."):format(table.concat(ended, ", "))) end
+    return #ended > 0
+end
+
 -- Everything back to full: HP, hit dice, resources and spell slots.
 function RPSheet:LongRest()
     local state = self:State()
     EndFormAfter(self, 8)
     self:EndBenefits() -- no spell benefit outlasts a rest
+    EndLasting(self)   -- nor a feature that lasts minutes
     self:EndWards(8)         -- nor a protective spell of 8 hours or less,
     self:EndWards(nil, true) -- nor one that hangs on concentration
     self:ClampState(true) -- also makes first-use-free abilities free again
@@ -37,6 +54,8 @@ function RPSheet:LongRest()
     state.prepareClosed = nil     -- and so can the prepared spells
     state.prepareSwap = nil       -- with the one exchange of a class that changes one per rest
     state.cantripSwap = nil       -- and a Mage's exchange of one cantrip (Sheet/CantripSwap.lua)
+    ns.ResetRestPicks()           -- and the feat picks that change after a long rest
+    state.lineageCantripChanged = nil -- and an elf's lineage cantrip (Options/Origin.lua)
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).
@@ -50,6 +69,7 @@ end
 function RPSheet:ShortRest()
     EndFormAfter(self, 1)
     self:ForgetRefunds()
+    if EndLasting(self) then self:PopulateSoon() end
     if self:EndBenefits() then
         self:ClampState()
         self:PopulateSoon()
