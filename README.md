@@ -11,7 +11,7 @@ short summaries in its own words.
 
 - **For whom:** players in a roleplay group or campaign that uses those rules, and DMs
   who want their players' rolls and numbers to be checkable.
-- **Needs:** retail WoW (interface 12.1.5). Nothing else.
+- **Needs:** retail WoW (interface 12.1.5) or WoW Forever (1.60). Nothing else.
 - **Optional:** [Total RP 3](https://www.curseforge.com/wow/addons/total-rp-3). With it,
   each Total RP 3 profile has its own sheet, your character's name comes from the
   profile, and stats show in its tooltips.
@@ -98,7 +98,8 @@ short summaries in its own words.
 
 1. Download the latest zip from the
    [Releases page](https://github.com/PerfectionVR/RPSheet/releases).
-2. Extract it into `World of Warcraft\_retail_\Interface\AddOns\`. You should end up with
+2. Extract it into `World of Warcraft\_retail_\Interface\AddOns\` (for WoW Forever:
+   `World of Warcraft\_forever_\Interface\AddOns\`). You should end up with
    an `RPSheet` folder that contains `RPSheet.toc`.
 3. Restart the game or `/reload`.
 

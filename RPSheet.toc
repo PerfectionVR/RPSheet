@@ -1,4 +1,4 @@
-## Interface: 120105
+## Interface: 120105, 16001
 ## Title: RP Sheet
 ## Notes: Small tabletop character sheet. Click a stat, skill or ability to roll a d20 and announce it. /sheet to toggle, /sheet config for settings.
 ## Author: PerfectionVR
