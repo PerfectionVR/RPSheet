@@ -18,7 +18,9 @@ end
 
 -- Rolls one die and passes the result to `callback`. Ignored while another roll is waiting.
 function RPSheet:Roll(sides, callback)
-    if self.db.profile.channel == "SELF" then
+    -- The addon rolls by itself for "Self only", and where the game lets an announcement
+    -- through only during the click (Core/Game.lua): the game's roll line comes after it.
+    if self.db.profile.channel == "SELF" or ns.Game.ChatNeedsClick() then
         callback(math.random(1, sides))
         return
     end

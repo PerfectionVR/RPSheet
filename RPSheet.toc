@@ -294,6 +294,7 @@ Sheet\PassCache.lua
 # Things the character does
 Actions\AnnounceSplit.lua
 Actions\Announce.lua
+Actions\AnnounceHeld.lua
 Actions\Dice.lua
 Actions\NextRollBonus.lua
 Actions\RollQuestions.lua

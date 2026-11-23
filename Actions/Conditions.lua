@@ -84,7 +84,8 @@ function RPSheet:DamageTaken(amount)
         local damage = self.concentrationDamage or 0
         self.concentrationDamage, self.concentrationTimer = nil, nil
         if damage > 0 and self:State().conditions.Concentrating then
-            self:RollConcentration(damage)
+            -- (A timer is no click: Actions/AnnounceHeld.lua.)
+            self:OutsideClick(self.RollConcentration, self, damage)
         end
     end)
 end

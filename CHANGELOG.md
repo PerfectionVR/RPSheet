@@ -3,10 +3,14 @@
 ## Unreleased
 
 - Loads in WoW Forever as well as retail: one download for both games.
-- WoW Forever: rolls work. Characters there have two-part names ("Given Family") and
-  no realm, so the game's roll line wasn't recognised and every roll said it couldn't
-  read the result. Sharing stats, chat links and the name on the sheet use the whole
-  name there too, so two players with the same first name are kept apart.
+- WoW Forever: rolls are announced. The game there lets an addon speak in chat only
+  straight from a click, so the sheet rolls the dice itself and announces during the
+  click instead of waiting for a `/roll` result.
+- WoW Forever: a line made without a click (the Constitution save after damage) is
+  shown to you with a [Send it] link; clicking it sends the line.
+- WoW Forever: characters there have two-part names ("Given Family") and no realm.
+  Sharing stats, chat links and the name on the sheet use the whole name, so two
+  players with the same first name are kept apart.
 
 ## 0.7.1
 

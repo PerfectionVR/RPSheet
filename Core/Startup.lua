@@ -29,6 +29,7 @@ end
 
 function RPSheet:OnEnable()
     self:RegisterEvent("CHAT_MSG_SYSTEM")
+    ns.WatchRefusedChat(self)
     self:UpdateSheetKey()
     self:BuildWindow()
     self:BuildMinimapIcon()
