@@ -28,27 +28,45 @@ Section("names", function()
 end)
 
 Section("rolling", function()
+    -- The game lets the line out only during the click: the addon rolls at once.
     local addon = sara.addon
     addon.db.profile.channel = "EMOTE"
-    sara.rolls = { 2 }
     local before = #sara.said
-    sara:Do(addon.RollCheck, addon, "STR check", 2)
-    world:Advance(4)
+    sara:Do(addon.RollCheck, addon, "INT check", 1)
     local line = sara.said[before + 1] and sara.said[before + 1].text or ""
-    Check(line:find("2 + 2 = 4", 1, true), "the roll the game made is announced: " .. line)
-    for _, printed in ipairs(sara.printed) do
-        Check(not printed:find("Couldn't read the roll", 1, true), "the roll line is read")
-    end
-    -- the other Sara's roll is not taken for ours
-    local got
-    local randomRoll = sara.env.RandomRoll
-    sara.env.RandomRoll = function() end -- (the lines are sent by hand below)
-    sara:Do(addon.Roll, addon, 20, function(value) got = value end)
-    sara.env.RandomRoll = randomRoll
-    sara:Fire("CHAT_MSG_SYSTEM", "Sara Brightwood rolls 17 (1-20)")
-    Eq(got, nil, "another player's roll with the same given name is passed by")
-    sara:Fire("CHAT_MSG_SYSTEM", "Sara Panthera rolls 9 (1-20)")
-    Eq(got, 9, "the player's own is taken")
+    Check(line:find("rolls [INT check]: ", 1, true), "the roll is announced in the click: " .. line)
+    Eq(world.refusedChat, nil, "nothing refused")
+    Check(sara.ns.Game.ChatNeedsClick(), "the game needs a click to speak")
+    -- the game's roll line, as another addon might show it, names the right Sara
+    local Game = sara.ns.Game
+    Check(Game.IsPlayer((Game.ParseRoll("Sara Panthera rolls 9 (1-20)")))
+        and not Game.IsPlayer((Game.ParseRoll("Sara Brightwood rolls 17 (1-20)"))), "a roll line names its player")
+end)
+
+Section("a line made outside a click", function()
+    local addon = sara.addon
+    -- The Constitution save after damage waits for the clicking to stop: no click then.
+    addon:State().conditions.Concentrating = true
+    local said, printed = #sara.said, #sara.printed
+    sara:Do(addon.DamageTaken, addon, 6)
+    world:Advance(3)
+    Eq(#sara.said, said, "nothing is sent from the timer")
+    Eq(world.refusedChat, nil, "nor tried")
+    local shown = sara.printed[#sara.printed] or ""
+    Check(#sara.printed > printed and shown:find("[Send it]", 1, true), "the player sees it with a link: " .. shown)
+    local link = shown:match("|H(addon:rpsheet%-send:%d+)|h")
+    sara:ClickLink(link)
+    Check(#sara.said == said + 1 and sara.said[#sara.said].text:find("CON save", 1, true), "a click on it sends it")
+    sara:ClickLink(link)
+    Eq(#sara.said, said + 1, "once")
+    -- An announcement from an event the addon didn't expect: refused, then held.
+    addon:Announce("waves.")
+    Eq(world.refusedChat, 1, "the game refused it")
+    shown = sara.printed[#sara.printed] or ""
+    Check(shown:find("waves.", 1, true) and shown:find("[Send it]", 1, true), "it is held: " .. shown)
+    sara:ClickLink(shown:match("|H(addon:rpsheet%-send:%d+)|h"))
+    Eq(sara.said[#sara.said].text, "waves.", "and sent on a click")
+    addon:State().conditions.Concentrating = nil
 end)
 
 Section("sharing stats", function()
@@ -86,6 +104,7 @@ retail:Advance(5)
 Section("retail names", function()
     local Game = anna.ns.Game
     Check(not Game.RegionalNames(), "no region-wide names")
+    Check(not Game.ChatNeedsClick(), "and chat from events is allowed")
     Eq(Game.UnitKey("player"), "Anna-Realm", "the key carries the realm")
     Eq(Game.SenderKey("Bert"), "Bert-Realm", "a sender from the same realm gets it added")
     Eq(Game.SenderKey("Bert-Elsewhere"), "Bert-Elsewhere", "another realm's is kept")

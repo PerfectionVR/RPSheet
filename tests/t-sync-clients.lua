@@ -518,7 +518,10 @@ local function BuildEnv(client)
     function env.UnitRace() return "Human", "Human", 1 end
     function env.GetNormalizedRealmName() return client.realmKnown and client.realm or nil end
     function env.GetRealmName() return client.realmTitle or client.realm end
-    if world.regional then env.RegionalUniqueNamesEnabled = function() return true end end
+    if world.regional then
+        env.RegionalUniqueNamesEnabled = function() return true end
+        env.GetBuildInfo = function() return "1.60.1", "1", "x", 16001 end
+    end
     function env.Ambiguate(name) -- "none": the realm goes when it is the player's own
         local short, realm = name:match("^([^-]+)-(.+)$")
         if short and realm == client.realm then return short end
@@ -548,7 +551,16 @@ local function BuildEnv(client)
         IsAddonMessagePrefixRegistered = function(prefix) return client.prefixes[prefix] == true end,
         SendAddonMessage = function(prefix, text, chatType, target) return world:SendAddon(client, prefix, text, chatType, target) end,
         SendAddonMessageLogged = function(prefix, text, chatType, target) return world:SendAddon(client, prefix, text, chatType, target) end,
-        SendChatMessage = function(text, chatType) world:SendChat(client, text, chatType) end,
+        SendChatMessage = function(text, chatType)
+            -- Forever: an addon's chat line only straight from a click, else the game
+            -- refuses it and tells every addon.
+            if world.regional and not client.inClick then
+                world.refusedChat = (world.refusedChat or 0) + 1
+                client:Fire("ADDON_ACTION_BLOCKED", "RPSheet", "UNKNOWN()")
+                return
+            end
+            world:SendChat(client, text, chatType)
+        end,
         InChatMessagingLockdown = function() return client.lockdown end,
     }
     local function AddFilter(event, filter)
@@ -846,7 +858,10 @@ end
 ---------------------------------------------------------------------------
 -- Runs a function the way the game runs a click: an error goes to the error handler.
 function Client:Do(fn, ...)
+    local outer = self.inClick
+    self.inClick = true
     local results = { xpcall(fn, function(m) return debug.traceback(tostring(m), 2) end, ...) }
+    self.inClick = outer
     if not results[1] then self.errors[#self.errors + 1] = tostring(results[2]) return end
     return unpack(results, 2)
 end

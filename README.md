@@ -33,9 +33,11 @@ short summaries in its own words.
 **Play**
 
 - **Roll** ability checks, saving throws, skills, tools, initiative and spell attacks
-  by clicking them. Rolls use the game's real `/roll`, so others can verify them, and
-  the total is announced, for example
-  `rolls [Stealth]: 14 + 5 = 19`.
+  by clicking them. In retail, rolls use the game's real `/roll`, so others can verify
+  them, and the total is announced, for example
+  `rolls [Stealth]: 14 + 5 = 19`. WoW Forever lets an addon speak in chat only straight
+  from a click, before a `/roll` result could come back, so there the sheet rolls the
+  dice itself and announces at once.
 - **Advantage and disadvantage** with Shift or Ctrl, or set for the next roll.
   Conditions, armor, features, feats and items that give either are applied by the
   sheet, and the two cancel out as the rules say.
@@ -342,7 +344,7 @@ Nothing leaves the game. What other players can see is this:
 
 | What | Who gets it | How |
 |---|---|---|
-| Your rolls | Whoever the game shows a `/roll` to: people nearby, or your group | The game's own `/roll`, one per die. With "Self only" nothing is rolled in public: the dice are rolled privately. |
+| Your rolls | Whoever the game shows a `/roll` to: people nearby, or your group | In retail, the game's own `/roll`, one per die. With "Self only", and always in WoW Forever, nothing is rolled in public: the sheet rolls the dice itself. |
 | Announcements | The channel at "Announce to": Emote (people nearby), Party, Raid, or only you | An ordinary chat line. If Party or Raid is chosen and you are not in one, the line is shown to you alone and says so. |
 | Your stats | Your party or raid, and RP Sheet users of your own faction who hover over you or target you | Hidden addon messages. Sent: the summary line (level, class, species or lineage, alignment), Armor Class, the six ability scores, hit points and up to three resources with their current values, the weapon in hand, and your conditions and exhaustion. |
 | How a number is worked out | An RP Sheet user who clicks one of your terms in chat | A hidden addon whisper back to that player, with the same breakdown your own [?] shows. |

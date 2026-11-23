@@ -281,7 +281,10 @@ click on a row                              UI/Rows.lua: ClickLabel -> onClick(b
                                             then the callback
     ns.RollText.Check / .Dice               the wording
     RPSheet:Announce(text)                  Actions/Announce.lua: SendChatMessage on the
-                                            channel, or printed when it can't be used
+                                            channel, or printed when it can't be used;
+                                            a line the game refuses (Forever: chat only
+                                            from a click) is printed with a [Send it]
+                                            link (Actions/AnnounceHeld.lua)
 ... on every client with the addon ...
   chat filter (Integrations/ChatLinks.lua)  turns [terms] into addon links
 ```

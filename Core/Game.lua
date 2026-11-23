@@ -30,7 +30,8 @@ end
 
 -- The key of a unit ("player", "party2", "mouseover"), or nil while it isn't known.
 function Game.UnitKey(unit)
-    local name, second = UnitName(unit)
+    -- (In Forever the plain UnitName can leave your own family name out, by a setting.)
+    local name, second = (Game.RegionalNames() and UnitNameUnmodified or UnitName)(unit)
     if type(name) ~= "string" or Secret(name) or name == "" or name == UNKNOWNOBJECT then return end
     if Secret(second) or second == "" then second = nil end
     if Game.RegionalNames() then
@@ -80,6 +81,32 @@ function Game.CharacterKey()
         return "char:" .. (Game.UnitKey("player") or UnitName("player"))
     end
     return ("char:%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
+end
+
+---------------------------------------------------------------------------
+-- Chat only from a click
+---------------------------------------------------------------------------
+-- WoW Forever lets an addon put a line in chat only straight from a click or a key
+-- press: not when an event comes in (the game's roll line) and not from a timer.
+-- Retail allows it for the channels the addon uses. Should a game refuse a line
+-- anyway, Actions/AnnounceHeld.lua reports it here and the addon works the Forever
+-- way from then on.
+local refused = false
+
+-- True in WoW Forever (its interface numbers are those of the original game).
+function Game.IsForever()
+    local _, _, _, interface = GetBuildInfo()
+    return type(interface) == "number" and interface < 20000
+end
+
+-- True when announcements must go out during the click that made them: the dice are
+-- then rolled by the addon at once instead of with the game's /roll (Actions/Dice.lua).
+function Game.ChatNeedsClick()
+    return refused or Game.IsForever()
+end
+
+function Game.ChatRefused()
+    refused = true
 end
 
 ---------------------------------------------------------------------------
