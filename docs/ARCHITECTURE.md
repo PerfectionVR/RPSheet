@@ -20,6 +20,7 @@ Libs                 LibStub, Ace3, LibSerialize, LibDeflate, LibSharedMedia,
                      LibDataBroker, LibDBIcon
 Core\Addon.lua       ns.addon
 Core\Util.lua        ns.Util
+Core\Game.lua        ns.Game: everything that differs between retail and WoW Forever
 Core\Codec.lua       ns.Codec
 Data\*.lua           ns.Rules, ns.FeatureKit, ns.Glossary, ns.ExampleCharacter
 UI\Themes.lua        ns.Themes          (before Defaults: the default theme is a copy)
@@ -275,8 +276,9 @@ click on a row                              UI/Rows.lua: ClickLabel -> onClick(b
       RPSheet:Roll(sides, callback)         "Self only": math.random, callback at once
         RandomRoll(1, sides)                otherwise the game's /roll, and `pending` is set
           ... the game prints "<name> rolls <n> (1-<sides>)" ...
-        RPSheet:CHAT_MSG_SYSTEM             matches the line against RANDOM_ROLL_RESULT for
-                                            this player and these sides, calls the callback
+        RPSheet:CHAT_MSG_SYSTEM             ns.Game.ParseRoll reads the line, ns.Game.IsPlayer
+                                            checks it is this player's (and these sides),
+                                            then the callback
     ns.RollText.Check / .Dice               the wording
     RPSheet:Announce(text)                  Actions/Announce.lua: SendChatMessage on the
                                             channel, or printed when it can't be used

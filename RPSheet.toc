@@ -31,6 +31,7 @@ Libs\AceConfig-3.0\AceConfig-3.0.xml
 
 Core\Addon.lua
 Core\Util.lua
+Core\Game.lua
 Core\Codec.lua
 
 # Rules data

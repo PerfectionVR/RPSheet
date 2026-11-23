@@ -19,7 +19,7 @@ function RPSheet:GetCharacterName()
     if custom and custom:trim() ~= "" then
         return custom
     end
-    return UnitName("player")
+    return ns.Game.PlayerName()
 end
 
 -- The level and classes of a character with several, e.g. "Level 5 Arms Warrior 3 / Mage 2".

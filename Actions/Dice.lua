@@ -3,13 +3,7 @@
 local _, ns = ...
 local RPSheet = ns.addon
 
-local pending -- the roll we are waiting on: { sides = "20", callback = function }
-
--- Lua pattern matching the game's "<name> rolls <n> (<low>-<high>)" message.
-local rollPattern = "^" .. RANDOM_ROLL_RESULT
-    :gsub("[%(%)%.%+%-%*%?%[%]%^%$]", "%%%0")
-    :gsub("%%s", "(.+)")
-    :gsub("%%d", "(%%d+)") .. "$"
+local pending -- the roll we are waiting on: { sides = 20, callback = function }
 
 function RPSheet:IsRolling()
     return pending ~= nil
@@ -29,7 +23,7 @@ function RPSheet:Roll(sides, callback)
         return
     end
     if pending then return end
-    local request = { sides = tostring(sides), callback = callback }
+    local request = { sides = tonumber(sides), callback = callback }
     pending = request
     RandomRoll(1, sides)
     C_Timer.After(3, function()
@@ -102,12 +96,13 @@ function RPSheet:RollD20(mode, callback, own)
 end
 
 function RPSheet:CHAT_MSG_SYSTEM(_, msg)
-    if not pending or (issecretvalue and issecretvalue(msg)) then return end
-    local name, roll, low, high = msg:match(rollPattern)
-    if name == UnitName("player") and low == "1" and high == pending.sides then
+    if not pending then return end
+    -- The game's own roll line, read the way each game writes it (Core/Game.lua).
+    local name, roll, low, high = ns.Game.ParseRoll(msg)
+    if name and low == 1 and high == pending.sides and ns.Game.IsPlayer(name) then
         local callback = pending.callback
         pending = nil
-        callback(tonumber(roll))
+        callback(roll)
     end
 end
 
