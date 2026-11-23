@@ -81,5 +81,12 @@ function UI.CombatSection(self, body)
             local current = self:GetWeapon()
             if current then self:ExplainWeapon(current) end
         end)
+    else
+        -- Without a weapon in hand the attack row would simply be missing: say why, and
+        -- a click opens the tab where one is equipped.
+        UI.AddLabel(body, 1, "|cff999999Attack: no weapon equipped|r", function()
+            self.db.char.sheetTab = "Items"
+            self:PopulateSoon()
+        end, "Attack", "Equip a weapon on the Items tab, or add one under Customize > Weapons, and the attack row appears here. Click to open the Items tab.")
     end
 end
