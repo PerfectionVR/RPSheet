@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Loads in WoW Forever as well as retail: one download for both games.
+
 ## 0.7.1
 
 - Take damage knows your features that change damage and offers each only while you
