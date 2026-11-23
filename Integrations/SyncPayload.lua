@@ -17,11 +17,9 @@ S.MAX_MESSAGE = 1024
 S.STALE = 1800
 S.PRUNE_EVERY = 300
 
+-- A unit's key ("Name-Realm" in retail, "Given Family" in Forever: Core/Game.lua).
 function S.FullName(unit)
-    local name, realm = UnitName(unit)
-    if not name or (issecretvalue and issecretvalue(name)) then return end
-    if not realm or realm == "" then realm = GetNormalizedRealmName() end
-    return realm and (name .. "-" .. realm)
+    return ns.Game.UnitKey(unit)
 end
 
 -- False while the game blocks addon messages (some encounters).

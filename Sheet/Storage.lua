@@ -5,7 +5,7 @@ local RPSheet = ns.addon
 local Util = ns.Util
 
 local function CharacterKey()
-    return ("char:%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
+    return ns.Game.CharacterKey()
 end
 
 local function CurrentSheetKey()

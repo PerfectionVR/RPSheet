@@ -94,14 +94,10 @@ function RPSheet:OnCommReceived(_, message, distribution, sender)
     if not S.Sharing() then return end
     if type(sender) ~= "string" or (issecretvalue and issecretvalue(sender)) or sender == "" then return end
     if type(message) ~= "string" or #message > S.MAX_MESSAGE then return end
-    if not sender:find("-", 1, true) then
-        -- The realm isn't known for a moment after login: then there is no name to keep
-        -- anything under, and the message is dropped.
-        local realm = GetNormalizedRealmName()
-        if not realm then return end
-        sender = sender .. "-" .. realm
-    end
-    if sender == S.FullName("player") then return end
+    -- In retail the realm isn't known for a moment after login: then there is no name
+    -- to keep anything under, and the message is dropped.
+    sender = ns.Game.SenderKey(sender)
+    if not sender or sender == S.FullName("player") then return end
 
     local ok, kind, data, extra = ns.Codec.Unpack("addon", message)
     if not ok or type(kind) ~= "string" then return end
