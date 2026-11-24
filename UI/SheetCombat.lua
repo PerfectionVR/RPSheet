@@ -81,10 +81,21 @@ function UI.CombatSection(self, body)
             local current = self:GetWeapon()
             if current then self:ExplainWeapon(current) end
         end)
+    elseif not self:HasUnarmedRow() then
+        -- Without a weapon in hand the row is the Unarmed Strike everyone can make
+        -- (Actions/UnarmedAttack.lua).
+        self.attackLabel = UI.AddLabel(body, 1, "", function(button)
+            if button == "RightButton" then
+                self.db.char.sheetTab = "Items"
+                self:PopulateSoon()
+            else
+                self:UnarmedAttack(ns.RollMode())
+            end
+        end, "Unarmed Strike", "A punch, kick or headbutt: Strength and proficiency to hit, 1 + Strength bludgeoning damage.\nLeft-click: roll to hit.\nRight-click: open the Items tab to equip a weapon; this row then attacks with it.\n" .. ns.ROLL_MODE_HELP,
+            function() self:ExplainUnarmed() end)
     else
-        -- Without a weapon in hand the attack row would simply be missing: say why, and
-        -- a click opens the tab where one is equipped.
-        UI.AddLabel(body, 1, "|cff999999Attack: no weapon equipped|r", function()
+        -- The sheet's own Unarmed Strike row (a feat, a style, Martial Arts) is the one to use.
+        UI.AddLabel(body, 1, "|cff999999Attack: no weapon equipped (Unarmed Strike is on the Actions tab)|r", function()
             self.db.char.sheetTab = "Items"
             self:PopulateSoon()
         end, "Attack", "Equip a weapon on the Items tab, or add one under Customize > Weapons, and the attack row appears here. Click to open the Items tab.")

@@ -38,6 +38,8 @@ end
 -- asks first when it needs to (Actions/RollQuestions.lua), and the menu attacks.
 function RPSheet:Attack(mode, answers)
     local weapon = self:GetWeapon()
+    -- Without a weapon in hand: the Unarmed Strike everyone can make (Actions/UnarmedAttack.lua).
+    if not weapon and not self:HasUnarmedRow() then return self:UnarmedAttack(mode, answers) end
     if not weapon then
         -- (A row or key that was there before the last weapon went.) The attempt still
         -- settles a rest that could be taken back, like any attack (Actions/RestUndo.lua).

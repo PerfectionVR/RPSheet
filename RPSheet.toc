@@ -295,6 +295,7 @@ Sheet\PassCache.lua
 Actions\AnnounceSplit.lua
 Actions\Announce.lua
 Actions\AnnounceHeld.lua
+Actions\UnarmedAttack.lua
 Actions\Dice.lua
 Actions\NextRollBonus.lua
 Actions\RollQuestions.lua
