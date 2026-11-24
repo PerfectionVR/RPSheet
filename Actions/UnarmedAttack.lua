@@ -1,7 +1,8 @@
 -- The Unarmed Strike everyone can make: the attack row's action while no weapon is in
 -- hand (UI/SheetCombat.lua). A punch, kick or headbutt: Strength + proficiency to hit,
 -- 1 + Strength bludgeoning damage. There is no damage die, so a critical hit deals the
--- same. A character whose feats or class improve the strike has an Unarmed Strike row
+-- same. In place of the damage the strike can grapple or shove: the target then saves
+-- against 8 + Strength + proficiency. A character whose feats or class improve the strike has an Unarmed Strike row
 -- of its own instead (Sheet/UnarmedStrike.lua, a Monk's Martial Arts).
 local _, ns = ...
 local RPSheet = ns.addon
@@ -14,6 +15,12 @@ function RPSheet:UnarmedNumbers()
     local toHit = mod + self:ProficiencyBonus() + self:Bonus("ATTACK")
     local damage = math.max(0, 1 + mod + self:DamageBonus("STR"))
     return toHit, damage
+end
+
+-- What a target saves against (Strength or Dexterity, its choice) when the strike is
+-- used to grapple or shove instead of dealing damage.
+function RPSheet:UnarmedDC()
+    return 8 + self:Mod("STR") + self:ProficiencyBonus()
 end
 
 -- True when the sheet has an Unarmed Strike row of its own, which then takes over.
@@ -53,5 +60,6 @@ function RPSheet:ExplainUnarmed()
     local hurt = ("Damage %d = 1 + Strength %s"):format(damage, Signed(mod))
     local more = self:DamageBonus("STR")
     if more ~= 0 then hurt = hurt .. " + damage bonuses " .. Signed(more) end
-    self:Print(("%s: %s. %s bludgeoning."):format(NAME, hit, hurt))
+    self:Print(("%s: %s. %s bludgeoning. Grapple or shove DC %d = 8 + Strength %s + proficiency %s."):format(
+        NAME, hit, hurt, self:UnarmedDC(), Signed(mod), Signed(proficiency)))
 end

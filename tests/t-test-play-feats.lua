@@ -214,6 +214,7 @@ Section("the Unarmed Strike row", function()
     Rolls(20)
     RPSheet:UnarmedAttack(nil, {})
     Said("(a critical hit: no die to double)", "a natural 20")
+    Eq(RPSheet:UnarmedDC(), 8 + mod + 2, "the grapple or shove DC is 8 + Strength + proficiency")
     -- a feat's own row takes over
     WithFeats("WARRIOR", 1, { "Tavern Brawler" })
     wipe(RPSheet:Sheet().weapons)

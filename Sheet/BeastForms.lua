@@ -36,11 +36,7 @@ function ns.BeastRider(ability)
     return (kind == "attack" and attack[2]) and ("On a hit: " .. rider) or rider
 end
 
-local function Find(list, auto)
-    for _, entry in ipairs(list) do
-        if entry.auto == auto then return entry end
-    end
-end
+local Find = ns.Util.FindAuto
 
 -- The entry with that key, made if it isn't there yet.
 local function Entry(list, auto, name, fresh)

@@ -1,7 +1,9 @@
--- Rules data: D&D 5e (2024 rules) as used by the "D&D: World of Warcraft" setting book.
+-- Rules data: D&D 5e, 2024 rules (often called 5.5e), as used by the "D&D: World of Warcraft" setting book.
 -- Only mechanics are encoded here (names and numbers); wording is our own and brief.
 -- Look up full feature text in the books. Core numbers follow the System Reference
 -- Document 5.2 (CC-BY-4.0, Wizards of the Coast).
+-- Where the 2014 rules differ, only the 2024 ones are encoded: when checking a number
+-- against the rules site, use its "XPHB" and "WoW" sources and never "PHB".
 --
 -- Nothing in this file belongs to one character; characters are created in game.
 local _, ns = ...

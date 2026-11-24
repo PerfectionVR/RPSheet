@@ -12,11 +12,7 @@ local RPSheet = ns.addon
 
 local MAX_WORTH, MAX_FRAGMENTS = 99999999, 999
 
-local function Whole(value, high)
-    value = tonumber(value)
-    if not value or value ~= value then return 0 end
-    return math.max(0, math.min(high, math.floor(value)))
-end
+local Whole = ns.Util.Whole
 
 -- Makes the saved fields well-formed; a character from before professions has none.
 -- `source` is the untrusted sheet an import was read from.

@@ -8,11 +8,7 @@
 local _, ns = ...
 local R = ns.Rules
 
-local function FindAuto(list, key)
-    for _, entry in ipairs(list) do
-        if entry.auto == key then return entry end
-    end
-end
+local FindAuto = ns.Util.FindAuto
 
 -- A feature's effects or actions may be a fixed table or a function of the level.
 local function Resolve(value, level, sheet)

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.1
+
+- The Unarmed Strike row's tooltip gives the save DC for a grapple or shove
+  (8 + Strength + proficiency), and its explanation shows how the DC is worked out.
+- The rules were checked again against the 2024 rules (5.5e); the README says which
+  edition the sheet follows and what that means where the 2014 rules differ.
+- Tidying inside: helpers that several files each had a copy of are shared, and code
+  nothing used is gone. Nothing changes in play.
+
 ## 0.8.0
 
 - Loads in WoW Forever as well as retail: one download for both games.

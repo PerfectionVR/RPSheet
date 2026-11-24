@@ -22,7 +22,8 @@ local function SpendsChannel(ability)
     return false
 end
 
--- True if the character has the feature (a class or subclass passive of that name).
+-- True if the character has the feature: a passive of that name that a rule put on
+-- the sheet (a class, a subclass, a pick), not one added by hand.
 function ns.HasFeature(sheet, name)
     for _, passive in ipairs(sheet.passives or {}) do
         if passive.name == name and (passive.auto or "") ~= "" then return true end

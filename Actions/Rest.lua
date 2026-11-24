@@ -4,13 +4,6 @@ local R = ns.Rules
 local RPSheet = ns.addon
 local RollText = ns.RollText
 
-local function HasPassive(sheet, name)
-    for _, passive in ipairs(sheet.passives) do
-        if passive.name == name and passive.enabled then return true end
-    end
-    return false
-end
-
 -- A beast form lasts half the character's level in hours (rounded down), so a rest of
 -- `hours` outlasts it below twice that level, plus one level for a form that would run
 -- out exactly as the rest ends.
@@ -64,7 +57,7 @@ function RPSheet:LongRest()
     self:ClearGrowingSpells()
     self:ClearDeathSaves()
     -- Humans wake up inspired (Resourceful).
-    if HasPassive(self:Sheet(), "Resourceful") then state.inspiration = true end
+    if self:HasPassive("Resourceful") then state.inspiration = true end
     self:Announce("finishes a long rest.")
     self:QueueBroadcast() -- the group sees the new hit points, also while the sheet is closed
     self:PopulateSoon()
@@ -93,8 +86,8 @@ function RPSheet:ShortRest()
     -- Chef: the meal cooked during the rest heals 1d8 more when Hit Dice are spent.
     -- Tushui Meditation: a rest spent in silent meditation ends with Heroic Inspiration.
     local state = self:State()
-    state.chefMeal = HasPassive(self:Sheet(), "Chef") or nil
-    if HasPassive(self:Sheet(), "Tushui Meditation") and self:GainInspiration() then regained[#regained + 1] = "Heroic Inspiration" end
+    state.chefMeal = self:HasPassive("Chef") or nil
+    if self:HasPassive("Tushui Meditation") and self:GainInspiration() then regained[#regained + 1] = "Heroic Inspiration" end
     -- Signature Spells: the casting without a slot is back.
     local spells = self:RestoreChosenCastings(true)
     for _, name in ipairs(spells) do regained[#regained + 1] = name .. " without a slot" end
