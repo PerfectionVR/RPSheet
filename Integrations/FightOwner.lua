@@ -167,6 +167,15 @@ function F.RestoreOwned()
     return true
 end
 
+-- An attack roll held against a combatant's Armor Class: the line with how it went,
+-- and "hit", "crit" or "miss". A natural 20 hits and a natural 1 misses.
+function F.HitText(text, target, total, die)
+    if die == 1 then return ("%s - a natural 1 misses %s"):format(text, target.name), "miss" end
+    if die == 20 then return ("%s - a critical hit on %s"):format(text, target.name), "crit" end
+    if total >= target.ac then return ("%s - hits %s (AC %d)"):format(text, target.name, target.ac), "hit" end
+    return ("%s - misses %s (AC %d)"):format(text, target.name, target.ac), "miss"
+end
+
 ---------------------------------------------------------------------------
 -- What the players ask for
 ---------------------------------------------------------------------------
@@ -242,23 +251,15 @@ function F.owner.A(sender, data)
     if not member or text == "" then return end
     local target = type(data.target) == "string" and data.target ~= sender and session.members[data.target]
     local total, die = F.Num(data.total, -50, 200, nil), F.Num(data.die, 1, 20, nil)
-    if target and data.attack == true and total and die then
-        if die == 1 then
-            text = ("%s - a natural 1 misses %s"):format(text, target.name)
-        elseif die == 20 then
-            text = ("%s - a critical hit on %s"):format(text, target.name)
-        elseif total >= target.ac then
-            text = ("%s - hits %s (AC %d)"):format(text, target.name, target.ac)
-        else
-            text = ("%s - misses %s (AC %d)"):format(text, target.name, target.ac)
-        end
-    end
+    if target and data.attack == true and total and die then text = F.HitText(text, target, total, die) end
     -- A saving throw the owner asked for (FightOwnerTools.lua).
     local dc = F.Num(data.save, 1, 40, nil)
     if dc and total then
         text = ("%s - %s against DC %d"):format(text, total >= dc and "succeeds" or "fails", dc)
     end
     Say(text, member)
+    -- Damage that waited for the save follows it (FightStatBlocks.lua).
+    if dc and total then F.SaveResolved(sender, total >= dc, dc) end
 end
 
 function F.owner.T(sender)

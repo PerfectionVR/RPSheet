@@ -82,7 +82,8 @@ end
 function F.Ended()
     local was = F.joined
     if was then F.DropTimers() end
-    F.session, F.joined, F.target, F.owedSave = nil, false, nil, nil
+    F.session, F.joined, F.target, F.owedSave, F.picking = nil, false, nil, nil, nil
+    wipe(F.pendingSaves)
     RPSheet.db.char.fightJoined = nil
     F.ResetTurn()
     if was then

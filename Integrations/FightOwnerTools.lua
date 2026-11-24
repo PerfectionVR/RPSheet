@@ -10,6 +10,7 @@
 -- Messages, from the owner to the group, each naming who it is for (`to`):
 --   V { to, stat, dc }     roll this saving throw
 --   D { to, amount, type } take this damage      D { to, amount, heal = true }
+--   D { to, parts = { { amount, type }, ... } }   damage of several types
 --   O { id, to }           the session is yours
 local _, ns = ...
 local R = ns.Rules
@@ -24,6 +25,7 @@ local function Tell(kind, data)
     end
     return F.Send(kind, data)
 end
+F.Tell = Tell
 
 -- The row the owner picked, or nil after saying that one is needed.
 local function Picked()
@@ -57,7 +59,11 @@ function F.AskSave(text)
         RPSheet:Print("Give the ability and the DC: DEX 15. For a combatant you run, its bonus too: DEX 15 +2")
         return
     end
-    if member.npc then return F.CreatureSave(key, stat, dc, F.Num(tonumber(bonus) or 0, -10, 30, 0)) end
+    if member.npc then
+        -- One made from a template knows its own bonus.
+        local template = F.Template(member)
+        return F.CreatureSave(key, stat, dc, F.Num(tonumber(bonus) or (template and template.saves[stat]) or 0, -10, 30, 0))
+    end
     F.Say(("makes a %s saving throw, DC %d."):format(R.STAT_NAMES[stat], dc), member)
     if not Tell("V", { to = key, stat = stat, dc = dc }) then RPSheet:Print("The request could not be sent.") end
 end
@@ -73,7 +79,11 @@ function F.DealDamage(text)
         return
     end
     if word == "" then word = nil end
-    if member.npc then return F.ChangeCreatureHP(key, amount, word) end
+    if member.npc then
+        -- One made from a template resists, shrugs off or is weak to some damage.
+        local taken, note = F.AdjustDamage(member, amount, word)
+        return F.ChangeCreatureHP(key, taken, word, note)
+    end
     if not Tell("D", { to = key, amount = amount, type = word }) then RPSheet:Print("The damage could not be sent.") end
 end
 
@@ -137,8 +147,38 @@ function F.RollOwedSave()
     RPSheet:RollCheck(owed.stat .. " save", RPSheet:SaveMod(owed.stat), ns.RollMode())
 end
 
+-- Damage of several types is taken one after the other, each when the sheet is done
+-- with the one before (a ward's die, a save that keeps the character up).
+local queue = {}
+local function TakeNext(tries)
+    local entry = queue[1]
+    if not entry then return end
+    if (RPSheet.busy or RPSheet:IsRolling()) and tries < 40 then
+        return C_Timer.After(0.5, function() TakeNext(tries + 1) end)
+    end
+    table.remove(queue, 1)
+    RPSheet:TakeDamage(entry.amount, entry.type)
+    if queue[1] then C_Timer.After(0.5, function() TakeNext(0) end) end
+end
+
 function F.player.D(sender, data)
     if not ForMe(sender, data) then return end
+    if type(data.parts) == "table" then
+        local owner, words, waiting = F.session.members[sender], {}, #queue > 0
+        for index = 1, math.min(#data.parts, 6) do
+            local part = data.parts[index]
+            local amount = type(part) == "table" and F.Num(part.amount, 1, 9999, nil)
+            if amount then
+                local kind = type(part.type) == "string" and R.DAMAGE_TYPE[part.type] and part.type or nil
+                queue[#queue + 1] = { amount = amount, type = kind }
+                words[#words + 1] = kind and ("%d %s"):format(amount, kind) or tostring(amount)
+            end
+        end
+        if #words == 0 then return end
+        RPSheet:Print(("%s deals you %s damage."):format(owner and owner.name or "The session's owner", table.concat(words, " + ")))
+        if not waiting then TakeNext(0) end
+        return
+    end
     local amount = F.Num(data.amount, 1, 9999, nil)
     if not amount then return end
     local owner = F.session.members[sender]

@@ -117,6 +117,8 @@ function RPSheet:PopulateFight()
     local session = F.session
     if not session then
         AddIdle(self, body)
+    elseif UI.AddCreaturePicker(self, body) then
+        -- the list to add a creature from fills the window (UI/FightWindowCreatures.lua)
     else
         local mine = F.Mine()
         UI.AddLabel(body, 1, ("Session of %s%s|r"):format(UI.ACCENT, ns.Game.ShortName(session.owner)))

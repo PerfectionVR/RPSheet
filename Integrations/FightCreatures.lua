@@ -36,7 +36,10 @@ end
 function F.AddCreature(text)
     local session = F.session
     if not F.IsOwner() then return end
-    local made = F.ParseCreature(text)
+    -- The name of a creature of the list alone makes one of those (Data/Creatures.lua).
+    local template = ns.Rules.FindCreature(text)
+    local made = template and { name = template.name, ac = template.ac, hp = template.hp, dex = F.Num(template.init, -5, 15, 0), template = template.name }
+        or F.ParseCreature(text)
     if not made then
         RPSheet:Print("Give a name, an Armor Class and hit points, and an initiative bonus if it has one: Gnoll 13 22 +1")
         return
@@ -60,7 +63,7 @@ function F.AddCreature(text)
     while session.members["npc:" .. index] do index = index + 1 end
     local key = "npc:" .. index
     local before = F.Before()
-    session.members[key] = { name = name, mark = 0, ac = made.ac, hp = made.hp, max = made.hp, dex = made.dex, npc = true }
+    session.members[key] = { name = name, mark = 0, ac = made.ac, hp = made.hp, max = made.hp, dex = made.dex, npc = true, template = made.template }
     F.Say(session.phase == "RUN" and "joins the fight." or "joins the combat session.", session.members[key])
     F.Rebroadcast(before)
     F.RollCreatureInitiative(key)
@@ -91,13 +94,16 @@ function F.CreatureAttack(text, key)
     })
 end
 
--- Hit points of a creature changed by the owner: damage (positive) or healing.
-function F.ChangeCreatureHP(key, amount, word)
+-- Hit points of a creature changed by the owner: damage (positive) or healing. `note`
+-- says what its defenses did to the damage.
+function F.ChangeCreatureHP(key, amount, word, note)
     local member = F.session.members[key]
     local before, was = F.Before(), member.hp
     member.hp = math.max(0, math.min(member.max, member.hp - amount))
     if amount > 0 then
-        F.Say(("takes %d %sdamage."):format(amount, word and (word .. " ") or ""), member)
+        F.Say(("takes %d %sdamage%s."):format(amount, word and (word .. " ") or "", note and (" (" .. note .. ")") or ""), member)
+    elseif amount == 0 then
+        F.Say(("takes no damage%s."):format(note and (" (" .. note .. ")") or ""), member)
     else
         F.Say(("regains %d hit points."):format(member.hp - was), member)
     end
