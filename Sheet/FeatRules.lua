@@ -7,20 +7,20 @@ local RPSheet = ns.addon
 local NONE = {}
 
 -- True if a switched-on passive of that name is on the sheet (a feat, a blessing).
-function RPSheet:HasPassive(name)
-    for _, passive in ipairs(self:Sheet().passives or NONE) do
+function ns.PassiveOn(sheet, name)
+    for _, passive in ipairs(sheet.passives or NONE) do
         if passive.name == name and passive.enabled then return true end
     end
     return false
 end
 
+function RPSheet:HasPassive(name)
+    return ns.PassiveOn(self:Sheet(), name)
+end
+
 -- True if the character's species has the trait.
 function RPSheet:HasTrait(name)
-    local species = R.SPECIES[self:Sheet().species]
-    for _, trait in ipairs(species and species.traits or NONE) do
-        if trait == name then return true end
-    end
-    return false
+    return ns.HasTrait(self:Sheet(), name)
 end
 
 -- The most Dexterity a suit of armor lets count for Armor Class, and what raised it:

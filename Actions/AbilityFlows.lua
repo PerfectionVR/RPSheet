@@ -32,10 +32,3 @@ function ns.FlowMenu(title, choices)
     end)
 end
 
--- True if a switched-on passive of that name is on the sheet.
-function ns.PassiveOn(sheet, name)
-    for _, passive in ipairs(sheet.passives or {}) do
-        if passive.enabled and passive.name == name then return true end
-    end
-    return false
-end

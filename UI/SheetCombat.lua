@@ -91,7 +91,9 @@ function UI.CombatSection(self, body)
             else
                 self:UnarmedAttack(ns.RollMode())
             end
-        end, "Unarmed Strike", "A punch, kick or headbutt: Strength and proficiency to hit, 1 + Strength bludgeoning damage.\nLeft-click: roll to hit.\nRight-click: open the Items tab to equip a weapon; this row then attacks with it.\n" .. ns.ROLL_MODE_HELP,
+        end, "Unarmed Strike", function()
+            return ("A punch, kick or headbutt: Strength and proficiency to hit, 1 + Strength bludgeoning damage.\nIn place of the damage you can grapple or shove a creature no more than one size larger than you. That takes no attack roll: the target makes a Strength or Dexterity save (its choice) against DC %d. Grappled, it is held; shoved, it is pushed 5 feet or knocked prone.\nLeft-click: roll to hit.\nRight-click: open the Items tab to equip a weapon; this row then attacks with it.\n"):format(self:UnarmedDC()) .. ns.ROLL_MODE_HELP
+        end,
             function() self:ExplainUnarmed() end)
     else
         -- The sheet's own Unarmed Strike row (a feat, a style, Martial Arts) is the one to use.

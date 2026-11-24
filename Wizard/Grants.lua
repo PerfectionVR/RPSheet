@@ -10,11 +10,7 @@ local function FindPassive(sheet, name)
     end
 end
 
-local function FindAuto(list, key)
-    for _, entry in ipairs(list) do
-        if entry.auto == key then return entry end
-    end
-end
+local FindAuto = ns.Util.FindAuto
 
 -- Where the feature comes from, followed by the glossary's summary of it.
 local function Describe(name, origin)

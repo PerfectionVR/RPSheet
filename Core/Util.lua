@@ -58,3 +58,17 @@ function Util.Named(list)
     end
     return result
 end
+
+-- The entry a rule put on a list under `key` (its `auto` field), and where it is.
+function Util.FindAuto(list, key)
+    for index, entry in ipairs(list) do
+        if entry.auto == key then return entry, index end
+    end
+end
+
+-- A saved number as a whole number from 0 to `high`; anything that isn't a number is 0.
+function Util.Whole(value, high)
+    value = tonumber(value)
+    if not value or value ~= value then return 0 end
+    return math.max(0, math.min(high, math.floor(value)))
+end

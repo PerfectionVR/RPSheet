@@ -3,7 +3,6 @@
 -- feature and can use it now: a reaction that is spent, or a feature that doesn't work
 -- while incapacitated, is left out. The answers fill `how`, which goes with the type.
 local _, ns = ...
-local RPSheet = ns.addon
 local UI = ns.UI
 
 local function Box(root, text, title, body, isOn, toggle)

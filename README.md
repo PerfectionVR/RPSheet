@@ -5,7 +5,7 @@ You make a character with a step-by-step wizard, then click a check, a weapon, a
 an ability on the sheet: the addon rolls, does the sums the rules ask for, and tells your
 group the result.
 
-It follows D&D 5e (2024 rules) as used by the *D&D: World of Warcraft* setting book. You
+It follows the 2024 rules of D&D 5e (often called 5.5e) as used by the *D&D: World of Warcraft* setting book. You
 need the books for the full text of features; the addon handles the numbers and gives
 short summaries in its own words.
 
@@ -43,7 +43,7 @@ short summaries in its own words.
   sheet, and the two cancel out as the rules say.
 - **Attack** with the weapon in hand: to hit, then damage, with critical hits, Fighting
   Styles, weapon mastery and magic bonuses counted. With no weapon in hand, an Unarmed
-  Strike (1 + Strength bludgeoning).
+  Strike (1 + Strength bludgeoning); its tooltip gives the save DC for a grapple or shove.
 - **Cast** spells from a list with slots, save DC, dice, concentration, rituals,
   higher slots and components. A Mage has a spellbook window; classes that change
   prepared spells after a long rest have a window for that.
@@ -269,7 +269,13 @@ A word `/sheet` doesn't know lists the commands.
 
 ## How the rules are applied
 
-RP Sheet follows D&D 5e (2024 rules) as used by the *D&D: World of Warcraft* setting book.
+RP Sheet follows the 2024 rules of D&D 5e (often called 5.5e) as used by the *D&D: World
+of Warcraft* setting book. Where the 2014 rules differ, the sheet uses the 2024 ones:
+exhaustion takes 2 from every d20 roll and 5 feet of speed per level, a long rest gives
+back every Hit Die, backgrounds give the ability scores and an origin feat, every
+subclass starts at level 3, weapons have a mastery, the concentration save stops at
+DC 30, a healing potion is a bonus action, and an Unarmed Strike can grapple or shove
+against a save DC. It doesn't offer the 2014 rules.
 The thirteen World of Warcraft classes each build on a Player's Handbook class (Death
 Knight and Paladin on Paladin, Demon Hunter and Hunter on Ranger, Evoker on Sorcerer,
 Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).

@@ -24,19 +24,7 @@ local function Feature(sheet, name)
     local passive = ns.FeaturePassive(sheet, name)
     return passive ~= nil and passive.enabled
 end
-local function Feat(sheet, name)
-    for _, passive in ipairs(sheet.passives) do
-        if passive.name == name and passive.enabled then return true end
-    end
-    return false
-end
-local function Trait(sheet, name)
-    local species = R.SPECIES[sheet.species]
-    for _, trait in ipairs(species and species.traits or {}) do
-        if trait == name then return true end
-    end
-    return false
-end
+local Feat, Trait = ns.PassiveOn, ns.HasTrait
 
 -- What the character can use against damage right now: each field is false or what
 -- it comes to (true, or the number it takes off).

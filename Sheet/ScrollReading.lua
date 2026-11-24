@@ -6,18 +6,6 @@
 local _, ns = ...
 local R = ns.Rules
 
-local listed -- [Player's Handbook class] = { [spell name] = true }, built when first asked
-local function OnList(base, name)
-    if not listed then
-        listed = {}
-        for class, names in pairs(R.SPELL_LISTS) do
-            listed[class] = {}
-            for _, spell in ipairs(names) do listed[class][spell] = true end
-        end
-    end
-    return listed[base] ~= nil and listed[base][name] == true
-end
-
 -- The highest spell level a class casts at its level: its slots, and for a Warlock the
 -- Mystic Arcanum levels it has reached (a spell of 6th to 9th level cast once a day).
 local function Reach(class, level)

@@ -1,7 +1,6 @@
 -- Fills the item browser: the tabs, the search box and the open page of blocks
 -- (see UI/ItemBrowser.lua for the window and what a source is).
 local _, ns = ...
-local R = ns.Rules
 local RPSheet = ns.addon
 local UI = ns.UI
 local Pages = UI.ItemPages

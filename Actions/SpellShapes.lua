@@ -4,7 +4,6 @@
 -- with Wild Shape's temporary hit points. Hooked into Actions/SpellAfterCast.lua.
 local _, ns = ...
 local R = ns.Rules
-local RPSheet = ns.addon
 
 -- The passives of the forms the character can take, by name.
 local function Forms(self)

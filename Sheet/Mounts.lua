@@ -124,11 +124,7 @@ end
 ---------------------------------------------------------------------------
 -- Saved data
 ---------------------------------------------------------------------------
-local function Whole(value, high)
-    value = tonumber(value)
-    if not value or value ~= value then return 0 end
-    return math.max(0, math.min(high, math.floor(value)))
-end
+local Whole = ns.Util.Whole
 
 -- Makes the owned list of a saved or imported sheet well-formed: known kinds, whole
 -- numbers, one mount ridden and one companion out at most.
