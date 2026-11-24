@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.11.0
+
+- A combat session's owner can add combatants of their own: a creature, or a player
+  without the addon. Type a name, Armor Class, hit points and initiative bonus
+  ("Gnoll 13 22 +1"). The owner's game rolls its initiative, and on its turn its
+  attack with the bonus you type, against the row you picked.
+- The owner picks a row of the combat window and asks for a saving throw ("DEX 15"):
+  the player is told, rolls it on their own sheet, and the owner's game says whether
+  it meets the DC.
+- The owner deals damage ("12 fire") or heals: the target's own sheet takes it, with
+  its resistances and everything else "Take damage" does. For a combatant of the
+  owner's it comes off the hit points the session keeps; at 0 its turns are passed
+  over.
+- The owner can hand the session to another player. The round, the order and the
+  owner's combatants go with it.
+- Sessions of this version and of 0.9 or 0.10 don't see each other: everyone in a
+  fight needs 0.11.
+
 ## 0.10.0
 
 - Combat sessions count what lasts a number of rounds. A spell you cast during a fight

@@ -811,3 +811,28 @@ There is still no clock: only a running session counts, in the character's own t
   line reaches the owner like any other.
 - **After.** `F.DropTimers()` when the session ends for this client.
 - **Tests:** `tests/t-sync-rounds.lua`; the window test ends everything listed.
+
+## Added in 0.11.0: the owner's tools
+
+`Integrations/FightCreatures.lua`, `Integrations/FightOwnerTools.lua`,
+`UI/FightWindowOwner.lua`, `UI/FightAsk.lua`. The prefix became `RPSheetF2`.
+
+- **Combatants the owner runs** are members with `npc = true` under the key
+  `npc:<n>`; `member.dex` is the initiative bonus. They reuse the players' handlers
+  with their key as the sender: `F.owner.R` (initiative), `F.owner.A` (an attack line
+  with `attack`, `total`, `die`), `F.owner.L` (removal). Their d20s are `math.random`
+  on the owner's client. `Advance` passes over one at 0 hit points. `F.owner.J`
+  strips `npc` from what a player sends.
+- **Shared by the owner files:** `F.Say`, `F.Before`, `F.Rebroadcast(before)`.
+- **Owner to one player** (`to` names the player key; the owner's own character is told
+  without a message): `V { stat, dc }` sets `F.owedSave`, and the wrapped `Announce`
+  (`FightGate.lua`) adds `save = dc` to the line of a matching save, which `F.owner.A`
+  turns into "succeeds/fails against DC n". `D { amount, type }` or `{ amount, heal }`
+  calls `RPSheet:TakeDamage` or `:Heal`. Both are only taken from `session.owner`
+  while `F.Mine()`.
+- **Handing over:** the owner sends the session (`S`) and then `O { id, to }`. Every
+  client sets `session.owner = to`; the new owner's client calls `F.Rebroadcast()`,
+  which also stores `db.char.fightOwned`.
+- **Text input:** `ns.AskFightText(prompt, default, go)`, a StaticPopup with an edit box.
+- **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
+  window test types into every box.

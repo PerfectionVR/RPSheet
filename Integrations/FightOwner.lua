@@ -15,12 +15,14 @@ local F = ns.Fight
 local function Say(text, member)
     RPSheet:Announce(text, member and F.ChatName(member) or "")
 end
+F.Say = Say
 
 -- What this client knew before a change, to tell what the change started.
 local function Before()
     local session = F.session
     return session and { id = session.id, phase = session.phase, round = session.round, turn = session.turn }
 end
+F.Before = Before
 
 -- Sends the session to everyone and keeps it over a reload.
 local function Broadcast(before)
@@ -28,6 +30,11 @@ local function Broadcast(before)
     RPSheet.db.char.fightOwned = session
     F.Send("S", session)
     F.Applied(before)
+end
+-- For the other owner files: `before` as F.Before() gave it ahead of the change, or
+-- left out when nothing of the turn changed.
+function F.Rebroadcast(before)
+    Broadcast(before or Before())
 end
 
 local function Sort(session)
@@ -71,9 +78,18 @@ local function Advance(from)
         end
         index = index + 1
     end
-    local newRound = index > #session.order
-    if newRound then
-        index, session.round = 1, session.round + 1
+    local newRound = false
+    -- A combatant the owner runs that is at 0 hit points is passed over.
+    for _ = 1, #session.order do
+        if index > #session.order then
+            index, session.round, newRound = 1, session.round + 1, true
+        end
+        local member = session.members[session.order[index]]
+        if not (member.npc and member.hp <= 0) then break end
+        index = index + 1
+    end
+    if index > #session.order then
+        index, session.round, newRound = 1, session.round + 1, true
     end
     session.turn = session.order[index]
     Say(TurnLine(session, newRound))
@@ -102,6 +118,13 @@ function F.CallInitiative()
     for _, member in pairs(session.members) do member.init = nil end
     Say("Roll initiative!")
     Broadcast(before)
+    -- The owner's own combatants roll at once (FightCreatures.lua).
+    local keys = {}
+    for key, member in pairs(session.members) do
+        if member.npc then keys[#keys + 1] = key end
+    end
+    table.sort(keys)
+    for _, key in ipairs(keys) do F.RollCreatureInitiative(key) end
 end
 
 -- Starts the turns with those who have rolled; the others take their place when they do.
@@ -158,7 +181,7 @@ function F.owner.J(sender, data)
         local count = 0
         for _ in pairs(session.members) do count = count + 1 end
         if count >= F.MAX_MEMBERS then return end
-        clean.init = nil
+        clean.init, clean.npc = nil, nil
         session.members[sender] = clean
         Say(session.phase == "RUN" and "joins the fight and rolls initiative." or "joins the combat session.", clean)
     end
@@ -210,7 +233,8 @@ function F.owner.R(sender, data)
 end
 
 -- Something a player's character did, in the words their sheet made for it. With an
--- attack roll at someone in the fight, the owner's client says whether it hits.
+-- attack roll at someone in the fight, the owner's client says whether it hits. (The
+-- owner's own combatants speak through this too: FightCreatures.lua.)
 function F.owner.A(sender, data)
     local session = F.session
     local member = session.members[sender]
@@ -228,6 +252,11 @@ function F.owner.A(sender, data)
         else
             text = ("%s - misses %s (AC %d)"):format(text, target.name, target.ac)
         end
+    end
+    -- A saving throw the owner asked for (FightOwnerTools.lua).
+    local dc = F.Num(data.save, 1, 40, nil)
+    if dc and total then
+        text = ("%s - %s against DC %d"):format(text, total >= dc and "succeeds" or "fails", dc)
     end
     Say(text, member)
 end

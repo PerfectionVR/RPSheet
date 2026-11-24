@@ -14,7 +14,7 @@ local F = ns.Fight
 
 local PENDING = 30 -- seconds an action that was let through waits for its line
 local pending      -- what was let through last: { cost, name, slots, at }
-local lastCheck    -- the d20 test in the line being made: { total, die, attack, initiative }
+local lastCheck    -- the d20 test in the line being made: { total, die, attack, initiative, label }
 
 local function Slots(self)
     local sum = 0
@@ -82,6 +82,7 @@ function ns.RollText.Check(label, d20, mod, note, extra)
         total = d20 + mod + (extra and extra.value or 0), die = d20,
         attack = plain:find("to hit", 1, true) ~= nil or plain:find("attack", 1, true) ~= nil,
         initiative = plain:find("initiative", 1, true) ~= nil,
+        label = plain,
     }
     return Check(label, d20, mod, note, extra)
 end
@@ -100,6 +101,11 @@ function RPSheet:Announce(text, speaker)
     pending = nil
     local data = { text = text, target = F.Target() }
     if check then data.attack, data.total, data.die = check.attack, check.total, check.die end
+    -- The saving throw the owner asked for: the owner's client says how it went.
+    local owed = F.owedSave
+    if check and owed and check.label:find(owed.stat:lower() .. " save", 1, true) then
+        data.save, F.owedSave = owed.dc, nil
+    end
     local owes = check and check.initiative and F.OwesInitiative()
     -- The owner can't be reached: the line is announced as outside a session.
     if not F.Request("A", data) then return Announce(self, text) end

@@ -13,13 +13,16 @@
 --   FightTurn.lua      what a turn allows: action, bonus action, reaction
 --   FightGate.lua      attacks, abilities and spells asked for during a fight
 --   FightActions.lua   what the window offers on a turn
+--   FightTimers.lua    what lasts a number of rounds
+--   FightCreatures.lua combatants the owner runs
+--   FightOwnerTools.lua  saves and damage the owner asks for, handing the session on
 --   UI/FightWindow*.lua  the window
 local _, ns = ...
 
 local F = {}
 ns.Fight = F
 
-F.PREFIX = "RPSheetF1" -- bumped whenever the messages change shape
+F.PREFIX = "RPSheetF2" -- bumped whenever the messages change shape
 F.MAX_MESSAGE = 4096
 F.MAX_MEMBERS = 40
 
@@ -66,6 +69,7 @@ function F.CleanMember(data)
         ac = Num(data.ac, 0, 60, 10),
         hp = Num(data.hp, 0, 9999, 0),
         max = Num(data.max, 1, 9999, 1),
+        npc = data.npc == true or nil, -- run by the session's owner (FightCreatures.lua)
     }
 end
 

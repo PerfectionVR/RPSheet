@@ -9,6 +9,30 @@ Start()
 local FT = ns.Fight
 local characters, rows, actions, greyed, running = 0, 0, 0, 0, 0
 
+-- Clicks the window's row that reads `needle` and types `text` into the box it opens.
+local owner = 0
+local function Ask(where, needle, text)
+    Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
+    for _, part in ipairs(RPSheet.fightBody.children) do
+        if F.Plain(PartText(part)):find(needle, 1, true) then
+            owner = owner + 1
+            Try(where .. " click " .. needle, function() F.Click(part.frame); F.Settle() end)
+            if text then
+                if not F.popup then Problem(where .. ": " .. needle .. " opened no box") return end
+                Try(where .. " type " .. needle, function() F.PopupType(text, true); F.Settle() end)
+            end
+            Dismiss()
+            return
+        end
+    end
+    Problem(where .. ": no row reads " .. needle)
+end
+local function Creature(name)
+    for key, member in pairs(FT.session.members) do
+        if member.name == name then return key, member end
+    end
+end
+
 local function Look(where)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
     CheckOverlap(RPSheet.fightBody, where)
@@ -31,6 +55,31 @@ for index, key in ipairs(R.CLASS_ORDER) do
         if not (FT.IsOwner() and FT.Mine()) then Problem(label .. ": starting a session didn't put the character in it") end
         Try(label .. " mark", function() FT.SetMark(8); F.Settle() end)
         Look(label .. " gathering")
+        -- the owner's rows: a combatant of their own, picked, hurt, healed and asked for a save
+        Ask(label, "Add a combatant you run", "Gnoll 13 22 +1")
+        local gnoll = Creature("Gnoll")
+        if not gnoll then
+            Problem(label .. ": typing a combatant didn't add it")
+        else
+            FT.target = gnoll
+            Look(label .. " gathering, a row picked")
+            Ask(label, "Deal damage", "5 fire")
+            if FT.session.members[gnoll].hp ~= 17 then Problem(label .. ": typed damage didn't come off the combatant's hit points") end
+            Ask(label, "Heal", "2")
+            if FT.session.members[gnoll].hp ~= 19 then Problem(label .. ": typed healing didn't come back") end
+            Ask(label, "Ask for a saving throw", "DEX 15 +2")
+            -- the owner's own row: the save is asked of this character
+            FT.target = FT.Me()
+            Ask(label, "Ask for a saving throw", "WIS 10")
+            if not FT.owedSave then Problem(label .. ": a save asked of the owner's own character isn't owed") end
+            Look(label .. " a save owed")
+            Ask(label, "Roll the Wisdom save")
+            FT.owedSave = nil
+            FT.target = gnoll
+            Ask(label, "Remove from the fight")
+            if Creature("Gnoll") then Problem(label .. ": the combatant is still there after it was removed") end
+            FT.target = nil
+        end
         Try(label .. " call", function() FT.CallInitiative(); F.Settle() end)
         Look(label .. " rolling")
         Try(label .. " roll", function() FT.RollInitiative(); F.Settle() end)
@@ -84,4 +133,5 @@ for index, key in ipairs(R.CLASS_ORDER) do
 end
 
 if running == 0 then Problem("no action of any class left something running for the window to list") end
-Finish("fight", ("%d characters, %d rows hovered, %d actions clicked, %d greyed with a reason, %d running things ended"):format(characters, rows, actions, greyed, running))
+Finish("fight", ("%d characters, %d rows hovered, %d actions clicked, %d greyed with a reason, %d running things ended, %d owner rows used"):format(
+    characters, rows, actions, greyed, running, owner))

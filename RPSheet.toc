@@ -437,8 +437,12 @@ Integrations\FightTurn.lua
 Integrations\FightGate.lua
 Integrations\FightActions.lua
 Integrations\FightTimers.lua
+Integrations\FightCreatures.lua
+Integrations\FightOwnerTools.lua
 UI\FightWindowTurn.lua
 UI\FightWindowRunning.lua
+UI\FightAsk.lua
+UI\FightWindowOwner.lua
 UI\FightWindow.lua
 
 # Settings, character editor and creation wizard
