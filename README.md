@@ -95,6 +95,10 @@ handles the numbers and gives short summaries in its own words.
   and says why (action used, no slot left, not your turn).
 - **The owner's game announces** for everyone: whose turn it is, each player's rolls,
   whether an attack roll hits the combatant it was aimed at, and who drops to 0.
+- **What lasts a number of rounds is counted** in your own turns: a spell you cast in
+  the fight that lasts an hour or less, and a feature you switch on for a time (a
+  rage, Sacred Weapon, a reckless attack). The window lists each with the rounds it
+  has left; when its time is up it ends by itself and the owner's game says so.
 - Your hit points, slots and resources from **before the fight** are kept: afterwards
   you put them back or keep the outcome.
 
@@ -331,8 +335,10 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
 
 ### What stays your call, or the DM's
 
-- **Time.** The sheet keeps no clock and no turns. A spell's duration, a beast form's
-  hours and "once a turn" effects are ended by hand or by a rest.
+- **Time.** The sheet keeps no clock. Outside a combat session a spell's duration and
+  a feature's minutes are ended by hand or by a rest; in a session they are counted
+  in rounds. A beast form's hours and "once a turn" effects are yours to keep
+  everywhere.
 - **Conditions** are ticked by you. The sheet applies what they do to your own rolls and
   speed; it does not stop you from ticking one you are immune to.
 - **Situations.** Advantage that depends on the target or on what you can see, cover,
@@ -362,6 +368,8 @@ Both are on by default and are kept per character.
 | A turn | One action, one bonus action, and only one spell that spends a slot. The Attack action is as many attacks as Extra Attack gives; Action Surge gives a second action. What the turn doesn't allow is refused with the reason, in the combat window and on the sheet alike. |
 | Reactions | Usable on anyone's turn, once, and back at the start of your own. |
 | What a feature costs | Read from how its description starts ("Bonus action: ...", "Reaction: ..."); a spell's from its casting time. A spell that takes a minute or longer, or a ritual, is not offered in a fight. |
+| Durations | A round goes by for what you have running each time your own turn starts: a spell of a minute ends when your tenth turn after the casting starts, one of a round when your next turn does. Counted: spells cast during the fight that last an hour or less, and features switched on for a time. A spell you concentrate on ends your concentration; another takes its protection and later rolls with it. Something started on someone else's turn (a reaction) is counted from your next turn, so it can end up to a round early. |
+| A rage | Counted for its ten minutes. At the end of a turn of yours without an attack the sheet reminds you what keeps a rage up; it can't see a save you forced, so ending it is your click. Not said from level 15, when a rage needs no upkeep. |
 | Attack rolls | Aimed at a combatant (click their row, or target them in the game), the owner's game compares the total with their Armor Class and says hit or miss; a natural 20 hits and a natural 1 misses. Damage is taken by the target's own player with "Take damage". |
 
 A session reaches the people in your party or raid. Alone, you can still start one to
@@ -465,17 +473,17 @@ and what it can't check (nothing is drawn). Release zips leave the folder out.
 
 ## Not built yet
 
-- **Durations counted in rounds.** Combat sessions have turns and rounds, but what
-  lasts a while (a spell's duration, a beast form's hours, "once a turn" effects) is
-  not yet ended by them: those still end by a rest or by hand. There is no clock
-  outside combat, and none is planned.
+- **More that a turn could count:** conditions that end after a number of rounds, a
+  spell someone else cast on you, what was already running when the fight started,
+  "once a turn" effects, and a beast form's hours. There is no clock outside combat,
+  and none is planned.
 - **More for a session's owner:** creatures of their own in the order, asking a
   combatant for a save or dealing damage to one, handing the session to someone else,
   and running a row for a player without the addon.
 - **Movement** in a turn is not counted.
 - **Combat sessions tried in game.** They are simulated with four players in
-  `tests/t-sync-fight.lua` and clicked through for every class in
-  `tests/t-test-windows-fight.lua`.
+  `tests/t-sync-fight.lua`, their durations with two in `tests/t-sync-rounds.lua`, and
+  clicked through for every class in `tests/t-test-windows-fight.lua`.
 - **Playing every class in game.** The Warrior, the Mage and the Druid have been
   played; the other ten run only in the tests.
 - **Syncing confirmed in game by two players.** It is simulated with two and three
@@ -493,8 +501,9 @@ Two things hold for everything, so they are said once here:
 
 - **Time.** The sheet keeps no clock. Whatever lasts a while (a spell's duration,
   concentration, Rage, a beast form, Sacred Weapon, a blessing for the length of a
-  quest) ends by hand or by a rest; combat sessions don't count it yet. Concentration
-  itself is tracked: a new spell ends the old one and damage asks for the save.
+  quest) ends by hand or by a rest. Only a combat session counts time, in rounds, for
+  what was started during it and lasts an hour or less. Concentration itself is
+  tracked: a new spell ends the old one and damage asks for the save.
 - **Played in game.** Only the Warrior, the Mage and the Druid have been played in
   World of Warcraft so far. The other ten classes run only in the test environment
   (`tests/`), which builds, levels and clicks all of them.

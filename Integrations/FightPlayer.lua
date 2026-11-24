@@ -26,10 +26,13 @@ function F.Applied(before)
             RPSheet:Print("Roll initiative: the Initiative row of your sheet, or the button in the combat window.")
             F.ShowWindow()
         end
+        -- A new call for initiative starts the rounds at 1 again (FightTimers.lua).
+        if session.phase ~= "RUN" then RPSheet:State().fightTicked = nil end
         local mine = session.phase == "RUN" and session.turn == F.Me()
-        if mine and not (same and before.phase == "RUN" and before.turn == session.turn and before.round == session.round) then
-            F.TurnStarts()
-        end
+        local moved = not (same and before.phase == "RUN" and before.turn == session.turn and before.round == session.round)
+        -- The turn that was this character's is over (FightTimers.lua).
+        if moved and same and before.phase == "RUN" and before.turn == F.Me() then F.TurnEnds() end
+        if mine and moved then F.TurnStarts() end
     end
     F.Changed()
 end
@@ -78,6 +81,7 @@ end
 -- The session is over for this client, or was left.
 function F.Ended()
     local was = F.joined
+    if was then F.DropTimers() end
     F.session, F.joined, F.target = nil, false, nil
     RPSheet.db.char.fightJoined = nil
     F.ResetTurn()

@@ -431,6 +431,7 @@ wrappers of one method run in reverse load order.
 | `RPSheet:WeaponStat`, `:WeaponDice`, `:WeaponStyle`, `:StrikeDice` | `Sheet/Armoury.lua`, `Sheet/StyleEffects.lua`, `Sheet/Combat.lua` | `Sheet/SpellWeapons.lua` (loads just before PassCache) | Shillelagh, Magic Weapon, Elemental Weapon, True Strike and the other weapon spells. |
 | `RPSheet:ApplyDice` | `Actions/Dice.lua` | `Actions/FeatureDice.lua` (which also holds `ns.HasFeature`) | Class features that count healing dice at their highest or refill a pool from a spell's dice. |
 | `L.Problem` | `Options/LevelDialogCheck.lua` | `Options/LineageAbility.lua`, `Options/LevelDialogLessons.lua` | Holds the level dialog until the species ability or Lessons of the First Ones' feat is chosen. |
+| `RPSheet:SpellWasCast` | `Actions/Spells.lua` (empty: a hook) | `Integrations/FightTimers.lua` | In a combat session a spell's rounds start being counted. |
 | `RPSheet:Attack`, `:UnarmedAttack`, `:UseAbility`, `:CastSpell`, `:Announce`, `:QueueBroadcast`, `ns.RollText.Check` | their own files | `Integrations/FightGate.lua` (loads last of all of them) | Combat sessions: the turn's limits, the line sent to the session's owner, hit points followed. |
 
 `tests/dupfuncs.py` lists every function defined twice; its output should be exactly
@@ -785,3 +786,28 @@ session; its copy is the truth.
 - **Window** (`UI/FightWindow.lua`, `FightWindowTurn.lua`): filled from `F.session` and
   `F.Actions()` (`FightActions.lua`); `F.Changed()` refills it once a frame.
 - **Tests:** `tests/t-sync-fight.lua` (four clients), `tests/t-test-windows-fight.lua`.
+
+## Added in 0.10.0: durations in rounds
+
+`Integrations/FightTimers.lua`, `UI/FightWindowRunning.lua`, `Data/SpellDurations.lua`.
+There is still no clock: only a running session counts, in the character's own turns.
+
+- **Data.** `R.SPELL_ROUNDS[<spell name>]` (1, 6, 10, 100 or 600) for spells of an hour
+  or less, made from `tests/data/site-spells.txt` and held to it by
+  `tests/t-conform-spells.lua`. It is a table by name because a sheet keeps its own
+  copies of spells, which the export codec doesn't carry new fields for.
+  `R.LASTING[<passive>]` gained `rounds`, `toEnd` and `upkeep`.
+- **State.** `state.fightTimers = { { kind = CONC | SPELL | PASSIVE, name, left, total,
+  toEnd, fresh, shown } }` and `state.fightTicked = "<session id>:<round>"`, so a reload
+  on your own turn doesn't count the turn twice.
+- **Starting.** `RPSheet:SpellWasCast(spell, concentrating)`, an empty hook at the end
+  of a casting in `Actions/Spells.lua`, is wrapped to start a spell's timer. Features
+  are found, not hooked: `F.SyncTimers()` starts one for every switched-on passive of
+  `R.LASTING` with `rounds`, and drops timers whose thing ended some other way.
+- **Counting.** `F.TickTurnStart()` (from `F.TurnStarts`) takes a round off each and
+  ends what reached 0; `F.TurnEnds()` (from `F.Applied`, when the turn that was this
+  character's moved on) ends the `toEnd` ones and gives the rage and owed-hit-point
+  reminders. Ending goes through `RPSheet:EndConcentration` or `:Announce`, so the
+  line reaches the owner like any other.
+- **After.** `F.DropTimers()` when the session ends for this client.
+- **Tests:** `tests/t-sync-rounds.lua`; the window test ends everything listed.

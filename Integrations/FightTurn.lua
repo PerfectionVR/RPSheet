@@ -93,6 +93,7 @@ end
 function F.TurnStarts()
     F.ResetTurn()
     RPSheet:State().reactionUsed = nil
+    F.TickTurnStart() -- a round has gone by for what this character has running
     RPSheet:Print(("Your turn (round %d): an action, a bonus action if something gives you one, and your reaction is back."):format(F.session.round))
     if RPSheet:IsDown() then RPSheet:Print("You are at 0 hit points: roll a death save.") end
     if PlaySound then pcall(PlaySound, 8960) end

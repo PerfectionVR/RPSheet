@@ -98,6 +98,11 @@ end
 -- without a slot. `benefit` is the pick for a spell that offers a choice of benefits;
 -- without it the spell asks first (see Sheet/Metamorphosis.lua). `answers` is what
 -- the player was asked about its attack roll (Actions/RollQuestions.lua).
+-- Called when a casting has gone through, with whether the spell is now concentrated
+-- on. What follows a casting elsewhere hooks in here (Integrations/FightTimers.lua).
+function RPSheet:SpellWasCast(spell, concentrating)
+end
+
 function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
     if self.busy or self:IsRolling() then return end
     if self:CantAct("cast " .. spell.name) then return end
@@ -216,6 +221,7 @@ function RPSheet:CastSpell(spell, mode, ritual, benefit, answers)
             note, followUp = self:AfterSpellCast(spell, slot and slot.level, dealt, growth.noConcentration)
             parts[#parts + 1] = note
         end
+        self:SpellWasCast(spell, (spell.concentration and not growth.noConcentration) or false)
         local text = "casts " .. ns.Mark(spell.name)
         if slot then text = text .. (" (%s)"):format(slot.label) end
         if chosen then text = text .. (" (%s, no slot)"):format(chosen.feature) end

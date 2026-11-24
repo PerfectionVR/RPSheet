@@ -148,6 +148,7 @@ function RPSheet:PopulateFight()
             end
         end
         AddRoster(self, body, session)
+        if mine then UI.AddFightRunning(self, body) end
         if mine and session.phase == "RUN" then UI.AddFightTurn(self, body) end
         if F.IsOwner() then AddOwnerRows(body, session) end
         if not F.IsOwner() then

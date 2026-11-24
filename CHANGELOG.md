@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.10.0
+
+- Combat sessions count what lasts a number of rounds. A spell you cast during a fight
+  that lasts an hour or less, and a feature you switch on for a time (a rage, Sacred
+  Weapon, Shadowform, a reckless attack, Parry and the like), has its rounds counted
+  in your own turns.
+- The combat window lists what you have running with the rounds left. A click ends
+  one early.
+- When the time is up it ends by itself: a spell you concentrate on ends your
+  concentration, another takes its protection and later rolls with it, a feature is
+  switched off. The session's owner's game announces it.
+- A rage: at the end of a turn without an attack you are reminded what keeps it up.
+  A spell that takes hit points back at the end of your turns reminds you then.
+- Outside a session nothing is counted, as before, and when a session ends what still
+  runs is yours to end again.
+- Not counted: conditions, spells others cast on you, what was already running when
+  the fight started, and a beast form's hours.
+
 ## 0.9.0
 
 - Turn-based combat sessions. One player starts a session and owns it; the party or
