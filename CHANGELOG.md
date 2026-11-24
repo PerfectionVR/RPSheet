@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.8.1
 
 - The Unarmed Strike row's tooltip gives the save DC for a grapple or shove
   (8 + Strength + proficiency), and its explanation shows how the DC is worked out.
