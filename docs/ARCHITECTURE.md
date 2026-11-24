@@ -836,3 +836,27 @@ There is still no clock: only a running session counts, in the character's own t
 - **Text input:** `ns.AskFightText(prompt, default, go)`, a StaticPopup with an edit box.
 - **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
   window test types into every box.
+
+## Added in 0.12.0: creature templates
+
+`Data/CreatureList.lua` (the facts, one creature per line), `Data/Creatures.lua` (the
+parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
+
+- **Data.** `tests/data/site-creatures.txt` is the site's bestiary of the setting's
+  book reduced to names and numbers by a script in the site's page, and checked
+  against the page by a checksum per line; `Data/CreatureList.lua` is that file's
+  lines. `R.CREATURES[name]`, `R.CREATURE_ORDER`, `R.FindCreature`,
+  `R.DamagePartsText`. No descriptions are stored.
+- **In a session** a templated combatant is an `npc` member with `template = <name>`,
+  which `F.CleanMember` keeps only when the name is a known template, so it survives
+  a reload and a handover. `F.AddCreature("<template name>")` makes one.
+- **Attacks and forced saves:** `F.CreatureStrike(index, key)` and
+  `F.CreatureForce(index, key)`; damage goes out through `F.Hurt(key, list)`: to a
+  player as `D { parts }` (taken one type at a time, each when the sheet is idle), to
+  an owner's combatant through `F.AdjustDamage` and `F.ChangeCreatureHP`. Damage
+  that waits for a player's save sits in `F.pendingSaves[key]` until `F.owner.A`
+  calls `F.SaveResolved`.
+- **Window:** `F.picking` swaps the window's content for the list
+  (`UI.AddCreaturePicker`); `UI.AddCreatureTurn` lists a templated creature's rolls.
+- **Tests:** `tests/t-sync-solo.lua` (one client, no group, `math.random` scripted, and
+  the list held against the site file).

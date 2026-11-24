@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.12.0
+
+- Creature templates: the 84 creatures of the setting can be added to a combat
+  session from a list in the combat window ("Add a creature from the list"), with a
+  filter by name. Each comes with its Armor Class, hit points, initiative bonus,
+  saves, resistances, attacks and the saves it forces; its tooltip shows them.
+- On such a creature's turn the owner clicks its attacks: the roll is held against the
+  picked row's Armor Class and, on a hit, the damage is rolled and the target takes
+  it. A natural 20 doubles the dice.
+- The saves a creature forces are a click too: the picked combatant rolls, and the
+  damage follows the result (half on a success where that applies).
+- A creature from the list halves damage it resists, ignores what it is immune to and
+  doubles what it is vulnerable to, and rolls saves with its own bonus.
+- A session can be played alone: start one without a group, add a creature and run it
+  against your own character.
+
 ## 0.11.0
 
 - A combat session's owner can add combatants of their own: a creature, or a player

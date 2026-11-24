@@ -76,6 +76,8 @@ Data\SpellFormer.lua
 Data\SpellFormerText.lua
 Data\Conditions.lua
 Data\Lasting.lua
+Data\CreatureList.lua
+Data\Creatures.lua
 Data\Combat.lua
 Data\Maneuvers.lua
 Data\Forms.lua
@@ -439,9 +441,11 @@ Integrations\FightActions.lua
 Integrations\FightTimers.lua
 Integrations\FightCreatures.lua
 Integrations\FightOwnerTools.lua
+Integrations\FightStatBlocks.lua
 UI\FightWindowTurn.lua
 UI\FightWindowRunning.lua
 UI\FightAsk.lua
+UI\FightWindowCreatures.lua
 UI\FightWindowOwner.lua
 UI\FightWindow.lua
 
