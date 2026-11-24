@@ -5,9 +5,9 @@ You make a character with a step-by-step wizard, then click a check, a weapon, a
 an ability on the sheet: the addon rolls, does the sums the rules ask for, and tells your
 group the result.
 
-It follows the 2024 rules of D&D 5e (often called 5.5e) as used by the *D&D: World of Warcraft* setting book. You
-need the books for the full text of features; the addon handles the numbers and gives
-short summaries in its own words.
+It follows the 2024 rules of D&D 5e (often called 5.5e) as used by the *D&D: World of
+Warcraft* setting book. You need the books for the full text of features; the addon
+handles the numbers and gives short summaries in its own words.
 
 - **For whom:** players in a roleplay group or campaign that uses those rules, and DMs
   who want their players' rolls and numbers to be checkable.
@@ -43,7 +43,8 @@ short summaries in its own words.
   sheet, and the two cancel out as the rules say.
 - **Attack** with the weapon in hand: to hit, then damage, with critical hits, Fighting
   Styles, weapon mastery and magic bonuses counted. With no weapon in hand, an Unarmed
-  Strike (1 + Strength bludgeoning); its tooltip gives the save DC for a grapple or shove.
+  Strike (1 + Strength bludgeoning); its tooltip gives the save DC for a grapple or
+  shove.
 - **Cast** spells from a list with slots, save DC, dice, concentration, rituals,
   higher slots and components. A Mage has a spellbook window; classes that change
   prepared spells after a long rest have a window for that.
@@ -80,6 +81,23 @@ short summaries in its own words.
 - A stable for mounts, vehicles and companion creatures: buy them, ride them, and see
   the mount's speed on your Speed row.
 
+**Fight in turns**
+
+- A **combat session** for your party or raid: one of you starts it and owns it, the
+  others join from the combat window (`/sheet combat`, or the "Combat session" row of
+  the sheet). Whoever fights together picks the same group, one of the game's eight
+  target marks.
+- **Initiative** is rolled by everyone for their own character when the owner calls
+  for it, and the turns go round in that order. Someone who joins a fight that is
+  running rolls too and acts when their place comes up.
+- **On your turn** the window lists what your character can do: its attack, abilities,
+  prepared spells and the actions everyone has. What it can't do right now is grey
+  and says why (action used, no slot left, not your turn).
+- **The owner's game announces** for everyone: whose turn it is, each player's rolls,
+  whether an attack roll hits the combatant it was aimed at, and who drops to 0.
+- Your hit points, slots and resources from **before the fight** are kept: afterwards
+  you put them back or keep the outcome.
+
 **Share with the group**
 
 - Announcements go to Emote, Party or Raid, or to yourself only.
@@ -112,7 +130,7 @@ addon needs are added when a release is built and are not stored in the reposito
 ### Building it yourself
 
 Releases are built by the [BigWigsMods packager](https://github.com/BigWigsMods/packager)
-from `.pkgmeta`. Pushing a tag such as `v0.6.0` publishes a release; a tag containing
+from `.pkgmeta`. Pushing a tag such as `v1.2.3` publishes a release; a tag containing
 `alpha` or `beta` is published as that type. To run a development copy straight from a
 clone, copy the libraries listed under "Bundled libraries" into a `Libs` folder, or run
 the packager locally.
@@ -257,6 +275,7 @@ the Customize page that goes with it.
 | `/sheet undo` | Takes back the last rest, until your next roll, spell, damage or rest. |
 | `/sheet tab <name>` | Opens a tab of the sheet: actions, checks, skills, traits, items, trade (a unique start of the name is enough). |
 | `/sheet items` | Opens or closes the item browser. |
+| `/sheet combat` | Opens or closes the combat window. |
 | `/sheet level` | Opens the level dialog when a level can be taken. |
 | `/sheet help` | Lists the commands. |
 | `/sheet damage 14` | Takes 14 damage without a type. |
@@ -276,6 +295,7 @@ back every Hit Die, backgrounds give the ability scores and an origin feat, ever
 subclass starts at level 3, weapons have a mastery, the concentration save stops at
 DC 30, a healing potion is a bonus action, and an Unarmed Strike can grapple or shove
 against a save DC. It doesn't offer the 2014 rules.
+
 The thirteen World of Warcraft classes each build on a Player's Handbook class (Death
 Knight and Paladin on Paladin, Demon Hunter and Hunter on Ranger, Evoker on Sorcerer,
 Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
@@ -292,8 +312,8 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
   feats and faction perks are added the same way.
 - **Rolls:** advantage and disadvantage from conditions, armor, features, feats, items
   and a loyal companion; Strength and Dexterity saves that fail without a roll while
-  paralyzed, petrified, stunned or unconscious; a natural 20 doubling the damage dice; exhaustion on every
-  d20 and on speed.
+  paralyzed, petrified, stunned or unconscious; a natural 20 doubling the damage
+  dice; exhaustion on every d20 and on speed.
 - **Casting:** the lowest free slot that fits (or the one set at "Cast at"), extra dice
   and other growth with a higher slot, concentration (a new spell ends the earlier
   one), the concentration save when you take damage, protective spells cast on
@@ -332,6 +352,24 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
 | Check that you carry the tool | Customize > Professions | Needing the profession's tool among your items to make or gather something. |
 
 Both are on by default and are kept per character.
+
+### Combat sessions
+
+| Rule | How the session applies it |
+|---|---|
+| Initiative | Each player rolls the sheet's own initiative, with its advantage, conditions and bonuses. The order is the totals from high to low and stays the same every round. A tie goes to the higher Dexterity modifier, then by name. |
+| Joining a running fight | The rules have no separate rule for it: the newcomer rolls initiative like everyone and takes that place in the order. |
+| A turn | One action, one bonus action, and only one spell that spends a slot. The Attack action is as many attacks as Extra Attack gives; Action Surge gives a second action. What the turn doesn't allow is refused with the reason, in the combat window and on the sheet alike. |
+| Reactions | Usable on anyone's turn, once, and back at the start of your own. |
+| What a feature costs | Read from how its description starts ("Bonus action: ...", "Reaction: ..."); a spell's from its casting time. A spell that takes a minute or longer, or a ritual, is not offered in a fight. |
+| Attack rolls | Aimed at a combatant (click their row, or target them in the game), the owner's game compares the total with their Armor Class and says hit or miss; a natural 20 hits and a natural 1 misses. Damage is taken by the target's own player with "Take damage". |
+
+A session reaches the people in your party or raid. Alone, you can still start one to
+try it.
+
+**WoW Forever** lets an addon speak in chat only straight from a click. The owner's own
+lines go out as they click; lines the owner's game makes for other players' rolls are
+shown to the owner with a [Send it] link.
 
 ### Strict places and free places
 
@@ -410,7 +448,7 @@ how the parts work together.
 | `Sheet/` | The saved character and the numbers worked out from it: storage per profile, conversion of old sheets, classes and multiclassing, derived numbers, trackers, defenses, inventory, mounts, professions, the upkeep that puts features, picks and spells on the sheet, explanations, export and import |
 | `Actions/` | What the character does: announcing, dice, attacks, abilities, spells, scrolls, conditions, damage, rests, death saves, gathering, trade |
 | `UI/` | The sheet window: themes, the window, bar and tab widgets, rows, the sheet's sections and tabs, the item browser and its sources, the spellbook and prepared-spells windows, the dialog skin, the minimap icon |
-| `Integrations/` | The Total RP 3 tooltip section, syncing with other players, term links in chat |
+| `Integrations/` | The Total RP 3 tooltip section, syncing with other players, term links in chat, combat sessions (`Fight*.lua`) |
 | `Options/` | The settings window: one file per tab or Customize page, the level dialog in parts, assembled by `Root.lua` |
 | `Wizard/` | Character creation: grants, the draft, more classes, Fighting Styles, the starting closet and gear sets, the pages, the dialog |
 | `tests/` | Regression tests that run the code outside the game (not shipped) |
@@ -427,190 +465,22 @@ and what it can't check (nothing is drawn). Release zips leave the folder out.
 
 ## Not built yet
 
-What the rules have that the addon doesn't, kept here to track the remaining work.
-
-**Classes**
-
-All thirteen classes and their subclasses have been checked against the rules, feature
-by feature. The Warrior, the Mage and the Druid have been played in game so far; the
-other ten still need that.
-
-- [x] Warrior, with Battle Master, Champion and all 25 maneuvers
-- [x] Rogue, Monk (with the brews of the Warrior of Mystic Brews), Hunter, Demon Hunter
-- [x] Paladin, Death Knight, Shaman (with totems and the Path of the Elements), Druid, Priest
-- [x] Mage, Warlock (with all Eldritch Invocations, the setting's own included) and
-      Evoker (with Metamagic)
-- [x] A second check of the twelve classes after the Warrior against the rules, by
-      one reviewer per class; what they found is fixed. The Warrior was checked the
-      same way afterwards
-- [x] Path of the Berserker (Shaman) and the War Domain (Priest), which the rules also list
-- [x] Invocations that can be taken more than once; a Death Knight's undead steed
-- [x] Rage and Reckless Attack only for Strength attacks; speed features and Martial
-      Arts that stop in the armor the rules name
-- [x] Curse of Agony (Warlock): the die grows after each failed save. Click the spell
-      again for each one; right-click ends it
-- [x] Metamorphosis (Demon Hunter): casting it asks which of the three benefits you
-      take and applies it, as a passive you switch off when the spell ends
-- [x] Metamorphosis: force damage from your own spells and ability dice counted for
-      Devourer, through a damage type you set on them
-- [x] Tactical Mind (Warrior), Psi-Bolstered Knack and Homing Strikes (Rogue): one
-      click takes the use or die back when the roll still failed; Psychic Whispers is
-      free the first time after a long rest
-- [x] Rend Mind and Psychic Veil (Rogue): once the free use is gone, the sheet spends
-      the dice a further use costs
-- [x] Student of War (Warrior): the artisan's tools are chosen in the level dialog
-- [x] Hunter pets: the 48 pet families, the companion's hit points and strike, and Pet
-      Specialization at level 6 in place of Roving
-- [x] The companion's own checks and saves; its strike rolls the charge die, names
-      prone or grapple, and uses the family's mastery when it is one of your picks
-- [x] The companion's Armor Class, speed and darkvision on the sheet
-- [x] The companion's two strikes at level 11 in one click
-- [x] The companion's mastery pick changed once per long rest
-- [x] Cat Form and Bear Form for the Circle of the Moon: the sheet takes the form's
-      Armor Class, speed, Strength and Dexterity while it is on
-- [x] Fifteen beasts as Wild Shape forms a druid picks from when levelling, with their
-      Armor Class, speed, Strength, Dexterity and attacks
-- [x] A beast form stops spellcasting, and ends at 0 hit points, when incapacitated,
-      and on a rest that outlasts it (a short rest below level 4, a long rest below
-      level 18)
-- [x] Ninety beasts as Wild Shape forms, grouped by challenge rating, the larger ones
-      for the Circle of the Moon; a form's own Constitution and senses
-- [x] Beast attacks whose damage depends on the situation (a charge, a Bloodied target,
-      a thinned swarm) have a second row that rolls it; a beast's own skill bonuses
-      are used where they beat yours
-- [x] A beast's own saving throw proficiencies and bonuses where they beat yours
-- [x] Always-prepared subclass spells added to the spell list by themselves
-- [x] A Death Knight's spells, following the rune, and a Demon Hunter's fixed spells
-      added by themselves
-- [x] A Demon Hunter's set of spells, following the specialization
-- [x] Expertise picks in the level dialog (Rogue, Hunter, Mage's Scholar)
-- [x] Arcane Recovery, Font of Magic and Magical Cunning change spell slots by the click
-- [x] Slots made with Font of Magic go above the usual number of slots, until a long rest
-- [x] A Warlock's Mystic Arcanum spells and a Mage's Spell Mastery and Signature Spells
-      chosen in the level dialog and cast without a slot as the rules allow
-- [x] Mystic Arcanum: one spell exchanged per level
-- [x] Multiclassing: a level in another class from the Character tab or in the
-      creation wizard, with the ability scores it needs and its reduced training;
-      hit points, Hit Dice, features, resources, subclass, Fighting Style, prepared
-      spells and spell slots worked out class by class
-
-**Spells**
-
-- [x] Core-rule spells of every level, with level, save or attack, dice and concentration
-- [x] Hand-written summaries for every core spell above 1st level
-- [x] Extra dice when a spell is cast with a higher slot, chosen with the "Cast at" row
-- [x] Spells that grow in another way with the slot: more targets, longer durations
-      and fixed amounts are stated, second dice parts and fixed bonuses are rolled
-- [x] The starting number of targets of the twenty plain "one more target per slot
-      level" spells read against the rules once more: all correct
-- [x] Spells that make several attacks roll them all in one click (Scorching Ray,
-      Eldritch Blast, Flurry, Azure Strike)
-- [x] Ritual casting: right-click a ritual spell to cast it without a slot
-- [x] Casting times, and components with a price, shown on each spell
-- [x] A Mage's spellbook: a page under Customize to write spells in and take them
-      out, and a spellbook window on the sheet to cast from and to prepare spells
-- [x] Spells chosen when a character is made and when it levels: the cantrips of
-      every spellcasting class, and a Mage's spellbook spells (six, and two per level)
-- [x] The prepared spells of the other classes chosen the same way, exactly as many
-      as the class prepares; spells added by hand before count as picks
-- [x] How often prepared spells may be swapped, by class: one per level in the level
-      dialog, or after a long rest (all, or one) in a window on the sheet
-- [x] Reopening the level dialog for a level you already have only fills in what is
-      open: chosen spells and cantrips stay. One cantrip exchanged per level (a Mage
-      none)
-- [x] Copying a found spell into the book for 50 gp a level, taken from your coins
-- [x] A spellbook's prepared spells changed only after a long rest (until the first
-      spell cast after it; the Customize page is free)
-- [x] Gold tracked on the sheet (see the inventory below)
-- [x] Spell components with a price checked against, and taken from, the inventory
-- [x] Components that are a weapon (True Strike, Steel Wind Strike, Conjure Barrage,
-      Conjure Volley) or coins (Gentle Repose, Detect Thoughts); components needed
-      once per target are asked for and taken per target
-
-**Character**
-
-- [x] Tool proficiencies: granted by class and background or ticked by hand, with a
-      check to click for each
-- [x] Professions: they follow your tool proficiencies and your skill follows your
-      proficiency bonus; gathering checks by region, materials, archaeology,
-      disenchanting, and crafting listed items with tool, skill and cost checks
-- [x] Crafting every magic item a profession's skill opens (over 300 more), scribing
-      and reading spell scrolls, building powered vehicles, and needing the tool in
-      your inventory
-- [x] An armoury for weapons of your own, kept between characters: save, add a copy,
-      rename, delete, and share one as a text string
-- [x] Armor's disadvantage on Stealth, and the speed heavy armor costs without the
-      Strength for it
-- [x] Coins with change, an inventory of gear with prices and weights against your
-      carrying capacity, and magic items: equipped and attuned (three at most), with
-      bonuses the sheet applies; a magic bonus on weapons; starting gold in the wizard
-- [x] A starting closet in the creation wizard: take as much plain gear as you like
-      and tick what you wear and wield
-- [x] Armor, shields and basic weapons in the inventory linked to Defense and Weapons:
-      equipping one puts it on or readies it, putting it away undoes that
-- [x] Magic items that set an ability score or a speed, and about fifty whose bonus
-      depends on the situation (the part that always holds is counted)
-- [x] The starting gear of each class and background, taken into the closet with one
-      button
-- [x] Swimming, climbing and flying speeds as numbers next to Speed
-- [x] The choices inside a starting gear set picked from a dropdown in the wizard
-- [x] Carrying more than you can holds your speed to 5 feet
-- [x] Magic and named armor, shields and weapons equipped from the inventory: an item
-      can count as a plain one and carry a magic bonus; a weapon of your own is
-      readied by an item of the same name
-- [x] Mounts, vehicles and companion creatures: a stable to add and buy them, riding
-      (the mount's speed on the Speed row), and companions with loyalty and gifts
-- [x] Renown discounts on prices: name the faction whose merchant is selling
-- [x] Companion gifts counted: advantage on death saves, 1d4 off psychic damage, a
-      swim speed
-- [x] Made and summoned mounts in the stable (carpets, figurines, summoned steeds)
-- [x] Senses and damage resistances shown on the sheet, gathered from the species, the
-      beast form and the passives switched on
-- [x] Immunities, vulnerabilities and conditions you can't be put under, next to the
-      resistances; "Take damage" and "Heal" apply them, temporary hit points and the
-      rules for dropping to 0
-- [x] Protection from spells cast on yourself (Stoneskin, Protection from Energy and
-      others): switched on by the casting, ended by a rest, by concentration or by
-      hand; Heavenly Spirit's damage types and Boon of the Night Spirit's resistance
-- [x] Spell protection that rolls its reduction (Resistance, Time Dilation) and
-      Warding Bond for both the caster and the one guarded
-- [x] The perks every faction gives at each renown tier, shown with the score
-- [x] Each faction's own renown perks, shown per tier; the sheet applies what it can
-      (a language, tool or skill from the faction's trainers, and blessings)
-- [x] Renown gained by rule: a stronghold in a faction's lands, and the other factions
-      of your side reaching a tier; renown with both the Explorers' League and the
-      Reliquary is flagged
-- [x] Renown by rule remembers the highest tier each faction reached
-- [x] The skills a feat lets you choose (Skilled, Skill Expert), picked on the Character tab
-- [x] The choices inside a feat, asked for where the feat is taken: Magic Initiate's
-      list, ability and spells, the skill of Keen Mind and Observant, Elemental
-      Adept's damage type, Crafter's tools, Musician's instruments, the spells of
-      Fey-Touched, Shadow-Touched and Ritual Caster, the Boons of Skill and Energy
-      Resistance
-- [x] Skilled's tools in place of skills; Weapon Master unlocking a mastery;
-      Inscription Adept's higher spells
-
-**Play**
-
-- [x] Conditions changing your own rolls and speed by themselves
-- [x] The concentration save rolled when you take damage; a failure ends the spell
-- [ ] Conditions and effects that end by themselves: they will be counted in turns
-      by the turn-based combat below. Until then a beast form's hours, Metamorphosis
-      after its minute and a spell's duration end by a rest or by hand; there is no
-      clock outside combat. A rest assumes you were in a beast form from its start
-- [ ] An in-game play-through of the ten classes other than the Warrior, Mage and Druid
-- [ ] Initiative order and turn tracking
-- [ ] A view for the DM of the whole party
-
-**Addon**
-
-- [ ] Syncing confirmed in game by two players. It is simulated with two and three
-      players in `tests/t-sync-*.lua`; the in-game script is in
-      [docs/MANUAL-CHECKS.md](docs/MANUAL-CHECKS.md)
-- [x] The creation wizard and level dialog drawn in the sheet's theme: frame, title,
-      headings, text and buttons
-- [x] Themed tick boxes, sliders, dropdowns, typing boxes and scroll bars; the
-      settings window and the item browser in the sheet's theme
+- **Durations counted in rounds.** Combat sessions have turns and rounds, but what
+  lasts a while (a spell's duration, a beast form's hours, "once a turn" effects) is
+  not yet ended by them: those still end by a rest or by hand. There is no clock
+  outside combat, and none is planned.
+- **More for a session's owner:** creatures of their own in the order, asking a
+  combatant for a save or dealing damage to one, handing the session to someone else,
+  and running a row for a player without the addon.
+- **Movement** in a turn is not counted.
+- **Combat sessions tried in game.** They are simulated with four players in
+  `tests/t-sync-fight.lua` and clicked through for every class in
+  `tests/t-test-windows-fight.lua`.
+- **Playing every class in game.** The Warrior, the Mage and the Druid have been
+  played; the other ten run only in the tests.
+- **Syncing confirmed in game by two players.** It is simulated with two and three
+  players in `tests/t-sync-*.lua`; the in-game script is in
+  [docs/MANUAL-CHECKS.md](docs/MANUAL-CHECKS.md).
 
 ## State of the rules
 
@@ -623,7 +493,7 @@ Two things hold for everything, so they are said once here:
 
 - **Time.** The sheet keeps no clock. Whatever lasts a while (a spell's duration,
   concentration, Rage, a beast form, Sacred Weapon, a blessing for the length of a
-  quest) ends by hand or by a rest; turn-based combat will count it. Concentration
+  quest) ends by hand or by a rest; combat sessions don't count it yet. Concentration
   itself is tracked: a new spell ends the old one and damage asks for the save.
 - **Played in game.** Only the Warrior, the Mage and the Druid have been played in
   World of Warcraft so far. The other ten classes run only in the test environment
@@ -683,14 +553,6 @@ and blessings. Class passives are in the classes table.
 
 Small gaps left in what is built. None is planned; say so if one matters to you.
 
-- **No turns yet** (they come with turn-based combat; there is no clock outside it): a beast form's hours,
-  Metamorphosis after its minute, spell durations, "once a turn" protection such as
-  Resistance, and temporary flight (Draconic Flight and the like) are ended or
-  switched by hand or by a rest.
-- **Multiclassing**: two classes built on the same core class (Paladin with Death
-  Knight, Hunter with Demon Hunter) can't be combined: by the rules they are one
-  class with different subclasses. Weapon Mastery picks from several classes add
-  up, which is one reading of a rule tables disagree on.
 - **Spells**: a weapon of your own (one not based on a listed weapon) serves as a
   spell's weapon component only once you set its worth, so that claws or a bite
   don't count.

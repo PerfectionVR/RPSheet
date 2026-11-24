@@ -233,3 +233,18 @@ Blocked messages and versions:
 - [ ] N1d. Log in on a character or Total RP 3 profile without a sheet, close the wizard with the window's own close button, log out, and look at `WTF/Account/<name>/SavedVariables/RPSheetDB.lua`. *No entry under `sheets` for that key; the entries of characters that exist are untouched.*
 - [ ] N2. Log in while in combat on a fresh profile. *The wizard is not opened in combat.*
 - [ ] N3. Open and use the sheet during combat. *Clicks, rolls and the settings window work; no "action blocked" message.*
+
+## O. Combat sessions (two players, A and B, in a party)
+
+- [ ] O1. A types `/sheet combat` and clicks "Start a combat session". *A's chat line says so; B is told and B's combat window offers "Join the session".*
+- [ ] O2. B joins and clicks the skull. *Both windows list both characters with hit points and Armor Class; B has the skull in front of the name.*
+- [ ] O3. A clicks "Call for initiative"; both roll. *Each roll is announced once, by A's game, with the mark; then "Round 1. ...'s turn." and the window of the one whose turn it is opens with "Your turn".*
+- [ ] O4. The one whose turn it is clicks the other's row, then attacks. *A's game announces the attack with "hits" or "misses" and the Armor Class.*
+- [ ] O5. Attack again, then hover a greyed action. *The second attack is refused (without Extra Attack); the tooltip says "Not now" and why.*
+- [ ] O6. The other player clicks an attack out of turn on the sheet itself. *Refused with "It is ...'s turn."*
+- [ ] O7. "End turn", round the table twice. *Turn and round lines are announced; the action is free again each turn.*
+- [ ] O8. A third player joins now. *They are asked to roll and act when their place comes up.*
+- [ ] O9. A takes damage to 0 with "Take damage". *"... drops to 0 hit points." is announced; the window shows a death save on A's turn.*
+- [ ] O10. A reloads mid-fight. *After a few seconds the session is back on both sides with the same turn.*
+- [ ] O11. A ends the session; B clicks "Put my character back as before the fight". *B's hit points, slots and resources are as when B joined.*
+- [ ] O12. In WoW Forever, as owner. *Your own lines go out with your clicks; lines for the other player's rolls wait behind a [Send it] link.*

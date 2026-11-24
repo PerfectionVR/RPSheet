@@ -35,7 +35,9 @@ local function GroupChat(channel)
 end
 
 -- `text` reads as a continuation of the character's name: "rolls Stealth: 14 + 5 = 19".
-function RPSheet:Announce(text)
+-- `speaker` is for a combat session's owner (Integrations/FightGate.lua): the name of
+-- the combatant the line is about, or "" for a line that needs no name in front.
+function RPSheet:Announce(text, speaker)
     local channel = Known(self.db.profile.channel)
     -- A rest can be taken back until something else is announced (Actions/RestUndo.lua).
     if ns.RestUndoExpire then ns.RestUndoExpire() end
@@ -43,7 +45,8 @@ function RPSheet:Announce(text)
     -- refuses and what would read as a colour or link code: line breaks become spaces,
     -- the rest is left out.
     text = ns.Codec.PlainText((text:gsub("%c+", " ")))
-    local name = ns.Codec.PlainText((self:GetCharacterName():gsub("%c+", " ")))
+    local name = ns.Codec.PlainText(((speaker or self:GetCharacterName()):gsub("%c+", " ")))
+    local named = name ~= "" and (name .. " ") or ""
     -- When the chosen channel can't be used the line is shown to the player alone, with
     -- the reason, so it is never mistaken for an announcement others saw.
     local why, chatType = nil, channel
@@ -54,7 +57,7 @@ function RPSheet:Announce(text)
         why = "the game blocks addon chat messages right now"
     end
     if why or channel == "SELF" then
-        local line = name .. " " .. text
+        local line = named .. text
         if why then
             line = ("%s |cff999999(only you see this: %s)|r"):format(line, why)
         end
@@ -62,7 +65,8 @@ function RPSheet:Announce(text)
         return
     end
     -- Emotes are already prefixed with the character's name by the game.
-    local lead = channel == "EMOTE" and "" or (ns.Codec.Cut(name, MAX_NAME) .. " ")
+    local lead = ns.Codec.Cut(name, MAX_NAME) .. (name ~= "" and " " or "")
+    if channel == "EMOTE" then lead = speaker and ("announces: " .. lead) or "" end
     -- A line too long for one message goes out as several (Actions/AnnounceSplit.lua),
     -- each starting with the name like the first.
     local parts = {}
@@ -70,7 +74,7 @@ function RPSheet:Announce(text)
         parts[#parts + 1] = lead .. part
     end
     -- Sent, or held for a click when the game refuses it (Actions/AnnounceHeld.lua).
-    self:SendAnnouncement(parts, chatType, name .. " " .. text)
+    self:SendAnnouncement(parts, chatType, named .. text)
 end
 
 -- Switches to the next announce channel.

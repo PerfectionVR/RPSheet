@@ -13,7 +13,7 @@ local saved = RPSheet.db.char
 local characters, tabsOpened = 0, 0
 
 local function CloseExtras()
-    for _, key in ipairs({ "itemWindow", "bookWindow", "preparedWindow" }) do
+    for _, key in ipairs({ "itemWindow", "bookWindow", "preparedWindow", "fightWindow" }) do
         local window = RPSheet[key]
         if window and window.frame:IsShown() then window:Hide() end
     end

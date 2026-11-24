@@ -35,6 +35,7 @@ function RPSheet:OnEnable()
     self:BuildMinimapIcon()
     ns.HookTRP3Tooltip(self)
     self:EnableSync()
+    self:EnableFight()
     ns.EnableChatLinks()
 
     -- Follow Total RP 3: when its profile loads or the player switches profile,

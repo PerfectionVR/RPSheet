@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.0
+
+- Turn-based combat sessions. One player starts a session and owns it; the party or
+  raid joins from the new combat window (`/sheet combat`, or the "Combat session" row
+  of the sheet), each under one of the eight target marks as their group if they like.
+- Initiative: everyone rolls for their own character when the owner calls for it; the
+  turns go round in that order. Joining a fight that is running: roll initiative and
+  act when your place comes up.
+- On your turn the combat window lists your attack, abilities, prepared spells and the
+  actions everyone has. What you can't do right now is grey and says why. A turn is
+  one action, one bonus action and one spell with a slot; Extra Attack and Action
+  Surge are counted; a reaction comes back at the start of your turn. The sheet's own
+  rows hold to the same during a fight.
+- The owner's game announces whose turn it is, every player's rolls with their group's
+  mark, whether an attack roll hits the combatant it was aimed at, and who drops to 0
+  hit points.
+- Joining keeps your hit points, slots, resources and conditions from before the
+  fight; afterwards you put them back or keep the outcome.
+- Not in this version: durations counted in rounds, creatures run by the owner,
+  damage and saves asked for by the owner, and movement.
+
 ## 0.8.1
 
 - The Unarmed Strike row's tooltip gives the save DC for a grapple or shove
