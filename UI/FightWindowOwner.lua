@@ -40,7 +40,9 @@ end
 function UI.AddFightOwner(self, body, session)
     UI.AddHeading(body, "Your session")
     local holder = session.phase == "RUN" and session.members[session.turn or ""]
-    if holder and holder.npc then
+    if holder and holder.npc and UI.AddCreatureTurn(body, holder) then
+        -- its own attacks and saves are listed (UI/FightWindowCreatures.lua)
+    elseif holder and holder.npc then
         Row(body, ("Roll an attack for %s"):format(holder.name),
             "Type its attack bonus, for example +5. Your game rolls the d20; with a combatant's row picked it also says whether the attack hits. Deal the damage with \"Deal damage\".",
             function() ns.AskFightText(("%s attacks: its attack bonus"):format(holder.name), "+0", function(text) F.CreatureAttack(text) end) end)
@@ -54,6 +56,11 @@ function UI.AddFightOwner(self, body, session)
         Row(body, "Next turn", "Ends the turn that is running and gives it to the next in the order: for a combatant you run, or someone who can't end theirs.", function() F.NextTurn() end)
         Row(body, "Call for initiative again", "A new fight in the same session: everyone rolls again.", function() F.CallInitiative() end)
     end
+    Row(body, "Add a creature from the list", "The creatures of Azeroth with their numbers: Armor Class, hit points, saves, attacks and what they resist. One you add knows its attacks, so on its turn you click them instead of typing.",
+        function()
+            F.picking = true
+            F.Changed()
+        end)
     Row(body, "Add a combatant you run",
         "A creature, or a player without the addon. Type its name, Armor Class and hit points, and its initiative bonus if it has one, for example Gnoll 13 22 +1. It gets a row like everyone; your game rolls its initiative, and you roll its attacks and saves and keep its hit points from here.",
         function() ns.AskFightText("A combatant you run: name, Armor Class, hit points, initiative bonus", "", F.AddCreature) end)

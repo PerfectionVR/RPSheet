@@ -80,6 +80,20 @@ for index, key in ipairs(R.CLASS_ORDER) do
             if Creature("Gnoll") then Problem(label .. ": the combatant is still there after it was removed") end
             FT.target = nil
         end
+        -- the list of creatures: opened, narrowed, one added, closed
+        Ask(label, "Add a creature from the list")
+        if not FT.picking then Problem(label .. ": the creature list didn't open") end
+        Look(label .. " creature list")
+        Ask(label, "Name has:", "fel")
+        if #FT.CreatureMatches(FT.pickFilter) ~= 4 then Problem(label .. ": the filter gives " .. #FT.CreatureMatches(FT.pickFilter) .. " creatures") end
+        Look(label .. " creature list, narrowed")
+        Ask(label, "Felguard  CR 4")
+        local felguard = Creature("Felguard")
+        if not (felguard and FT.Template(FT.session.members[felguard])) then Problem(label .. ": a click in the list didn't add the creature") end
+        Ask(label, "Show all of them")
+        Ask(label, "Back to the fight")
+        if FT.picking then Problem(label .. ": the creature list didn't close") end
+        if felguard then FT.RemoveCreature(felguard) end
         Try(label .. " call", function() FT.CallInitiative(); F.Settle() end)
         Look(label .. " rolling")
         Try(label .. " roll", function() FT.RollInitiative(); F.Settle() end)
@@ -120,6 +134,26 @@ for index, key in ipairs(R.CLASS_ORDER) do
             local round = FT.session.round
             Try(label .. " end turn", function() FT.EndTurn(); F.Settle() end)
             if FT.session.round ~= round + 1 or FT.used.action then Problem(label .. ": ending the turn alone didn't start the next round") end
+            -- a creature from the list takes its turn: its attacks and saves are rows of the owner's
+            Try(label .. " add creature", function() FT.AddCreature("Doomguard"); F.Settle() end)
+            local doomguard = Creature("Doomguard")
+            for _ = 1, 3 do
+                if FT.session.turn ~= doomguard then Try(label .. " next turn", function() FT.NextTurn(); F.Settle() end) end
+            end
+            if not doomguard or FT.session.turn ~= doomguard then
+                Problem(label .. ": the creature's turn didn't come up")
+            else
+                FT.target = FT.Me()
+                Look(label .. " the creature's turn")
+                local hp = RPSheet:State().hp
+                Ask(label, "Fel Claw")
+                Ask(label, "Gore")
+                Ask(label, "War Stomp")
+                if not FT.owedSave then Problem(label .. ": the creature's War Stomp asked no save of the character") end
+                Look(label .. " the creature's turn, a save owed")
+                FT.owedSave, FT.target = nil, nil
+                RPSheet:State().hp = hp
+            end
         end
         Try(label .. " end", function() FT.End(); F.Settle() end)
         if FT.session then Problem(label .. ": the session is still there after its end") end

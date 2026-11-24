@@ -259,3 +259,8 @@ Blocked messages and versions:
 - [ ] O21. "Ask for a saving throw", `DEX 15`. *They are told and get a "Roll the Dexterity save" row; after their roll your game adds "succeeds" or "fails against DC 15".*
 - [ ] O22. Pick the Gnoll and deal it more damage than it has. *"Gnoll drops to 0 hit points."; its turn no longer comes up.*
 - [ ] O23. Pick the other player and click "Hand the session over". *They get the owner's rows, you lose them, and their game announces the next turn.*
+- [ ] O24. Alone, without a group: `/sheet combat`, "Start a combat session", "Add a creature from the list", click "Name has" and type `fel`, click Felguard, "Back to the fight". *A Felguard row with AC 17 and 60 hit points; its tooltip in the list showed its attacks.*
+- [ ] O25. "Call for initiative", roll yours. *The Felguard's roll is announced; the turns start.*
+- [ ] O26. On the Felguard's turn click your own row, then "Fel Battleaxe". *The roll is announced with hit or miss against your Armor Class; on a hit your sheet takes the slashing and then the fire damage.*
+- [ ] O27. Click the Felguard's row, "Deal damage", `10 fire`, then `10 poison`. *5 (resisted), then none (immune).*
+- [ ] O28. Add a Doomguard; on its turn pick your row and click "War Stomp". *You get a "Roll the Strength save" row; after your roll the damage follows, halved on a success.*

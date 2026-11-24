@@ -16,6 +16,7 @@
 --   FightTimers.lua    what lasts a number of rounds
 --   FightCreatures.lua combatants the owner runs
 --   FightOwnerTools.lua  saves and damage the owner asks for, handing the session on
+--   FightStatBlocks.lua  combatants made from a creature template
 --   UI/FightWindow*.lua  the window
 local _, ns = ...
 
@@ -70,6 +71,8 @@ function F.CleanMember(data)
         hp = Num(data.hp, 0, 9999, 0),
         max = Num(data.max, 1, 9999, 1),
         npc = data.npc == true or nil, -- run by the session's owner (FightCreatures.lua)
+        -- the creature template it was made from (FightStatBlocks.lua)
+        template = data.npc == true and type(data.template) == "string" and ns.Rules.CREATURES[data.template] and data.template or nil,
     }
 end
 
