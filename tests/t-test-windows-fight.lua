@@ -7,7 +7,7 @@ dofile(ARG3 .. "/t-test-windows-base.lua")
 Start()
 
 local FT = ns.Fight
-local characters, rows, actions, greyed = 0, 0, 0, 0
+local characters, rows, actions, greyed, running = 0, 0, 0, 0, 0
 
 local function Look(where)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
@@ -52,6 +52,14 @@ for index, key in ipairs(R.CLASS_ORDER) do
                 end
             end
             Look(label .. " turn, after acting")
+            -- what the actions left running is listed with its rounds, and a click ends it
+            for _, timer in ipairs(CopyTable(FT.SyncTimers())) do
+                running = running + 1
+                if FT.TimerText(timer) == "" then Problem(label .. ": " .. timer.name .. " runs without a time") end
+                Try(label .. " end " .. timer.name, function() FT.EndTimer(timer.kind, timer.name); F.Settle() end)
+                Dismiss()
+            end
+            if #FT.SyncTimers() > 0 then Problem(label .. ": something still runs after everything was ended") end
             -- everything that costs an action is greyed once the action is spent
             RPSheet.busy = false
             FT.used.action, FT.used.attacks, FT.used.bonus = true, 0, true
@@ -66,6 +74,7 @@ for index, key in ipairs(R.CLASS_ORDER) do
         end
         Try(label .. " end", function() FT.End(); F.Settle() end)
         if FT.session then Problem(label .. ": the session is still there after its end") end
+        if RPSheet:State().fightTimers then Problem(label .. ": rounds are still counted after the session") end
         Look(label .. " after the fight")
         if not FT.HasSnapshot() then Problem(label .. ": no state from before the fight is kept") end
         Try(label .. " restore", function() FT.RestoreSnapshot(); F.Settle() end)
@@ -74,4 +83,5 @@ for index, key in ipairs(R.CLASS_ORDER) do
     end
 end
 
-Finish("fight", ("%d characters, %d rows hovered, %d actions clicked, %d greyed with a reason"):format(characters, rows, actions, greyed))
+if running == 0 then Problem("no action of any class left something running for the window to list") end
+Finish("fight", ("%d characters, %d rows hovered, %d actions clicked, %d greyed with a reason, %d running things ended"):format(characters, rows, actions, greyed, running))
