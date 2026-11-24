@@ -145,6 +145,7 @@ function NewWorld()
         now = 1000, clients = {}, wire = {}, queue = {}, chatLog = {}, violations = {},
         latency = 0,           -- seconds a message is on its way
         bareSenders = false,   -- true: senders of the same realm arrive without "-Realm"
+        regional = false,      -- true: WoW Forever's names, "Given Family" with no realm (set before AddClient)
         tamper = false,        -- function(message) -> list of messages to deliver in its place
     }, World)
 end
@@ -162,6 +163,7 @@ function World:AddClient(who)
         lockdown = false, combat = false,
     }, Client)
     client.full = client.name .. "-" .. client.realm
+    if self.regional then client.family = who.family or "Family"; client.full = client.name .. " " .. client.family end
     self.clients[#self.clients + 1] = client
     return client
 end
@@ -285,6 +287,7 @@ end
 
 -- The name a receiver sees a sender under.
 local function SenderFor(world, from, to)
+    if world.regional then return from.full end
     if world.bareSenders and from.realm == to.realm then return from.name end
     return from.full
 end
@@ -300,7 +303,7 @@ local function Recipients(world, from, chatType, target)
         return list
     elseif chatType == "WHISPER" then
         if type(target) ~= "string" or target == "" then return nil, RESULT.TargetRequired end
-        if not target:find("-", 1, true) then target = target .. "-" .. from.realm end
+        if not world.regional and not target:find("-", 1, true) then target = target .. "-" .. from.realm end
         local to = world:Find(target)
         if not to then
             from.system[#from.system + 1] = ("No player named '%s' is currently playing."):format(target)
@@ -493,12 +496,18 @@ local function BuildEnv(client)
     function env.UnitName(unit)
         local other = Resolve(client, unit)
         if not other then return nil end
+        -- Forever: the given name, then the family name where retail gives the realm.
+        if world.regional then return other.name, other.family end
         return other.name, other.realm ~= client.realm and other.realm or nil
     end
     env.UnitNameUnmodified = env.UnitName
+    if world.regional then
+        env.C_GameRules = { IsGameRuleActive = function() return false end }
+        env.Enum = setmetatable({ GameRule = { RPRuleset = 1, PvPRuleset = 2, HardcoreRuleset = 3 } }, { __index = env.Enum })
+    end
     function env.UnitFullName(unit)
         local other = Resolve(client, unit)
-        if other then return other.name, other.realm end
+        if other then return other.name, world.regional and other.family or other.realm end
     end
     function env.UnitExists(unit) return Resolve(client, unit) ~= nil end
     function env.UnitIsPlayer(unit) return Resolve(client, unit) ~= nil end
@@ -509,6 +518,10 @@ local function BuildEnv(client)
     function env.UnitRace() return "Human", "Human", 1 end
     function env.GetNormalizedRealmName() return client.realmKnown and client.realm or nil end
     function env.GetRealmName() return client.realmTitle or client.realm end
+    if world.regional then
+        env.RegionalUniqueNamesEnabled = function() return true end
+        env.GetBuildInfo = function() return "1.60.1", "1", "x", 16001 end
+    end
     function env.Ambiguate(name) -- "none": the realm goes when it is the player's own
         local short, realm = name:match("^([^-]+)-(.+)$")
         if short and realm == client.realm then return short end
@@ -538,7 +551,16 @@ local function BuildEnv(client)
         IsAddonMessagePrefixRegistered = function(prefix) return client.prefixes[prefix] == true end,
         SendAddonMessage = function(prefix, text, chatType, target) return world:SendAddon(client, prefix, text, chatType, target) end,
         SendAddonMessageLogged = function(prefix, text, chatType, target) return world:SendAddon(client, prefix, text, chatType, target) end,
-        SendChatMessage = function(text, chatType) world:SendChat(client, text, chatType) end,
+        SendChatMessage = function(text, chatType)
+            -- Forever: an addon's chat line only straight from a click, else the game
+            -- refuses it and tells every addon.
+            if world.regional and not client.inClick then
+                world.refusedChat = (world.refusedChat or 0) + 1
+                client:Fire("ADDON_ACTION_BLOCKED", "RPSheet", "UNKNOWN()")
+                return
+            end
+            world:SendChat(client, text, chatType)
+        end,
         InChatMessagingLockdown = function() return client.lockdown end,
     }
     local function AddFilter(event, filter)
@@ -552,7 +574,7 @@ local function BuildEnv(client)
     function env.RandomRoll(low, high)
         local value = table.remove(client.rolls, 1) or math.ceil(high / 2)
         value = math.max(low, math.min(high, value))
-        client:Fire("CHAT_MSG_SYSTEM", ("%s rolls %d (%d-%d)"):format(client.name, value, low, high))
+        client:Fire("CHAT_MSG_SYSTEM", ("%s rolls %d (%d-%d)"):format(world.regional and client.full or client.name, value, low, high))
     end
     env.MenuUtil = { CreateContextMenu = function() end }
     function env.GameTooltip_SetTitle() end
@@ -836,7 +858,10 @@ end
 ---------------------------------------------------------------------------
 -- Runs a function the way the game runs a click: an error goes to the error handler.
 function Client:Do(fn, ...)
+    local outer = self.inClick
+    self.inClick = true
     local results = { xpcall(fn, function(m) return debug.traceback(tostring(m), 2) end, ...) }
+    self.inClick = outer
     if not results[1] then self.errors[#self.errors + 1] = tostring(results[2]) return end
     return unpack(results, 2)
 end

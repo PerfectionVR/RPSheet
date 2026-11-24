@@ -63,12 +63,14 @@ function RPSheet:Announce(text)
     end
     -- Emotes are already prefixed with the character's name by the game.
     local lead = channel == "EMOTE" and "" or (ns.Codec.Cut(name, MAX_NAME) .. " ")
-    local send = C_ChatInfo.SendChatMessage or SendChatMessage
     -- A line too long for one message goes out as several (Actions/AnnounceSplit.lua),
     -- each starting with the name like the first.
+    local parts = {}
     for _, part in ipairs(ns.SplitChat(text, MAX_CHAT - #lead, MAX_PARTS)) do
-        send(lead .. part, chatType)
+        parts[#parts + 1] = lead .. part
     end
+    -- Sent, or held for a click when the game refuses it (Actions/AnnounceHeld.lua).
+    self:SendAnnouncement(parts, chatType, name .. " " .. text)
 end
 
 -- Switches to the next announce channel.

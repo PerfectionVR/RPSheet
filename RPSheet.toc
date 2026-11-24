@@ -1,4 +1,4 @@
-## Interface: 120105
+## Interface: 120105, 16001
 ## Title: RP Sheet
 ## Notes: Small tabletop character sheet. Click a stat, skill or ability to roll a d20 and announce it. /sheet to toggle, /sheet config for settings.
 ## Author: PerfectionVR
@@ -31,6 +31,7 @@ Libs\AceConfig-3.0\AceConfig-3.0.xml
 
 Core\Addon.lua
 Core\Util.lua
+Core\Game.lua
 Core\Codec.lua
 
 # Rules data
@@ -293,6 +294,8 @@ Sheet\PassCache.lua
 # Things the character does
 Actions\AnnounceSplit.lua
 Actions\Announce.lua
+Actions\AnnounceHeld.lua
+Actions\UnarmedAttack.lua
 Actions\Dice.lua
 Actions\NextRollBonus.lua
 Actions\RollQuestions.lua

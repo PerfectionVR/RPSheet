@@ -9,7 +9,7 @@
 --   click  the maths behind it: your own at once, another player's by asking their
 --          addon (see Integrations/Sync.lua)
 --
--- A link reads  |Haddon:rpsheet:<Name-Realm>:<term>|h[term]|h . The "addon:" link
+-- A link reads  |Haddon:rpsheet:<player key>:<term>|h[term]|h (the key: Core/Game.lua). The "addon:" link
 -- type is one the game leaves for addons to handle.
 local _, ns = ...
 local RPSheet = ns.addon
@@ -22,8 +22,9 @@ function ns.Mark(term)
     return "[" .. term .. "]"
 end
 
+-- The player's key (Core/Game.lua), which links and shared stats are told apart by.
 function ns.PlayerFullName()
-    return ("%s-%s"):format(UnitName("player"), GetNormalizedRealmName() or "")
+    return ns.Game.UnitKey("player") or ""
 end
 
 -- (What a term means, for its tooltip: ns.TermInfo in Integrations/ChatTerms.lua.)
@@ -62,8 +63,9 @@ local function Filter(_, _, message, author, ...)
     -- In some places the game hides chat text from addons; such lines are left alone.
     if issecretvalue and (issecretvalue(message) or issecretvalue(author)) then return false end
     if type(message) ~= "string" or type(author) ~= "string" or not message:find("[", 1, true) then return false end
-    if not author:find("-", 1, true) then author = author .. "-" .. (GetNormalizedRealmName() or "") end
-    local linked = ns.LinkTerms(message, author)
+    local key = ns.Game.SenderKey(author)
+    if not key then return false end
+    local linked = ns.LinkTerms(message, key)
     if linked == message then return false end
     return false, linked, author, ...
 end
@@ -80,7 +82,7 @@ local function OnEnter(frame, link)
     for _, line in ipairs(lines or {}) do GameTooltip:AddLine(line, 1, 1, 1, true) end
     local mine = sender == ns.PlayerFullName()
     GameTooltip:AddLine(mine and "Click to see how your number is worked out."
-        or ("Click to ask %s's sheet about it."):format(sender:match("^[^-]+")), 0.56, 0.56, 0.56, true)
+        or ("Click to ask %s's sheet about it."):format(ns.Game.ShortName(sender)), 0.56, 0.56, 0.56, true)
     GameTooltip:Show()
     frame.rpSheetLinkTooltip = true
 end
@@ -109,7 +111,7 @@ local function OnClick(link)
         end
     elseif not RPSheet:RequestExplanation(sender, term) then
         -- Couldn't ask (another faction, or sharing is off): show what the rules say.
-        if not PrintInfo(term) then RPSheet:Print(("Couldn't ask %s about %s."):format(sender:match("^[^-]+"), term)) end
+        if not PrintInfo(term) then RPSheet:Print(("Couldn't ask %s about %s."):format(ns.Game.ShortName(sender), term)) end
     end
 end
 

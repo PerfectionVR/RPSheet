@@ -24,7 +24,7 @@ function RPSheet:RequestExplanation(fullName, term)
     local question = { term = term }
     asked[fullName] = question
     self:SendCommMessage(S.PREFIX, ns.Codec.Pack("addon", "E", term), "WHISPER", fullName)
-    local name = fullName:match("^[^-]+")
+    local name = ns.Game.ShortName(fullName)
     self:Print(("Asking %s's sheet about %s..."):format(name, term))
     -- No answer comes from the other faction, from someone who has sharing off or who
     -- has left: say so instead of leaving the player waiting.
@@ -58,7 +58,7 @@ function S.handlers.X(self, sender, _, data, extra)
     local term, text = S.Text(data, nil, 60), S.Text(extra, "", 500)
     if term and asked[sender] and asked[sender].term == term then
         asked[sender] = nil
-        local name = sender:match("^[^-]+")
+        local name = ns.Game.ShortName(sender)
         if text ~= "" then
             self:Print(("%s - %s"):format(name, text))
         else
