@@ -102,4 +102,15 @@ function UI.CombatSection(self, body)
             self:PopulateSoon()
         end, "Attack", "Equip a weapon on the Items tab, or add one under Customize > Weapons, and the attack row appears here. Click to open the Items tab.")
     end
+
+    -- Turn-based combat with the group (Integrations/Fight.lua, UI/FightWindow.lua).
+    local F = ns.Fight
+    local session = F.session
+    local standing = "none"
+    if session then
+        standing = ("%s's%s"):format(ns.Game.ShortName(session.owner),
+            (F.MyTurn() and ", your turn") or (session.phase == "RUN" and (", round " .. session.round)) or (F.Mine() and "" or ", not joined"))
+    end
+    UI.AddLabel(body, 1, ("Combat session %s%s|r"):format(UI.ACCENT, standing), function() F.ToggleWindow() end, "Combat session",
+        "Turn-based combat with your party or raid. One of you starts a session and the others join; everyone rolls initiative for their own character, and the turns go round in that order. On your turn the combat window lists what you can do. Click to open or close it.")
 end
