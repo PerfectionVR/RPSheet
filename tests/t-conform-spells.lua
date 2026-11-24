@@ -179,6 +179,9 @@ for _, name in ipairs(names) do
         local time = false
         for _, option in ipairs(List(site.time, "/")) do time = time or TIMES[option:match("%a+$")] == (mine.time or "ACTION") end
         Same(time, name, "time", ("addon %s, site %s"):format(mine.time or "ACTION", site.time))
+        -- how long it lasts, for what a combat session counts in rounds (Data/SpellDurations.lua)
+        local rounds = ({ ["1 round"] = 1, ["6 round"] = 6, ["1 minute"] = 10, ["10 minute"] = 100, ["1 hour"] = 600 })[site.duration]
+        Same(R.SPELL_ROUNDS[name] == rounds, name, "rounds", ("addon %s, site %s"):format(tostring(R.SPELL_ROUNDS[name]), site.duration))
         Roll(name, mine, site)
         Dice(name, mine, site)
         Type(name, mine, site)

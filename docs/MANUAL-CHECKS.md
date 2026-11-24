@@ -248,3 +248,8 @@ Blocked messages and versions:
 - [ ] O10. A reloads mid-fight. *After a few seconds the session is back on both sides with the same turn.*
 - [ ] O11. A ends the session; B clicks "Put my character back as before the fight". *B's hit points, slots and resources are as when B joined.*
 - [ ] O12. In WoW Forever, as owner. *Your own lines go out with your clicks; lines for the other player's rolls wait behind a [Send it] link.*
+- [ ] O13. On your turn cast a spell you concentrate on that lasts a minute (Bless, Blur). *The combat window gets a "Running" heading with the spell and "10 rounds left"; one less each time your turn starts.*
+- [ ] O14. Off your turn cast Shield, or switch on a reckless attack on your turn. *Listed as ending when your next turn starts; at that moment it is switched off and the owner's game says so.*
+- [ ] O15. Click a running row. *It ends now, announced as ended early.*
+- [ ] O16. As a Shaman, rage, then end a later turn without attacking. *You are reminded what keeps a rage up; the rage stays on until you click it off.*
+- [ ] O17. End the session with something still running. *You are told it is yours to end again; it stays on.*
