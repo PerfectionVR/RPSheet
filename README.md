@@ -42,7 +42,8 @@ short summaries in its own words.
   Conditions, armor, features, feats and items that give either are applied by the
   sheet, and the two cancel out as the rules say.
 - **Attack** with the weapon in hand: to hit, then damage, with critical hits, Fighting
-  Styles, weapon mastery and magic bonuses counted.
+  Styles, weapon mastery and magic bonuses counted. With no weapon in hand, an Unarmed
+  Strike (1 + Strength bludgeoning).
 - **Cast** spells from a list with slots, save DC, dice, concentration, rituals,
   higher slots and components. A Mage has a spellbook window; classes that change
   prepared spells after a long rest have a window for that.
@@ -174,7 +175,8 @@ won't go narrower than its six tabs need). The buttons on the right:
 - **Combat:** Armor Class, initiative, speed (and swim, climb or fly speeds when you
   have one), proficiency bonus, passive Perception, spell save DC and spell attack,
   senses, and what you resist, are immune to or vulnerable to.
-- The **weapon row:** the weapon in hand, with its to-hit and damage.
+- The **weapon row:** the weapon in hand, with its to-hit and damage; with none, the
+  Unarmed Strike (right-click opens the Items tab to equip a weapon).
 
 **Tabs.** The open tab is remembered per game character.
 
@@ -667,6 +669,7 @@ and blessings. Class passives are in the classes table.
 | Feat | Healer | Battle Medic (a creature spends a Hit Die with your healer's kit) is rolled by hand. |
 | Feat | Stagger and Sway | The Delayed Reaction pool's own force damage doesn't add another die to the pool: read literally, the pool would never shrink. |
 | Feat | Boon of Fortitude | The 40 hit points count; the Constitution modifier added to healing doesn't. |
+| Unarmed | Unarmed Strike (no weapon in hand) | Features that add dice to every melee hit, and weapon feats, aren't added to it. |
 | Unarmed | Unarmed Fighting (Fighting Style) | A Monk's strikes keep the Martial Arts die, even at the levels where the style's d8 with hands free is larger. |
 | Invocation | Pact of the Blade | The pact weapon is a weapon of yours with "Pact weapon" ticked under Customize, Weapons; its necrotic, psychic or radiant damage is said by hand. |
 

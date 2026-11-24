@@ -150,7 +150,7 @@ Try("down", function()
     if not RPSheet.deathLabel then Problem("at 0 hit points the sheet shows no death save row") end
     WalkRows(function() return (Split()) end, "at 0 HP top", { after = CloseExtras, printed = PRINTED })
 end)
--- With no weapon in hand the attack row says so, and a click opens the Items tab.
+-- With no weapon in hand the attack row is the Unarmed Strike; a right-click opens the Items tab.
 Try("no weapon", function()
     local sheet = NewCharacter("WARRIOR", nil, nil, 5, 1)
     sheet.weapons = {}
@@ -160,9 +160,9 @@ Try("no weapon", function()
     local row
     for _, part in ipairs((Split())) do
         local text = part.label and part.label.GetText and part.label:GetText() or (part.GetText and part:GetText()) or ""
-        if tostring(text):find("no weapon equipped", 1, true) then row = part end
+        if tostring(text):find("Unarmed Strike", 1, true) then row = part end
     end
-    if not row then Problem("without a weapon the sheet shows no attack row saying so") return end
+    if not row then Problem("without a weapon the sheet shows no Unarmed Strike row") return end
     WalkRows(function() return (Split()) end, "no weapon top", { after = CloseExtras, printed = PRINTED })
     if saved.sheetTab ~= "Items" then Problem("a click on the row didn't open the Items tab: " .. tostring(saved.sheetTab)) end
 end)

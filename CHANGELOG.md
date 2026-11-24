@@ -8,8 +8,10 @@
   click instead of waiting for a `/roll` result.
 - WoW Forever: a line made without a click (the Constitution save after damage) is
   shown to you with a [Send it] link; clicking it sends the line.
-- With no weapon equipped, the sheet says so where the attack row would be; a click
-  opens the Items tab.
+- With no weapon equipped, the attack row is the Unarmed Strike everyone can make:
+  Strength and proficiency to hit, 1 + Strength bludgeoning damage. A right-click
+  opens the Items tab to equip a weapon. A feat, style or Martial Arts that improves
+  the strike keeps its own row, and the attack row then says to use it.
 - WoW Forever: characters there have two-part names ("Given Family") and no realm.
   Sharing stats, chat links and the name on the sheet use the whole name, so two
   players with the same first name are kept apart.

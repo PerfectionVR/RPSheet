@@ -113,6 +113,8 @@ function RPSheet:Refresh()
     local weapon = self:GetWeapon()
     if weapon and self.attackLabel then
         UI.SetText(self.attackLabel, ("%s  %s%s|r"):format(weapon.name, UI.GREY, self:WeaponText(weapon)))
+    elseif self.attackLabel then
+        UI.SetText(self.attackLabel, ("Unarmed Strike  %s%s|r"):format(UI.GREY, self:UnarmedText()))
     end
 
     for _, row in ipairs(self.trackerRows) do
