@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.9.0
 
 - Turn-based combat sessions. One player starts a session and owns it; the party or
   raid joins from the new combat window (`/sheet combat`, or the "Combat session" row
