@@ -23,11 +23,7 @@ local function EachGrant(sheet, visit)
     end
 end
 
-local function FindAuto(list, key)
-    for _, entry in ipairs(list) do
-        if entry.auto == key then return entry end
-    end
-end
+local FindAuto = ns.Util.FindAuto
 
 -- Bars for the perks with uses, in the same form as class `pools`.
 function ns.RenownPools(sheet)

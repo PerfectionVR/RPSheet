@@ -79,11 +79,7 @@ function ns.TraitPools(sheet)
     return pools
 end
 
-local function FindAuto(list, key)
-    for index, entry in ipairs(list) do
-        if entry.auto == key then return entry, index end
-    end
-end
+local FindAuto = ns.Util.FindAuto
 
 ---------------------------------------------------------------------------
 -- Choices

@@ -40,11 +40,7 @@ function ns.FeatPools(sheet)
     return pools
 end
 
-local function FindAuto(list, key)
-    for index, item in ipairs(list) do
-        if item.auto == key then return item, index end
-    end
-end
+local FindAuto = ns.Util.FindAuto
 
 -- Sheet upkeep: the abilities and passives of the feats the character has, and none
 -- of those it no longer has.

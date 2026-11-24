@@ -16,11 +16,6 @@ local function FeaturePassive(sheet, feature)
     end
 end
 
--- True if the character has a class or subclass feature of that name.
-function ns.HasFeature(sheet, feature)
-    return FeaturePassive(sheet, feature) ~= nil
-end
-
 ns.FeaturePassive = FeaturePassive
 
 ---------------------------------------------------------------------------

@@ -21,7 +21,7 @@ function ns.CopyDefenses(entry, feature, sheet)
 end
 
 -- True if the species has the trait.
-local function HasTrait(sheet, name)
+function ns.HasTrait(sheet, name)
     local species = R.SPECIES[sheet.species]
     for _, trait in ipairs(species and species.traits or {}) do
         if trait == name then return true end
@@ -78,7 +78,7 @@ function RPSheet:Defenses()
             elseif auto:find("^lineage:") then
                 local _, option = R.Lineage(sheet.species, sheet.lineage)
                 Add(option, name)
-            elseif auto == "" and HasTrait(sheet, name) then
+            elseif auto == "" and ns.HasTrait(sheet, name) then
                 Add(R.TRAITS[name], name)
             elseif auto == "" and not feat and not IsTraitName(name) and type(passive.desc) == "string" then
                 -- Written by the player: the wording is all there is.

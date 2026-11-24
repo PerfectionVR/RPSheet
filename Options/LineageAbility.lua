@@ -4,7 +4,6 @@
 -- holds the dialog until it is chosen; it loads after the dialog's other parts and
 -- before Options/LevelDialog.lua registers them.
 local _, ns = ...
-local R = ns.Rules
 local L = ns.LevelDialog
 local args = L.args
 

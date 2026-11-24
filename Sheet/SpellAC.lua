@@ -28,13 +28,7 @@ end
 
 -- Explanations are printed for the player, or collected when another player asked
 -- (as in Sheet/Explain.lua).
-local function Out(self, text)
-    if self.explainCapture then
-        self.explainCapture[#self.explainCapture + 1] = text
-    else
-        self:Print(text)
-    end
-end
+local Out = ns.ExplainKit.Out
 
 local ExplainAC = RPSheet.ExplainAC
 function RPSheet:ExplainAC()
