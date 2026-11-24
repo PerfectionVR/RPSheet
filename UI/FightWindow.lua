@@ -94,32 +94,17 @@ local function AddRoster(self, body, session)
     for _, key in ipairs(F.Roster()) do
         local member = session.members[key]
         local init = member.init and ("%d"):format(member.init) or "-"
-        local text = ("%s%s%s%s  %s%s  HP %d/%d  AC %d|r"):format(
+        local text = ("%s%s%s%s%s  %s%s  HP %d/%d  AC %d|r"):format(
             session.turn == key and (UI.ACCENT .. "> |r") or "", F.MarkIcon(member.mark), member.name,
+            member.npc and (UI.GREY .. " (run by the owner)|r") or "",
             key == target and (RED .. " (your target)|r") or "", UI.GREY, init, member.hp, member.max, member.ac)
         UI.AddLabel(body, 1, text, function()
             F.target = F.target ~= key and key or nil
             F.Changed()
-        end, member.name, ("Initiative %s. Click to aim your attacks at %s: the session then says whether an attack roll hits. Click again to aim at no one."):format(
-            member.init and init or "not rolled yet", member.name))
+        end, member.name, ("Initiative %s. Click to aim your attacks at %s: the session then says whether an attack roll hits. Click again to aim at no one.%s"):format(
+            member.init and init or "not rolled yet", member.name,
+            F.IsOwner() and "\nAs the session's owner you also pick here who a saving throw, damage or healing is for." or ""))
     end
-end
-
-local function AddOwnerRows(body, session)
-    UI.AddHeading(body, "Your session")
-    if session.phase == "LOBBY" then
-        UI.AddLabel(body, 1, UI.ACCENT .. "Call for initiative|r", function() F.CallInitiative() end, "Call for initiative",
-            "Everyone who joined rolls initiative, a Dexterity check, for their own character. The turns start when all have rolled.")
-    elseif session.phase == "ROLL" then
-        UI.AddLabel(body, 1, UI.ACCENT .. "Start without the rest|r", function() F.Begin() end, "Start without the rest",
-            "Starts the turns with those who have rolled. Whoever rolls later takes that place in the order.")
-    else
-        UI.AddLabel(body, 1, UI.ACCENT .. "Next turn|r", function() F.NextTurn() end, "Next turn",
-            "Ends the turn that is running and gives it to the next in the order, for someone who can't end theirs.")
-        UI.AddLabel(body, 1, UI.ACCENT .. "Call for initiative again|r", function() F.CallInitiative() end, "Call for initiative again",
-            "A new fight in the same session: everyone rolls again.")
-    end
-    UI.AddLabel(body, 1, UI.ACCENT .. "End the session|r", function() F.End() end, "End the session", "The fight is over for everyone.")
 end
 
 function RPSheet:PopulateFight()
@@ -142,6 +127,11 @@ function RPSheet:PopulateFight()
                 .. (session.phase == "RUN" and "\nThe turns are running: you roll initiative and act when your place in the order comes up." or ""))
         else
             AddGroups(body, mine)
+            if F.owedSave then
+                UI.AddLabel(body, 1, ("%sRoll the %s save (DC %d)|r"):format(UI.ACCENT, ns.Rules.STAT_NAMES[F.owedSave.stat], F.owedSave.dc),
+                    function() F.RollOwedSave() end, "Saving throw",
+                    "The session's owner asked for this saving throw. You roll it on your own sheet; the owner's game says whether it meets the DC.\n" .. ns.ROLL_MODE_HELP)
+            end
             if F.OwesInitiative() then
                 UI.AddLabel(body, 1, UI.ACCENT .. "Roll initiative|r", function() F.RollInitiative() end, "Roll initiative",
                     "A Dexterity check for your place in the order.\n" .. ns.ROLL_MODE_HELP)
@@ -150,7 +140,7 @@ function RPSheet:PopulateFight()
         AddRoster(self, body, session)
         if mine then UI.AddFightRunning(self, body) end
         if mine and session.phase == "RUN" then UI.AddFightTurn(self, body) end
-        if F.IsOwner() then AddOwnerRows(body, session) end
+        if F.IsOwner() then UI.AddFightOwner(self, body, session) end
         if not F.IsOwner() then
             UI.AddLabel(body, 1, "\n" .. UI.GREY .. (mine and "Leave the fight" or "Forget this session") .. "|r", function() F.Leave() end, "Leave",
                 "The session goes on without you.")

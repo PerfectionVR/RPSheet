@@ -99,6 +99,11 @@ handles the numbers and gives short summaries in its own words.
   the fight that lasts an hour or less, and a feature you switch on for a time (a
   rage, Sacred Weapon, a reckless attack). The window lists each with the rounds it
   has left; when its time is up it ends by itself and the owner's game says so.
+- **The owner runs the fight** from the same window: adds combatants of their own (a
+  creature, or a player without the addon) with a name, Armor Class and hit points;
+  rolls their attacks and saves; asks a player for a saving throw and has the result
+  held against the DC; deals damage and heals, which the target's own sheet applies;
+  and can hand the session to another player.
 - Your hit points, slots and resources from **before the fight** are kept: afterwards
   you put them back or keep the outcome.
 
@@ -370,6 +375,9 @@ Both are on by default and are kept per character.
 | What a feature costs | Read from how its description starts ("Bonus action: ...", "Reaction: ..."); a spell's from its casting time. A spell that takes a minute or longer, or a ritual, is not offered in a fight. |
 | Durations | A round goes by for what you have running each time your own turn starts: a spell of a minute ends when your tenth turn after the casting starts, one of a round when your next turn does. Counted: spells cast during the fight that last an hour or less, and features switched on for a time. A spell you concentrate on ends your concentration; another takes its protection and later rolls with it. Something started on someone else's turn (a reaction) is counted from your next turn, so it can end up to a round early. |
 | A rage | Counted for its ten minutes. At the end of a turn of yours without an attack the sheet reminds you what keeps a rage up; it can't see a save you forced, so ending it is your click. Not said from level 15, when a rage needs no upkeep. |
+| Combatants the owner runs | Typed as "Gnoll 13 22 +1": name, Armor Class, hit points, initiative bonus. They have no sheet, so their d20s (initiative, attacks, saves) are rolled by the owner's addon itself and are not /roll rolls. The owner types their damage and keeps their hit points; one at 0 hit points is passed over in the order. |
+| Saving throws the owner asks for | The player rolls on their own sheet, with everything it knows about that save. The owner's game compares the total with the DC; a natural 1 or 20 decides nothing by itself. |
+| Damage from the owner | Goes through the target's own "Take damage": resistance, immunity, temporary hit points, wards, the save to keep concentrating and dropping to 0 all apply. Only the owner of the session you joined can do this, and only while you are in it. |
 | Attack rolls | Aimed at a combatant (click their row, or target them in the game), the owner's game compares the total with their Armor Class and says hit or miss; a natural 20 hits and a natural 1 misses. Damage is taken by the target's own player with "Take damage". |
 
 A session reaches the people in your party or raid. Alone, you can still start one to
@@ -477,13 +485,14 @@ and what it can't check (nothing is drawn). Release zips leave the folder out.
   spell someone else cast on you, what was already running when the fight started,
   "once a turn" effects, and a beast form's hours. There is no clock outside combat,
   and none is planned.
-- **More for a session's owner:** creatures of their own in the order, asking a
-  combatant for a save or dealing damage to one, handing the session to someone else,
-  and running a row for a player without the addon.
+- **More for a session's owner:** stat blocks for their combatants (attacks, saves and
+  damage dice kept per creature instead of typed each time), hiding a creature's hit
+  points from the players, and a save asked of several combatants at once.
 - **Movement** in a turn is not counted.
 - **Combat sessions tried in game.** They are simulated with four players in
-  `tests/t-sync-fight.lua`, their durations with two in `tests/t-sync-rounds.lua`, and
-  clicked through for every class in `tests/t-test-windows-fight.lua`.
+  `tests/t-sync-fight.lua`, their durations with two in `tests/t-sync-rounds.lua`, the
+  owner's tools with three in `tests/t-sync-owner.lua`, and clicked through for every
+  class in `tests/t-test-windows-fight.lua`.
 - **Playing every class in game.** The Warrior, the Mage and the Druid have been
   played; the other ten run only in the tests.
 - **Syncing confirmed in game by two players.** It is simulated with two and three

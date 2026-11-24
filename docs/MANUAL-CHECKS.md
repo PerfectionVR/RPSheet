@@ -253,3 +253,9 @@ Blocked messages and versions:
 - [ ] O15. Click a running row. *It ends now, announced as ended early.*
 - [ ] O16. As a Shaman, rage, then end a later turn without attacking. *You are reminded what keeps a rage up; the rage stays on until you click it off.*
 - [ ] O17. End the session with something still running. *You are told it is yours to end again; it stays on.*
+- [ ] O18. As owner click "Add a combatant you run" and type `Gnoll 13 22 +1`. *A Gnoll row appears for everyone, marked as run by the owner; with initiative called, its roll is announced.*
+- [ ] O19. On the Gnoll's turn click a player's row, then "Roll an attack for Gnoll" and type `+5`. *Your game announces the roll and whether it hits that player's Armor Class.*
+- [ ] O20. With the player's row picked, "Deal damage", `7 fire`. *Their sheet takes it (halved if they resist fire) and their hit points in the list follow.*
+- [ ] O21. "Ask for a saving throw", `DEX 15`. *They are told and get a "Roll the Dexterity save" row; after their roll your game adds "succeeds" or "fails against DC 15".*
+- [ ] O22. Pick the Gnoll and deal it more damage than it has. *"Gnoll drops to 0 hit points."; its turn no longer comes up.*
+- [ ] O23. Pick the other player and click "Hand the session over". *They get the owner's rows, you lose them, and their game announces the next turn.*
