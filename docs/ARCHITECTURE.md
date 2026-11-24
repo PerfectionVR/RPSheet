@@ -429,8 +429,9 @@ wrappers of one method run in reverse load order.
 | `RPSheet:ResolveMode`, `:RollTest`, `:DisadvantageFrom` | `Sheet/RollModes.lua`, `Actions/NextRollBonus.lua` | `Actions/SpellRollBonus.lua` | Bless, Guidance, Glibness, one-roll advantage and a reduced creature's disadvantage. |
 | `RPSheet:AC`, `:ExplainAC` | `Sheet/DerivedDefense.lua`, `Sheet/ExplainDefense.lua` | `Sheet/SpellAC.lua` | Mage Armor's base 13 and Barkskin's floor of 17. |
 | `RPSheet:WeaponStat`, `:WeaponDice`, `:WeaponStyle`, `:StrikeDice` | `Sheet/Armoury.lua`, `Sheet/StyleEffects.lua`, `Sheet/Combat.lua` | `Sheet/SpellWeapons.lua` (loads just before PassCache) | Shillelagh, Magic Weapon, Elemental Weapon, True Strike and the other weapon spells. |
-| `RPSheet:ApplyDice`, `ns.HasFeature` | `Actions/Dice.lua`, `Sheet/Combat.lua` | `Actions/FeatureDice.lua` | Class features that count healing dice at their highest or refill a pool from a spell's dice. |
+| `RPSheet:ApplyDice` | `Actions/Dice.lua` | `Actions/FeatureDice.lua` (which also holds `ns.HasFeature`) | Class features that count healing dice at their highest or refill a pool from a spell's dice. |
 | `L.Problem` | `Options/LevelDialogCheck.lua` | `Options/LineageAbility.lua`, `Options/LevelDialogLessons.lua` | Holds the level dialog until the species ability or Lessons of the First Ones' feat is chosen. |
+| `RPSheet:Attack`, `:UnarmedAttack`, `:UseAbility`, `:CastSpell`, `:Announce`, `:QueueBroadcast`, `ns.RollText.Check` | their own files | `Integrations/FightGate.lua` (loads last of all of them) | Combat sessions: the turn's limits, the line sent to the session's owner, hit points followed. |
 
 `tests/dupfuncs.py` lists every function defined twice; its output should be exactly
 these. Other places where behaviour is added to something that exists:
@@ -751,3 +752,36 @@ See [tests/README.md](../tests/README.md).
   `Actions/Inspiration.lua`, `Sheet/FeatRules.lua` (Medium Armor Master's Dexterity cap).
   Invocation spells: `Data/InvocationSpells.lua`, `Sheet/InvocationSpells.lua`
   (`auto = "invocation:<name>"`); Lessons of the First Ones: `Sheet/LessonFeats.lua`.
+
+## Added in 0.9.0: combat sessions
+
+`ns.Fight` (`Integrations/Fight*.lua`, `UI/FightWindow*.lua`). One client owns a
+session; its copy is the truth.
+
+- **State.** `F.session = { id, owner, phase = LOBBY | ROLL | RUN, round, turn, order,
+  members = { [player key] = { name, mark, init, dex, ac, hp, max } } }`. Player keys
+  come from `ns.Game.UnitKey`, so both games work.
+- **Messages** (`FightSend.lua`), on the group channel with the prefix `F.PREFIX`.
+  Players ask: `J` join, `L` leave, `M` group mark, `R` initiative total, `A` a line
+  their sheet made (with an attack roll's numbers and target), `T` end turn, `H` hit
+  points and Armor Class, `Q` send the session. The owner sends `S`, the whole
+  session, after every change, and `E` at the end. `F.Request` handles the owner's own
+  requests on the spot. Everything received goes through `F.CleanSession` /
+  `F.CleanMember`.
+- **Owner** (`FightOwner.lua`): applies requests, sorts the order (total, Dexterity
+  modifier, key), advances the turn, and announces through `RPSheet:Announce(text,
+  speaker)`. The session survives the owner's reload in `db.char.fightOwned`.
+- **Player** (`FightPlayer.lua`): `F.Applied(before)` compares a new copy with what was
+  known and starts what changed (the call for initiative, `F.TurnStarts`).
+- **The turn** (`FightTurn.lua`): `F.used`, `F.Why(cost, slot)`, `F.Charge`. Costs are
+  ACTION, ATTACK, BONUS, REACTION, LONG and FREE; an ability's is read from the start
+  of its description, a spell's is its `time`.
+- **The gate** (`FightGate.lua`): the wrapped click functions ask `F.Why` first and
+  remember what was let through; the wrapped `Announce` charges it when the line is
+  made, and sends the line to the owner instead of to chat. `ns.RollText.Check` is
+  wrapped to keep the last d20 test's numbers for that message.
+- **Snapshot** (`FightSnapshot.lua`): the play state without `state.sheet`, in
+  `db.char.fightSnapshot`, kept at joining.
+- **Window** (`UI/FightWindow.lua`, `FightWindowTurn.lua`): filled from `F.session` and
+  `F.Actions()` (`FightActions.lua`); `F.Changed()` refills it once a frame.
+- **Tests:** `tests/t-sync-fight.lua` (four clients), `tests/t-test-windows-fight.lua`.

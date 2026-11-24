@@ -81,6 +81,23 @@ handles the numbers and gives short summaries in its own words.
 - A stable for mounts, vehicles and companion creatures: buy them, ride them, and see
   the mount's speed on your Speed row.
 
+**Fight in turns**
+
+- A **combat session** for your party or raid: one of you starts it and owns it, the
+  others join from the combat window (`/sheet combat`, or the "Combat session" row of
+  the sheet). Whoever fights together picks the same group, one of the game's eight
+  target marks.
+- **Initiative** is rolled by everyone for their own character when the owner calls
+  for it, and the turns go round in that order. Someone who joins a fight that is
+  running rolls too and acts when their place comes up.
+- **On your turn** the window lists what your character can do: its attack, abilities,
+  prepared spells and the actions everyone has. What it can't do right now is grey
+  and says why (action used, no slot left, not your turn).
+- **The owner's game announces** for everyone: whose turn it is, each player's rolls,
+  whether an attack roll hits the combatant it was aimed at, and who drops to 0.
+- Your hit points, slots and resources from **before the fight** are kept: afterwards
+  you put them back or keep the outcome.
+
 **Share with the group**
 
 - Announcements go to Emote, Party or Raid, or to yourself only.
@@ -258,6 +275,7 @@ the Customize page that goes with it.
 | `/sheet undo` | Takes back the last rest, until your next roll, spell, damage or rest. |
 | `/sheet tab <name>` | Opens a tab of the sheet: actions, checks, skills, traits, items, trade (a unique start of the name is enough). |
 | `/sheet items` | Opens or closes the item browser. |
+| `/sheet combat` | Opens or closes the combat window. |
 | `/sheet level` | Opens the level dialog when a level can be taken. |
 | `/sheet help` | Lists the commands. |
 | `/sheet damage 14` | Takes 14 damage without a type. |
@@ -334,6 +352,24 @@ Mage on Wizard, Priest on Cleric, Shaman on Barbarian, Warrior on Fighter).
 | Check that you carry the tool | Customize > Professions | Needing the profession's tool among your items to make or gather something. |
 
 Both are on by default and are kept per character.
+
+### Combat sessions
+
+| Rule | How the session applies it |
+|---|---|
+| Initiative | Each player rolls the sheet's own initiative, with its advantage, conditions and bonuses. The order is the totals from high to low and stays the same every round. A tie goes to the higher Dexterity modifier, then by name. |
+| Joining a running fight | The rules have no separate rule for it: the newcomer rolls initiative like everyone and takes that place in the order. |
+| A turn | One action, one bonus action, and only one spell that spends a slot. The Attack action is as many attacks as Extra Attack gives; Action Surge gives a second action. What the turn doesn't allow is refused with the reason, in the combat window and on the sheet alike. |
+| Reactions | Usable on anyone's turn, once, and back at the start of your own. |
+| What a feature costs | Read from how its description starts ("Bonus action: ...", "Reaction: ..."); a spell's from its casting time. A spell that takes a minute or longer, or a ritual, is not offered in a fight. |
+| Attack rolls | Aimed at a combatant (click their row, or target them in the game), the owner's game compares the total with their Armor Class and says hit or miss; a natural 20 hits and a natural 1 misses. Damage is taken by the target's own player with "Take damage". |
+
+A session reaches the people in your party or raid. Alone, you can still start one to
+try it.
+
+**WoW Forever** lets an addon speak in chat only straight from a click. The owner's own
+lines go out as they click; lines the owner's game makes for other players' rolls are
+shown to the owner with a [Send it] link.
 
 ### Strict places and free places
 
@@ -412,7 +448,7 @@ how the parts work together.
 | `Sheet/` | The saved character and the numbers worked out from it: storage per profile, conversion of old sheets, classes and multiclassing, derived numbers, trackers, defenses, inventory, mounts, professions, the upkeep that puts features, picks and spells on the sheet, explanations, export and import |
 | `Actions/` | What the character does: announcing, dice, attacks, abilities, spells, scrolls, conditions, damage, rests, death saves, gathering, trade |
 | `UI/` | The sheet window: themes, the window, bar and tab widgets, rows, the sheet's sections and tabs, the item browser and its sources, the spellbook and prepared-spells windows, the dialog skin, the minimap icon |
-| `Integrations/` | The Total RP 3 tooltip section, syncing with other players, term links in chat |
+| `Integrations/` | The Total RP 3 tooltip section, syncing with other players, term links in chat, combat sessions (`Fight*.lua`) |
 | `Options/` | The settings window: one file per tab or Customize page, the level dialog in parts, assembled by `Root.lua` |
 | `Wizard/` | Character creation: grants, the draft, more classes, Fighting Styles, the starting closet and gear sets, the pages, the dialog |
 | `tests/` | Regression tests that run the code outside the game (not shipped) |
@@ -429,11 +465,17 @@ and what it can't check (nothing is drawn). Release zips leave the folder out.
 
 ## Not built yet
 
-- **Turn-based combat:** initiative order and turns. It will also count what lasts a
-  while (a spell's duration, a beast form's hours, "once a turn" effects) and end it
-  by itself; until then those end by a rest or by hand. There is no clock outside
-  combat, and none is planned.
-- **A view for the DM** of the whole party.
+- **Durations counted in rounds.** Combat sessions have turns and rounds, but what
+  lasts a while (a spell's duration, a beast form's hours, "once a turn" effects) is
+  not yet ended by them: those still end by a rest or by hand. There is no clock
+  outside combat, and none is planned.
+- **More for a session's owner:** creatures of their own in the order, asking a
+  combatant for a save or dealing damage to one, handing the session to someone else,
+  and running a row for a player without the addon.
+- **Movement** in a turn is not counted.
+- **Combat sessions tried in game.** They are simulated with four players in
+  `tests/t-sync-fight.lua` and clicked through for every class in
+  `tests/t-test-windows-fight.lua`.
 - **Playing every class in game.** The Warrior, the Mage and the Druid have been
   played; the other ten run only in the tests.
 - **Syncing confirmed in game by two players.** It is simulated with two and three
@@ -451,7 +493,7 @@ Two things hold for everything, so they are said once here:
 
 - **Time.** The sheet keeps no clock. Whatever lasts a while (a spell's duration,
   concentration, Rage, a beast form, Sacred Weapon, a blessing for the length of a
-  quest) ends by hand or by a rest; turn-based combat will count it. Concentration
+  quest) ends by hand or by a rest; combat sessions don't count it yet. Concentration
   itself is tracked: a new spell ends the old one and damage asks for the save.
 - **Played in game.** Only the Warrior, the Mage and the Druid have been played in
   World of Warcraft so far. The other ten classes run only in the test environment

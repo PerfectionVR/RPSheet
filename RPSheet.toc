@@ -427,6 +427,16 @@ Integrations\SyncTerms.lua
 Integrations\Sync.lua
 Integrations\ChatTerms.lua
 Integrations\ChatLinks.lua
+Integrations\Fight.lua
+Integrations\FightSend.lua
+Integrations\FightSnapshot.lua
+Integrations\FightOwner.lua
+Integrations\FightPlayer.lua
+Integrations\FightTurn.lua
+Integrations\FightGate.lua
+Integrations\FightActions.lua
+UI\FightWindowTurn.lua
+UI\FightWindow.lua
 
 # Settings, character editor and creation wizard
 Options\Common.lua
