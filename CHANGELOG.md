@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.14.0
+
+- Every window now follows the combat window: what reacts to a click is a button, a
+  tab or a bar with an edge round it, and plain text is only read. That goes for the
+  sheet and its tabs, the spellbook, the prepared spells, the item browser, the
+  stable and the crafting window.
+- The "[?]" in front of a number is now a "?" part of the row's button, with a line
+  between the two. A number that only has an explanation explains wherever its button
+  is clicked.
+- A button's text wraps when it doesn't fit, and the button grows with it, instead of
+  being cut. That goes for the combat window too.
+- The sheet's top is shorter: "Announce to" and "Next roll" share a line, and so do
+  conditions and exhaustion.
+- A passive that is switched off is a greyed button.
+- The item browser's buttons and tabs are the addon's own, in the theme's colours.
+- A character without a class gets a "Create your character" button.
+
 ## 0.13.0
 
 - The combat window has a new layout, after the screen of a text adventure: who is

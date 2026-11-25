@@ -59,7 +59,10 @@ handles the numbers and gives short summaries in its own words.
 - **Rest:** short and long rests, and Hit Dice to spend.
 - **Companions and forms:** a Beast Master's companion, Wild Shape forms and
   Metamorphosis, each with their own numbers while they are on.
-- A small **[?]** in front of a number shows, to you alone, how it is worked out.
+- A small **?** in front of a number shows, to you alone, how it is worked out.
+- **Every window looks the same way:** what reacts to a click is a button, a tab or a
+  bar with an edge round it, and plain text is only read. A button's text wraps when
+  it doesn't fit; a switch that is off is greyed.
 
 **Level up and multiclass**
 
@@ -242,7 +245,7 @@ Every row has a tooltip that says what a click does. The ones worth knowing by h
 | On | Left-click | Right-click | With a key |
 |---|---|---|---|
 | Any roll (check, save, skill, tool, initiative, attack, spell attack, ability) | Roll it | | **Shift**: advantage. **Ctrl**: disadvantage. |
-| A row with **[?]** in front | Click the [?] itself to see how the number is worked out | | **Alt**-click anywhere on the row does the same |
+| A button with **?** in front | Click the ? itself to see how the number is worked out. A button that does nothing else explains wherever it is clicked | | **Alt**-click anywhere on the button does the same |
 | Weapon row | Attack: to hit, then damage | Swap to the next ready weapon | |
 | Ability | Use it: pays its cost, rolls, announces | Take back a cost the feature lets you take back | |
 | Spell | Cast it | Cast a ritual spell as a ritual, without a slot | |
@@ -432,7 +435,7 @@ Nothing leaves the game. What other players can see is this:
 | Your rolls | Whoever the game shows a `/roll` to: people nearby, or your group | In retail, the game's own `/roll`, one per die. With "Self only", and always in WoW Forever, nothing is rolled in public: the sheet rolls the dice itself. |
 | Announcements | The channel at "Announce to": Emote (people nearby), Party, Raid, or only you | An ordinary chat line. If Party or Raid is chosen and you are not in one, the line is shown to you alone and says so. |
 | Your stats | Your party or raid, and RP Sheet users of your own faction who hover over you or target you | Hidden addon messages. Sent: the summary line (level, class, species or lineage, alignment), Armor Class, the six ability scores, hit points and up to three resources with their current values, the weapon in hand, and your conditions and exhaustion. |
-| How a number is worked out | An RP Sheet user who clicks one of your terms in chat | A hidden addon whisper back to that player, with the same breakdown your own [?] shows. |
+| How a number is worked out | An RP Sheet user who clicks one of your terms in chat | A hidden addon whisper back to that player, with the same breakdown your own ? shows. |
 
 - Stats you receive are kept until you log out or reload, never saved, and shown only in
   the Total RP 3 tooltip. Everything received is treated as untrusted: numbers are

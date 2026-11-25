@@ -555,7 +555,7 @@ Try("not now", function()
     RPSheet:Populate()
     F.Settle()
     for _, part in ipairs(RPSheet.body.children) do
-        if F.Plain(PartText(part)):find("^No class chosen yet") then
+        if F.Plain(PartText(part)):find("^Create your character") then
             ClickPart("the sheet's 'create your character' row", part, "LeftButton")
         end
     end

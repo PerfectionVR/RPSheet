@@ -382,6 +382,7 @@ UI\DialogSkinEdit.lua
 UI\DialogSkinTabs.lua
 UI\DialogSkinTree.lua
 UI\Rows.lua
+UI\Parts.lua
 UI\DefenseRows.lua
 UI\DamageMenu.lua
 UI\DamageReactions.lua
@@ -445,7 +446,6 @@ Integrations\FightCreatures.lua
 Integrations\FightOwnerTools.lua
 Integrations\FightStatBlocks.lua
 Integrations\FightLog.lua
-UI\FightParts.lua
 UI\FightWindowRoster.lua
 UI\FightWindowTurn.lua
 UI\FightWindowRunning.lua

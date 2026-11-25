@@ -46,7 +46,11 @@ rest is grouped by window and can be done in any order.
 - [ ] B5. Open each of the six tabs in turn. *The open tab is marked, the others are not; each tab shows its sections; an empty one says "Nothing here yet."*
 - [ ] B6. Hover each tab. *A tooltip with the tab's name and what is on it.*
 - [ ] B7. Give an ability, a passive, a spell and an item very long names (Customize) and look at their rows at the narrowest width. *Names wrap inside their own row; the row below starts under them.*
-- [ ] B8. Hover a row with [?] and click the [?] itself, then the rest of the row. *The [?] prints the breakdown in your chat only; the rest of the row rolls.*
+- [ ] B8. Hover a button with ? in front and click the ? itself, then the rest of the button. *The ? lights up on its own under the mouse and prints the breakdown in your chat only; the rest of the button rolls. On AC, which rolls nothing, both print the breakdown.*
+- [ ] B8a. Look over the sheet and each of its tabs. *Everything that reacts to a click has an edge round it: rests, announce, next roll, conditions, damage and heal, spell slots, checks, saves, skills, abilities, spells, passives, items, mounts, professions. Text without an edge (the summary line, Proficiency, senses, languages) does nothing when clicked.*
+- [ ] B8b. Make the sheet as narrow as it goes. *Buttons whose text no longer fits grow taller and wrap the text; nothing is cut and no button lies over another.*
+- [ ] B8c. On the Traits tab switch a passive off. *Its button turns grey and still switches back on.*
+- [ ] B8d. Open the item browser, the stable and the crafting window. *Their tabs and buttons look like the sheet's; a button that can't be used is grey and does nothing.*
 - [ ] B9. Left-click and right-click "Next roll". *Normal, Advantage (green), Disadvantage (red); right-click adds "(every roll)"; after one roll an unlocked choice goes back to Normal.*
 - [ ] B10. Hover a passive, a spell and an item. *The tooltip stays on screen, wraps, and is readable against the game's tooltip background.*
 - [ ] B11. Drag the window to each screen edge. *It can't be dragged off screen.*

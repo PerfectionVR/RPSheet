@@ -28,6 +28,6 @@ function UI.PassiveSection(self, body)
             if passive.enabled then self:PassiveSwitchedOn(passive) end -- some end others
             self:ClampState()
             self:PopulateSoon()
-        end, passive.name, function() return Tip(self, passive) end)
+        end, passive.name, function() return Tip(self, passive) end, nil, not passive.enabled and "off" or nil)
     end
 end

@@ -8,15 +8,16 @@ function UI.HeaderSection(self, body)
     if summary then
         UI.AddLabel(body, 1, UI.GREY .. summary .. "|r")
     else
-        UI.AddLabel(body, 1, UI.ACCENT .. "No class chosen yet - click here to create your character|r", function()
+        UI.AddLabel(body, 1, UI.GREY .. "No class chosen yet.|r")
+        UI.AddLabel(body, 1, UI.ACCENT .. "Create your character|r", function()
             ns.OpenWizard()
-        end)
+        end, "Create your character", "Opens the steps that make a character: class, species, background, ability scores and what it starts with.")
     end
 
-    self.channelLabel = UI.AddLabel(body, 1, "", function() self:CycleChannel() end,
+    self.channelLabel = UI.AddLabel(body, 0.5, "", function() self:CycleChannel() end,
         "Announce to", "Click to switch between Emote, Party, Raid and Self only.\nSelf only rolls privately; the others use a real /roll.")
 
-    self.rollModeLabel = UI.AddLabel(body, 1, "", function(button) self:CycleRollMode(button == "RightButton") end,
+    self.rollModeLabel = UI.AddLabel(body, 0.5, "", function(button) self:CycleRollMode(button == "RightButton") end,
         "Next roll", "How your next d20 is rolled: normally, with advantage (two dice, the higher counts) or with disadvantage (the lower counts).\n\nLeft-click: switch between normal, advantage and disadvantage. It goes back to normal after one roll.\nRight-click: keep it for every roll until you change it, for a condition that lasts.\n\nHolding Shift or Ctrl while clicking a roll still works, and takes priority.")
 
     -- A die or a number added to the next d20 (UI/SheetNextRoll.lua).

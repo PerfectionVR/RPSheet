@@ -21,7 +21,8 @@ local function Playing() return HasCharacter() end
 ---------------------------------------------------------------------------
 local function Clickable(part)
     local kind = part.type
-    if kind == "InteractiveLabel" or kind == "RPSheetBar" or kind == "RPSheetTab" then
+    if kind == "RPSheetButton" or kind == "RPSheetBar" or kind == "RPSheetTab" then
+        if part.disabled then return false end
         return part.events and part.events.OnClick ~= nil and part.frame:IsVisible()
     end
     if kind == "Button" then return part.frame:IsEnabled() and part.frame:IsVisible() end
@@ -46,7 +47,8 @@ local KEYS = { "", "", "", "shift", "ctrl", "alt", "shift+ctrl", "ctrl+alt" }
 local function Click(part, button, keys, mark)
     F.menu = nil -- a click elsewhere closes an open menu
     F.SetKeys(keys:find("shift") ~= nil, keys:find("ctrl") ~= nil, keys:find("alt") ~= nil)
-    F.MoveMouse(part.frame, mark and 0 or 0.9, 0.5, mark and 2 or 0)
+    if mark and part.mark and part.mark:IsShown() then part = { frame = part.mark } end
+    F.MoveMouse(part.frame, 0.5, 0.5, 0)
     local ok, problem = xpcall(F.Click, function(message) return debug.traceback(tostring(message), 2) end, part.frame, button)
     F.SetKeys(false, false, false)
     F.MoveMouse(nil)
