@@ -18,7 +18,7 @@ function UI.AddFightRunning(self, body)
     for _, timer in ipairs(timers) do
         local kind, name = timer.kind, timer.name
         local label = kind == "PASSIVE" and R.LASTING[name].label or name
-        UI.AddLabel(body, 1, ("%s%s  %s%s|r"):format(label, kind == "CONC" and (UI.GREY .. " (concentration)|r") or "", UI.GREY, F.TimerText(timer)),
+        UI.AddButton(body, 1, ("%s%s  %s%s|r"):format(label, kind == "CONC" and (UI.GREY .. " (concentration)|r") or "", UI.GREY, F.TimerText(timer)),
             function() F.EndTimer(kind, name) end, label,
             ("%s: %s. It lasts %s, counted in your own turns: a round has gone by each time your turn starts.\nClick to end it now."):format(
                 label, KIND[kind], R.RoundsText(timer.total)))

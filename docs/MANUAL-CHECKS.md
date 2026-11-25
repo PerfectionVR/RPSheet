@@ -239,7 +239,7 @@ Blocked messages and versions:
 - [ ] O1. A types `/sheet combat` and clicks "Start a combat session". *A's chat line says so; B is told and B's combat window offers "Join the session".*
 - [ ] O2. B joins and clicks the skull. *Both windows list both characters with hit points and Armor Class; B has the skull in front of the name.*
 - [ ] O3. A clicks "Call for initiative"; both roll. *Each roll is announced once, by A's game, with the mark; then "Round 1. ...'s turn." and the window of the one whose turn it is opens with "Your turn".*
-- [ ] O4. The one whose turn it is clicks the other's row, then attacks. *A's game announces the attack with "hits" or "misses" and the Armor Class.*
+- [ ] O4. The one whose turn it is clicks the other's health bar, then attacks. *A's game announces the attack with "hits" or "misses" and the Armor Class.*
 - [ ] O5. Attack again, then hover a greyed action. *The second attack is refused (without Extra Attack); the tooltip says "Not now" and why.*
 - [ ] O6. The other player clicks an attack out of turn on the sheet itself. *Refused with "It is ...'s turn."*
 - [ ] O7. "End turn", round the table twice. *Turn and round lines are announced; the action is free again each turn.*
@@ -250,17 +250,23 @@ Blocked messages and versions:
 - [ ] O12. In WoW Forever, as owner. *Your own lines go out with your clicks; lines for the other player's rolls wait behind a [Send it] link.*
 - [ ] O13. On your turn cast a spell you concentrate on that lasts a minute (Bless, Blur). *The combat window gets a "Running" heading with the spell and "10 rounds left"; one less each time your turn starts.*
 - [ ] O14. Off your turn cast Shield, or switch on a reckless attack on your turn. *Listed as ending when your next turn starts; at that moment it is switched off and the owner's game says so.*
-- [ ] O15. Click a running row. *It ends now, announced as ended early.*
+- [ ] O15. Click a running button. *It ends now, announced as ended early.*
 - [ ] O16. As a Shaman, rage, then end a later turn without attacking. *You are reminded what keeps a rage up; the rage stays on until you click it off.*
 - [ ] O17. End the session with something still running. *You are told it is yours to end again; it stays on.*
 - [ ] O18. As owner click "Add a combatant you run" and type `Gnoll 13 22 +1`. *A Gnoll row appears for everyone, marked as run by the owner; with initiative called, its roll is announced.*
-- [ ] O19. On the Gnoll's turn click a player's row, then "Roll an attack for Gnoll" and type `+5`. *Your game announces the roll and whether it hits that player's Armor Class.*
-- [ ] O20. With the player's row picked, "Deal damage", `7 fire`. *Their sheet takes it (halved if they resist fire) and their hit points in the list follow.*
-- [ ] O21. "Ask for a saving throw", `DEX 15`. *They are told and get a "Roll the Dexterity save" row; after their roll your game adds "succeeds" or "fails against DC 15".*
+- [ ] O19. On the Gnoll's turn click a player's health bar, then, in the Session tab, "Roll an attack for Gnoll" and type `+5`. *Your game announces the roll and whether it hits that player's Armor Class.*
+- [ ] O20. With the player picked, "Deal damage", `7 fire`. *Their sheet takes it (halved if they resist fire) and their hit points in the list follow.*
+- [ ] O21. "Ask for a saving throw", `DEX 15`. *They are told and get a "Roll the Dexterity save" button; after their roll your game adds "succeeds" or "fails against DC 15".*
 - [ ] O22. Pick the Gnoll and deal it more damage than it has. *"Gnoll drops to 0 hit points."; its turn no longer comes up.*
-- [ ] O23. Pick the other player and click "Hand the session over". *They get the owner's rows, you lose them, and their game announces the next turn.*
-- [ ] O24. Alone, without a group: `/sheet combat`, "Start a combat session", "Add a creature from the list", click "Name has" and type `fel`, click Felguard, "Back to the fight". *A Felguard row with AC 17 and 60 hit points; its tooltip in the list showed its attacks.*
+- [ ] O23. Pick the other player and click "Hand the session over". *They get the Session tab, you lose it, and their game announces the next turn.*
+- [ ] O24. Alone, without a group: `/sheet combat`, "Start a combat session", "Add a creature from the list", the Side tab, "Burning Legion", click Felguard, "Back to the fight". *A Felguard row with AC 17 and 60 hit points; its tooltip in the list showed its attacks.*
 - [ ] O25. "Call for initiative", roll yours. *The Felguard's roll is announced; the turns start.*
-- [ ] O26. On the Felguard's turn click your own row, then "Fel Battleaxe". *The roll is announced with hit or miss against your Armor Class; on a hit your sheet takes the slashing and then the fire damage.*
-- [ ] O27. Click the Felguard's row, "Deal damage", `10 fire`, then `10 poison`. *5 (resisted), then none (immune).*
-- [ ] O28. Add a Doomguard; on its turn pick your row and click "War Stomp". *You get a "Roll the Strength save" row; after your roll the damage follows, halved on a success.*
+- [ ] O26. On the Felguard's turn click "Fel Battleaxe" without picking anyone. *The roll is announced with hit or miss against your Armor Class; on a hit your sheet takes the slashing and then the fire damage.*
+- [ ] O27. Click the Felguard's health bar, "Deal damage", `10 fire`, then `10 poison`. *5 (resisted), then none (immune).*
+- [ ] O28. Add a Doomguard; on its turn click your own health bar and then "War Stomp". *You get a "Roll the Strength save" button; after your roll the damage follows, halved on a success.*
+- [ ] O29. Look at the combat window in a running fight. *From the top: who is here with health bars, the fight's log in colour, your own line with three squares, a button that moves the turn on, tabs. Everything that reacts to a click has an edge round it; plain text does nothing.*
+- [ ] O30. Take damage until under half, then under a quarter of your hit points. *Your bar turns amber, then red.*
+- [ ] O31. On your turn open each tab. *Each shows its buttons; a tab with nothing usable is grey; a greyed button's tooltip and a click say why. "End turn" stays above the tabs.*
+- [ ] O32. As owner, let the turn pass to a creature of yours. *The Session tab opens by itself with the creature's attacks.*
+- [ ] O33. With a second player in the party, as that player watch the log while the owner's creature attacks. *The owner's lines appear in the player's fight log as in chat.*
+- [ ] O34. In the creature list open each of the four tabs and click a few groups. *The group's creatures are listed as buttons; the picked group is filled; "In the fight" names those already added.*

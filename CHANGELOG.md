@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.13.0
+
+- The combat window has a new layout, after the screen of a text adventure: who is
+  here on top, each with a health bar (green, amber under half, red under a quarter)
+  that is clicked to pick them; the fight's log under it, in colour; then your own
+  line with hit points, Armor Class and a square each for action, bonus action and
+  reaction; then the buttons.
+- What can be clicked is now a button, a tab or a bar, with an edge round it. Plain
+  text is only read. What can't be used right now is a greyed button that says why.
+- The actions of your turn are behind tabs (attack, abilities, cantrips, spells,
+  actions everyone has), with a tab for the session's owner and one for your group
+  and leaving. "End turn", "Next turn" and "Call for initiative" stay above the tabs.
+  On the turn of a combatant the owner runs, the owner's tab opens by itself.
+- The fight's log is in the window: the owner's game keeps what the session says, a
+  player's game takes the owner's lines from chat. It is not saved over a reload.
+- The creature list is sorted behind tabs: by type, by people, by side and by
+  challenge. Groups and creatures are buttons; the list shows who is in the fight
+  already. A typed part of a name still looks through all of them.
+- A creature's attack or forced save is aimed at its only opponent when no one is
+  picked, so a fight alone needs no click to aim.
+- Fixed: a creature's attack with no one to aim at read "damage 37 piercing damage".
+- Tests: the runner can use the Python module lupa when no Lua DLL is configured.
+
 ## 0.12.0
 
 - Creature templates: the 84 creatures of the setting can be added to a combat

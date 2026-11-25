@@ -58,6 +58,8 @@ local function AttachTooltip(widget, title, body)
     widget:SetCallback("OnLeave", GameTooltip_Hide)
 end
 
+UI.AttachTooltip = AttachTooltip
+
 -- The small "[?]" in front of a row that can explain its number. Clicking it shows
 -- the maths; clicking the rest of the row does what the row normally does.
 local EXPLAIN_MARK = "|cff8f8f8f[?]|r "

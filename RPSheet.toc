@@ -78,6 +78,7 @@ Data\Conditions.lua
 Data\Lasting.lua
 Data\CreatureList.lua
 Data\Creatures.lua
+Data\CreatureGroups.lua
 Data\Combat.lua
 Data\Maneuvers.lua
 Data\Forms.lua
@@ -362,6 +363,7 @@ UI\WindowMinimize.lua
 UI\Window.lua
 UI\Bar.lua
 UI\Tab.lua
+UI\Button.lua
 UI\TermLabel.lua
 UI\Slider.lua
 UI\DialogBacking.lua
@@ -442,6 +444,9 @@ Integrations\FightTimers.lua
 Integrations\FightCreatures.lua
 Integrations\FightOwnerTools.lua
 Integrations\FightStatBlocks.lua
+Integrations\FightLog.lua
+UI\FightParts.lua
+UI\FightWindowRoster.lua
 UI\FightWindowTurn.lua
 UI\FightWindowRunning.lua
 UI\FightAsk.lua

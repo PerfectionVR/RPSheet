@@ -84,8 +84,23 @@ function F.Hurt(key, list)
     F.ChangeCreatureHP(key, total, nil, #notes > 0 and table.concat(notes, ", ") or nil)
 end
 
--- One of a templated combatant's attacks, at the picked row. `key` is the attacker
--- (the turn's holder when left out).
+-- Who the combatant `key` acts on: the picked one, or, when no one else is picked,
+-- the only other combatant still standing.
+function F.CreatureTarget(key)
+    local session = F.session
+    if F.target and F.target ~= key and session.members[F.target] then return F.target end
+    local only
+    for other, member in pairs(session.members) do
+        if other ~= key and member.hp > 0 then
+            if only then return nil end
+            only = other
+        end
+    end
+    return only
+end
+
+-- One of a templated combatant's attacks, at the picked combatant. `key` is the
+-- attacker (the turn's holder when left out).
 function F.CreatureStrike(index, key)
     local session = F.session
     if not F.IsOwner() then return end
@@ -97,13 +112,13 @@ function F.CreatureStrike(index, key)
     local die = math.random(1, 20)
     local total = die + attack.hit
     local text = ("attacks with %s: %d %s = %d"):format(attack.name, die, Signed(attack.hit), total)
-    local targetKey = F.target ~= key and F.target or nil
+    local targetKey = F.CreatureTarget(key)
     local target = targetKey and session.members[targetKey]
     local outcome
     if target then text, outcome = F.HitText(text, target, total, die) end
     if outcome == "miss" or #attack.parts == 0 then return F.Say(text, member) end
     local list = RollParts(attack.parts, die == 20)
-    F.Say(("%s%s %s damage"):format(text, target and " for" or ", damage", ListText(list)), member)
+    F.Say(target and ("%s for %s damage"):format(text, ListText(list)) or ("%s, for %s damage"):format(text, ListText(list)), member)
     if target then F.Hurt(targetKey, list) end
 end
 
@@ -118,10 +133,10 @@ function F.CreatureForce(index, key)
     local template = F.Template(member)
     local force = template and template.forces[index]
     if not force then return end
-    local targetKey = F.target ~= key and F.target or nil
+    local targetKey = F.CreatureTarget(key)
     local target = targetKey and session.members[targetKey]
     if not target then
-        RPSheet:Print(("Click the row of who has to save against %s first."):format(force.name))
+        RPSheet:Print(("Click the health bar of who has to save against %s first."):format(force.name))
         return
     end
     local mark = ("%s:%s:%d:%d:%s"):format(session.id, key, index, session.round, tostring(session.turn))
