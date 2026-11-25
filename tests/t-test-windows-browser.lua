@@ -29,7 +29,7 @@ local function Showing()
     end
 end
 local function PageButton(text)
-    for _, part in ipairs(Of("Button")) do
+    for _, part in ipairs(Of("RPSheetButton")) do
         if part.text:GetText() == text then return part end
     end
 end
@@ -63,7 +63,7 @@ end
 local function CardButtons(card)
     local list = {}
     for _, part in ipairs(card.children) do
-        if part.type == "Button" then list[#list + 1] = part end
+        if part.type == "RPSheetButton" then list[#list + 1] = part end
     end
     return list
 end
@@ -93,7 +93,7 @@ local function CheckView(where, firstText)
     for _, part in ipairs(body.children) do
         CheckText(where, PartText(part))
         if part.frame:GetRight() > edge + 0.5 then Problem(where .. ": '" .. F.Plain(PartText(part)):sub(1, 30) .. "' runs past the window's edge") break end
-        if part.type == "InteractiveLabel" and part.events.OnEnter then HoverPart(where .. " row", part) end
+        if part.events and part.events.OnEnter then HoverPart(where .. " row", part) end
     end
     for _, card in ipairs(cards) do
         local name = CardName(card)
@@ -107,7 +107,7 @@ local function CheckView(where, firstText)
             local text = PartText(part)
             CheckText(where .. " block " .. name, text)
             if part.type == "InteractiveLabel" and not F.Plain(text):match("%S") then Problem(where .. ": the block " .. name .. " says nothing") end
-            if part.type == "Button" and (part.text:GetText() or "") == "" then Problem(where .. ": the block " .. name .. " has a button without text") end
+            if part.type == "RPSheetButton" and (part.text:GetText() or "") == "" then Problem(where .. ": the block " .. name .. " has a button without text") end
             -- a term in the block (attunement, harness...) explains itself when hovered
             local link, word = (text or ""):match("|H(rpsheet:.-)|h(.-)|h")
             if link then
@@ -319,7 +319,7 @@ Try("inventory", function()
 
     -- the line saying whose merchant is selling: through every choice and back
     local function ShopRow()
-        for _, part in ipairs(Of("InteractiveLabel")) do
+        for _, part in ipairs(Of("RPSheetButton")) do
             if F.Plain(PartText(part)):find("^Buying from") then return part end
         end
     end

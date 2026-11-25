@@ -141,7 +141,7 @@ Try("damage", function()
     F.PopupAccept()
     F.Settle()
     Check("1234 damage leaves hit points", HP() == 0)
-    CheckText("death save row", RPSheet.deathLabel and RPSheet.deathLabel.label:GetText() or "nil")
+    CheckText("death save row", RPSheet.deathLabel and RPSheet.deathLabel:GetText() or "nil")
     Check("at 0 hit points the sheet shows no death save row", RPSheet.deathLabel ~= nil)
 
     -- temporary hit points go first
@@ -674,7 +674,7 @@ Try("right-click on rolls", function()
     local rolls, roll = 0, RandomRoll
     RandomRoll = function(...) rolls = rolls + 1 return roll(...) end
     local found = {}
-    local STARTS = { "[?] STR", "[?] DEX +", "[?] Athletics", "[?] Initiative", "[?] Spell attack", "[?] Thieves' Tools" }
+    local STARTS = { "STR", "DEX +", "Athletics", "Initiative", "Spell attack", "Thieves' Tools" }
     for _, tab in ipairs({ "Checks", "Skills" }) do
         Tab(tab)
         for _, start in ipairs(STARTS) do

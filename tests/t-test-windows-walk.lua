@@ -54,12 +54,17 @@ function HoverPart(where, part)
     return lines
 end
 
--- One click on a part. `mark` puts the cursor on the "[?]" in front of the row.
+-- One click on a part. `mark` clicks the "?" part in front of a row's button.
 function ClickPart(where, part, button, shift, ctrl, alt, mark)
     F.SetKeys(shift, ctrl, alt)
-    F.MoveMouse(part.frame, mark and 0 or 0.9, 0.5, mark and 2 or 0)
+    local frame = part.frame
+    if mark then
+        if not (part.mark and part.mark:IsShown()) then Problem(where .. ": the row explains a number and has no ? part") end
+        frame = part.mark or frame
+    end
+    F.MoveMouse(frame, 0.5, 0.5, 0)
     COUNT.clicks = COUNT.clicks + 1
-    Try(where, F.Click, part.frame, button)
+    Try(where, F.Click, frame, button)
     F.SetKeys(false, false, false)
     F.MoveMouse(nil)
     Try(where .. " (after)", F.Settle)
@@ -73,9 +78,18 @@ local VARIANTS = {
 local NAMES = { "left", "right", "shift-left", "ctrl-left", "alt-left", "shift-right", "ctrl-right", "alt-right" }
 
 local function Clickable(part)
-    if part.type == "InteractiveLabel" or part.type == "RPSheetBar" then return part.events and part.events.OnClick ~= nil end
+    if part.type == "RPSheetBar" then return part.events and part.events.OnClick ~= nil end
+    if part.type == "RPSheetButton" then return not part.disabled and part.events and part.events.OnClick ~= nil end
     if part.type == "Button" then return part.frame:IsEnabled() end
     return false
+end
+
+-- The rule of every window: what reacts to a click is a button, a tab or a bar.
+-- Text that does is a problem.
+function CheckNoClickableText(where, part)
+    if (part.type == "InteractiveLabel" or part.type == "Label") and part.events and part.events.OnClick then
+        Problem(where .. ": plain text that reacts to a click")
+    end
 end
 
 CLICKED = {}
@@ -98,6 +112,7 @@ function WalkRows(rows, where, options)
         local name = ("%s [%s] '%s'"):format(where, tostring(kind), F.Plain(text):gsub("\n", " "):sub(1, 50))
         COUNT.rows = COUNT.rows + 1
         CheckText(name, text)
+        CheckNoClickableText(name, part)
         if part.frame:IsMouseEnabled() or (part.events and (part.events.OnEnter or part.events.OnClick)) then
             HoverPart(name, part)
         end

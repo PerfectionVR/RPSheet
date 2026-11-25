@@ -249,8 +249,8 @@ read by `RPSheet:HasAdvantage`, `RPSheet:FeatureFlag`, `Sheet/Limits.lua`,
 **Explaining.** `Sheet/Explain.lua` has one `Explain...` method per number
 (`ExplainAC`, `ExplainSave`, `ExplainWeapon`, ...). Each mirrors the calculation next to
 it by hand, as a list of labelled parts: **when you change a calculation, change its
-explanation too**. `UI.AddLabel`'s last argument is that method; it puts the `[?]` in
-front of the row. A row that rolls a d20 is made with `UI.AddRollLabel` (checks, saves,
+explanation too**. `UI.AddLabel`'s `explain` argument is that method; it gives the row's
+button a `?` part in front. A row that rolls a d20 is made with `UI.AddRollLabel` (checks, saves,
 skills, tools, initiative, spell attack): there a right-click explains as well, and its
 tooltip says so. `RPSheet:ExplainTerm(term)` captures the same text for another player
 who clicked a term in chat.
@@ -837,9 +837,37 @@ There is still no clock: only a running session counts, in the character's own t
 - **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
   window test types into every box.
 
+## Added in 0.14.0: buttons in every window
+
+`UI/FightParts.lua` became `UI/Parts.lua` and loads right after `UI/Rows.lua`.
+
+- **Rule of every window:** what can be clicked is an `RPSheetButton`, an `RPSheetTab`
+  or an `RPSheetBar`. `UI.AddLabel` keeps its arguments, and makes an
+  `InteractiveLabel` only when it is given nothing to do; with `onClick` or `explain`
+  it hands over to `UI.AddRowButton` (`UI/Parts.lua`) and returns the button, which
+  has `SetText` and `GetText` like the label had. So a section never chooses: give a
+  row something to do and it is a button. The window tests' walker
+  (`tests/t-test-windows-walk.lua`, `CheckNoClickableText`) fails on text with a click.
+- **`RPSheetButton`** (version 2): the text wraps and the button takes the height it
+  needs (`Fit`, on `SetText`, `OnWidthSet`, `SetMark`, `SetStyle`). A fourth look,
+  "row": text in the text colour, for rows that colour parts of their own text.
+  `SetMark(true)` shows a "?" part on the left, a button inside the button that fires
+  `OnMarkClick`. `SetDisabled(true)` takes no click at all (the item browser's
+  buttons); the "off" look alone still does, to say why.
+- **Explaining:** the "?" part calls `explain`; so does Alt with a click, and the
+  whole button when the row has no `onClick`. `UI.AddRollLabel` is unchanged: a
+  right-click explains too. `UI.SetText` no longer adds a mark to the text.
+- **`UI.AddLabel`'s eighth argument** is a look for the button ("off" for a passive
+  that is switched off).
+- **Tab strips:** the sheet (`UI/SheetTabs.lua`) and the item browser
+  (`UI/ItemBrowserParts.lua`) use `UI.AddTabStrip` like the combat window. With `open`
+  nil no tab is the open one (the browser while it searches every tab).
+- **`UI.AddItemButton`** makes an `RPSheetButton`; AceGUI's own `Button` is no longer
+  made by the addon's windows (the dialogs of AceConfig still have theirs, skinned).
+
 ## Added in 0.13.0: the combat window's layout
 
-`UI/Button.lua`, `UI/FightParts.lua`, `UI/FightWindowRoster.lua`,
+`UI/Button.lua`, `UI/Parts.lua` (then `UI/FightParts.lua`), `UI/FightWindowRoster.lua`,
 `Integrations/FightLog.lua`, `Data/CreatureGroups.lua`; `UI/FightWindowTurn.lua`,
 `UI/FightWindowOwner.lua`, `UI/FightWindowCreatures.lua` and `UI/FightWindow.lua`
 rewritten.
@@ -850,7 +878,7 @@ rewritten.
 - **`RPSheetButton`** (`UI/Button.lua`): a box with an edge, looks "on", "off" (greyed,
   a click may say why) and "picked". `UI.AddButton(parent, relWidth, text, onClick,
   tipTitle, tipBody, look)`, `UI.AddTabStrip(parent, tabs, open, pick)`, `UI.Pip`,
-  `UI.HealthColor` are in `UI/FightParts.lua`.
+  `UI.HealthColor` are in `UI/Parts.lua`.
 - **Order of the window** (`RPSheet:PopulateFight`): headline, an owed save or
   initiative roll, `UI.AddFightRoster` (a label and a health bar per combatant; the
   bar picks `F.target`), `UI.AddFightLog`, `UI.AddFightRunning`, `UI.AddFightStatus`,

@@ -2,7 +2,7 @@
 -- text adventure. From the top: who is here, each with a health bar
 -- (UI/FightWindowRoster.lua); the fight's log; this character's own line; and the
 -- buttons, behind tabs, for what it can do now (UI/FightWindowTurn.lua). What can be
--- clicked is a button, a tab or a bar (UI/FightParts.lua).
+-- clicked is a button, a tab or a bar (UI/Parts.lua).
 -- Opened with /sheet combat, and by itself when initiative is called for or this
 -- character's turn starts.
 local ADDON, ns = ...
