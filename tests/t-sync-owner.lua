@@ -161,6 +161,19 @@ Section("damage and healing", function()
     Eq(laura.addon:State().hp, before, "and a message that claims to be the owner's is not believed")
 end)
 
+Section("the fight's log", function()
+    -- the owner's game keeps what it says; a player's keeps the owner's lines from chat
+    Check(#Fight(maren).LogLines() > 3, "the owner's log holds what the session said")
+    local before = #Fight(laura).LogLines()
+    laura:Fire("CHAT_MSG_PARTY", "Gnoll takes 5 fire damage.", maren.full)
+    Eq(#Fight(laura).LogLines(), before + 1, "a player's log takes the owner's line from the group's chat")
+    laura:Fire("CHAT_MSG_PARTY", "Gnoll takes 500 fire damage.", thok.full)
+    Eq(#Fight(laura).LogLines(), before + 1, "and not what another player says")
+    local own = #Fight(maren).LogLines()
+    maren:Fire("CHAT_MSG_PARTY", "Gnoll takes 5 fire damage.", maren.full)
+    Eq(#Fight(maren).LogLines(), own, "the owner's game doesn't take its own lines twice")
+end)
+
 Section("a combatant at 0 is passed over", function()
     local F = Fight(maren)
     local seen = {}

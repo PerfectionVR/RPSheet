@@ -1,6 +1,8 @@
--- The combat window: the session this character is in. Who takes part, in initiative
--- order, each with their group's mark; the buttons of the session's owner; and, while
--- turns are taken, what this character can do now (UI/FightWindowTurn.lua).
+-- The combat window: the session this character is in, laid out like the screen of a
+-- text adventure. From the top: who is here, each with a health bar
+-- (UI/FightWindowRoster.lua); the fight's log; this character's own line; and the
+-- buttons, behind tabs, for what it can do now (UI/FightWindowTurn.lua). What can be
+-- clicked is a button, a tab or a bar (UI/FightParts.lua).
 -- Opened with /sheet combat, and by itself when initiative is called for or this
 -- character's turn starts.
 local ADDON, ns = ...
@@ -10,7 +12,6 @@ local F = ns.Fight
 local AceGUI = LibStub("AceGUI-3.0")
 local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
-local RED = "|cffff5555"
 local PHASE = {
     LOBBY = "Gathering: join, and pick a group if you fight as one.",
     ROLL = "Roll initiative. The turns start when everyone has rolled.",
@@ -67,44 +68,24 @@ end
 local function AddIdle(self, body)
     if F.HasSnapshot() then
         UI.AddHeading(body, "After the fight")
-        UI.AddLabel(body, 1, UI.ACCENT .. "Put my character back as before the fight|r", function() F.RestoreSnapshot() end, "Before the fight",
+        UI.AddButton(body, 1, "Put my character back as before the fight", function() F.RestoreSnapshot() end, "Before the fight",
             "Your hit points, spell slots, resources, conditions and what was running go back to what they were when you joined. Your character itself (levels, items) is not touched.")
-        UI.AddLabel(body, 1, UI.ACCENT .. "Keep the outcome|r", function() F.DropSnapshot() end, "Keep the outcome",
+        UI.AddButton(body, 1, "Keep the outcome", function() F.DropSnapshot() end, "Keep the outcome",
             "Your character stays as the fight left it, and the state from before the fight is forgotten.")
     end
     UI.AddHeading(body, "Combat session")
-    UI.AddLabel(body, 1, UI.ACCENT .. "Start a combat session|r", function() F.Start() end, "Start a combat session",
-        "You own the session: your group can join it, you call for initiative, and your game announces whose turn it is and what comes of everyone's rolls. Everyone rolls for their own character.")
-    UI.AddLabel(body, 1, UI.GREY .. "Others join from this window once you are in a party or raid with them.|r")
+    UI.AddButton(body, 1, "Start a combat session", function() F.Start() end, "Start a combat session",
+        "You own the session: your group can join it, you call for initiative, and your game announces whose turn it is and what comes of everyone's rolls. Everyone rolls for their own character.",
+        "picked")
+    UI.AddLabel(body, 1, UI.GREY .. "Others join from this window once you are in a party or raid with them. Alone, you can still start one and add creatures to fight.|r")
 end
 
--- The eight marks to fight under, and none.
-local function AddGroups(body, mine)
-    UI.AddLabel(body, 1, "Your group: " .. (F.MARKS[mine.mark] and (F.MarkIcon(mine.mark) .. F.MARKS[mine.mark].name) or (UI.GREY .. "none|r")), nil,
-        "Groups", "Those who fight together pick the same mark below. The mark stands in front of your name in the order and in what is announced.")
-    for index, mark in ipairs(F.MARKS) do
-        UI.AddLabel(body, 0.11, F.MarkIcon(index), function() F.SetMark(index) end, mark.name, ("Join the %s group."):format(mark.name))
-    end
-    UI.AddLabel(body, 0.11, UI.GREY .. "x|r", function() F.SetMark(0) end, "No group", "Fight under no mark.")
-end
-
-local function AddRoster(self, body, session)
-    UI.AddHeading(body, session.phase == "RUN" and ("Round %d"):format(session.round) or "Who takes part")
-    local target = F.joined and F.Target()
-    for _, key in ipairs(F.Roster()) do
-        local member = session.members[key]
-        local init = member.init and ("%d"):format(member.init) or "-"
-        local text = ("%s%s%s%s%s  %s%s  HP %d/%d  AC %d|r"):format(
-            session.turn == key and (UI.ACCENT .. "> |r") or "", F.MarkIcon(member.mark), member.name,
-            member.npc and (UI.GREY .. " (run by the owner)|r") or "",
-            key == target and (RED .. " (your target)|r") or "", UI.GREY, init, member.hp, member.max, member.ac)
-        UI.AddLabel(body, 1, text, function()
-            F.target = F.target ~= key and key or nil
-            F.Changed()
-        end, member.name, ("Initiative %s. Click to aim your attacks at %s: the session then says whether an attack roll hits. Click again to aim at no one.%s"):format(
-            member.init and init or "not rolled yet", member.name,
-            F.IsOwner() and "\nAs the session's owner you also pick here who a saving throw, damage or healing is for." or ""))
-    end
+-- What the session is doing, in one line.
+local function Headline(session)
+    local holder = session.members[session.turn or ""]
+    local owner = ("Session of %s%s|r"):format(UI.ACCENT, ns.Game.ShortName(session.owner))
+    if session.phase ~= "RUN" then return owner end
+    return ("%s  %sround %d, %s|r"):format(owner, UI.GREY, session.round, F.MyTurn() and "your turn" or (holder and (holder.name .. "'s turn") or "between turns"))
 end
 
 function RPSheet:PopulateFight()
@@ -121,31 +102,30 @@ function RPSheet:PopulateFight()
         -- the list to add a creature from fills the window (UI/FightWindowCreatures.lua)
     else
         local mine = F.Mine()
-        UI.AddLabel(body, 1, ("Session of %s%s|r"):format(UI.ACCENT, ns.Game.ShortName(session.owner)))
+        UI.AddLabel(body, 1, Headline(session))
         if PHASE[session.phase] then UI.AddLabel(body, 1, UI.GREY .. PHASE[session.phase] .. "|r") end
         if not mine then
-            UI.AddLabel(body, 1, UI.ACCENT .. "Join the session|r", function() F.Join() end, "Join",
+            UI.AddButton(body, 0.5, "Join the session", function() F.Join() end, "Join",
                 "Your character joins with the hit points, slots and resources it has now. That state is kept: after the fight you can put it back."
-                .. (session.phase == "RUN" and "\nThe turns are running: you roll initiative and act when your place in the order comes up." or ""))
+                .. (session.phase == "RUN" and "\nThe turns are running: you roll initiative and act when your place in the order comes up." or ""), "picked")
+            UI.AddButton(body, 0.5, "Forget this session", function() F.Leave() end, "Forget", "The session goes on without you.")
         else
-            AddGroups(body, mine)
             if F.owedSave then
-                UI.AddLabel(body, 1, ("%sRoll the %s save (DC %d)|r"):format(UI.ACCENT, ns.Rules.STAT_NAMES[F.owedSave.stat], F.owedSave.dc),
+                UI.AddButton(body, 1, ("Roll the %s save (DC %d)"):format(ns.Rules.STAT_NAMES[F.owedSave.stat], F.owedSave.dc),
                     function() F.RollOwedSave() end, "Saving throw",
-                    "The session's owner asked for this saving throw. You roll it on your own sheet; the owner's game says whether it meets the DC.\n" .. ns.ROLL_MODE_HELP)
+                    "The session's owner asked for this saving throw. You roll it on your own sheet; the owner's game says whether it meets the DC.\n" .. ns.ROLL_MODE_HELP, "picked")
             end
             if F.OwesInitiative() then
-                UI.AddLabel(body, 1, UI.ACCENT .. "Roll initiative|r", function() F.RollInitiative() end, "Roll initiative",
-                    "A Dexterity check for your place in the order.\n" .. ns.ROLL_MODE_HELP)
+                UI.AddButton(body, 1, "Roll initiative", function() F.RollInitiative() end, "Roll initiative",
+                    "A Dexterity check for your place in the order.\n" .. ns.ROLL_MODE_HELP, "picked")
             end
         end
-        AddRoster(self, body, session)
-        if mine then UI.AddFightRunning(self, body) end
-        if mine and session.phase == "RUN" then UI.AddFightTurn(self, body) end
-        if F.IsOwner() then UI.AddFightOwner(self, body, session) end
-        if not F.IsOwner() then
-            UI.AddLabel(body, 1, "\n" .. UI.GREY .. (mine and "Leave the fight" or "Forget this session") .. "|r", function() F.Leave() end, "Leave",
-                "The session goes on without you.")
+        UI.AddFightRoster(self, body, session)
+        UI.AddFightLog(self, body)
+        if mine then
+            UI.AddFightRunning(self, body)
+            UI.AddFightStatus(self, body)
+            UI.AddFightTurn(self, body, session, mine)
         end
     end
     body:ResumeLayout()

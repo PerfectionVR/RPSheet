@@ -10,6 +10,8 @@ leave this folder out.
 - **A Lua 5.1-compatible interpreter as a DLL**: LuaJIT's `lua51.dll`, or the reference
   Lua 5.1 built as a shared library. The game uses Lua 5.1; LuaJIT is close enough,
   and `lua51.py` reports the few things LuaJIT accepts that the game would not.
+  Without one, the Python module `lupa` (`pip install lupa`) is used: it carries a
+  LuaJIT of its own, and then `LUA_DLL` can be left out.
 - **A copy of the Ace3 libraries**, for example the `Libs` folder of an installed
   release of this addon. They are read, never changed.
 

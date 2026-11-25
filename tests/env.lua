@@ -30,6 +30,7 @@ dofile(ARG3 .. "/strict.lua")
 -- string helpers
 strtrim = function(s, chars) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
 string.trim = strtrim
+strlenutf8 = function(s) return #tostring(s) end
 strsplit = function(sep, s, limit)
     local out, start = {}, 1
     while true do
