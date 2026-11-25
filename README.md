@@ -90,9 +90,16 @@ handles the numbers and gives short summaries in its own words.
 - **Initiative** is rolled by everyone for their own character when the owner calls
   for it, and the turns go round in that order. Someone who joins a fight that is
   running rolls too and acts when their place comes up.
-- **On your turn** the window lists what your character can do: its attack, abilities,
-  prepared spells and the actions everyone has. What it can't do right now is grey
-  and says why (action used, no slot left, not your turn).
+- **The combat window** is laid out like the screen of a text adventure. On top is who
+  is here, in initiative order, each with a health bar you click to pick them. Under
+  it is the fight's log: what the session said, hits in red, misses in grey, healing
+  in green. Then your own line: hit points, Armor Class, and a square each for your
+  action, bonus action and reaction, green while it is free. Under that are buttons.
+  What can be clicked is a button, a tab or a bar; plain text is only read.
+- **On your turn** the buttons are what your character can do, behind tabs: its attack,
+  abilities, cantrips, prepared spells and the actions everyone has. What it can't do
+  right now is a greyed button that says why (action used, no slot left, not your
+  turn). "End turn" stays in sight above the tabs.
 - **The owner's game announces** for everyone: whose turn it is, each player's rolls,
   whether an attack roll hits the combatant it was aimed at, and who drops to 0.
 - **What lasts a number of rounds is counted** in your own turns: a spell you cast in
@@ -107,9 +114,13 @@ handles the numbers and gives short summaries in its own words.
 - **Creatures from a list:** the 84 creatures of the setting, from a Mechanostrider to
   the Lich King, each with its Armor Class, hit points, saves, attacks and what it
   resists. One you add knows its attacks: on its turn you click "Fel Claw" and your
-  game rolls to hit against the row you picked and, on a hit, the damage, which the
-  target takes. The saves it forces work the same way, with the damage following the
-  result.
+  game rolls to hit against the combatant you picked and, on a hit, the damage, which
+  the target takes. With only one opponent it is aimed at them without a click. The
+  saves it forces work the same way, with the damage following the result.
+- **The list is sorted** behind four tabs: by type (dragon, undead, fiend), by people
+  (demons, naga, nerubians), by side (Burning Legion, Scourge, Scarlet Crusade,
+  Dragonflights) and by challenge. A group is a button; so is each creature in it. A
+  typed part of a name looks through all of them at once.
 - **Alone:** you can start a session without a group, add a creature and play it
   against your own character, to try a fight out.
 - Your hit points, slots and resources from **before the fight** are kept: afterwards
@@ -385,8 +396,9 @@ Both are on by default and are kept per character.
 | A rage | Counted for its ten minutes. At the end of a turn of yours without an attack the sheet reminds you what keeps a rage up; it can't see a save you forced, so ending it is your click. Not said from level 15, when a rage needs no upkeep. |
 | Combatants the owner runs | Typed as "Gnoll 13 22 +1": name, Armor Class, hit points, initiative bonus. They have no sheet, so their d20s (initiative, attacks, saves) are rolled by the owner's addon itself and are not /roll rolls. The owner types their damage and keeps their hit points; one at 0 hit points is passed over in the order. |
 | Creatures from the list | Names and numbers only: Armor Class, average hit points, initiative bonus, saving throw bonuses, resistances, immunities and vulnerabilities, each attack's bonus and damage dice, and each save it forces with its DC and damage. Their traits, spells, multiattack routines, recharges, legendary actions and the conditions their attacks cause are not in the list: those stay with whoever runs the creature. |
-| A creature's attack | d20 + its bonus against the picked row's Armor Class; a natural 20 doubles the damage dice. A player takes each damage type through their own "Take damage"; another creature from the list halves what it resists, ignores what it is immune to and doubles what it is vulnerable to. |
-| A save a creature forces | Asked of the picked row; the damage is rolled once a turn, so everyone caught takes the same. On a failure the damage is dealt, on a success half where the creature's ability says so. |
+| Groups in the creature list | Type is the creature's own. People and side are this addon's sorting by name, for finding a creature, and have no effect on any roll; what fits nowhere is under "Others". |
+| A creature's attack | d20 + its bonus against the picked combatant's Armor Class (the only opponent standing, when none is picked); a natural 20 doubles the damage dice. A player takes each damage type through their own "Take damage"; another creature from the list halves what it resists, ignores what it is immune to and doubles what it is vulnerable to. |
+| A save a creature forces | Asked of the picked combatant; the damage is rolled once a turn, so everyone caught takes the same. On a failure the damage is dealt, on a success half where the creature's ability says so. |
 | Saving throws the owner asks for | The player rolls on their own sheet, with everything it knows about that save. The owner's game compares the total with the DC; a natural 1 or 20 decides nothing by itself. |
 | Damage from the owner | Goes through the target's own "Take damage": resistance, immunity, temporary hit points, wards, the save to keep concentrating and dropping to 0 all apply. Only the owner of the session you joined can do this, and only while you are in it. |
 | Attack rolls | Aimed at a combatant (click their row, or target them in the game), the owner's game compares the total with their Armor Class and says hit or miss; a natural 20 hits and a natural 1 misses. Damage is taken by the target's own player with "Take damage". |

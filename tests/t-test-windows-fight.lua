@@ -7,14 +7,16 @@ dofile(ARG3 .. "/t-test-windows-base.lua")
 Start()
 
 local FT = ns.Fight
-local characters, rows, actions, greyed, running = 0, 0, 0, 0, 0
+local characters, rows, actions, greyed, running, tabs = 0, 0, 0, 0, 0, 0
+local CLICKABLE = { RPSheetButton = true, RPSheetTab = true, RPSheetBar = true }
 
 -- Clicks the window's row that reads `needle` and types `text` into the box it opens.
 local owner = 0
 local function Ask(where, needle, text)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
     for _, part in ipairs(RPSheet.fightBody.children) do
-        if F.Plain(PartText(part)):find(needle, 1, true) then
+        -- (only what reads as something to click: the fight's log repeats the names)
+        if CLICKABLE[part.type] and F.Plain(PartText(part)):find(needle, 1, true) then
             owner = owner + 1
             Try(where .. " click " .. needle, function() F.Click(part.frame); F.Settle() end)
             if text then
@@ -33,9 +35,42 @@ local function Creature(name)
     end
 end
 
+-- What can be clicked in this window is a button, a tab or a bar, and nothing else is.
+local function CheckClickable(where)
+    for _, part in ipairs(RPSheet.fightBody.children) do
+        if not CLICKABLE[part.type] and part.GetUserData and part:GetUserData("onClick") then
+            Problem(("%s: plain text that can be clicked: %s"):format(where, F.Plain(PartText(part)):sub(1, 40)))
+        end
+    end
+end
+
+-- Opens every tab of the strip in turn and looks at what it shows.
+local function LookAtTabs(where)
+    Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
+    local names = {}
+    for _, part in ipairs(RPSheet.fightBody.children) do
+        if part.type == "RPSheetTab" then names[#names + 1] = F.Plain(PartText(part)) end
+    end
+    if #names < 2 then Problem(where .. ": only " .. #names .. " tabs") end
+    for _, name in ipairs(names) do
+        tabs = tabs + 1
+        for _, part in ipairs(RPSheet.fightBody.children) do
+            if part.type == "RPSheetTab" and F.Plain(PartText(part)) == name then
+                Try(where .. " tab " .. name, function() F.Click(part.frame); F.Settle() end)
+                break
+            end
+        end
+        Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
+        CheckOverlap(RPSheet.fightBody, where .. " tab " .. name)
+        CheckClickable(where .. " tab " .. name)
+        for _, part in ipairs(RPSheet.fightBody.children) do HoverPart(where .. " tab " .. name, part) end
+    end
+end
+
 local function Look(where)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
     CheckOverlap(RPSheet.fightBody, where)
+    CheckClickable(where)
     for _, part in ipairs(RPSheet.fightBody.children) do
         HoverPart(where, part)
         rows = rows + 1
@@ -84,6 +119,12 @@ for index, key in ipairs(R.CLASS_ORDER) do
         Ask(label, "Add a creature from the list")
         if not FT.picking then Problem(label .. ": the creature list didn't open") end
         Look(label .. " creature list")
+        LookAtTabs(label .. " creature list")
+        Ask(label, "Side")
+        Ask(label, "Scourge")
+        Ask(label, "Abomination  CR 12")
+        local abomination = Creature("Abomination")
+        if not abomination then Problem(label .. ": a creature of a group wasn't added by its button") else FT.RemoveCreature(abomination) end
         Ask(label, "Name has:", "fel")
         if #FT.CreatureMatches(FT.pickFilter) ~= 4 then Problem(label .. ": the filter gives " .. #FT.CreatureMatches(FT.pickFilter) .. " creatures") end
         Look(label .. " creature list, narrowed")
@@ -102,6 +143,8 @@ for index, key in ipairs(R.CLASS_ORDER) do
             Problem(label .. ": alone in the session, the roll didn't start the character's turn")
         else
             Look(label .. " turn")
+            LookAtTabs(label .. " turn")
+            FT.tab = nil
             local list = FT.Actions()
             if #list < 11 then Problem(label .. ": the turn lists only " .. #list .. " actions") end
             for _, entry in ipairs(list) do
@@ -145,7 +188,14 @@ for index, key in ipairs(R.CLASS_ORDER) do
             else
                 FT.target = FT.Me()
                 Look(label .. " the creature's turn")
+                if #FT.LogLines() == 0 then Problem(label .. ": the fight's log is empty") end
                 local hp = RPSheet:State().hp
+                -- alone with the creature, it is aimed at the character without a click
+                FT.target = nil
+                if FT.session.members[FT.Me()].hp > 0 and FT.CreatureTarget(doomguard) ~= FT.Me() then
+                    Problem(label .. ": the creature isn't aimed at its only opponent")
+                end
+                FT.target = FT.Me()
                 Ask(label, "Fel Claw")
                 Ask(label, "Gore")
                 Ask(label, "War Stomp")
@@ -167,5 +217,5 @@ for index, key in ipairs(R.CLASS_ORDER) do
 end
 
 if running == 0 then Problem("no action of any class left something running for the window to list") end
-Finish("fight", ("%d characters, %d rows hovered, %d actions clicked, %d greyed with a reason, %d running things ended, %d owner rows used"):format(
-    characters, rows, actions, greyed, running, owner))
+Finish("fight", ("%d characters, %d rows hovered, %d tabs opened, %d actions clicked, %d greyed with a reason, %d running things ended, %d owner rows used"):format(
+    characters, rows, tabs, actions, greyed, running, owner))

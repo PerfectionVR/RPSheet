@@ -432,7 +432,7 @@ wrappers of one method run in reverse load order.
 | `RPSheet:ApplyDice` | `Actions/Dice.lua` | `Actions/FeatureDice.lua` (which also holds `ns.HasFeature`) | Class features that count healing dice at their highest or refill a pool from a spell's dice. |
 | `L.Problem` | `Options/LevelDialogCheck.lua` | `Options/LineageAbility.lua`, `Options/LevelDialogLessons.lua` | Holds the level dialog until the species ability or Lessons of the First Ones' feat is chosen. |
 | `RPSheet:SpellWasCast` | `Actions/Spells.lua` (empty: a hook) | `Integrations/FightTimers.lua` | In a combat session a spell's rounds start being counted. |
-| `RPSheet:Attack`, `:UnarmedAttack`, `:UseAbility`, `:CastSpell`, `:Announce`, `:QueueBroadcast`, `ns.RollText.Check` | their own files | `Integrations/FightGate.lua` (loads last of all of them) | Combat sessions: the turn's limits, the line sent to the session's owner, hit points followed. |
+| `RPSheet:Attack`, `:UnarmedAttack`, `:UseAbility`, `:CastSpell`, `:Announce`, `:QueueBroadcast`, `ns.RollText.Check` | their own files | `Integrations/FightGate.lua` (loads last of all of them) | Combat sessions: the turn's limits, the line sent to the session's owner, hit points followed. `Integrations/FightLog.lua` wraps `:Announce` once more (the owner's lines into the fight's log) and `:EnableFight` (the chat events a player's log listens to). |
 
 `tests/dupfuncs.py` lists every function defined twice; its output should be exactly
 these. Other places where behaviour is added to something that exists:
@@ -836,6 +836,44 @@ There is still no clock: only a running session counts, in the character's own t
 - **Text input:** `ns.AskFightText(prompt, default, go)`, a StaticPopup with an edit box.
 - **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
   window test types into every box.
+
+## Added in 0.13.0: the combat window's layout
+
+`UI/Button.lua`, `UI/FightParts.lua`, `UI/FightWindowRoster.lua`,
+`Integrations/FightLog.lua`, `Data/CreatureGroups.lua`; `UI/FightWindowTurn.lua`,
+`UI/FightWindowOwner.lua`, `UI/FightWindowCreatures.lua` and `UI/FightWindow.lua`
+rewritten.
+
+- **Rule of the window:** what can be clicked is an `RPSheetButton`, an `RPSheetTab`
+  or an `RPSheetBar`; an `InteractiveLabel` there never has a click. The window test
+  holds every state to it (`CheckClickable`).
+- **`RPSheetButton`** (`UI/Button.lua`): a box with an edge, looks "on", "off" (greyed,
+  a click may say why) and "picked". `UI.AddButton(parent, relWidth, text, onClick,
+  tipTitle, tipBody, look)`, `UI.AddTabStrip(parent, tabs, open, pick)`, `UI.Pip`,
+  `UI.HealthColor` are in `UI/FightParts.lua`.
+- **Order of the window** (`RPSheet:PopulateFight`): headline, an owed save or
+  initiative roll, `UI.AddFightRoster` (a label and a health bar per combatant; the
+  bar picks `F.target`), `UI.AddFightLog`, `UI.AddFightRunning`, `UI.AddFightStatus`,
+  `UI.AddFightTurn` (the button that moves the turn on, the tab strip, the open tab).
+- **Tabs:** one per `section` of `F.Actions()`, "Session" for the owner
+  (`UI.AddFightOwner`) and "You". `F.tab` is the player's choice; it is dropped when
+  the session's phase or turn changes, and then the owner's tab opens on the turn of
+  a combatant they run and outside the turns, the first action tab otherwise.
+- **The log** (`Integrations/FightLog.lua`): `F.Log(text)`, `F.LogLines()`,
+  `F.LogText(line)` (colour by outcome, marks as icons). The owner's client logs in a
+  wrap of `RPSheet:Announce` (every line with a speaker while it owns a session); a
+  player's client logs the owner's lines from the chat events registered in a wrap of
+  `RPSheet:EnableFight`. Kept in memory, emptied when the session's id changes.
+- **Creature groups** (`Data/CreatureGroups.lua`): `R.CREATURE_GROUPINGS`,
+  `R.CreatureGroups(key)` for `kind`, `people`, `side`, `challenge`. People and side
+  are lists by name in that file; a dragonflight is told by its name. The picker
+  keeps `F.pickBy`, `F.pickGroup`, `F.pickFilter`.
+- **Aim:** `F.CreatureTarget(key)` is `F.target`, or the only other combatant above 0
+  hit points.
+- **Tests:** the window test opens every tab in every state; `tests/t-sync-solo.lua`
+  holds each grouping to all 84 creatures; `tests/t-sync-owner.lua` the log on both
+  sides. `tests/runlua.py` falls back to the Python module `lupa` (LuaJIT) when
+  `LUA_DLL` is not set, and `tests/env.lua` has `strlenutf8`.
 
 ## Added in 0.12.0: creature templates
 

@@ -5,7 +5,23 @@
 import ctypes, os, sys
 path = os.environ.get("RPSHEET_LUA_DLL", "")
 if not path or not os.path.exists(path):
-    sys.exit("No Lua interpreter: set LUA_DLL in tests/local.cfg (see tests/README.md).")
+    # No DLL: the Python module lupa (pip install lupa) carries a LuaJIT of its own.
+    try:
+        from lupa import luajit21 as lupa
+    except ImportError:
+        sys.exit("No Lua interpreter: set LUA_DLL in tests/local.cfg, or install the Python module lupa (see tests/README.md).")
+    lua = lupa.LuaRuntime(unpack_returned_tuples=True, register_eval=False, encoding=None)
+    g = lua.globals()
+    for i, a in enumerate(sys.argv[2:]):
+        g[("ARG%d" % (i + 1)).encode()] = a.encode()
+    g[b"ACE_LIBS"] = os.environ.get("RPSHEET_ACE_LIBS", "").encode()
+    try:
+        lua.execute(b"local f, e = loadfile(...) if not f then error(e, 0) end f()", sys.argv[1].encode())
+    except lupa.LuaError as error:
+        text = error.args[0] if error.args else str(error)
+        print("ERROR:", text.decode(errors="replace") if isinstance(text, bytes) else text)
+    sys.stdout.flush()
+    sys.exit(0)
 dll = ctypes.CDLL(path)
 dll.luaL_newstate.restype = ctypes.c_void_p
 L = ctypes.c_void_p(dll.luaL_newstate())

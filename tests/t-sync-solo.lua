@@ -71,6 +71,27 @@ Section("the list of creatures", function()
     Eq(R.FindCreature("  felguard "), felguard, "a name finds its creature whatever its capitals")
     Eq(#F.CreatureMatches("dragonflight"), 15, "part of a name narrows the list")
     Check(F.CreatureSummary(felguard):find("Fel Battleaxe: +5 to hit, 2d8 + 3 slashing + 2d6 fire.", 1, true), "its tooltip lists its attacks")
+    -- every way of sorting the list holds every creature once
+    for _, grouping in ipairs(R.CREATURE_GROUPINGS) do
+        local seen, total = {}, 0
+        for _, group in ipairs(R.CreatureGroups(grouping.key)) do
+            for _, name in ipairs(group.list) do
+                total = total + 1
+                if seen[name] or not R.CREATURES[name] then Check(false, name .. " is once under " .. grouping.name) end
+                seen[name] = true
+            end
+        end
+        Eq(total, 84, "sorted by " .. grouping.name:lower() .. " the list holds all 84")
+    end
+    local function Group(key, name)
+        for _, group in ipairs(R.CreatureGroups(key)) do
+            if group.name == name then return #group.list end
+        end
+    end
+    Eq(Group("kind", "Dragon"), 15, "by type: the dragons")
+    Eq(Group("side", "Burning Legion"), 13, "by side: the Burning Legion")
+    Eq(Group("people", "Nerubians"), 6, "by people: the nerubians")
+    Eq(R.CreatureGroups("side")[#R.CreatureGroups("side")].name, "Others", "what belongs nowhere comes last")
 end)
 
 Section("alone in a session", function()
@@ -118,14 +139,20 @@ Section("the creature attacks", function()
     world:Advance(6)
     Check(SaidSince(said, "a critical hit on Maren for 7 slashing + 4 fire damage"), "a natural 20 doubles the dice: " .. tostring(SaidSince(said, "Felguard attacks")))
     Eq(HP(), hp - 11, "and that lands too")
-    -- with no row picked the roll is only said
+    -- with no one picked it is aimed at its only opponent
     F.target = nil
+    Eq(F.CreatureTarget(key), F.Me(), "alone with one opponent, the creature is aimed at them")
     hp, said = HP(), #maren.said
     dice = { 15, 2, 2, 2, 2 }
     maren:Do(F.CreatureStrike, 1)
-    world:Advance(3)
-    Check(SaidSince(said, "= 20, damage 7 slashing + 4 fire damage"), "without a target the attack and its damage are announced: " .. tostring(SaidSince(said, "Felguard attacks")))
-    Eq(HP(), hp, "and nobody takes it")
+    world:Advance(6)
+    Check(SaidSince(said, "= 20 - hits Maren"), "so its attack is held against them without a click: " .. tostring(SaidSince(said, "Felguard attacks")))
+    Eq(HP(), hp - 11, "and lands")
+    local logged = false
+    for _, line in ipairs(F.LogLines()) do logged = logged or line:find("Felguard attacks with Fel Battleaxe: 15 + 5 = 20 - hits Maren", 1, true) ~= nil end
+    Check(logged, "what the session says is kept in the fight's log")
+    Check(F.LogText("Felguard attacks: 20 - hits Maren (AC 16)"):find("|cffff7777", 1, true), "a hit is red in the log")
+    Check(F.LogText("{star} Maren regains 4 hit points."):find("UI-RaidTargetingIcon_1", 1, true), "and a group's mark is its icon")
     Eq(F.Template(F.session.members[key]).name, "Felguard", "the combatant knows its template")
 end)
 
@@ -154,13 +181,21 @@ Section("a save the creature forces", function()
     world:Advance(2)
     local key = Key("Felhound")
     local printed = #maren.printed
+    addon:State().hp = addon:MaxHP()
     F.target = nil
+    Eq(F.CreatureTarget(key), nil, "with two opponents the creature is aimed at no one until one is picked")
     maren:Do(F.CreatureForce, 1, key)
     local told = false
-    for index = printed + 1, #maren.printed do told = told or tostring(maren.printed[index]):find("Click the row of who has to save", 1, true) ~= nil end
+    for index = printed + 1, #maren.printed do told = told or tostring(maren.printed[index]):find("Click the health bar of who has to save", 1, true) ~= nil end
     Check(told, "it needs someone to save")
-    F.target = F.Me()
     local hp, said = HP(), #maren.said
+    dice = { 15, 2, 2, 2 }
+    maren:Do(F.CreatureStrike, 1, key)
+    world:Advance(3)
+    Check(SaidSince(said, ", for "), "and its attack and damage are only announced: " .. tostring(SaidSince(said, "Felhound attacks")))
+    Eq(HP(), hp, "nobody takes it")
+    F.target = F.Me()
+    hp, said = HP(), #maren.said
     dice = { 4, 4, 4 }
     maren:Do(F.CreatureForce, 1, key)
     world:Advance(2)
