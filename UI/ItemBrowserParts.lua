@@ -5,15 +5,11 @@ local UI = ns.UI
 local AceGUI = LibStub("AceGUI-3.0")
 local B = UI.ItemBrowserState
 
--- A button under a block. It is a hair narrower than asked: buttons whose widths add
--- up to the full row could otherwise be rounded past it, and the last one would wrap.
+-- A button under a block. One that can't be used now is greyed and does nothing.
 function UI.AddItemButton(card, width, text, enabled, onClick)
-    local button = AceGUI:Create("Button")
-    button:SetText(text)
-    button:SetRelativeWidth(width * 0.999)
+    local button = UI.AddButton(card, width, text, enabled and function() onClick() end or nil, nil, nil, enabled and "on" or "off")
     button:SetDisabled(not enabled)
-    button:SetCallback("OnClick", onClick)
-    card:AddChild(button)
+    return button
 end
 
 local function AddCard(self, body, entry, first)
@@ -38,7 +34,6 @@ local function Later(self)
 end
 
 local function AddTabs(self, body)
-    local theme = self.db.profile.theme
     local tabs, found = { B.source.first }, B.open == B.source.first
     local kinds = type(B.source.kinds) == "function" and B.source.kinds(self) or B.source.kinds
     for _, tab in ipairs(kinds) do
@@ -46,17 +41,14 @@ local function AddTabs(self, body)
         found = found or tab == B.open
     end
     if not found then B.open = B.source.first end -- its tab is gone
-    for _, tab in ipairs(tabs) do
-        local button = AceGUI:Create("RPSheetTab")
-        button:SetStyle(theme, tab == B.open and not B.everywhere)
-        button:SetText(tab.name)
-        button:SetRelativeWidth(0.999 / #tabs) -- a hair under an even share: see UI/SheetTabs.lua
-        button:SetCallback("OnClick", function()
-            B.open, B.everywhere = tab, false -- a tab is one tab again
-            Later(self)
-        end)
-        body:AddChild(button)
-    end
+    -- (while the search goes over every tab none is the open one, and each can be clicked)
+    UI.AddTabStrip(body, tabs, not B.everywhere and B.open.name or nil, function(name)
+        for _, tab in ipairs(tabs) do
+            if tab.name == name then B.open = tab end
+        end
+        B.everywhere = false -- a tab is one tab again
+        Later(self)
+    end)
 end
 
 -- The search box, and next to it the button that makes the search go over every tab

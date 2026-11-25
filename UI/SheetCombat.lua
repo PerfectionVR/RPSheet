@@ -9,7 +9,7 @@ function UI.CombatSection(self, body)
     local sheet = self:Sheet()
     UI.AddHeading(body, "Combat")
 
-    -- Two numbers to a row: with three, "[?] Passive Perc. 10" wrapped at the
+    -- Two numbers to a row: with three, "? Passive Perc. 10" wrapped at the
     -- window's smallest width. A number that is clicked (initiative, spell attack) is
     -- a roll: a right-click explains it (UI.AddRollLabel).
     local function Number(label, value, onClick, tip, explain)

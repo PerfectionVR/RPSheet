@@ -237,7 +237,8 @@ local function CheckWidth(label, width)
     -- here, and the game's letters can be wider. (Half-width rows carry names of any
     -- length, and a larger font is the player's choice: those may wrap.)
     for _, part in ipairs(checkFit and RPSheet.body.children or {}) do
-        if part.relWidth and part.relWidth < 0.4 and part.type == "InteractiveLabel" then
+        if part.relWidth and part.relWidth < 0.4 and (part.type == "InteractiveLabel" or part.type == "RPSheetButton") then
+            part = { label = part.label or part.text }
             local text = part.label:GetText() or ""
             local _, size = part.label:GetFont()
             local _, wide = F.Measure(text, size or 12)

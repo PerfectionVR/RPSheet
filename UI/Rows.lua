@@ -1,4 +1,5 @@
--- Building blocks for the sheet's contents: themed text rows, headings and bars.
+-- Building blocks for the sheet's contents: themed text rows, headings and bars. A
+-- row that does something when clicked is a button (UI.AddRowButton, UI/Parts.lua).
 local _, ns = ...
 local RPSheet = ns.addon
 local Util = ns.Util
@@ -32,17 +33,23 @@ end
 -- getting functions of its own every time the sheet is rebuilt.
 -- A tooltip's body may be a function that gives the text: it is only called here, when
 -- the mouse is over the row, so rebuilding the sheet doesn't pay for the tooltips of
--- rows nobody hovers. (EXPLAIN_TIP: see the "[?]" below.)
-local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the [?] in front to see how this number is worked out.|r"
+-- rows nobody hovers. (EXPLAIN_TIP: the "?" part of a row's button.)
+local EXPLAIN_TIP = "\n\n|cff8f8f8fClick the ? in front to see how this number is worked out.|r"
 -- (a roll's row, UI.AddRollLabel, also explains on a right-click)
-local EXPLAIN_RIGHT_TIP = "\n\n|cff8f8f8fRight-click, or click the [?] in front, to see how this number is worked out.|r"
+local EXPLAIN_RIGHT_TIP = "\n\n|cff8f8f8fRight-click, or click the ? in front, to see how this number is worked out.|r"
+-- (a row that does nothing else explains wherever it is clicked)
+local EXPLAIN_ONLY_TIP = "\n\n|cff8f8f8fClick to see how this number is worked out.|r"
+
+local function ExplainTip(onClick, right)
+    return (not onClick and EXPLAIN_ONLY_TIP) or (right and EXPLAIN_RIGHT_TIP) or EXPLAIN_TIP
+end
 
 local function ShowTooltip(widget)
     local body = widget:GetUserData("tipBody")
     if type(body) == "function" then
         body = body()
         if widget:GetUserData("explain") then
-            body = (body or "") .. (widget:GetUserData("rightExplains") and EXPLAIN_RIGHT_TIP or EXPLAIN_TIP)
+            body = (body or "") .. ExplainTip(widget:GetUserData("onClick"), widget:GetUserData("rightExplains"))
         end
     end
     GameTooltip:SetOwner(widget.frame, "ANCHOR_RIGHT")
@@ -60,66 +67,41 @@ end
 
 UI.AttachTooltip = AttachTooltip
 
--- The small "[?]" in front of a row that can explain its number. Clicking it shows
--- the maths; clicking the rest of the row does what the row normally does.
-local EXPLAIN_MARK = "|cff8f8f8f[?]|r "
-
--- True if the mouse is over the mark at the start of the row.
-local function OverMark(label)
-    local left = label.frame:GetLeft()
-    if not left then return false end
-    local x = GetCursorPosition() / label.frame:GetEffectiveScale()
-    return x - left <= Theme().fontSize * 1.7
-end
-
--- A click on a row: on its mark (or with Alt) the explanation, otherwise what the row does.
-local function ClickLabel(label, _, button)
-    local explain, onClick = label:GetUserData("explain"), label:GetUserData("onClick")
-    if explain and (OverMark(label) or IsAltKeyDown()) then
-        explain()
-    elseif onClick then
-        onClick(button)
-    end
-end
-
-local function ClickBar(bar, _, button)
-    bar:GetUserData("onClick")(button)
-end
-
--- Sets a row's text, keeping the mark in front if it has one.
+-- Sets a row's text.
 function UI.SetText(label, text)
-    label:SetText(label:GetUserData("explains") and (EXPLAIN_MARK .. text) or text)
+    label:SetText(text)
 end
 
 -- A row of text taking `relWidth` of the window's width (1 = full, 0.5 = half).
--- With `onClick(mouseButton)` it highlights under the mouse and can be clicked.
--- With `explain()` it gets a "[?]" in front that calls it.
+-- With `onClick(mouseButton)` it is a button instead of text. With `explain()` that
+-- button has a "?" part in front that calls it; with only `explain()` the whole
+-- button does.
 -- `tipBody` is the tooltip's text, or a function that gives it when the row is hovered:
 -- use a function where the text takes work (lists, explanations, spell and item text).
-function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain)
+-- `look` is the button's, when it isn't a row's own (UI/Button.lua): "off" for a
+-- switch that is off.
+function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain, look)
     local theme = Theme()
-    local label = AceGUI:Create("InteractiveLabel")
-    StyleLabel(label, theme, theme.text)
-    label:SetRelativeWidth(relWidth)
-    label:SetUserData("explains", explain ~= nil)
-    UI.SetText(label, text)
+    local label
     if onClick or explain then
-        label.highlight:SetColorTexture(unpack(theme.highlight))
-        label:SetUserData("onClick", onClick)
-        label:SetUserData("explain", explain)
-        label:SetCallback("OnClick", ClickLabel)
+        label = UI.AddRowButton(parent, relWidth, text, onClick, explain, look)
+    else
+        label = AceGUI:Create("InteractiveLabel")
+        StyleLabel(label, theme, theme.text)
+        label:SetRelativeWidth(relWidth)
+        label:SetText(text)
+        parent:AddChild(label)
     end
     if tipTitle then
-        -- (a function's text gets the line about the "[?]" when it is shown)
+        -- (a function's text gets the line about the "?" when it is shown)
         local fixed = type(tipBody) ~= "function"
-        AttachTooltip(label, tipTitle, fixed and explain and ((tipBody or "") .. EXPLAIN_TIP) or tipBody)
+        AttachTooltip(label, tipTitle, fixed and explain and ((tipBody or "") .. ExplainTip(onClick)) or tipBody)
     end
-    parent:AddChild(label)
     return label
 end
 
 -- A row that rolls a d20 (a check, save, skill, tool, initiative, spell attack): a
--- left-click rolls, a right-click shows how the number is worked out, as the "[?]"
+-- left-click rolls, a right-click shows how the number is worked out, as the "?"
 -- does, and the tooltip says so. `explain()` is required.
 local function ClickRoll(button, roll, explain)
     if button == "RightButton" then explain() else roll() end

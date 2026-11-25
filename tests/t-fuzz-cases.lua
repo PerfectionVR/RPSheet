@@ -48,7 +48,7 @@ local CASES = {
     -- rest is cast: the window went on saying the list could still be changed.
     { name = "prepared window after the first spell", steps = {
         { a = "make", seed = 3, p = { class = "DRUID", level = 10, extras = 0, tick = "Starry Wisp" } },
-        { a = "click", seed = 1528399239, p = { button = "LeftButton", keys = "", mark = false, row = "window: InteractiveLabel Change prepared spells" } },
+        { a = "click", seed = 1528399239, p = { button = "LeftButton", keys = "", mark = false, row = "window: RPSheetButton Change prepared spells" } },
         { a = "cast", seed = 1070505899, p = { mode = "none", ritual = false, slotClicks = 6, spell = "Starry Wisp" } },
     }, check = function()
         if FUZZ.cast ~= "Starry Wisp" then return "the case didn't cast its spell (" .. tostring(FUZZ.cast) .. ")" end

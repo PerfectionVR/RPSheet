@@ -59,7 +59,7 @@ Action("browser", { weight = 22, guard = Z.HasCharacter, run = function()
     for _, part in ipairs(Parts(RPSheet.itemWindow)) do
         local kind = part.type
         if part.frame:IsVisible() and ((kind == "Button" and part.frame:IsEnabled())
-            or ((kind == "InteractiveLabel" or kind == "RPSheetTab") and part.events and part.events.OnClick)) then
+            or ((kind == "RPSheetButton" or kind == "RPSheetTab") and not part.disabled and part.events and part.events.OnClick)) then
             parts[#parts + 1] = part
         end
     end

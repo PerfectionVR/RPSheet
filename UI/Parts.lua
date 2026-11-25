@@ -1,6 +1,6 @@
--- Building blocks of the combat window: buttons (UI/Button.lua), a strip of tabs
+-- Building blocks of every window: buttons (UI/Button.lua), a strip of tabs
 -- (UI/Tab.lua), and the small coloured square that shows something is free or used.
--- In this window what can be clicked is a button, a tab or a bar; plain text is
+-- In all of them what can be clicked is a button, a tab or a bar; plain text is
 -- only read.
 local _, ns = ...
 local RPSheet = ns.addon
@@ -12,7 +12,40 @@ local function Theme()
 end
 
 local function Click(widget, _, button)
-    widget:GetUserData("onClick")(button)
+    local onClick = widget:GetUserData("onClick")
+    if onClick then onClick(button) end
+end
+
+-- A click on a row of a sheet: what the row does, or, when it only has a number to
+-- explain or Alt is held, how that number is worked out. Its "?" always explains.
+local function ClickRow(widget, _, button)
+    local explain, onClick = widget:GetUserData("explain"), widget:GetUserData("onClick")
+    if explain and (not onClick or IsAltKeyDown()) then
+        explain()
+    elseif onClick then
+        onClick(button)
+    end
+end
+
+local function ClickMark(widget)
+    widget:GetUserData("explain")()
+end
+
+-- A row of a sheet that can be clicked (UI.AddLabel makes one when it is given
+-- something to do): a button in the "row" look, with a "?" part when it can explain
+-- its number.
+function UI.AddRowButton(parent, relWidth, text, onClick, explain, look)
+    local button = AceGUI:Create("RPSheetButton")
+    button:SetStyle(Theme(), look or "row")
+    button:SetMark(explain ~= nil)
+    button:SetText(text)
+    button:SetRelativeWidth(relWidth >= 1 and 1 or relWidth * 0.999)
+    button:SetUserData("onClick", onClick)
+    button:SetUserData("explain", explain)
+    button:SetCallback("OnClick", ClickRow)
+    button:SetCallback("OnMarkClick", ClickMark)
+    parent:AddChild(button)
+    return button
 end
 
 -- A button taking `relWidth` of the window's width. `look` is "on" (the default),
@@ -30,8 +63,8 @@ function UI.AddButton(parent, relWidth, text, onClick, tipTitle, tipBody, look)
     return button
 end
 
--- A strip of tabs: `tabs` is a list of { name, tip }, `open` the name of the one
--- showing, `pick(name)` is called for a click on another.
+-- A strip of tabs: `tabs` is a list of { name, label, tip }, `open` the name of the
+-- one showing (nil: none of them), `pick(name)` is called for a click on another.
 function UI.AddTabStrip(parent, tabs, open, pick)
     local theme = Theme()
     for _, tab in ipairs(tabs) do
@@ -43,7 +76,7 @@ function UI.AddTabStrip(parent, tabs, open, pick)
             if tab.name ~= open then pick(tab.name) end
         end)
         button:SetCallback("OnClick", Click)
-        UI.AttachTooltip(button, tab.name, tab.tip)
+        if tab.tip then UI.AttachTooltip(button, tab.name, tab.tip) end
         parent:AddChild(button)
     end
 end
