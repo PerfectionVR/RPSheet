@@ -20,16 +20,16 @@ end
 -- Always shown, above the tabs.
 local TOP = { UI.HeaderSection, UI.TrackerSection, UI.ConditionSection, UI.CombatSection }
 
--- The rest, one tab at a time (UI/SheetTabs.lua).
+-- The rest, one page at a time (UI/SheetTabs.lua). The icons ship with both games.
 local TABS = {
-    { name = "Actions", tip = "Your abilities and spells, and your companion if you have one.",
+    { name = "Actions", icon = "Interface\\Icons\\INV_Sword_04", tip = "Your abilities and spells, and your companion if you have one.",
       UI.PetSection, UI.AbilitySection, UI.SpellSection },
-    { name = "Checks", tip = "Ability checks and saving throws.", UI.CheckSection, UI.SaveSection },
-    { name = "Skills", tip = "Skills and tools.", UI.SkillSection, UI.ToolSection },
-    { name = "Traits", tip = "Passives and traits, languages and renown.", UI.PassiveSection, UI.OriginSection },
-    { name = "Items", tip = "Your coins and what you carry, and your mounts, vehicles and companion creatures.",
+    { name = "Checks", icon = "Interface\\Icons\\Spell_Nature_Strength", tip = "Ability checks and saving throws.", UI.CheckSection, UI.SaveSection },
+    { name = "Skills", icon = "Interface\\Icons\\INV_Misc_Book_09", tip = "Skills and tools.", UI.SkillSection, UI.ToolSection },
+    { name = "Traits", icon = "Interface\\Icons\\Spell_Holy_MagicalSentry", tip = "Passives and traits, languages and renown.", UI.PassiveSection, UI.OriginSection },
+    { name = "Items", icon = "Interface\\Icons\\INV_Misc_Bag_08", tip = "Your coins and what you carry, and your mounts, vehicles and companion creatures.",
       UI.InventorySection, UI.MountSection },
-    { name = "Trade", tip = "Your professions: what you can make, gathering, and the materials you have.", UI.ProfessionSection },
+    { name = "Trade", icon = "Interface\\Icons\\Trade_BlackSmithing", tip = "Your professions: what you can make, gathering, and the materials you have.", UI.ProfessionSection },
 }
 
 ---------------------------------------------------------------------------

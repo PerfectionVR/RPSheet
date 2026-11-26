@@ -60,9 +60,10 @@ handles the numbers and gives short summaries in its own words.
 - **Companions and forms:** a Beast Master's companion, Wild Shape forms and
   Metamorphosis, each with their own numbers while they are on.
 - A small **?** in front of a number shows, to you alone, how it is worked out.
-- **Every window looks the same way:** what reacts to a click is a button, a tab or a
-  bar with an edge round it, and plain text is only read. A button's text wraps when
-  it doesn't fit; a switch that is off is greyed.
+- **Every window looks the same way.** A row of a list has a thin line under it and
+  lights up under the mouse; a button is a filled shape; a number worth a glance is a
+  tile. Plain text is only read. The sheet's pages are on a rail down its left side.
+  Text wraps when it doesn't fit; a switch that is off is greyed.
 
 **Level up and multiclass**
 

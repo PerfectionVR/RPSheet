@@ -209,27 +209,18 @@ end)
 ---------------------------------------------------------------------------
 -- Resizing
 ---------------------------------------------------------------------------
-local function TabStrip()
-    local tabs = {}
-    for _, part in ipairs(RPSheet.body.children) do
-        if part.type == "RPSheetTab" then tabs[#tabs + 1] = part end
-    end
-    return tabs
-end
-
+local RAIL = 126 -- the side rail's width (UI/WindowRail.lua)
 local function CheckWidth(label, width)
     local where = ("%s at width %d"):format(label, width)
-    local tabs = TabStrip()
-    Check(where .. ": " .. #tabs .. " tabs", #tabs == #TABS)
-    for index = 2, #tabs do
-        if not SameRow(tabs[1], tabs[index]) then
-            Problem(("%s: the tab %s wrapped to another row"):format(where, tostring(tabs[index].text:GetText())))
-        end
+    local pages = RPSheet.window.railItems
+    Check(where .. ": " .. #pages .. " pages on the rail", #pages == #TABS)
+    -- the rail's entries stay inside the rail, and the rows start right of it
+    local rail = RPSheet.window.rail
+    for _, page in ipairs(pages) do
+        Check(where .. ": a rail entry runs past the rail", page.frame:GetRight() <= rail:GetRight() + 0.5)
     end
-    -- the tabs fill the row and don't run past it
-    local last = tabs[#tabs].frame
+    Check(where .. ": the rows start under the rail", RPSheet.body.content:GetLeft() >= rail:GetRight() - 0.5)
     local edge = RPSheet.body.content:GetLeft() + RPSheet.body.content:GetWidth()
-    Check(where .. ": the tabs run past the window's edge", last:GetRight() <= edge + 0.5)
     rowsChecked = rowsChecked + CheckFlowRows(RPSheet.body, where)
     CheckOverlap(RPSheet.body, where)
     -- a third-width row's text (the numbers, checks, saves, bars) stays on one line
@@ -259,7 +250,7 @@ local function CheckWidth(label, width)
 end
 
 local minWidth, minHeight = frame:GetResizeBounds()
-Check("the smallest width is " .. tostring(minWidth), minWidth == 340)
+Check("the smallest width is " .. tostring(minWidth), minWidth == 340 + RAIL)
 
 local function ResizeRun(label)
     for _, tab in ipairs(TABS) do
@@ -275,13 +266,13 @@ local function ResizeRun(label)
             F.Settle()
             widths = widths + 1
             if profile.window.width ~= width then Problem(label .. ": the width " .. width .. " isn't saved") end
-            if math.abs(RPSheet.body.content:GetWidth() - (width - 16 - (RPSheet.body.scrollBarShown and 20 or 0))) > 0.5 then
+            if math.abs(RPSheet.body.content:GetWidth() - (width - 20 - RAIL - (RPSheet.body.scrollBarShown and 20 or 0))) > 0.5 then
                 Problem(("%s: at width %d the rows are laid out for %s"):format(label, width, tostring(RPSheet.body.content:GetWidth())))
             end
             CheckWidth(label .. " tab " .. tab, width)
         end
         -- and back down in one go, then a few odd widths
-        for _, width in ipairs({ minWidth, 341, 347, 353, 359.5, 401, 455, 523, 611, 700.25 }) do
+        for _, width in ipairs({ minWidth, 341 + RAIL, 347 + RAIL, 353 + RAIL, 359.5 + RAIL, 401 + RAIL, 455 + RAIL, 523 + RAIL, 611 + RAIL, 700.25 + RAIL }) do
             F.Fire(window.sizer, "OnMouseDown", "LeftButton")
             frame:SetWidth(width)
             F.Settle() -- the game draws frames while the grip is held
@@ -301,7 +292,7 @@ Try("resize height", function()
         F.Fire(window.sizer, "OnMouseUp", "LeftButton")
         F.Settle()
         Check("the height " .. height .. " isn't saved", profile.window.height == height)
-        Check("at height " .. height .. " the scroll area doesn't fit the window", math.abs(RPSheet.body.scrollframe:GetHeight() - (height - 22 - 16)) < 0.5)
+        Check("at height " .. height .. " the scroll area doesn't fit the window", math.abs(RPSheet.body.scrollframe:GetHeight() - (height - 26 - 20)) < 0.5)
         CheckOverlap(RPSheet.body, "height " .. height)
         -- scrolling to the end and back
         if RPSheet.body.scrollBarShown then

@@ -30,6 +30,7 @@ function ns.AttachMinimize(widget, barHeight)
             frame:SetHeight(self.fullHeight or frame:GetHeight())
         end
         self.content:SetShown(not on)
+        if self.rail then self.rail:SetShown(not on and self.railOn == true) end
         self.sizer:SetShown(not on and not self.locked)
     end
 

@@ -19,12 +19,12 @@ function UI.ConditionSection(self, body)
         return table.concat(lines, "\n\n")
     end
     local label
-    label = UI.AddLabel(body, 0.66,
+    label = UI.AddLabel(body, 0.6,
         ("Conditions %s%s|r"):format(UI.ACCENT, #active > 0 and table.concat(active, ", ") or "none"),
         function() self:OpenConditionMenu(label.frame) end, "Conditions", Tip)
 
     local exhaustion = self:Exhaustion()
-    UI.AddLabel(body, 0.33, ("Exhaustion %s%d|r"):format(exhaustion > 0 and "|cffff5555" or UI.ACCENT, exhaustion),
+    UI.AddLabel(body, 0.4, ("Exhaustion %s%d|r"):format(exhaustion > 0 and "|cffff5555" or UI.ACCENT, exhaustion),
         function(button) self:ChangeExhaustion(button == "RightButton" and -1 or 1) end,
         "Exhaustion", R.EXHAUSTION_HELP .. "\n\nLeft-click +1, right-click -1.")
 end

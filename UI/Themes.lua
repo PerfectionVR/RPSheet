@@ -26,55 +26,56 @@ end
 --   bg / border   window background and its 1px edge
 --   accent        title, section headings, highlighted words
 --   text / muted  normal text and secondary text (modifiers, costs, switched-off passives)
---   highlight     glow under the row the mouse is on
+--   highlight     wash under the row the mouse is on
+-- The rest of a window's colours are worked out from these (UI/Tokens.lua).
 ns.Themes = {
     DARK = {
         name = "Dark",
-        bg = { 0.05, 0.05, 0.07, 0.92 }, border = { 0.35, 0.35, 0.40, 1 },
-        accent = { 1.00, 0.82, 0.00, 1 }, text = { 1, 1, 1, 1 }, muted = { 0.56, 0.56, 0.56, 1 },
-        highlight = { 1.00, 0.82, 0.00, 0.25 },
-        font = FRIZ, fontSize = 11, scale = 1, shadow = true,
+        bg = { 0.07, 0.08, 0.11, 0.96 }, border = { 0.17, 0.19, 0.24, 1 },
+        accent = { 0.91, 0.72, 0.29, 1 }, text = { 0.93, 0.94, 0.96, 1 }, muted = { 0.50, 0.53, 0.60, 1 },
+        highlight = { 1, 1, 1, 0.07 },
+        font = FRIZ, fontSize = 12, scale = 1, shadow = false,
     },
     PARCHMENT = {
         name = "Parchment",
         bg = { 0.87, 0.80, 0.64, 0.96 }, border = { 0.35, 0.24, 0.12, 1 },
         accent = { 0.50, 0.14, 0.06, 1 }, text = { 0.16, 0.11, 0.06, 1 }, muted = { 0.42, 0.33, 0.22, 1 },
-        highlight = { 1, 1, 1, 0.35 },
+        highlight = { 0.16, 0.11, 0.06, 0.10 },
         font = "Morpheus", fontSize = 12, scale = 1, shadow = false,
     },
     ALLIANCE = {
         name = "Alliance",
         bg = { 0.04, 0.08, 0.18, 0.92 }, border = { 0.78, 0.65, 0.25, 1 },
         accent = { 0.95, 0.80, 0.35, 1 }, text = { 0.90, 0.94, 1.00, 1 }, muted = { 0.55, 0.62, 0.75, 1 },
-        highlight = { 0.30, 0.50, 1.00, 0.30 },
+        highlight = { 0.90, 0.94, 1.00, 0.08 },
         font = FRIZ, fontSize = 11, scale = 1, shadow = true,
     },
     HORDE = {
         name = "Horde",
         bg = { 0.16, 0.03, 0.03, 0.92 }, border = { 0.55, 0.10, 0.08, 1 },
         accent = { 1.00, 0.45, 0.20, 1 }, text = { 1.00, 0.93, 0.88, 1 }, muted = { 0.70, 0.50, 0.45, 1 },
-        highlight = { 1.00, 0.30, 0.10, 0.30 },
+        highlight = { 1.00, 0.93, 0.88, 0.08 },
         font = FRIZ, fontSize = 11, scale = 1, shadow = true,
     },
     FEL = {
         name = "Fel",
         bg = { 0.03, 0.09, 0.04, 0.92 }, border = { 0.30, 0.80, 0.20, 1 },
         accent = { 0.60, 1.00, 0.30, 1 }, text = { 0.90, 1.00, 0.88, 1 }, muted = { 0.50, 0.68, 0.48, 1 },
-        highlight = { 0.40, 1.00, 0.20, 0.25 },
+        highlight = { 0.90, 1.00, 0.88, 0.08 },
         font = FRIZ, fontSize = 11, scale = 1, shadow = true,
     },
     VOID = {
         name = "Void",
         bg = { 0.08, 0.04, 0.14, 0.92 }, border = { 0.50, 0.30, 0.80, 1 },
         accent = { 0.78, 0.60, 1.00, 1 }, text = { 0.94, 0.90, 1.00, 1 }, muted = { 0.60, 0.52, 0.72, 1 },
-        highlight = { 0.60, 0.30, 1.00, 0.30 },
+        highlight = { 0.94, 0.90, 1.00, 0.08 },
         font = FRIZ, fontSize = 11, scale = 1, shadow = true,
     },
     MINIMAL = {
         name = "Minimal (see-through)",
         bg = { 0, 0, 0, 0.35 }, border = { 0, 0, 0, 0 },
         accent = { 1, 1, 1, 1 }, text = { 1, 1, 1, 1 }, muted = { 0.75, 0.75, 0.75, 1 },
-        highlight = { 1, 1, 1, 0.20 },
+        highlight = { 1, 1, 1, 0.10 },
         font = "Arial Narrow", fontSize = 12, scale = 1, shadow = true,
     },
 }
@@ -82,9 +83,9 @@ ns.THEME_ORDER = { "DARK", "PARCHMENT", "ALLIANCE", "HORDE", "FEL", "VOID", "MIN
 
 -- Bar colours (HP, class resource, counter). A theme may set its own; otherwise these apply.
 local BAR_DEFAULTS = {
-    barHP = { 0.20, 0.62, 0.24, 0.90 },
-    barResource = { 0.22, 0.45, 0.90, 0.90 },
-    barCounter = { 0.80, 0.55, 0.10, 0.90 },
+    barHP = { 0.31, 0.68, 0.36, 1 },
+    barResource = { 0.30, 0.52, 0.92, 1 },
+    barCounter = { 0.85, 0.62, 0.20, 1 },
 }
 ns.Themes.PARCHMENT.barHP = { 0.42, 0.62, 0.30, 0.85 }
 ns.Themes.PARCHMENT.barResource = { 0.38, 0.55, 0.78, 0.85 }
@@ -98,4 +99,22 @@ end
 -- Bars are flat by default; "Blizzard" and any texture from other addons can be picked.
 for _, theme in pairs(ns.Themes) do
     theme.barTexture = theme.barTexture or "Solid"
+end
+
+-- The look changed in 0.15.0 (washes instead of glows, hairlines instead of boxes). A
+-- saved theme is a copy of a preset, so a profile from before gets its preset's
+-- colours once more; a theme the player made their own only has its glow toned down.
+local LOOK = 2
+local COLORS = { "bg", "border", "accent", "text", "muted", "highlight", "barHP", "barResource", "barCounter" }
+function ns.RenewTheme(profile)
+    if profile.themeLook == LOOK then return end
+    profile.themeLook = LOOK
+    local theme, preset = profile.theme, ns.Themes[profile.themePreset or ""]
+    if preset then
+        for _, key in ipairs(COLORS) do theme[key] = { unpack(preset[key]) } end
+        theme.shadow = preset.shadow
+        if theme.fontSize == 11 then theme.fontSize = preset.fontSize end
+    elseif theme.highlight and (theme.highlight[4] or 1) > 0.12 then
+        theme.highlight = { theme.text[1], theme.text[2], theme.text[3], 0.08 }
+    end
 end

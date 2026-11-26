@@ -36,6 +36,14 @@ end
 -- its number.
 function UI.AddRowButton(parent, relWidth, text, onClick, explain, look)
     local button = AceGUI:Create("RPSheetButton")
+    -- A row whose whole text is in the accent colour is something to do, not an entry
+    -- of a list ("Short rest", "Take damage"): that is a button, in its own colours.
+    local action = not look and not explain and text:sub(1, #UI.ACCENT) == UI.ACCENT and text:match("^|c%x%x%x%x%x%x%x%x([^|]+)|r$")
+    if action then
+        look, text = "on", action
+    elseif look == "off" then
+        look = "rowoff"
+    end
     button:SetStyle(Theme(), look or "row")
     button:SetMark(explain ~= nil)
     button:SetText(text)

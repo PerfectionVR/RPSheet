@@ -51,6 +51,11 @@ rest is grouped by window and can be done in any order.
 - [ ] B8b. Make the sheet as narrow as it goes. *Buttons whose text no longer fits grow taller and wrap the text; nothing is cut and no button lies over another.*
 - [ ] B8c. On the Traits tab switch a passive off. *Its button turns grey and still switches back on.*
 - [ ] B8d. Open the item browser, the stable and the crafting window. *Their tabs and buttons look like the sheet's; a button that can't be used is grey and does nothing.*
+- [ ] B8e. Look at the sheet. *A darker rail down the left with who the character is and six pages with icons; the open page has a strip in the accent colour and a coloured icon, the others are grey. Hit points are a slim bar with its text above. Armor Class and the other numbers are tiles, four to a row.*
+- [ ] B8f. Click each page on the rail. *The page opens under a small heading with its name; the rest of the sheet stays.*
+- [ ] B8g. On Actions look at a spell. *Its name is on the left, its dice and save on the right in grey, a thin line under it, and it lights up under the mouse. The ? is at the right end.*
+- [ ] B8h. Check the icons on the rail in both games. *Six icons, none a green or empty square.*
+- [ ] B8i. Try each theme under Appearance. *Text stays readable on every ground; the wash under the mouse is faint, not a glow.*
 - [ ] B9. Left-click and right-click "Next roll". *Normal, Advantage (green), Disadvantage (red); right-click adds "(every roll)"; after one roll an unlocked choice goes back to Normal.*
 - [ ] B10. Hover a passive, a spell and an item. *The tooltip stays on screen, wraps, and is readable against the game's tooltip background.*
 - [ ] B11. Drag the window to each screen edge. *It can't be dragged off screen.*
