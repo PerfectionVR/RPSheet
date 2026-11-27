@@ -74,10 +74,11 @@ local function Constructor()
     bar:SetAllPoints(track)
     bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
 
-    -- (under the mouse the whole widget lights up, the text of a thin bar included)
-    local hover = frame:CreateTexture(nil, "BORDER")
-    hover:SetPoint("TOPLEFT")
-    hover:SetPoint("BOTTOMRIGHT", -GAP, GAP - 2)
+    -- Under the mouse the whole widget lights up, the text of a thin bar included. The
+    -- wash belongs to the bar's own frame, which is drawn over this one's textures.
+    local hover = bar:CreateTexture(nil, "ARTWORK")
+    hover:SetPoint("TOPLEFT", frame, "TOPLEFT")
+    hover:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -GAP, GAP - 2)
 
     local text = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     text:SetWordWrap(false)
