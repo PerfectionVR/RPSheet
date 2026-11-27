@@ -9,15 +9,21 @@ function UI.CombatSection(self, body)
     local sheet = self:Sheet()
     UI.AddHeading(body, "Combat")
 
-    -- The numbers are tiles, four to a row: a small label over the number. One that is
-    -- clicked (initiative, spell attack) is a roll: a right-click explains it
-    -- (UI.AddRollLabel).
+    -- The numbers are tiles: a small label over the number. One that is clicked
+    -- (initiative, spell attack) is a roll: a right-click explains it
+    -- (UI.AddRollLabel). They are gathered first and then share their rows evenly, at
+    -- most five to a row, so no tile ends up alone on a row of its own.
+    local tiles = {}
     local function Number(label, value, onClick, tip, explain)
-        local text = ("%s\n%s"):format(label, value)
-        if onClick and explain then
-            UI.AddRollLabel(body, 0.25, text, onClick, tip and label, tip, explain, "tile")
-        else
-            UI.AddLabel(body, 0.25, text, onClick, tip and label, tip, explain, "tile")
+        tiles[#tiles + 1] = { text = ("%s\n%s"):format(label, value), onClick = onClick, title = tip and label, tip = tip, explain = explain }
+    end
+    local function Tiles()
+        local perRow = math.ceil(#tiles / math.ceil(#tiles / 5))
+        -- (a hair under an even share, so rounding never pushes the last one down)
+        local width = math.floor(1000 / perRow) / 1000
+        for _, tile in ipairs(tiles) do
+            local add = tile.onClick and tile.explain and UI.AddRollLabel or UI.AddLabel
+            add(body, width, tile.text, tile.onClick, tile.title, tile.tip, tile.explain, "tile")
         end
     end
     -- In a form the Armor Class is the form's own.
@@ -38,7 +44,7 @@ function UI.CombatSection(self, body)
         end
     end
     Number("Proficiency", Signed(self:ProficiencyBonus()), nil, ns.Glossary["Proficiency bonus"])
-    Number("Passive Perc.", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
+    Number("Passive", self:PassivePerception(), nil, "Passive Perception: 10 + Perception modifier.",
         function() self:ExplainPassivePerception() end)
     -- Senses and what the character shrugs off get rows of their own, after the numbers.
     local senses = self:Senses()
@@ -56,6 +62,7 @@ function UI.CombatSection(self, body)
             function() self:RollCheck("spell attack", self:SpellAttack(), ns.RollMode()) end,
             "Click to roll a spell attack.\n" .. ns.ROLL_MODE_HELP, function() self:ExplainSpellAttack() end)
     end
+    Tiles()
     After()
 
     self.attackLabel = nil
