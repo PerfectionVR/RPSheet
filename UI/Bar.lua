@@ -46,8 +46,10 @@ local methods = {
             track:SetPoint("BOTTOMLEFT", 0, GAP)
             track:SetPoint("BOTTOMRIGHT", -GAP, GAP)
             track:SetHeight(THIN)
-            text:SetPoint("TOPLEFT", 0, -2)
-            text:SetPoint("TOPRIGHT", -GAP, -2)
+            -- (from the widget: the text belongs to the slim bar, which is where a
+            -- point without a frame would hang it)
+            text:SetPoint("TOPLEFT", self.frame, "TOPLEFT", 0, -2)
+            text:SetPoint("TOPRIGHT", self.frame, "TOPRIGHT", -GAP, -2)
             text:SetJustifyH("LEFT")
             self:SetHeight(theme.fontSize + 6 + THIN + GAP)
         else

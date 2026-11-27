@@ -60,6 +60,7 @@ rest is grouped by window and can be done in any order.
 - [ ] B8k. On a caster look at the spell slots. *Up to four slots of a level show as squares, lit while left; spending one dims a square.*
 - [ ] B8l. Scroll the sheet, the spellbook and the combat window. *The scroll bar is a thin grey handle on a faint track, not the game's own.*
 - [ ] B8m. On the Skills page. *A proficient skill's name is in the accent colour; modifiers are on the right in grey.*
+- [ ] B8n. On the Actions page look at the bars and the combat numbers. *Each bar's text stands above its bar and nothing is cut off; the numbers fill their row or rows evenly; no heading without rows under it.*
 - [ ] B9. Left-click and right-click "Next roll". *Normal, Advantage (green), Disadvantage (red); right-click adds "(every roll)"; after one roll an unlocked choice goes back to Normal.*
 - [ ] B10. Hover a passive, a spell and an item. *The tooltip stays on screen, wraps, and is readable against the game's tooltip background.*
 - [ ] B11. Drag the window to each screen edge. *It can't be dragged off screen.*
