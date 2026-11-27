@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.15.1
+
+- Fixed: the text of a bar on the sheet (hit points, hit dice, resources) was drawn
+  through the bar and cut off by the row below. It now stands above its bar.
+- The combat numbers share their rows evenly, up to five to a row, so the last one
+  no longer sits alone on a second row. "Passive Perc." is "Passive".
+- The empty heading with the page's name is gone from the sheet: the rail already
+  shows which page is open.
+- On the rail, class, species and alignment each have a line of their own.
+
 ## 0.15.0
 
 - A new look for every window. Text comes in three steps (what matters, what

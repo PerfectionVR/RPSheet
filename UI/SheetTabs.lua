@@ -14,10 +14,14 @@ function UI.AddTabBar(self, body, tabs)
     for _, tab in ipairs(tabs) do
         if tab.name == saved.sheetTab then open = tab end
     end
-    self.window:SetRail(self.db.profile.theme, self:Summary() or "No class chosen yet", tabs, open.name, function(name)
+    self.window:SetRail(self.db.profile.theme, (self:Summary() or "No class chosen yet"):gsub(" %- ", "\n"), tabs, open.name, function(name)
         saved.sheetTab = name
         self:PopulateSoon()
     end)
-    UI.AddHeading(body, open.name):SetUserData("page", true) -- the page starts here
+    -- The page starts here. Its name is lit on the rail and its first section has a
+    -- heading of its own, so the mark itself is empty.
+    local mark = UI.AddHeading(body, "")
+    mark:SetText("")
+    mark:SetUserData("page", true)
     return open
 end
