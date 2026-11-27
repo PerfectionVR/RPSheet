@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.15.0 (in progress on feature/ui-overhaul)
+## 0.15.0
 
 - A new look for every window. Text comes in three steps (what matters, what
   supports it, hints) instead of colours; rows of a list have no box, only a thin
@@ -20,7 +20,16 @@
 - Section titles are small, muted capitals.
 - The Dark theme has new colours, and every theme a quieter wash under the mouse. A
   theme you made your own keeps its colours.
-- Not done yet: the settings, the wizard and the level dialog still have the old look.
+- The settings, the wizard and the level dialog have the same look: filled buttons
+  without an edge, tabs on a thin line, names of fields in a quieter colour, thin
+  lines round panes, and the accent colour only on what is ticked, picked or open.
+- Numbers and values inside rows are in the text colour, not gold. The accent colour
+  now marks a proficiency (a skill's or save's name) and whose turn it is.
+- A row with a value has its name on the left and the value on the right: "Announce
+  to", "Next roll", conditions, exhaustion, temporary hit points, skills and tools.
+- Spell slots are squares, lit while they are left, where there are few enough.
+- The scroll bars of the sheet, the spellbook, the prepared spells and the combat
+  window are in the theme's colours: a thin, quiet handle.
 
 ## 0.14.0
 

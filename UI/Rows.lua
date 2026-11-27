@@ -8,13 +8,16 @@ local AceGUI = LibStub("AceGUI-3.0")
 local UI = {}
 ns.UI = UI
 
--- Colour codes for secondary and highlighted text inside a row. Set from the theme.
-UI.GREY, UI.ACCENT = "|cff909090", "|cffffd100"
+-- Colour codes for text inside a row, set from the theme: GREY for what supports
+-- (modifiers, costs), ACCENT for a value that stands out, which is the text colour
+-- itself, and MARK, the theme's accent colour, kept for the few things it marks:
+-- a proficiency, whose turn it is.
+UI.GREY, UI.ACCENT, UI.MARK = "|cff909090", "|cffffffff", "|cffffd100"
 UI.GREEN = "|cff80ff80" -- effect lines in tooltips, which keep the game's own colours
 
 function UI.SetColors(theme)
     ns.ForgetTokens() -- the theme may have changed (UI/Tokens.lua)
-    UI.GREY, UI.ACCENT = Util.HexCode(theme.muted), Util.HexCode(theme.accent)
+    UI.GREY, UI.ACCENT, UI.MARK = Util.HexCode(theme.muted), Util.HexCode(theme.text), Util.HexCode(theme.accent)
 end
 
 local function Theme()
@@ -125,6 +128,15 @@ end
 function UI.SetOut(body)
     body:DoLayout()
     body:DoLayout()
+    UI.SkinScroll(body)
+end
+
+-- The scroll bar of a window's body in the theme's colours: the dialogs' skin has
+-- the look (UI/DialogSkinSlider.lua). Asked for whenever the rows are set out, since
+-- the bar comes and goes with them.
+function UI.SkinScroll(body)
+    local style = ns.DialogSkin and ns.DialogSkin.styles and ns.DialogSkin.styles.ScrollFrame
+    if style then pcall(style, body, Theme()) end
 end
 
 -- A section title with a blank line above it.

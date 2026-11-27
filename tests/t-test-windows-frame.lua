@@ -59,7 +59,7 @@ Try("close and reopen", function()
     Check("ToggleWindow doesn't open the window", frame:IsShown() and saved.shown == true)
     local found
     for _, part in ipairs(RPSheet.body.children) do
-        if F.Plain(PartText(part)):find("Conditions Prone", 1, true) then found = true end
+        if F.Plain(PartText(part)):find("Conditions  Prone", 1, true) then found = true end
     end
     Check("the reopened window doesn't show a change made while it was closed", found)
     RPSheet:State().conditions.Prone = nil

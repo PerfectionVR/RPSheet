@@ -22,7 +22,7 @@ function UI.SaveSection(self, body)
     UI.AddHeading(body, "Saving throws")
     for _, stat in ipairs(R.STATS) do
         local mod = self:SaveMod(stat)
-        local name = saves[stat] and (UI.ACCENT .. stat .. ", proficient|r") or stat
+        local name = saves[stat] and (UI.MARK .. stat .. ", proficient|r") or stat
         UI.AddRollLabel(body, 0.33, ("%s\n%s"):format(name, Signed(mod)),
             function() self:RollCheck(stat .. " save", mod, ns.RollMode()) end,
             R.STAT_NAMES[stat] .. " saving throw",

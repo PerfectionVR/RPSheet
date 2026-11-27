@@ -4,7 +4,7 @@
 local _, ns = ...
 local Skin = ns.DialogSkin
 
-local FILL, EDGE = 0.15, 0.7 -- how solid the accent colour is in the box and on its edge
+local FILL, EDGE = 0.08, 0 -- how solid the text colour is in the box; it has no edge
 
 -- A button picks its text's font and colour by its state (normal, under the mouse,
 -- switched off), so the theme is given as three fonts of our own rather than set on
@@ -30,7 +30,7 @@ local function Fonts(theme)
             font:CopyFontObject(GameFontNormal) -- spacing and alignment as the game has them
         end
     end
-    SetFont(fonts.normal, theme, theme.accent)
+    SetFont(fonts.normal, theme, theme.text)
     SetFont(fonts.hover, theme, theme.text)
     SetFont(fonts.off, theme, theme.muted)
     return fonts
@@ -61,7 +61,7 @@ function Skin.Button(widget, button, theme)
     if not (button and button.GetRegions and button.CreateTexture) then return end
     -- The game's button art, its glow included, makes way for ours.
     Skin.FadeArt(widget, button)
-    local fill = Skin.Box(widget, button, theme.accent, FILL, EDGE, 1)
+    local fill = Skin.Box(widget, button, theme.text, FILL, EDGE, 1)
     local glow = Skin.Texture(widget, button, "glow", "HIGHLIGHT")
     glow:SetAllPoints(fill)
     glow:SetColorTexture(unpack(theme.highlight))

@@ -94,6 +94,22 @@ function UI.Pip(red, green, blue)
     return ("|TInterface\\Buttons\\WHITE8x8:9:9:0:0:8:8:0:8:0:8:%d:%d:%d|t"):format(red * 255, green * 255, blue * 255)
 end
 
+-- A count of a few things as squares, the ones left in the accent colour and the
+-- ones used faint: "2 of 4" is two lit and two faint. nil for more than `most`
+-- (6 when left out), which no longer read at a glance.
+function UI.Pips(value, max, most)
+    if max < 1 or max > (most or 6) then return nil end
+    local theme = Theme()
+    local lit, faint = theme.accent, theme.muted
+    local parts = {}
+    for index = 1, max do
+        local color = index <= value and lit or faint
+        local dim = index <= value and 1 or 0.45
+        parts[index] = UI.Pip(color[1] * dim, color[2] * dim, color[3] * dim)
+    end
+    return table.concat(parts, " ")
+end
+
 -- The colour of a health bar: green, then amber under half, red under a quarter.
 function UI.HealthColor(hp, max)
     local part = max > 0 and hp / max or 0

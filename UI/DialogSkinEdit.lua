@@ -24,7 +24,7 @@ end
 styles.MultiLineEditBox = function(widget, theme)
     local box = widget.editBox
     local off = box and box.IsMouseEnabled and not box:IsMouseEnabled()
-    Skin.Font(widget, widget.label, off and theme.muted or theme.accent, theme)
+    Skin.Font(widget, widget.label, off and theme.muted or ns.Tokens(theme).dim, theme)
     Skin.Backdrop(widget, widget.scrollBG, Skin.Wash(theme), Skin.EdgeColor(theme))
     -- Only when the box can be ours: in the game's dark one, dark typing would not show.
     if widget.scrollBG and widget.scrollBG.SetBackdropColor then

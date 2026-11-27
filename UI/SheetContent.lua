@@ -98,16 +98,16 @@ function RPSheet:Refresh()
     self:QueueBroadcast()
     local state = self:State()
     self.window:SetTitle(self:GetCharacterName())
-    self.channelLabel:SetText(("Announce to: %s%s|r"):format(UI.ACCENT, ns.ChannelLabel(self.db.profile.channel)))
+    self.channelLabel:SetText(("Announce to  %s%s|r"):format(UI.ACCENT, ns.ChannelLabel(self.db.profile.channel)))
     if self.rollModeLabel then
         local mode = self.rollMode
         local text = (mode == "ADV" and "|cff80ff80Advantage|r") or (mode == "DIS" and "|cffff5555Disadvantage|r") or (UI.ACCENT .. "Normal|r")
         if mode and self.rollModeLocked then text = text .. " (every roll)" end
-        self.rollModeLabel:SetText(("Next roll: %s"):format(text))
+        self.rollModeLabel:SetText(("Next roll  %s"):format(text))
     end
 
     if self.castLevelLabel then
-        self.castLevelLabel:SetText(("Cast at: %s%s|r"):format(UI.ACCENT, self.castLevel and (R.ORDINALS[self.castLevel] .. " level") or "lowest slot"))
+        self.castLevelLabel:SetText(("Cast at  %s%s|r"):format(UI.ACCENT, self.castLevel and (R.ORDINALS[self.castLevel] .. " level") or "lowest slot"))
     end
 
     local weapon = self:GetWeapon()
@@ -129,12 +129,13 @@ function RPSheet:Refresh()
             row.widget:SetText(text)
         else
             local short = tracker.label:gsub("%-level slot", "")
-            row.widget:SetText(("%s %s%d/%d|r"):format(short, UI.ACCENT, value, max))
+            -- (a few slots are squares, lit while they are left; more are a count)
+            row.widget:SetText(("%s  %s"):format(short, UI.Pips(value, max, 4) or ("%s%d/%d|r"):format(UI.ACCENT, value, max)))
         end
     end
 
-    self.tempLabel:SetText(("Temp HP %s%d|r"):format(UI.ACCENT, state.tempHP))
-    self.inspirationLabel:SetText(("Inspiration %s%s|r"):format(UI.ACCENT, state.inspiration and "yes" or "no"))
+    self.tempLabel:SetText(("Temp HP  %s%d|r"):format(UI.ACCENT, state.tempHP))
+    self.inspirationLabel:SetText(("Inspiration  %s%s|r"):format(UI.ACCENT, state.inspiration and "yes" or "no"))
     if self.deathLabel then
         local status = "click to roll"
         if state.deathFail >= 3 then

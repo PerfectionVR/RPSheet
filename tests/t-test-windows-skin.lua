@@ -223,11 +223,11 @@ local function CheckSkinned(app, where)
             end
             if kind == "Heading" and (widget.label:GetText() or "") ~= "" then
                 local r, g, b = widget.label:GetTextColor()
-                if not SameColor(r, g, b, current.accent) then Problem(where .. ": a heading isn't in the accent colour") end
+                if not SameColor(r, g, b, current.muted) then Problem(where .. ": a heading isn't in the muted colour") end
             end
             if kind == "Button" then
                 local r, g, b = widget.frame:GetFontString():GetTextColor()
-                local wanted = widget.disabled and current.muted or current.accent
+                local wanted = widget.disabled and current.muted or current.text
                 if not SameColor(r, g, b, wanted) then
                     Problem(("%s: a button's text is %s, not %s"):format(where, List(r, g, b), List(unpack(wanted, 1, 3))))
                 end

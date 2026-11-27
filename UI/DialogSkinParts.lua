@@ -8,15 +8,14 @@ local Skin = ns.DialogSkin
 -- The colour of a control's box. A theme without a visible border (the see-through
 -- one) still needs boxes that can be seen.
 function Skin.EdgeColor(theme)
-    local border = theme.border
-    if (border[4] or 1) < 0.3 then return theme.muted end
-    return border
+    local text = theme.text
+    return { text[1], text[2], text[3], 0.18 }
 end
 
 -- A faint wash of the accent colour: the inside of a box.
 function Skin.Wash(theme, alpha)
-    local accent = theme.accent
-    return { accent[1], accent[2], accent[3], alpha or 0.06 }
+    local text = theme.text
+    return { text[1], text[2], text[3], alpha or 0.06 }
 end
 
 -- Only the colour of a text; for what is typed, whose font is left to the library.

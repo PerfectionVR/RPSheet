@@ -136,4 +136,5 @@ function RPSheet:PopulateSpellbook()
     end
     body:ResumeLayout()
     body:DoLayout()
+    UI.SkinScroll(body)
 end

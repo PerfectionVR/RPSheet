@@ -21,7 +21,7 @@ function UI.AddFightRoster(self, body, session)
         local notes = { "init " .. init, "AC " .. member.ac }
         if key == target then notes[#notes + 1] = RED .. "target|r" .. UI.GREY end
         if down then notes[#notes + 1] = "down" end
-        UI.AddLabel(body, 0.56, ("%s%s%s  %s%s|r"):format(session.turn == key and (UI.ACCENT .. "> |r") or "", F.MarkIcon(member.mark), name,
+        UI.AddLabel(body, 0.56, ("%s%s%s  %s%s|r"):format(session.turn == key and (UI.MARK .. "> |r") or "", F.MarkIcon(member.mark), name,
             UI.GREY, table.concat(notes, ", ")), nil, member.name,
             ("Initiative %s, Armor Class %d, %d of %d hit points.%s%s"):format(member.init and init or "not rolled yet", member.ac, member.hp, member.max,
                 member.npc and "\nRun by the session's owner." or "", session.turn == key and "\nIt is their turn." or ""))

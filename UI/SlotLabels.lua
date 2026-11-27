@@ -9,7 +9,9 @@ local UI = ns.UI
 function RPSheet:SlotText(level)
     for _, tracker in ipairs(self:GetTrackers()) do
         if tracker.kind == "slot" and tracker.level == level then
-            return ("slots %d/%d"):format(tracker.get() or 0, tracker.max)
+            local left = tracker.get() or 0
+            local pips = UI.Pips(left, math.max(tracker.max, left))
+            return pips and ("%s|r %s %d/%d"):format(pips, UI.GREY, left, tracker.max) or ("slots %d/%d"):format(left, tracker.max)
         end
     end
     return ""

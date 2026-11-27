@@ -56,6 +56,10 @@ rest is grouped by window and can be done in any order.
 - [ ] B8g. On Actions look at a spell. *Its name is on the left, its dice and save on the right in grey, a thin line under it, and it lights up under the mouse. The ? is at the right end.*
 - [ ] B8h. Check the icons on the rail in both games. *Six icons, none a green or empty square.*
 - [ ] B8i. Try each theme under Appearance. *Text stays readable on every ground; the wash under the mouse is faint, not a glow.*
+- [ ] B8j. Open the settings, the wizard and a level dialog. *Buttons are filled shapes without an edge, tabs are names on a thin line with the open one underlined in the accent colour, and nothing but ticks, sliders and that line is in the accent colour.*
+- [ ] B8k. On a caster look at the spell slots. *Up to four slots of a level show as squares, lit while left; spending one dims a square.*
+- [ ] B8l. Scroll the sheet, the spellbook and the combat window. *The scroll bar is a thin grey handle on a faint track, not the game's own.*
+- [ ] B8m. On the Skills page. *A proficient skill's name is in the accent colour; modifiers are on the right in grey.*
 - [ ] B9. Left-click and right-click "Next roll". *Normal, Advantage (green), Disadvantage (red); right-click adds "(every roll)"; after one roll an unlocked choice goes back to Normal.*
 - [ ] B10. Hover a passive, a spell and an item. *The tooltip stays on screen, wraps, and is readable against the game's tooltip background.*
 - [ ] B11. Drag the window to each screen edge. *It can't be dragged off screen.*

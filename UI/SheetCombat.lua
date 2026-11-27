@@ -111,6 +111,6 @@ function UI.CombatSection(self, body)
         standing = ("%s's%s"):format(ns.Game.ShortName(session.owner),
             (F.MyTurn() and ", your turn") or (session.phase == "RUN" and (", round " .. session.round)) or (F.Mine() and "" or ", not joined"))
     end
-    UI.AddLabel(body, 1, ("Combat session %s%s|r"):format(UI.ACCENT, standing), function() F.ToggleWindow() end, "Combat session",
+    UI.AddLabel(body, 1, ("Combat session  %s%s|r"):format(UI.ACCENT, standing), function() F.ToggleWindow() end, "Combat session",
         "Turn-based combat with your party or raid. One of you starts a session and the others join; everyone rolls initiative for their own character, and the turns go round in that order. On your turn the combat window lists what you can do. Click to open or close it.")
 end

@@ -837,7 +837,7 @@ There is still no clock: only a running session counts, in the character's own t
 - **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
   window test types into every box.
 
-## Added in 0.15.0 (in progress): the look
+## Added in 0.15.0: the look
 
 `UI/Tokens.lua`, `UI/ButtonLooks.lua`, `UI/WindowRail.lua`; `UI/Button.lua`,
 `UI/Bar.lua` rewritten; `UI/Tab.lua`, `UI/Window.lua`, `UI/Themes.lua` restyled.
@@ -865,7 +865,19 @@ There is still no clock: only a running session counts, in the character's own t
   colours once (`profile.themeLook`); a custom theme only gets a quieter highlight.
 - **Tests:** the sheet's pages are read from `window.railItems`; `PartText` gives a
   button's whole text.
-- **Still old:** `UI/DialogSkin*.lua` (settings, wizard, level dialog).
+- **The dialogs** (`UI/DialogSkin*.lua`: settings, wizard, level dialog) follow:
+  `Skin.Wash` and `Skin.EdgeColor` are made from the text colour, buttons are a wash
+  without an edge with text in the text colour, a tab is its name over a line (the
+  accent colour and two pixels under the open one), names of fields are `dim`,
+  headings `muted`, panes edged with `line`. A scroll bar's handle is thin and muted;
+  a slider's, which sets a value, stays in the accent colour.
+- **`UI.ACCENT` is the text colour** now: a value that stands out. `UI.MARK` is the
+  theme's accent, for a proficiency and the turn marker. `UI.AddRowButton` still
+  takes a row whose whole text is in `UI.ACCENT` for an action.
+- **`UI.Pips(value, max, most)`** (`UI/Parts.lua`): squares for a small count, nil
+  above `most`. Used for spell slots (`UI/SheetContent.lua`, `UI/SlotLabels.lua`).
+- **`UI.SkinScroll(body)`** (`UI/Rows.lua`) gives a body's scroll bar the dialogs'
+  look; `UI.SetOut` calls it.
 
 ## Added in 0.14.0: buttons in every window
 
