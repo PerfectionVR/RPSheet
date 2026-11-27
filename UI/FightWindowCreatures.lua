@@ -13,7 +13,7 @@ local function AddCreature(body, name)
     local template = R.CREATURES[name]
     UI.AddButton(body, 0.5, ("%s  %sCR %s|r"):format(name, UI.GREY, template.cr), function() F.AddCreature(name) end, name,
         ("AC %d, %d hit points.\n%s\n\nClick to put one into the fight. Click again for another: they are numbered."):format(
-            template.ac, template.hp, F.CreatureSummary(template)))
+            template.ac, template.hp, F.CreatureSummary(template)), "row")
 end
 
 -- The list to add from, in place of the rest of the window. Returns true when shown.

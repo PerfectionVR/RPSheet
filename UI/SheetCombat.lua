@@ -9,15 +9,15 @@ function UI.CombatSection(self, body)
     local sheet = self:Sheet()
     UI.AddHeading(body, "Combat")
 
-    -- Two numbers to a row: with three, "? Passive Perc. 10" wrapped at the
-    -- window's smallest width. A number that is clicked (initiative, spell attack) is
-    -- a roll: a right-click explains it (UI.AddRollLabel).
+    -- The numbers are tiles, four to a row: a small label over the number. One that is
+    -- clicked (initiative, spell attack) is a roll: a right-click explains it
+    -- (UI.AddRollLabel).
     local function Number(label, value, onClick, tip, explain)
-        local text = ("%s %s%s|r"):format(label, UI.ACCENT, value)
+        local text = ("%s\n%s"):format(label, value)
         if onClick and explain then
-            UI.AddRollLabel(body, 0.5, text, onClick, tip and label, tip, explain)
+            UI.AddRollLabel(body, 0.25, text, onClick, tip and label, tip, explain, "tile")
         else
-            UI.AddLabel(body, 0.5, text, onClick, tip and label, tip, explain)
+            UI.AddLabel(body, 0.25, text, onClick, tip and label, tip, explain, "tile")
         end
     end
     -- In a form the Armor Class is the form's own.
@@ -111,6 +111,6 @@ function UI.CombatSection(self, body)
         standing = ("%s's%s"):format(ns.Game.ShortName(session.owner),
             (F.MyTurn() and ", your turn") or (session.phase == "RUN" and (", round " .. session.round)) or (F.Mine() and "" or ", not joined"))
     end
-    UI.AddLabel(body, 1, ("Combat session %s%s|r"):format(UI.ACCENT, standing), function() F.ToggleWindow() end, "Combat session",
+    UI.AddLabel(body, 1, ("Combat session  %s%s|r"):format(UI.ACCENT, standing), function() F.ToggleWindow() end, "Combat session",
         "Turn-based combat with your party or raid. One of you starts a session and the others join; everyone rolls initiative for their own character, and the turns go round in that order. On your turn the combat window lists what you can do. Click to open or close it.")
 end

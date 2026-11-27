@@ -36,6 +36,14 @@ end
 -- its number.
 function UI.AddRowButton(parent, relWidth, text, onClick, explain, look)
     local button = AceGUI:Create("RPSheetButton")
+    -- A row whose whole text is in the accent colour is something to do, not an entry
+    -- of a list ("Short rest", "Take damage"): that is a button, in its own colours.
+    local action = not look and not explain and text:sub(1, #UI.ACCENT) == UI.ACCENT and text:match("^|c%x%x%x%x%x%x%x%x([^|]+)|r$")
+    if action then
+        look, text = "on", action
+    elseif look == "off" then
+        look = "rowoff"
+    end
     button:SetStyle(Theme(), look or "row")
     button:SetMark(explain ~= nil)
     button:SetText(text)
@@ -84,6 +92,22 @@ end
 -- A small filled square in a line of text.
 function UI.Pip(red, green, blue)
     return ("|TInterface\\Buttons\\WHITE8x8:9:9:0:0:8:8:0:8:0:8:%d:%d:%d|t"):format(red * 255, green * 255, blue * 255)
+end
+
+-- A count of a few things as squares, the ones left in the accent colour and the
+-- ones used faint: "2 of 4" is two lit and two faint. nil for more than `most`
+-- (6 when left out), which no longer read at a glance.
+function UI.Pips(value, max, most)
+    if max < 1 or max > (most or 6) then return nil end
+    local theme = Theme()
+    local lit, faint = theme.accent, theme.muted
+    local parts = {}
+    for index = 1, max do
+        local color = index <= value and lit or faint
+        local dim = index <= value and 1 or 0.45
+        parts[index] = UI.Pip(color[1] * dim, color[2] * dim, color[3] * dim)
+    end
+    return table.concat(parts, " ")
 end
 
 -- The colour of a health bar: green, then amber under half, red under a quarter.

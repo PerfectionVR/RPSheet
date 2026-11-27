@@ -30,7 +30,7 @@ function UI.AddShopChoice(self, body)
         if faction == current then at = index end
     end
     local shown = current and ("%s (%d%% off)"):format(current, (ns.RenownDiscount(self:Sheet(), current))) or NOBODY
-    UI.AddLabel(body, 1, ("Buying from %s%s|r"):format(UI.ACCENT, shown), function(button)
+    UI.AddLabel(body, 1, ("Buying from  %s%s|r"):format(UI.ACCENT, shown), function(button)
         -- Position 0 is nobody; the list wraps around both ways.
         local step = button == "RightButton" and -1 or 1
         self:SetShopFaction(factions[(at + step) % (#factions + 1)])

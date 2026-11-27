@@ -59,8 +59,8 @@ local function RollRows(self, body, kind)
     local long = kind == "save" and "saving throw" or "check"
     for _, stat in ipairs(R.STATS) do
         local mod = self:PetRollMod(stat)
-        local text = kind == "save" and ("%s save %s%s|r"):format(stat, UI.GREY, Signed(mod))
-            or ("%s %d %s(%s)|r"):format(stat, scores[stat], UI.GREY, Signed(mod))
+        local text = kind == "save" and ("%s save\n%s"):format(stat, Signed(mod))
+            or ("%s %d\n%s"):format(stat, scores[stat], Signed(mod))
         UI.AddLabel(body, 0.33, text,
             function() self:PetCheck(stat, kind, ns.RollMode()) end,
             ("Companion: %s %s"):format(R.STAT_NAMES[stat], long),
@@ -68,7 +68,7 @@ local function RollRows(self, body, kind)
                 return ("%s\n\nClick to roll your companion's %s %s. A skill it uses rolls as a check of that skill's ability.\n%s"):format(
                     BOND, R.STAT_NAMES[stat], long, ns.ROLL_MODE_HELP)
             end,
-            function() self:Print(self:ExplainPetTerm(("companion %s %s"):format(stat, kind))) end)
+            function() self:Print(self:ExplainPetTerm(("companion %s %s"):format(stat, kind))) end, "tile")
     end
 end
 

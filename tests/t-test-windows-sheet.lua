@@ -24,13 +24,14 @@ end
 
 local function Rows() return RPSheet.body.children end
 
--- The rows above the tab buttons, and the rows below them.
+-- The pages on the window's rail, and the rows above and below the open page's heading.
+local function Pages() return RPSheet.window.railItems end
 local function Split()
-    local top, below, seenTab = {}, {}, false
+    local top, below, seenPage = {}, {}, false
     for _, part in ipairs(Rows()) do
-        if part.type == "RPSheetTab" then
-            seenTab = true
-        elseif seenTab then
+        if part.GetUserData and part:GetUserData("page") then
+            seenPage = true
+        elseif seenPage then
             below[#below + 1] = part
         else
             top[#top + 1] = part
@@ -58,9 +59,10 @@ local function Walk(label, key)
         local where = ("%s tab %s"):format(label, tab)
         -- the open tab is the one asked for
         local open
-        for _, part in ipairs(Rows()) do
-            if part.type == "RPSheetTab" and part.open then open = part.text:GetText() end
+        for _, part in ipairs(Pages()) do
+            if part.open then open = part.text:GetText() end
         end
+        if #Pages() ~= #TABS then Problem(where .. ": the rail has " .. #Pages() .. " pages") end
         if open ~= tab then Problem(where .. ": the open tab is " .. tostring(open)) end
         CheckOverlap(RPSheet.body, where)
         CheckFlowRows(RPSheet.body, where)
@@ -70,14 +72,14 @@ local function Walk(label, key)
         end
         WalkRows(function() local _, below = Split() return below end, where, options)
         -- the tab buttons themselves: hovered here, clicked below
-        for _, part in ipairs(Rows()) do
-            if part.type == "RPSheetTab" then HoverPart(where .. " tab button " .. tostring(part.text:GetText()), part) end
+        for _, part in ipairs(Pages()) do
+            HoverPart(where .. " tab button " .. tostring(part.text:GetText()), part)
         end
     end
     -- clicking through the tab strip
     for _, tab in ipairs(TABS) do
-        for _, part in ipairs(Rows()) do
-            if part.type == "RPSheetTab" and part.text:GetText() == tab then
+        for _, part in ipairs(Pages()) do
+            if part.text:GetText() == tab then
                 ClickPart(label .. " click tab " .. tab, part, "LeftButton")
                 break
             end

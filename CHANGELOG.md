@@ -1,5 +1,36 @@
 # Changelog
 
+## 0.15.0
+
+- A new look for every window. Text comes in three steps (what matters, what
+  supports it, hints) instead of colours; rows of a list have no box, only a thin
+  line under them and a wash under the mouse; the accent colour is kept for the main
+  action, the chosen option and the open page.
+- The sheet's pages (Actions, Checks, Skills, Traits, Items, Trade) are on a rail down
+  the left side of the window, each with an icon, under a line saying who the
+  character is. The sheet is wider for it: 466 pixels at its narrowest.
+- Armor Class, initiative, speed, spell numbers, ability checks and saving throws are
+  tiles: a small label over the number.
+- Hit points, Hit Dice and resources are slim bars with their text above them.
+- Buttons are filled shapes without an edge; the main one of a window is filled in
+  the accent colour. Rows put their detail on the right ("Fireball" left, "8d6 fire"
+  right). The "?" that explains a number is on the right of its row, or in the corner
+  of its tile.
+- Tabs are names on a thin line; the open one stands on a line in the accent colour.
+- Section titles are small, muted capitals.
+- The Dark theme has new colours, and every theme a quieter wash under the mouse. A
+  theme you made your own keeps its colours.
+- The settings, the wizard and the level dialog have the same look: filled buttons
+  without an edge, tabs on a thin line, names of fields in a quieter colour, thin
+  lines round panes, and the accent colour only on what is ticked, picked or open.
+- Numbers and values inside rows are in the text colour, not gold. The accent colour
+  now marks a proficiency (a skill's or save's name) and whose turn it is.
+- A row with a value has its name on the left and the value on the right: "Announce
+  to", "Next roll", conditions, exhaustion, temporary hit points, skills and tools.
+- Spell slots are squares, lit while they are left, where there are few enough.
+- The scroll bars of the sheet, the spellbook, the prepared spells and the combat
+  window are in the theme's colours: a thin, quiet handle.
+
 ## 0.14.0
 
 - Every window now follows the combat window: what reacts to a click is a button, a

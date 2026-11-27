@@ -40,7 +40,7 @@ function UI.TrackerSection(self, body)
     for _, tracker in ipairs(trackers) do
         if tracker.kind ~= "slot" then
             local bar = UI.AddBar(body, barColors[tracker.kind], function(button) Change(tracker, button) end,
-                tracker.label, tracker.kind == "hitdice" and HIT_DICE_HELP or TRACKER_HELP)
+                tracker.label, tracker.kind == "hitdice" and HIT_DICE_HELP or TRACKER_HELP, true)
             self.trackerRows[#self.trackerRows + 1] = { widget = bar, tracker = tracker, bar = true }
         end
     end

@@ -22,10 +22,10 @@ local function AddAction(self, body, entry)
     if entry.why then
         UI.AddButton(body, wide and 1 or 0.5, text, function()
             self:Print(("%s: %s"):format(entry.name, entry.why))
-        end, entry.name, ("%sNot now: %s|r\n\n%s%s"):format(RED, entry.why, takes, entry.tip or ""), "off")
+        end, entry.name, ("%sNot now: %s|r\n\n%s%s"):format(RED, entry.why, takes, entry.tip or ""), "rowoff")
     else
         UI.AddButton(body, wide and 1 or 0.5, text, function() entry.run() end,
-            entry.name, takes .. (entry.tip or "") .. "\n" .. ns.ROLL_MODE_HELP)
+            entry.name, takes .. (entry.tip or "") .. "\n" .. ns.ROLL_MODE_HELP, "row")
     end
 end
 

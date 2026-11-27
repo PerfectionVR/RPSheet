@@ -6,7 +6,7 @@ local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
 local Type, Version = "RPSheetWindow", 1
 
-local TITLE_HEIGHT, PADDING = 22, 8
+local TITLE_HEIGHT, PADDING = 26, 10
 local MIN_WIDTH, MIN_HEIGHT = 340, 200 -- narrower than this and the rows and tabs wrap
 local LOCK_ICON = "Interface\\PetBattles\\PetBattle-LockIcon"
 local EDIT_ICON = "Interface\\Buttons\\UI-OptionsButton"
@@ -55,6 +55,7 @@ local methods = {
     end,
 
     OnRelease = function(self)
+        self:SetRail()
         self.status = nil
         wipe(self.localstatus)
     end,
@@ -71,7 +72,8 @@ local methods = {
     ApplyStatus = function(self)
         local frame, status = self.frame, self.status or self.localstatus
         self:SetCollapsed(false)
-        self:SetWidth(math.max(MIN_WIDTH, status.width or MIN_WIDTH))
+        local least = MIN_WIDTH + (self.railWidth or 0)
+        self:SetWidth(math.max(least, status.width or least))
         self:SetHeight(math.max(MIN_HEIGHT, status.height or 480))
         frame:ClearAllPoints()
         if status.top and status.left then
@@ -83,7 +85,7 @@ local methods = {
     end,
 
     OnWidthSet = function(self, width)
-        local contentWidth = math.max(0, width - PADDING * 2)
+        local contentWidth = math.max(0, width - PADDING * 2 - (self.railWidth or 0))
         self.content:SetWidth(contentWidth)
         self.content.width = contentWidth
     end,
@@ -105,20 +107,23 @@ local methods = {
     end,
 
     SetTheme = function(self, theme)
-        local accent = theme.accent
         self.frame:SetBackdropColor(unpack(theme.bg))
         self.frame:SetBackdropBorderColor(unpack(theme.border))
         self.frame:SetScale(theme.scale)
-        self.titleBackground:SetColorTexture(accent[1], accent[2], accent[3], 0.15)
-        self.titleText:SetFont(ns.ThemeFont(theme), theme.fontSize + 2, "")
-        self.titleText:SetTextColor(accent[1], accent[2], accent[3])
+        -- A darker strip with the title in the text colour; its icons are quiet.
+        local tokens = ns.Tokens(theme)
+        local text, dim = tokens.text, tokens.dim
+        self.titleBackground:SetColorTexture(unpack(tokens.shade))
+        self.titleLine:SetColorTexture(unpack(tokens.line))
+        self.titleText:SetFont(ns.ThemeFont(theme), theme.fontSize + 1, "")
+        self.titleText:SetTextColor(text[1], text[2], text[3])
         self.titleText:SetShadowOffset(1, -1)
         self.titleText:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)
-        self.closeText:SetTextColor(accent[1], accent[2], accent[3])
-        self.lockButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
-        self.editButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
-        self.minimizeButton.icon:SetVertexColor(accent[1], accent[2], accent[3])
-        self.sizerTexture:SetVertexColor(accent[1], accent[2], accent[3])
+        self.closeText:SetTextColor(dim[1], dim[2], dim[3])
+        self.lockButton.icon:SetVertexColor(dim[1], dim[2], dim[3])
+        self.editButton.icon:SetVertexColor(dim[1], dim[2], dim[3])
+        self.minimizeButton.icon:SetVertexColor(dim[1], dim[2], dim[3])
+        self.sizerTexture:SetVertexColor(dim[1], dim[2], dim[3])
     end,
 }
 
@@ -158,6 +163,10 @@ local function Constructor()
 
     widget.titleBackground = titleBar:CreateTexture(nil, "BACKGROUND")
     widget.titleBackground:SetAllPoints()
+    widget.titleLine = titleBar:CreateTexture(nil, "ARTWORK")
+    widget.titleLine:SetPoint("BOTTOMLEFT")
+    widget.titleLine:SetPoint("BOTTOMRIGHT")
+    widget.titleLine:SetHeight(1)
 
     widget.titleText = titleBar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     widget.titleText:SetPoint("LEFT", PADDING, 0)
@@ -221,6 +230,15 @@ local function Constructor()
     content:SetPoint("BOTTOMRIGHT", -PADDING, PADDING)
     content.obj = widget
     widget.content = content
+
+    -- A side rail (UI/WindowRail.lua) takes its width off the contents, and a window
+    -- with one can't be made as narrow as one without.
+    ns.AttachRail(widget, TITLE_HEIGHT + 1, function(self)
+        local rail = self.railWidth
+        content:SetPoint("TOPLEFT", PADDING + rail, -(TITLE_HEIGHT + PADDING))
+        frame:SetResizeBounds(MIN_WIDTH + rail, MIN_HEIGHT)
+        self:SetWidth(math.max(MIN_WIDTH + rail, frame:GetWidth()))
+    end)
 
     ns.AttachMinimize(widget, TITLE_HEIGHT + 2)
     return AceGUI:RegisterAsContainer(widget)

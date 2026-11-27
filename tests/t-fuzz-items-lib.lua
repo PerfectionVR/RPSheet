@@ -25,16 +25,13 @@ end
 
 -- A tab of the sheet, then one of the rows under the tab strip.
 Action("tab row", { weight = 22, guard = function() return Z.HasCharacter() and Shown(RPSheet.window) end, run = function()
-    local tabs = {}
-    for _, part in ipairs(RPSheet.body.children) do
-        if part.type == "RPSheetTab" then tabs[#tabs + 1] = part end
-    end
+    local tabs = RPSheet.window.railItems
     local tab = Z.Choose("tab", tabs, function(part) return part.text:GetText() end)
     F.Click(tab.frame, "LeftButton")
     F.Settle()
     local rows, below = {}, false
     for _, part in ipairs(RPSheet.body.children) do
-        if part.type == "RPSheetTab" then below = true
+        if part.GetUserData and part:GetUserData("page") then below = true
         elseif below and part.events and part.events.OnClick and part.frame:IsVisible() then rows[#rows + 1] = part end
     end
     ClickOne(rows)

@@ -11,8 +11,8 @@ function UI.SkillSection(self, body)
     for _, skill in ipairs(R.SKILLS) do
         local mod = self:SkillMod(skill)
         local rank = ranks[skill.name] or 0
-        local name = rank > 0 and (UI.ACCENT .. skill.name .. (rank > 1 and "*" or "") .. "|r") or skill.name
-        UI.AddRollLabel(body, 0.5, ("%s %s%s|r"):format(name, UI.GREY, Signed(mod)),
+        local name = rank > 0 and (UI.MARK .. skill.name .. (rank > 1 and "*" or "") .. "|r") or skill.name
+        UI.AddRollLabel(body, 0.5, ("%s  %s%s|r"):format(name, UI.GREY, Signed(mod)),
             function() self:RollCheck(skill.name, mod, ns.RollMode()) end,
             skill.name,
             function()
@@ -30,7 +30,7 @@ function UI.ToolSection(self, body)
     UI.AddHeading(body, "Tools")
     for _, tool in ipairs(tools) do
         local mod = self:ToolMod(tool)
-        UI.AddRollLabel(body, 0.5, ("%s%s|r %s%s|r"):format(UI.ACCENT, tool.name, UI.GREY, Signed(mod)),
+        UI.AddRollLabel(body, 0.5, ("%s  %s%s|r"):format(tool.name, UI.GREY, Signed(mod)),
             function() self:RollCheck(tool.name, mod, ns.RollMode()) end,
             tool.name,
             function()

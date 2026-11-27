@@ -23,7 +23,7 @@ Section("a saved channel that is none of ours", function()
         shown = nil
         addon.db.profile.channel = odd
         anna:Do(addon.Refresh, addon)
-        Check(type(shown) == "string" and shown:find("Announce to: ", 1, true) and shown:find("Self only", 1, true), ("the row with a saved %s: %s"):format(tostring(odd), tostring(shown)))
+        Check(type(shown) == "string" and shown:find("Announce to  ", 1, true) and shown:find("Self only", 1, true), ("the row with a saved %s: %s"):format(tostring(odd), tostring(shown)))
         local printed = #anna.printed
         anna:Do(addon.Announce, addon, "waves.")
         Eq(#anna.said, 0, "nothing is sent anywhere")

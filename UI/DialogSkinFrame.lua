@@ -50,9 +50,9 @@ Skin.styles.Frame = function(widget, theme)
     bar:SetPoint("TOPLEFT", INSET + 1, -(INSET + 1))
     bar:SetPoint("TOPRIGHT", -(INSET + 1), -(INSET + 1))
     bar:SetHeight(BAR_HEIGHT)
-    bar:SetColorTexture(accent[1], accent[2], accent[3], 0.15)
+    bar:SetColorTexture(0, 0, 0, 0.22)
     MoveTitle(widget, widget.titletext, bar)
-    Skin.Font(widget, widget.titletext, accent, theme)
+    Skin.Font(widget, widget.titletext, theme.text, theme)
 
     -- The Close button and the status line under the contents are not named on the
     -- part; they are the two buttons among the frame's children that point back at it.
@@ -62,7 +62,7 @@ Skin.styles.Frame = function(widget, theme)
                 if child.GetFontString and child:GetFontString() then
                     Skin.Button(widget, child, theme)
                 else
-                    Skin.Backdrop(widget, child, { accent[1], accent[2], accent[3], 0.06 }, border)
+                    Skin.Backdrop(widget, child, Skin.Wash(theme), Skin.EdgeColor(theme))
                 end
             end
         end
@@ -74,7 +74,7 @@ Skin.styles.Frame = function(widget, theme)
     if grip and grip.GetRegions then
         for _, region in ipairs({ grip:GetRegions() }) do
             if region.IsObjectType and region:IsObjectType("Texture") then
-                Skin.Tint(widget, region, accent)
+                Skin.Tint(widget, region, ns.Tokens(theme).dim)
             end
         end
     end
