@@ -30,11 +30,12 @@ function Skin.Bar(widget, slider, theme, upright, off)
     end
     track:SetColorTexture(edge[1], edge[2], edge[3], 0.5)
 
-    local color = off and theme.muted or theme.accent
+    -- (a scroll bar's handle is quiet; a slider's, which sets a value, is in the accent colour)
+    local color = (off or upright) and theme.muted or theme.accent
     local knob = Skin.Texture(widget, slider, "knob", "ARTWORK")
     knob:ClearAllPoints()
     knob:SetPoint("CENTER", thumb, "CENTER")
-    knob:SetSize(8, upright and 20 or 14)
+    knob:SetSize(upright and 4 or 8, upright and 24 or 14)
     knob:SetColorTexture(color[1], color[2], color[3], 1)
 end
 
@@ -50,7 +51,7 @@ function Skin.ScrollBar(widget, bar, theme)
         local button = bar[key] or (name and _G[name .. key])
         if type(button) == "table" and button.GetRegions and button.CreateTexture then
             Skin.FadeArt(widget, button)
-            Skin.Arrow(widget, button, "arrow", theme.accent, up)
+            Skin.Arrow(widget, button, "arrow", theme.muted, up)
         end
     end
 end

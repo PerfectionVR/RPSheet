@@ -8,6 +8,7 @@ local AceConfigDialog = LibStub("AceConfigDialog-3.0")
 
 function RPSheet:BuildWindow()
     local saved = self.db.char
+    ns.RenewTheme(self.db.profile)
     local theme = self.db.profile.theme
     UI.SetColors(theme)
 
@@ -68,6 +69,7 @@ end
 -- switched, copied or reset the settings profile.
 function RPSheet:SettingsChanged()
     if not self.window then return end
+    ns.RenewTheme(self.db.profile)
     self.window:SetStatusTable(self.db.profile.window)
     self:ApplyLock()
     self.window:SetMinimized(self.db.profile.minimized)

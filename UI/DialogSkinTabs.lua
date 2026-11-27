@@ -18,7 +18,7 @@ local function Fonts(theme)
     local base = GameFontNormalSmall
     return Skin.StateFont("RPSheetDialogTabFont", base, theme, theme.muted),
         Skin.StateFont("RPSheetDialogTabHoverFont", base, theme, theme.text),
-        Skin.StateFont("RPSheetDialogTabOpenFont", base, theme, theme.accent)
+        Skin.StateFont("RPSheetDialogTabOpenFont", base, theme, theme.text)
 end
 
 local function Tab(widget, tab, theme, closed, hover, opened)
@@ -33,16 +33,21 @@ local function Tab(widget, tab, theme, closed, hover, opened)
     -- name and ends on the top line of the page below.
     fill:SetPoint("TOPLEFT", SIDE, -5)
     fill:SetPoint("BOTTOMRIGHT", -SIDE, -1)
-    fill:SetColorTexture(accent[1], accent[2], accent[3], open and 0.22 or 0.06)
+    fill:SetColorTexture(0, 0, 0, 0)
     for index, side in ipairs(EDGES) do
         local edge = Skin.Texture(widget, tab, "tabEdge" .. index, "BORDER")
         edge:ClearAllPoints()
         edge:SetPoint(side[1], fill, side[1])
         edge:SetPoint(side[2], fill, side[2])
-        if side.flat then edge:SetHeight(1) else edge:SetWidth(1) end
-        edge:SetColorTexture(accent[1], accent[2], accent[3], open and 1 or 0.3)
-        -- No line under the open tab: it reads as joined to the page below.
-        if index == 4 then edge:SetShown(not open) end
+        -- No box: only the line under a tab is drawn, thicker and in the accent
+        -- colour under the open one.
+        if side.flat then edge:SetHeight(index == 4 and open and 2 or 1) else edge:SetWidth(1) end
+        if index == 4 and open then
+            edge:SetColorTexture(accent[1], accent[2], accent[3], 1)
+        else
+            edge:SetColorTexture(theme.text[1], theme.text[2], theme.text[3], index == 4 and 0.10 or 0)
+        end
+        edge:Show()
     end
     local glow = Skin.Texture(widget, tab, "tabGlow", "HIGHLIGHT")
     glow:SetAllPoints(fill)
@@ -54,7 +59,7 @@ local function Tab(widget, tab, theme, closed, hover, opened)
 end
 
 Skin.styles.TabGroup = function(widget, theme)
-    Skin.Font(widget, widget.titletext, theme.accent, theme)
+    Skin.Font(widget, widget.titletext, ns.Tokens(theme).dim, theme)
     Skin.Pane(widget, widget.border, theme, 0)
     if type(widget.tabs) == "table" then
         local closed, hover, opened = Fonts(theme)

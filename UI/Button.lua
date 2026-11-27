@@ -1,50 +1,114 @@
--- "RPSheetButton": an AceGUI widget for something to click in a window: a box with
--- an edge all round in the accent colour, so it reads as a button and not as text.
--- Four looks: "on" (can be clicked now), "off" (greyed: a click says why not),
--- "picked" (the one of several that is chosen, filled) and "row" (a row of a sheet:
--- text in the text colour, so the colours inside it stand out). Text that doesn't fit
--- wraps and the button grows with it. With SetMark(true) it has a small "?" part of
--- its own on the left. Fires OnClick(button), OnMarkClick(button), OnEnter, OnLeave.
+-- "RPSheetButton": an AceGUI widget for everything that is clicked in a window. Its
+-- looks (UI/ButtonLooks.lua) are of three kinds:
+--   a button    "on", "off" (greyed: a click says why not), "picked" (the main action,
+--               or the one of several that is chosen): a filled shape, text centred
+--   a row       "row", "rowoff": a line of a list. No box: a hairline under it and a
+--               wash under the mouse. Text after two spaces ("Name  info") stands
+--               on the right in the muted colour
+--   a tile      "tile": a number worth a glance. Text before a line break is the
+--               small label over it
+-- Text that doesn't fit wraps and the widget grows with it. With SetMark(true) it has
+-- a small "?" part of its own on the right. Fires OnClick(button),
+-- OnMarkClick(button), OnEnter, OnLeave.
 local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
-local Type, Version = "RPSheetButton", 2
+local Type, Version = "RPSheetButton", 3
 
-local GAP = 3 -- space kept free to the right and below, between neighbouring buttons
-local PAD = 4 -- between the edge and the text, left and right
-local ROOM = 10 -- above and below the text together
-
--- Gives the text the width there is, and the button the height the text needs.
+-- Gives the texts the width there is, and the widget the height they need.
 local function Fit(self)
     if self.fitting then return end
+    local kind = self.kind
+    if not kind then return end
     local marked = self.marked and self.markWidth or 0
-    local width = math.max(10, (self.frame.width or self.frame:GetWidth() or 0) - GAP - 2 * PAD - marked)
-    self.text:SetWidth(width)
-    local height = math.max(self.lineHeight or 12, self.text:GetStringHeight() or 0) + ROOM + GAP
+    local width = math.max(10, (self.frame.width or self.frame:GetWidth() or 0) - kind.gap - 2 * kind.pad - (kind.tile and 0 or marked))
+    local height
+    if kind.tile then
+        -- (a tile's "?" stands in its corner, beside the label: the number has the whole width)
+        self.side:SetWidth(math.max(10, width - marked))
+        self.text:SetWidth(width)
+        height = (self.side:GetStringHeight() or 0) + 2 + math.max(self.lineHeight + 4, self.text:GetStringHeight() or 0)
+    else
+        local side = 0
+        if kind.split and (self.side:GetText() or "") ~= "" then
+            side = math.min(self.side:GetStringWidth() or 0, width * 0.6)
+            self.side:SetWidth(side)
+            side = side + 8
+        end
+        self.text:SetWidth(math.max(10, width - side))
+        height = math.max(self.lineHeight, self.text:GetStringHeight() or 0)
+    end
     self.fitting = true
-    self:SetHeight(height)
+    self:SetHeight(height + kind.room + kind.below)
     self.fitting = nil
+end
+
+-- Where the texts stand for the kind of look.
+local function Place(self)
+    local kind, fill, text, side = self.kind, self.fill, self.text, self.side
+    local right = -kind.pad - (self.marked and self.markWidth or 0)
+    text:ClearAllPoints()
+    side:ClearAllPoints()
+    if kind.tile then
+        side:SetPoint("TOPLEFT", fill, "TOPLEFT", kind.pad, -kind.room / 2)
+        text:SetPoint("BOTTOMLEFT", fill, "BOTTOMLEFT", kind.pad, kind.room / 2)
+        text:SetJustifyH("LEFT")
+        side:SetJustifyH("LEFT")
+        side:SetWordWrap(true)
+        self.mark:ClearAllPoints()
+        self.mark:SetPoint("TOPRIGHT", fill, "TOPRIGHT")
+        self.mark:SetHeight(self.lineHeight + kind.room / 2 + 2)
+    elseif kind.split then
+        text:SetPoint("LEFT", fill, "LEFT", kind.pad, 0)
+        side:SetPoint("RIGHT", fill, "RIGHT", right, 0)
+        text:SetJustifyH("LEFT")
+        side:SetJustifyH("RIGHT")
+        side:SetWordWrap(false)
+    else
+        text:SetPoint("CENTER", fill, "CENTER", self.marked and -self.markWidth / 2 or 0, 0)
+        text:SetJustifyH("CENTER")
+    end
+    if not kind.tile then
+        self.mark:ClearAllPoints()
+        self.mark:SetPoint("TOPRIGHT", fill, "TOPRIGHT")
+        self.mark:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
+    end
+    fill:ClearAllPoints()
+    fill:SetPoint("TOPLEFT")
+    fill:SetPoint("BOTTOMRIGHT", -kind.gap, kind.below)
 end
 
 local methods = {
     OnAcquire = function(self)
-        self.marked = false
+        self.marked, self.kind, self.look, self.whole = false, nil, nil, nil
         self:SetDisabled(false)
         self.mark:Hide()
-        self.text:SetPoint("CENTER", self.fill, "CENTER", 0, 0)
         self:SetWidth(100)
         self:SetHeight(22)
-        self:SetText("")
+        self.text:SetText("")
+        self.side:SetText("")
         self.hover:Hide()
         self.markHover:Hide()
     end,
 
+    -- A row's text is split at the first two spaces, a tile's at the first line break.
     SetText = function(self, text)
-        self.text:SetText(text)
+        local kind = self.kind
+        local main, side = text, ""
+        if kind and kind.tile then
+            local label, value = text:match("^(.-)\n(.*)$")
+            if label then main, side = value, label end
+        elseif kind and kind.split then
+            local left, right = text:match("^(.-)  +(.*)$")
+            if left and left ~= "" and right ~= "" then main, side = left, right end
+        end
+        self.whole = text
+        self.text:SetText(main)
+        self.side:SetText(side)
         Fit(self)
     end,
 
     GetText = function(self)
-        return self.text:GetText()
+        return self.whole or self.text:GetText()
     end,
 
     -- Switched off: it takes no click at all. (The "off" look alone still does.)
@@ -57,49 +121,25 @@ local methods = {
         Fit(self)
     end,
 
-    -- The "?" part on the left, a button of its own (OnMarkClick).
+    -- The "?" part on the right, a button of its own (OnMarkClick).
     SetMark = function(self, on)
         self.marked = on and true or false
         self.mark:SetShown(self.marked)
-        self.text:SetPoint("CENTER", self.fill, "CENTER", self.marked and self.markWidth / 2 or 0, 0)
+        if self.kind then Place(self) end
         Fit(self)
     end,
 
-    -- Colours, font and height from the theme. `look` is "on", "off", "picked" or "row".
+    -- Colours, font and sizes from the theme. `look`: see the top of this file.
     SetStyle = function(self, theme, look)
-        local accent, muted = theme.accent, theme.muted
-        local edge = look == "off" and muted or accent
-        local color = look == "off" and muted or ((look == "picked" or look == "row") and theme.text or accent)
         self.look = look
-        self.text:SetFont(ns.ThemeFont(theme), theme.fontSize, "")
-        self.text:SetTextColor(color[1], color[2], color[3])
-        self.text:SetShadowOffset(1, -1)
-        self.text:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)
-        self.fill:SetColorTexture(edge[1], edge[2], edge[3],
-            look == "picked" and 0.45 or (look == "off" and 0.05 or (look == "row" and 0.09 or 0.14)))
-        local solid = look == "off" and 0.35 or (look == "picked" and 1 or (look == "row" and 0.55 or 0.75))
-        for _, line in ipairs(self.edges) do
-            line:SetColorTexture(edge[1], edge[2], edge[3], solid)
-        end
-        self.hover:SetColorTexture(unpack(theme.highlight))
-        self.markHover:SetColorTexture(unpack(theme.highlight))
-        self.markLine:SetColorTexture(edge[1], edge[2], edge[3], solid)
-        self.markText:SetFont(ns.ThemeFont(theme), theme.fontSize, "")
-        self.markText:SetTextColor(muted[1], muted[2], muted[3])
-        self.markWidth = theme.fontSize + 4
-        self.mark:SetWidth(self.markWidth)
+        self.kind = ns.PaintButton(self, theme, look)
         self.lineHeight = theme.fontSize
-        Fit(self)
+        self.markWidth = theme.fontSize + 8
+        self.mark:SetWidth(self.markWidth)
+        Place(self)
+        if self.whole then self:SetText(self.whole) else Fit(self) end
     end,
 }
-
-local function Edge(frame, fill, from, to, width, height)
-    local line = frame:CreateTexture(nil, "ARTWORK")
-    line:SetPoint(from, fill, from)
-    line:SetPoint(to, fill, to)
-    if width then line:SetWidth(width) else line:SetHeight(height) end
-    return line
-end
 
 local function Constructor()
     local frame = CreateFrame("Button", nil, UIParent)
@@ -108,43 +148,37 @@ local function Constructor()
 
     local fill = frame:CreateTexture(nil, "BACKGROUND")
     fill:SetPoint("TOPLEFT")
-    fill:SetPoint("BOTTOMRIGHT", -GAP, GAP)
+    fill:SetPoint("BOTTOMRIGHT")
 
     local hover = frame:CreateTexture(nil, "BORDER")
     hover:SetAllPoints(fill)
-    hover:SetBlendMode("ADD")
 
-    local edges = {
-        Edge(frame, fill, "TOPLEFT", "TOPRIGHT", nil, 1), Edge(frame, fill, "BOTTOMLEFT", "BOTTOMRIGHT", nil, 1),
-        Edge(frame, fill, "TOPLEFT", "BOTTOMLEFT", 1), Edge(frame, fill, "TOPRIGHT", "BOTTOMRIGHT", 1),
-    }
+    -- The hairline under a row.
+    local line = frame:CreateTexture(nil, "ARTWORK")
+    line:SetPoint("BOTTOMLEFT", fill, "BOTTOMLEFT")
+    line:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
+    line:SetHeight(1)
 
     local text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    text:SetPoint("CENTER", fill, "CENTER", 0, 0)
-    text:SetJustifyH("CENTER")
     text:SetWordWrap(true)
+    local side = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 
-    -- The "?" part: a button inside the button, with a line between the two.
+    -- The "?" part: a button inside the button.
     local mark = CreateFrame("Button", nil, frame)
     mark:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    mark:SetPoint("TOPLEFT", fill, "TOPLEFT")
-    mark:SetPoint("BOTTOMLEFT", fill, "BOTTOMLEFT")
+    mark:SetPoint("TOPRIGHT", fill, "TOPRIGHT")
+    mark:SetPoint("BOTTOMRIGHT", fill, "BOTTOMRIGHT")
     mark:SetWidth(16)
     mark:Hide()
     local markHover = mark:CreateTexture(nil, "BORDER")
     markHover:SetAllPoints(mark)
-    markHover:SetBlendMode("ADD")
     markHover:Hide()
-    local markLine = mark:CreateTexture(nil, "ARTWORK")
-    markLine:SetPoint("TOPRIGHT", mark, "TOPRIGHT")
-    markLine:SetPoint("BOTTOMRIGHT", mark, "BOTTOMRIGHT")
-    markLine:SetWidth(1)
     local markText = mark:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     markText:SetPoint("CENTER", mark, "CENTER", 0, 0)
     markText:SetText("?")
 
-    local widget = { type = Type, frame = frame, fill = fill, hover = hover, edges = edges, text = text,
-        mark = mark, markHover = markHover, markLine = markLine, markText = markText }
+    local widget = { type = Type, frame = frame, fill = fill, hover = hover, line = line, text = text, side = side,
+        mark = mark, markHover = markHover, markText = markText }
     for name, method in pairs(methods) do widget[name] = method end
 
     frame:SetScript("OnClick", function(_, button) widget:Fire("OnClick", button) end)

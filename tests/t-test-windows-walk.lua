@@ -4,6 +4,8 @@ COUNT = { rows = 0, clicks = 0, tips = 0, explains = 0 }
 
 -- What a part reads as.
 function PartText(part)
+    -- (a row's button keeps its whole text; its two halves are drawn apart)
+    if part.type == "RPSheetButton" then return part:GetText() or "" end
     for _, key in ipairs({ "label", "text", "titletext" }) do
         local region = part[key]
         if type(region) == "table" and region.GetText then

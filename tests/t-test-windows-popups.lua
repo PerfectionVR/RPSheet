@@ -605,7 +605,7 @@ Try("prepared two classes", function()
     local headings = 0
     for _, part in ipairs(PreparedRows()) do
         local text = F.Plain(PartText(part))
-        if text:find("^\n" .. R.CLASSES.PRIEST.name) or text:find("^\n" .. R.CLASSES.DRUID.name) then headings = headings + 1 end
+        if text:find("^\n" .. R.CLASSES.PRIEST.name:upper()) or text:find("^\n" .. R.CLASSES.DRUID.name:upper()) then headings = headings + 1 end
     end
     Check("with two classes that prepare, their names aren't above their spells", headings >= 2)
 end)
@@ -674,7 +674,7 @@ Try("right-click on rolls", function()
     local rolls, roll = 0, RandomRoll
     RandomRoll = function(...) rolls = rolls + 1 return roll(...) end
     local found = {}
-    local STARTS = { "STR", "DEX +", "Athletics", "Initiative", "Spell attack", "Thieves' Tools" }
+    local STARTS = { "STR ", "DEX\n", "Athletics", "Initiative", "Spell attack", "Thieves' Tools" }
     for _, tab in ipairs({ "Checks", "Skills" }) do
         Tab(tab)
         for _, start in ipairs(STARTS) do

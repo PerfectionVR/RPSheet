@@ -172,6 +172,7 @@ Data\ItemVariants.lua
 Data\ItemVariantsNamed.lua
 
 UI\Themes.lua
+UI\Tokens.lua
 Core\Defaults.lua
 
 # The character sheet: saved data and the numbers worked out from it
@@ -360,9 +361,11 @@ Actions\Trade.lua
 
 # The sheet window
 UI\WindowMinimize.lua
+UI\WindowRail.lua
 UI\Window.lua
 UI\Bar.lua
 UI\Tab.lua
+UI\ButtonLooks.lua
 UI\Button.lua
 UI\TermLabel.lua
 UI\Slider.lua

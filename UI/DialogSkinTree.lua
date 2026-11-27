@@ -8,9 +8,9 @@ local Skin = ns.DialogSkin
 
 -- Top entries in the accent colour, the entries below them in the text colour.
 local function Fonts(theme)
-    return Skin.StateFont("RPSheetDialogTreeFont", GameFontNormal, theme, theme.accent),
+    return Skin.StateFont("RPSheetDialogTreeFont", GameFontNormal, theme, theme.text),
         Skin.StateFont("RPSheetDialogTreeHoverFont", GameFontHighlight, theme, theme.text),
-        Skin.StateFont("RPSheetDialogTreeSubFont", GameFontHighlightSmall, theme, theme.text)
+        Skin.StateFont("RPSheetDialogTreeSubFont", GameFontHighlightSmall, theme, ns.Tokens(theme).dim)
 end
 
 local function Rows(widget, theme)
@@ -24,8 +24,8 @@ local function Rows(widget, theme)
             Skin.Flat(widget, row.GetHighlightTexture and row:GetHighlightTexture(), theme.highlight)
             local toggle = row.toggle -- the plus or minus before an entry with pages below it
             if toggle and toggle.GetNormalTexture and toggle.GetPushedTexture then
-                Skin.Grey(widget, toggle:GetNormalTexture(), theme.accent)
-                Skin.Grey(widget, toggle:GetPushedTexture(), theme.accent)
+                Skin.Grey(widget, toggle:GetNormalTexture(), theme.muted)
+                Skin.Grey(widget, toggle:GetPushedTexture(), theme.muted)
             end
             Skin.Recolor(widget, row.text, theme)
         end
@@ -42,7 +42,7 @@ end
 local function BarLit(bar)
     local theme = Skin.Theme()
     if not (theme and bar.SetBackdropColor) then return end
-    bar:SetBackdropColor(theme.accent[1], theme.accent[2], theme.accent[3], 0.6)
+    bar:SetBackdropColor(theme.text[1], theme.text[2], theme.text[3], 0.2)
 end
 
 Skin.styles.TreeGroup = function(widget, theme)

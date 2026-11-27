@@ -1,10 +1,13 @@
--- "RPSheetBar": an AceGUI widget showing a value as a filled bar with text on top
--- (HP, class resource, counter). Clickable like a row: fires OnClick(button), OnEnter, OnLeave.
+-- "RPSheetBar": an AceGUI widget showing a value as a filled bar (HP, class resource,
+-- counter). Two shapes: thin, a slim bar with its text above it (the sheet's
+-- trackers), and full, the text on the bar (a combatant's health in the combat
+-- window). Clickable like a row: fires OnClick(button), OnEnter, OnLeave.
 local _, ns = ...
 local AceGUI = LibStub("AceGUI-3.0")
-local Type, Version = "RPSheetBar", 1
+local Type, Version = "RPSheetBar", 2
 
-local GAP = 3 -- space kept free to the right and below, so neighbouring bars don't touch
+local GAP = 6 -- space kept free to the right and below, so neighbouring bars don't touch
+local THIN = 6 -- height of a thin bar
 
 local methods = {
     OnAcquire = function(self)
@@ -24,16 +27,37 @@ local methods = {
         self.text:SetText(text)
     end,
 
-    -- Bar colour, plus font, text colour and row height from the theme.
-    SetStyle = function(self, theme, color)
-        self.bar:SetStatusBarTexture(ns.ThemeBarTexture(theme))
-        self.bar:SetStatusBarColor(color[1], color[2], color[3], color[4] or 1)
-        self.text:SetFont(ns.ThemeFont(theme), theme.fontSize, "")
-        self.text:SetTextColor(theme.text[1], theme.text[2], theme.text[3])
-        self.text:SetShadowOffset(1, -1)
-        self.text:SetShadowColor(0, 0, 0, theme.shadow and 1 or 0)
-        self.hover:SetColorTexture(unpack(theme.highlight))
-        self:SetHeight(theme.fontSize + 7 + GAP)
+    -- Bar colour, plus font, text colour and height from the theme.
+    SetStyle = function(self, theme, color, thin)
+        local tokens = ns.Tokens(theme)
+        local track, bar, text = self.track, self.bar, self.text
+        self.thin = thin and true or false
+        bar:SetStatusBarTexture(ns.ThemeBarTexture(theme))
+        bar:SetStatusBarColor(color[1], color[2], color[3], color[4] or 1)
+        track:SetColorTexture(unpack(tokens.track))
+        text:SetFont(ns.ThemeFont(theme), theme.fontSize, "")
+        text:SetTextColor(tokens.text[1], tokens.text[2], tokens.text[3])
+        text:SetShadowOffset(1, -1)
+        text:SetShadowColor(0, 0, 0, (theme.shadow or not thin) and 1 or 0)
+        self.hover:SetColorTexture(unpack(tokens.hover))
+        track:ClearAllPoints()
+        text:ClearAllPoints()
+        if thin then
+            track:SetPoint("BOTTOMLEFT", 0, GAP)
+            track:SetPoint("BOTTOMRIGHT", -GAP, GAP)
+            track:SetHeight(THIN)
+            text:SetPoint("TOPLEFT", 0, -2)
+            text:SetPoint("TOPRIGHT", -GAP, -2)
+            text:SetJustifyH("LEFT")
+            self:SetHeight(theme.fontSize + 6 + THIN + GAP)
+        else
+            track:SetPoint("TOPLEFT")
+            track:SetPoint("BOTTOMRIGHT", -GAP, GAP)
+            text:SetPoint("LEFT", track, "LEFT", 4, 0)
+            text:SetPoint("RIGHT", track, "RIGHT", -4, 0)
+            text:SetJustifyH("CENTER")
+            self:SetHeight(theme.fontSize + 8 + GAP)
+        end
     end,
 }
 
@@ -45,23 +69,21 @@ local function Constructor()
     local track = frame:CreateTexture(nil, "BACKGROUND")
     track:SetPoint("TOPLEFT")
     track:SetPoint("BOTTOMRIGHT", -GAP, GAP)
-    track:SetColorTexture(0, 0, 0, 0.45)
 
     local bar = CreateFrame("StatusBar", nil, frame)
     bar:SetAllPoints(track)
     bar:SetStatusBarTexture("Interface\\Buttons\\WHITE8x8")
 
+    -- Under the mouse the whole widget lights up, the text of a thin bar included. The
+    -- wash belongs to the bar's own frame, which is drawn over this one's textures.
     local hover = bar:CreateTexture(nil, "ARTWORK")
-    hover:SetAllPoints(track)
-    hover:SetBlendMode("ADD")
+    hover:SetPoint("TOPLEFT", frame, "TOPLEFT")
+    hover:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -GAP, GAP - 2)
 
     local text = bar:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    text:SetPoint("LEFT", 4, 0)
-    text:SetPoint("RIGHT", -4, 0)
-    text:SetJustifyH("CENTER")
     text:SetWordWrap(false)
 
-    local widget = { type = Type, frame = frame, bar = bar, text = text, hover = hover }
+    local widget = { type = Type, frame = frame, track = track, bar = bar, text = text, hover = hover }
     for name, method in pairs(methods) do widget[name] = method end
 
     frame:SetScript("OnClick", function(_, button) widget:Fire("OnClick", button) end)

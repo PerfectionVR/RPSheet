@@ -16,7 +16,7 @@ local BOX_INSET = { 1, 1, 0, 2 }  -- the game's box inside the strip that takes 
 -- One line of an open list.
 local function Line(widget, theme)
     local color = widget.disabled and theme.muted
-        or widget.type == "Dropdown-Item-Header" and theme.accent or theme.text
+        or widget.type == "Dropdown-Item-Header" and theme.muted or theme.text
     Skin.Font(widget, widget.text, color, theme)
     Skin.Flat(widget, widget.highlight, theme.highlight)
     Skin.Grey(widget, widget.check, theme.accent)
@@ -45,7 +45,7 @@ end
 -- group that keeps this dropdown for itself.
 function Skin.Dropdown(owner, widget, theme)
     local off = widget.disabled
-    Skin.Font(owner, widget.label, off and theme.muted or theme.accent, theme)
+    Skin.Font(owner, widget.label, off and theme.muted or ns.Tokens(theme).dim, theme)
 
     local holder, strip, boxed = widget.dropdown, widget.button_cover, false
     if holder and holder.GetRegions and holder.CreateTexture and strip then
@@ -59,7 +59,7 @@ function Skin.Dropdown(owner, widget, theme)
     local button = widget.button
     if boxed and button and button.GetRegions and button.CreateTexture then
         Skin.FadeArt(owner, button)
-        Skin.Arrow(owner, button, "arrow", off and theme.muted or theme.accent)
+        Skin.Arrow(owner, button, "arrow", off and theme.muted or ns.Tokens(theme).dim)
         local glow = Skin.Texture(owner, button, "glow", "HIGHLIGHT")
         glow:SetAllPoints(boxed)
         glow:SetColorTexture(unpack(theme.highlight))

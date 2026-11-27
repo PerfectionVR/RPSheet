@@ -837,6 +837,48 @@ There is still no clock: only a running session counts, in the character's own t
 - **Tests:** `tests/t-sync-owner.lua` (three clients, including a forged `D`); the
   window test types into every box.
 
+## Added in 0.15.0: the look
+
+`UI/Tokens.lua`, `UI/ButtonLooks.lua`, `UI/WindowRail.lua`; `UI/Button.lua`,
+`UI/Bar.lua` rewritten; `UI/Tab.lua`, `UI/Window.lua`, `UI/Themes.lua` restyled.
+
+- **Tokens:** `ns.Tokens(theme)` works a theme's few colours out into the ladder every
+  widget paints with: `text`, `dim`, `muted`; `line` (hairline); `wash`, `washStrong`;
+  `track`; `onAccent`; `shade`; `hover` (the theme's `highlight`). Kept per theme
+  until `ns.ForgetTokens()`, which `UI.SetColors` calls. No widget takes a colour
+  from the theme's accent for an edge or a fill of its own any more.
+- **`RPSheetButton`** (version 3) has kinds of looks (`UI/ButtonLooks.lua`): buttons
+  ("on", "off", "picked"), rows ("row", "rowoff": text after two spaces goes to the
+  right, muted) and "tile" (text before a line break is the small label). `GetText`
+  gives the whole text back; `text` and `side` are the two halves as drawn.
+- **`UI.AddRowButton`** makes a row; a row whose whole text is in the accent colour
+  ("Short rest") becomes an "on" button with plain text; "off" becomes "rowoff".
+  `UI.AddLabel(..., look)` with "tile" always makes a tile, also with nothing to do.
+- **The rail:** `window:SetRail(theme, head, items, open, pick)` (`UI/WindowRail.lua`),
+  `window.railItems`, `window.railWidth`. The sheet's pages are set there by
+  `UI.AddTabBar` (`UI/SheetTabs.lua`), which adds the page's heading to the body
+  (user data `page`: where the page starts). A window with a rail is at least
+  340 + 126 wide. Icons are the game's own, from `Interface\Icons`, in both games.
+- **`RPSheetBar`** (version 2): `SetStyle(theme, color, thin)`; thin has the text above
+  a slim bar (`UI.AddBar(..., thin)`, the sheet), full has it on the bar (the roster).
+- **Themes:** `ns.RenewTheme(profile)` gives a profile from before its preset's new
+  colours once (`profile.themeLook`); a custom theme only gets a quieter highlight.
+- **Tests:** the sheet's pages are read from `window.railItems`; `PartText` gives a
+  button's whole text.
+- **The dialogs** (`UI/DialogSkin*.lua`: settings, wizard, level dialog) follow:
+  `Skin.Wash` and `Skin.EdgeColor` are made from the text colour, buttons are a wash
+  without an edge with text in the text colour, a tab is its name over a line (the
+  accent colour and two pixels under the open one), names of fields are `dim`,
+  headings `muted`, panes edged with `line`. A scroll bar's handle is thin and muted;
+  a slider's, which sets a value, stays in the accent colour.
+- **`UI.ACCENT` is the text colour** now: a value that stands out. `UI.MARK` is the
+  theme's accent, for a proficiency and the turn marker. `UI.AddRowButton` still
+  takes a row whose whole text is in `UI.ACCENT` for an action.
+- **`UI.Pips(value, max, most)`** (`UI/Parts.lua`): squares for a small count, nil
+  above `most`. Used for spell slots (`UI/SheetContent.lua`, `UI/SlotLabels.lua`).
+- **`UI.SkinScroll(body)`** (`UI/Rows.lua`) gives a body's scroll bar the dialogs'
+  look; `UI.SetOut` calls it.
+
 ## Added in 0.14.0: buttons in every window
 
 `UI/FightParts.lua` became `UI/Parts.lua` and loads right after `UI/Rows.lua`.

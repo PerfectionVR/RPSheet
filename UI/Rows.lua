@@ -8,12 +8,16 @@ local AceGUI = LibStub("AceGUI-3.0")
 local UI = {}
 ns.UI = UI
 
--- Colour codes for secondary and highlighted text inside a row. Set from the theme.
-UI.GREY, UI.ACCENT = "|cff909090", "|cffffd100"
+-- Colour codes for text inside a row, set from the theme: GREY for what supports
+-- (modifiers, costs), ACCENT for a value that stands out, which is the text colour
+-- itself, and MARK, the theme's accent colour, kept for the few things it marks:
+-- a proficiency, whose turn it is.
+UI.GREY, UI.ACCENT, UI.MARK = "|cff909090", "|cffffffff", "|cffffd100"
 UI.GREEN = "|cff80ff80" -- effect lines in tooltips, which keep the game's own colours
 
 function UI.SetColors(theme)
-    UI.GREY, UI.ACCENT = Util.HexCode(theme.muted), Util.HexCode(theme.accent)
+    ns.ForgetTokens() -- the theme may have changed (UI/Tokens.lua)
+    UI.GREY, UI.ACCENT, UI.MARK = Util.HexCode(theme.muted), Util.HexCode(theme.text), Util.HexCode(theme.accent)
 end
 
 local function Theme()
@@ -79,11 +83,12 @@ end
 -- `tipBody` is the tooltip's text, or a function that gives it when the row is hovered:
 -- use a function where the text takes work (lists, explanations, spell and item text).
 -- `look` is the button's, when it isn't a row's own (UI/Button.lua): "off" for a
--- switch that is off.
+-- switch that is off, "tile" for a number worth a glance (the text is then the label,
+-- a line break and the number; a tile is made even with nothing to do).
 function UI.AddLabel(parent, relWidth, text, onClick, tipTitle, tipBody, explain, look)
     local theme = Theme()
     local label
-    if onClick or explain then
+    if onClick or explain or look == "tile" then
         label = UI.AddRowButton(parent, relWidth, text, onClick, explain, look)
     else
         label = AceGUI:Create("InteractiveLabel")
@@ -107,11 +112,11 @@ local function ClickRoll(button, roll, explain)
     if button == "RightButton" then explain() else roll() end
 end
 
-function UI.AddRollLabel(parent, relWidth, text, roll, tipTitle, tipBody, explain)
+function UI.AddRollLabel(parent, relWidth, text, roll, tipTitle, tipBody, explain, look)
     local body = tipBody
     if type(body) ~= "function" then body = function() return tipBody end end
     local label = UI.AddLabel(parent, relWidth, text, function(button) ClickRoll(button, roll, explain) end,
-        tipTitle, body, explain)
+        tipTitle, body, explain, look)
     label:SetUserData("rightExplains", true)
     return label
 end
@@ -123,23 +128,35 @@ end
 function UI.SetOut(body)
     body:DoLayout()
     body:DoLayout()
+    UI.SkinScroll(body)
+end
+
+-- The scroll bar of a window's body in the theme's colours: the dialogs' skin has
+-- the look (UI/DialogSkinSlider.lua). Asked for whenever the rows are set out, since
+-- the bar comes and goes with them.
+function UI.SkinScroll(body)
+    local style = ns.DialogSkin and ns.DialogSkin.styles and ns.DialogSkin.styles.ScrollFrame
+    if style then pcall(style, body, Theme()) end
 end
 
 -- A section title with a blank line above it.
 function UI.AddHeading(parent, text)
     local heading = AceGUI:Create("InteractiveLabel")
     local theme = Theme()
-    StyleLabel(heading, theme, theme.accent, 1)
+    -- Small, muted capitals: it names what follows and stays out of its way.
+    StyleLabel(heading, theme, ns.Tokens(theme).muted, -1)
     heading.frame:EnableMouse(false)
     heading:SetFullWidth(true)
-    heading:SetText("\n" .. text)
+    heading:SetText("\n" .. (text:find("|", 1, true) and text or text:upper()))
     parent:AddChild(heading)
+    return heading
 end
 
--- A filled bar (see Bar.lua) taking half the window's width.
-function UI.AddBar(parent, color, onClick, tipTitle, tipBody)
+-- A filled bar (see Bar.lua) taking half the window's width. `thin`: a slim bar with
+-- its text above it.
+function UI.AddBar(parent, color, onClick, tipTitle, tipBody, thin)
     local bar = AceGUI:Create("RPSheetBar")
-    bar:SetStyle(Theme(), color)
+    bar:SetStyle(Theme(), color, thin)
     bar:SetRelativeWidth(0.5)
     bar:SetUserData("onClick", onClick)
     bar:SetCallback("OnClick", ClickBar)
