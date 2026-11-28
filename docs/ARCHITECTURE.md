@@ -1020,3 +1020,16 @@ parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
   `F.CreatureForce` ask it first. A creature flagged `multi` gets two attacks: the
   list doesn't say how many it has. Acting for a combatant whose turn it isn't
   (`key` given) is not counted. The count is not kept over a reload.
+
+## Changed in 0.18.0: what a creature's action is
+
+- **`Data/CreatureList.lua`**: field 14 is `M3` (attacks per action) and a forced
+  save's last field is a string of flags (`h`, `r5`, `d2`, `b`, `e`, `l`, `t`, `w`,
+  `x1`); an attack can end in `~l`. They were read from the site's Multiattack text
+  and action names by a script in its page; `tests/data/site-creatures.txt` has the
+  same. `Data/Creatures.lua` makes them `attacksPerAction` and a force's `kind`,
+  `recharge`, `perDay`, `with` and `swap`.
+- **`Integrations/FightCreatureTurn.lua`** holds a use against them, and keeps for
+  the session what is used up. `F.CreatureTurnStarts(key)`, called where the owner's
+  client moves the turn (`Advance` in FightOwner.lua), rolls for what recharges.
+  `F.ForceNote(force)` is the few words on the button.

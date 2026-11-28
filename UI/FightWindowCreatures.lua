@@ -126,14 +126,15 @@ function UI.AddCreatureTurn(body, member)
             F.CreatureWhy("attack", index, F.session.turn), function() F.CreatureStrike(index) end)
     end
     for index, force in ipairs(template.forces) do
-        TurnButton(body, ("%s  %s%s save, DC %d%s|r"):format(force.name, UI.GREY, force.stat, force.dc,
-            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or ""), force.name,
+        local note = F.ForceNote(force)
+        TurnButton(body, ("%s  %s%s save, DC %d%s%s|r"):format(force.name, UI.GREY, force.stat, force.dc,
+            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or "", note ~= "" and ("; " .. note) or ""), force.name,
             ("The picked combatant makes a %s saving throw against DC %d: a player on their own sheet, one of yours by your game.%s Click once for each combatant it catches: the damage is rolled once a turn."):format(
                 R.STAT_NAMES[force.stat], force.dc,
                 #force.parts > 0 and (force.half and " On a failure they take the damage, on a success half of it." or " On a failure they take the damage.") or " What a failure does is yours to say."),
             F.CreatureWhy("force", index, F.session.turn, targetKey), function() F.CreatureForce(index) end)
     end
     UI.AddButton(body, 0.5, "Another action", function() F.CreatureAnotherAction() end, "Another action",
-        "A turn is one action: its attacks, or one thing that forces a save, which can catch several combatants. Click when it has more to do this turn than that, and its buttons are free again.")
+        "A turn is one action: its attacks, or one thing that forces a save, which can catch several combatants. Click when it has more to do this turn than that: its attacks and its action are free again. What is used up until a roll brings it back, or for the day, stays used.")
     return true
 end
