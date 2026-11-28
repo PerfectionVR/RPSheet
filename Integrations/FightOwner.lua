@@ -108,6 +108,7 @@ function F.Start()
     F.session = { id = ("%06x"):format(math.random(0, 0xffffff)), owner = me, phase = "LOBBY", round = 0, members = {}, order = {} }
     RPSheet:Announce("opens a combat session. With RP Sheet, /sheet combat joins it.", true)
     F.Join()
+    if F.ShowSessionWindow then F.ShowSessionWindow() end -- (UI/FightSessionWindow.lua)
 end
 
 -- "Roll initiative": everyone rolls, and the turns start when all have.

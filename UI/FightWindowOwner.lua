@@ -1,8 +1,8 @@
--- The combat window's tab for the session's owner: the rolls of the combatant whose
+-- The session window's middle part (UI/FightSessionWindow.lua), for whoever runs the session: the rolls of the combatant whose
 -- turn it is (UI/FightWindowCreatures.lua), what they do to the row they picked
 -- (Integrations/FightOwnerTools.lua), adding combatants of their own
 -- (Integrations/FightCreatures.lua), and ending the session. Moving the turn on is
--- above the tabs (UI/FightWindowTurn.lua).
+-- in that window's top part.
 local _, ns = ...
 local UI = ns.UI
 local F = ns.Fight

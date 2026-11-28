@@ -94,16 +94,22 @@ handles the numbers and gives short summaries in its own words.
 - **Initiative** is rolled by everyone for their own character when the owner calls
   for it, and the turns go round in that order. Someone who joins a fight that is
   running rolls too and acts when their place comes up.
-- **The combat window** is laid out like the screen of a text adventure. On top is who
-  is here, in initiative order, each with a health bar you click to pick them. Under
-  it is the fight's log: what the session said, hits in red, misses in grey, healing
-  in green. Then your own line: hit points, Armor Class, and a square each for your
-  action, bonus action and reaction, green while it is free. Under that are buttons.
-  What can be clicked is a button, a tab or a bar; plain text is only read.
+- **The combat window** is your own character's place in the fight, in three parts
+  that keep their place. On top is who is here, in initiative order, each with a
+  health bar you click to pick them, then your own line: hit points, Armor Class, and
+  a square each for your action, bonus action and reaction, green while it is free,
+  with "End turn" under it. In the middle are your buttons. At the bottom is the
+  fight's log, which scrolls by itself: what the session said, hits in red, misses in
+  grey, healing in green. What can be clicked is a button, a tab or a bar.
 - **On your turn** the buttons are what your character can do, behind tabs: its attack,
   abilities, cantrips, prepared spells and the actions everyone has. What it can't do
   right now is a greyed button that says why (action used, no slot left, not your
-  turn). "End turn" stays in sight above the tabs.
+  turn).
+- **The session window** is for whoever runs the session (`/sheet session`; it opens
+  by itself when you start one). It has the same roster and log, "Next turn" or "Call
+  for initiative", the attacks of the creature whose turn it is, and the tools:
+  damage, healing and saving throws for whoever you pick, adding creatures, handing
+  the session over and ending it.
 - **The owner's game announces** for everyone: whose turn it is, each player's rolls,
   whether an attack roll hits the combatant it was aimed at, and who drops to 0.
 - **What lasts a number of rounds is counted** in your own turns: a spell you cast in
@@ -308,6 +314,7 @@ the Customize page that goes with it.
 | `/sheet tab <name>` | Opens a tab of the sheet: actions, checks, skills, traits, items, trade (a unique start of the name is enough). |
 | `/sheet items` | Opens or closes the item browser. |
 | `/sheet combat` | Opens or closes the combat window. |
+| `/sheet session` | Opens or closes the session window, for whoever runs a combat session. |
 | `/sheet level` | Opens the level dialog when a level can be taken. |
 | `/sheet help` | Lists the commands. |
 | `/sheet damage 14` | Takes 14 damage without a type. |
