@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.16.0
+
+- The combat window is in three parts that keep their place: on top who is here,
+  your own line and "End turn"; in the middle your actions behind their tabs; at
+  the bottom the fight's log, which scrolls by itself and stays at its last line.
+  The log no longer pushes your buttons out of sight, and "Show more of the log" is
+  gone: the whole log is there to scroll through.
+- Running a session has a window of its own, the session window: who is here, "Next
+  turn" or "Call for initiative", the attacks of the creature whose turn it is,
+  damage, healing and saving throws for whoever you pick, adding creatures, ending
+  the session, and the log. It opens for whoever starts a session or is handed one
+  and closes when the session is over. `/sheet session` opens or closes it, as does
+  the "Session window" button of the combat window.
+- The combat window no longer has a Session tab.
+
+
 ## 0.15.2
 
 - The sheet is in two parts again: the numbers that are always there on top, and

@@ -199,9 +199,10 @@ function F.player.O(sender, data)
     if not to then return end
     session.owner = to
     if to == F.Me() then
-        RPSheet:Print("The combat session is yours now: the combat window has the owner's buttons.")
+        RPSheet:Print("The combat session is yours now: the session window has what you need to run it.")
         F.Rebroadcast()
         F.ShowWindow()
+        if F.ShowSessionWindow then F.ShowSessionWindow() end
     end
     F.Changed()
 end

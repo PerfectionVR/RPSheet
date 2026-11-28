@@ -12,6 +12,7 @@ local USAGE = {
     "/sheet tab items - open a tab of the sheet (actions, checks, skills, traits, items, trade)",
     "/sheet items - show or hide the item browser",
     "/sheet combat - show or hide the combat window (turn-based combat sessions)",
+    "/sheet session - show or hide the session window, for whoever runs a combat session",
     "/sheet lock - lock or unlock the window",
     "/sheet rest - long rest",
     "/sheet short - short rest (also /sheet rest short)",
@@ -66,6 +67,7 @@ local WORDS = {
     undo = function(self) self:UndoRest() end,
     items = function(self) self:ToggleItemBrowser() end,
     combat = function() ns.Fight.ToggleWindow() end,
+    session = function() ns.Fight.ToggleSessionWindow() end,
     level = TakeLevel,
 }
 WORDS["rest long"], WORDS["rest short"] = WORDS.rest, WORDS.short

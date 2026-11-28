@@ -386,6 +386,7 @@ UI\DialogSkinTabs.lua
 UI\DialogSkinTree.lua
 UI\Rows.lua
 UI\Parts.lua
+UI\Panes.lua
 UI\DefenseRows.lua
 UI\DamageMenu.lua
 UI\DamageReactions.lua
@@ -456,6 +457,7 @@ UI\FightAsk.lua
 UI\FightWindowCreatures.lua
 UI\FightWindowOwner.lua
 UI\FightWindow.lua
+UI\FightSessionWindow.lua
 
 # Settings, character editor and creation wizard
 Options\Common.lua

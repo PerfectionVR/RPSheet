@@ -7,10 +7,8 @@ local UI = ns.UI
 local F = ns.Fight
 
 local RED = "|cffff5555"
-local SHORT, LONG = 6, 30 -- lines of the log shown
 
 function UI.AddFightRoster(self, body, session)
-    UI.AddHeading(body, "Who is here")
     local target = F.joined and F.Target()
     for _, key in ipairs(F.Roster()) do
         local member = session.members[key]
@@ -36,20 +34,14 @@ function UI.AddFightRoster(self, body, session)
     end
 end
 
+-- The log, in a part of its own that scrolls: every line this client has, the last
+-- one at the bottom. One piece of text, so a long fight is still one row.
 function UI.AddFightLog(self, body)
     local lines = F.LogLines()
     if #lines == 0 then return end
-    UI.AddHeading(body, "Fight log")
-    local shown = F.longLog and LONG or SHORT
-    for index = math.max(1, #lines - shown + 1), #lines do
-        UI.AddLabel(body, 1, F.LogText(lines[index]))
-    end
-    if #lines > SHORT then
-        UI.AddButton(body, 0.5, F.longLog and "Show less of the log" or "Show more of the log", function()
-            F.longLog = not F.longLog or nil
-            F.Changed()
-        end, "Fight log", "What the session has said so far. The same lines are in your chat.")
-    end
+    local shown = {}
+    for index, line in ipairs(lines) do shown[index] = F.LogText(line) end
+    UI.AddLabel(body, 1, table.concat(shown, "\n"))
 end
 
 local FREE, USED = { 0.18, 0.75, 0.18 }, { 0.35, 0.35, 0.35 }
@@ -59,7 +51,7 @@ local function Slot(name, used)
     return ("%s %s%s|r"):format(UI.Pip(color[1], color[2], color[3]), used and UI.GREY or "", name)
 end
 
--- This character's own line, under the log.
+-- This character's own line, under the roster.
 function UI.AddFightStatus(self, body)
     local me = F.Mine()
     if not me then return end
@@ -69,7 +61,7 @@ function UI.AddFightStatus(self, body)
         text = ("%s    %s  %s  %s"):format(text, Slot("Action", used.action and (used.attacks or 0) <= 0), Slot("Bonus", used.bonus),
             Slot("Reaction", RPSheet:State().reactionUsed))
     end
-    UI.AddLabel(body, 1, "\n" .. text, nil, "Your turn", F.Running()
+    UI.AddLabel(body, 1, text, nil, "Your turn", F.Running()
         and ("%s.\nA turn is one action, one bonus action when something gives you one, and your movement. Your reaction comes back when your turn starts and can be used on anyone's turn. Only one spell a turn can spend a spell slot."):format(
             (F.TurnText():gsub("^%l", string.upper)))
         or "Your hit points and Armor Class as the session has them.")
