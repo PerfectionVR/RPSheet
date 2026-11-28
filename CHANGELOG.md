@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.17.1
+
+- A creature from the list has one action on its turn, like everyone: one attack,
+  or two when it attacks more than once a turn, or one thing that forces a save,
+  which can catch several combatants but each of them once. What it has used is
+  greyed and says why. "Another action" in the session window frees its buttons
+  for what a creature does beyond its action.
+
+
 ## 0.17.0
 
 - The combat window has a target row above your actions: a button for everyone else

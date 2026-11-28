@@ -93,6 +93,24 @@ function UI.AddCreaturePicker(self, body)
 end
 
 -- On the turn of a creature made from a template: what it can roll.
+-- What is left of its action, after who it is aimed at.
+local function Budget(key)
+    local left, most = F.CreatureAttacksLeft(key), F.CreatureAttacks(key)
+    if not left then return "" end
+    if left == 0 then return ". Its action is used" end
+    return most > 1 and (". %d of %d attacks left"):format(left, most) or ""
+end
+
+-- A button of the creature's turn: greyed with the reason when its action is used.
+local function TurnButton(body, text, name, tip, why, run)
+    if why then
+        UI.AddButton(body, 1, UI.GREY .. text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "") .. "|r", function() RPSheet:Print(why) end, name,
+            ("|cffff5555Not now: %s|r\n\n%s"):format(why, tip), "off")
+    else
+        UI.AddButton(body, 1, text, run, name, tip)
+    end
+end
+
 function UI.AddCreatureTurn(body, member)
     local template = F.Template(member)
     if not template then return false end
@@ -100,18 +118,22 @@ function UI.AddCreatureTurn(body, member)
     local target = targetKey and F.session.members[targetKey]
     UI.AddLabel(body, 1, ("%s%s|r %s%s%s|r"):format(UI.ACCENT, member.name, UI.GREY,
         target and ("at " .. target.name) or "at no one: click a health bar above to aim",
-        template.multi and ". It attacks more than once a turn" or ""), nil, member.name, F.CreatureSummary(template))
+        Budget(F.session.turn)), nil, member.name, F.CreatureSummary(template))
     for index, attack in ipairs(template.attacks) do
-        UI.AddButton(body, 1, ("%s  %s%+d to hit%s|r"):format(attack.name, UI.GREY, attack.hit,
-            #attack.parts > 0 and (", " .. R.DamagePartsText(attack.parts)) or ""), function() F.CreatureStrike(index) end, attack.name,
-            "Your game rolls the attack. It is held against the picked combatant's Armor Class, and on a hit the damage is rolled and they take it: a player on their own sheet, with their resistances. A natural 20 doubles the dice. With only one opponent in the fight it is aimed at them without a click; with no one to aim at, the roll and its damage are only announced.")
+        TurnButton(body, ("%s  %s%+d to hit%s|r"):format(attack.name, UI.GREY, attack.hit,
+            #attack.parts > 0 and (", " .. R.DamagePartsText(attack.parts)) or ""), attack.name,
+            "Your game rolls the attack. It is held against the picked combatant's Armor Class, and on a hit the damage is rolled and they take it: a player on their own sheet, with their resistances. A natural 20 doubles the dice. With only one opponent in the fight it is aimed at them without a click; with no one to aim at, the roll and its damage are only announced.",
+            F.CreatureWhy("attack", index, F.session.turn), function() F.CreatureStrike(index) end)
     end
     for index, force in ipairs(template.forces) do
-        UI.AddButton(body, 1, ("%s  %s%s save, DC %d%s|r"):format(force.name, UI.GREY, force.stat, force.dc,
-            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or ""), function() F.CreatureForce(index) end, force.name,
+        TurnButton(body, ("%s  %s%s save, DC %d%s|r"):format(force.name, UI.GREY, force.stat, force.dc,
+            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or ""), force.name,
             ("The picked combatant makes a %s saving throw against DC %d: a player on their own sheet, one of yours by your game.%s Click once for each combatant it catches: the damage is rolled once a turn."):format(
                 R.STAT_NAMES[force.stat], force.dc,
-                #force.parts > 0 and (force.half and " On a failure they take the damage, on a success half of it." or " On a failure they take the damage.") or " What a failure does is yours to say."))
+                #force.parts > 0 and (force.half and " On a failure they take the damage, on a success half of it." or " On a failure they take the damage.") or " What a failure does is yours to say."),
+            F.CreatureWhy("force", index, F.session.turn, targetKey), function() F.CreatureForce(index) end)
     end
+    UI.AddButton(body, 0.5, "Another action", function() F.CreatureAnotherAction() end, "Another action",
+        "A turn is one action: its attacks, or one thing that forces a save, which can catch several combatants. Click when it has more to do this turn than that, and its buttons are free again.")
     return true
 end
