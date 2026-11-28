@@ -109,6 +109,9 @@ function F.CreatureStrike(index, key)
     local template = F.Template(member)
     local attack = template and template.attacks[index]
     if not attack then return end
+    local why = F.CreatureWhy("attack", index, key)
+    if why then return RPSheet:Print(why) end
+    F.CreatureSpent("attack", index, key)
     local die = math.random(1, 20)
     local total = die + attack.hit
     local text = ("attacks with %s: %d %s = %d"):format(attack.name, die, Signed(attack.hit), total)
@@ -116,7 +119,10 @@ function F.CreatureStrike(index, key)
     local target = targetKey and session.members[targetKey]
     local outcome
     if target then text, outcome = F.HitText(text, target, total, die) end
-    if outcome == "miss" or #attack.parts == 0 then return F.Say(text, member) end
+    if outcome == "miss" or #attack.parts == 0 then
+        F.Say(text, member)
+        return F.Changed()
+    end
     local list = RollParts(attack.parts, die == 20)
     F.Say(target and ("%s for %s damage"):format(text, ListText(list)) or ("%s, for %s damage"):format(text, ListText(list)), member)
     if target then F.Hurt(targetKey, list) end
@@ -139,6 +145,9 @@ function F.CreatureForce(index, key)
         RPSheet:Print(("Click the health bar of who has to save against %s first."):format(force.name))
         return
     end
+    local why = F.CreatureWhy("force", index, key, targetKey)
+    if why then return RPSheet:Print(why) end
+    F.CreatureSpent("force", index, key, targetKey)
     local mark = ("%s:%s:%d:%d:%s"):format(session.id, key, index, session.round, tostring(session.turn))
     if rolled.mark ~= mark then rolled.mark, rolled.list = mark, RollParts(force.parts) end
     local list = rolled.list
@@ -201,7 +210,7 @@ function F.CreatureSummary(template)
         lines[#lines + 1] = ("%s: %s save, DC %d%s%s."):format(force.name, force.stat, force.dc,
             #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or "", force.half and ", half on a success" or "")
     end
-    if template.multi then lines[#lines + 1] = "It attacks more than once a turn." end
+    if template.multi then lines[#lines + 1] = "Its action is two attacks." end
     return table.concat(lines, "\n")
 end
 
