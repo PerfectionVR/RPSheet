@@ -5,9 +5,12 @@
 --       saves = { DEX = 9, ... },         every ability: the listed bonus, or the modifier
 --       resist, immune, vulnerable        { fire = true, ... }
 --       conditionImmune                   { "charmed", ... }
---       multi                             true if it attacks more than once a turn
---       attacks = { { name, reach = "m" | "r" | "mr", hit, parts }, ... }
---       forces = { { name, stat, dc, parts, half }, ... }   saves it makes others roll
+--       attacksPerAction                  how many attacks its action is
+--       attacks = { { name, reach = "m" | "r" | "mr", hit, parts, legendary }, ... }
+--       forces = { { name, stat, dc, parts, half, kind, recharge, perDay, with, swap }, ... }
+--           saves it makes others roll. kind: "action", "bonus", "reaction", "legendary"
+--           or "trait"; recharge: the least d6 roll that brings it back; perDay: uses;
+--           with: used along with its attacks; swap: attacks it takes the place of
 --   }
 --   parts = { { count, sides, flat, type }, ... }: dice, what is added, and the damage
 --   type (nil when the creature's player picks it)
@@ -58,7 +61,7 @@ for line in R.CREATURE_DATA:gmatch("[^\r\n]+") do
         name = f[1], size = SIZES[f[2]] or f[2], kind = f[3]:match("^%a+"), cr = f[4], challenge = Challenge(f[4]),
         ac = tonumber(f[5]), hp = tonumber(f[6]), init = tonumber(f[7]),
         mods = {}, saves = {}, resist = Set(f[10]), immune = Set(f[11]), vulnerable = Set(f[12]),
-        conditionImmune = {}, multi = f[14] == "M", attacks = {}, forces = {},
+        conditionImmune = {}, attacksPerAction = tonumber(f[14]:match("^M(%d+)$")) or 1, attacks = {}, forces = {},
     }
     local scores = {}
     for score in f[8]:gmatch("%d+") do scores[#scores + 1] = tonumber(score) end
@@ -69,12 +72,18 @@ for line in R.CREATURE_DATA:gmatch("[^\r\n]+") do
     for stat, bonus in f[9]:gmatch("(%a+)([+-]%d+)") do creature.saves[stat:upper()] = tonumber(bonus) end
     for word in f[13]:gmatch("[^,]+") do creature.conditionImmune[#creature.conditionImmune + 1] = word end
     for entry in f[15]:gmatch("[^;]+") do
-        local name, reach, hit, damage = entry:match("^(.-)~(%a+)~(-?%d+)~(.*)$")
-        creature.attacks[#creature.attacks + 1] = { name = name, reach = reach, hit = tonumber(hit), parts = Parts(damage) }
+        local name, reach, hit, damage, flags = entry:match("^(.-)~(%a+)~(-?%d+)~([^~]*)~?(%a*)$")
+        creature.attacks[#creature.attacks + 1] = { name = name, reach = reach, hit = tonumber(hit), parts = Parts(damage), legendary = flags == "l" or nil }
     end
     for entry in (f[16] or ""):gmatch("[^;]+") do
-        local name, stat, dc, damage, half = entry:match("^(.-)~(%a+)~(%d+)~(.-)~(h?)$")
-        creature.forces[#creature.forces + 1] = { name = name, stat = stat, dc = tonumber(dc), parts = Parts(damage), half = half == "h" }
+        local name, stat, dc, damage, flags = entry:match("^(.-)~(%a+)~(%d+)~(.-)~(%w*)$")
+        creature.forces[#creature.forces + 1] = {
+            name = name, stat = stat, dc = tonumber(dc), parts = Parts(damage), half = flags:find("h", 1, true) ~= nil,
+            kind = (flags:find("b", 1, true) and "bonus") or (flags:find("e", 1, true) and "reaction") or (flags:find("l", 1, true) and "legendary")
+                or (flags:find("t", 1, true) and "trait") or "action",
+            recharge = tonumber(flags:match("r(%d)")), perDay = tonumber(flags:match("d(%d)")),
+            with = flags:find("w", 1, true) ~= nil or nil, swap = tonumber(flags:match("x(%d)")),
+        }
     end
     R.CREATURES[creature.name] = creature
     R.CREATURE_ORDER[#R.CREATURE_ORDER + 1] = creature.name

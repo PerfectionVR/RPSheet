@@ -267,7 +267,8 @@ for index, key in ipairs(R.CLASS_ORDER) do
                 FT.target = FT.Me()
                 Ask(label, "Fel Claw")
                 Ask(label, "Gore")
-                if not FT.CreatureWhy("attack", 1, doomguard) then Problem(label .. ": the creature can attack a third time in its turn") end
+                Ask(label, "Fel Claw")
+                if not FT.CreatureWhy("attack", 1, doomguard) then Problem(label .. ": the creature can attack a fourth time in its turn") end
                 Look(label .. " the creature's turn, its action used")
                 Ask(label, "Another action")
                 if FT.CreatureWhy("force", 1, doomguard, FT.Me()) then Problem(label .. ": another action didn't free the creature's buttons") end

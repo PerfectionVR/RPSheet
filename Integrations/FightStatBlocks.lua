@@ -207,10 +207,12 @@ function F.CreatureSummary(template)
             #attack.parts > 0 and (", " .. R.DamagePartsText(attack.parts)) or "")
     end
     for _, force in ipairs(template.forces) do
-        lines[#lines + 1] = ("%s: %s save, DC %d%s%s."):format(force.name, force.stat, force.dc,
-            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or "", force.half and ", half on a success" or "")
+        local note = F.ForceNote(force)
+        lines[#lines + 1] = ("%s: %s save, DC %d%s%s%s."):format(force.name, force.stat, force.dc,
+            #force.parts > 0 and (", " .. R.DamagePartsText(force.parts)) or "", force.half and ", half on a success" or "",
+            note ~= "" and ("; " .. note) or "")
     end
-    if template.multi then lines[#lines + 1] = "Its action is two attacks." end
+    if template.attacksPerAction > 1 then lines[#lines + 1] = ("Its action is %d attacks."):format(template.attacksPerAction) end
     return table.concat(lines, "\n")
 end
 

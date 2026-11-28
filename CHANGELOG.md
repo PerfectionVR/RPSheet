@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.18.0
+
+- Every creature of the list has its own number of attacks: a Dragonflight whelp
+  makes three, a shivarra six, a mechanostrider one. Before, anything that attacks
+  more than once got two.
+- What a creature uses up comes back the way it should: a breath is gone once used,
+  and at the start of each of the creature's turns your game rolls a d6 and says
+  whether it is back. What has uses a day is counted for the session.
+- A save a creature forces knows what it costs: its action, a bonus action (one a
+  turn), one or two of its attacks, nothing beside its attacks, or nothing at all for
+  a reaction, a legendary action or an aura. The button says which.
+
+
 ## 0.17.1
 
 - A creature from the list has one action on its turn, like everyone: one attack,

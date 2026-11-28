@@ -143,7 +143,6 @@ Section("the creature attacks", function()
     Check(not SaidSince(said, "Felguard attacks"), "a third attack in the turn is not rolled")
     Eq(HP(), hp, "and deals nothing")
     Check(tostring(maren.printed[#maren.printed]):find("has made its 2 attacks this turn", 1, true) and #maren.printed > printed, "the owner is told why: " .. tostring(maren.printed[#maren.printed]))
-    Check(F.CreatureWhy("force", 1, key), "nor can it force a save after attacking")
     maren:Do(F.CreatureAnotherAction)
     Eq(F.CreatureAttacksLeft(key), 2, "another action frees its attacks")
     hp, said = HP(), #maren.said
@@ -251,6 +250,68 @@ Section("half on a success", function()
     Check(SaidSince(said, "succeeds against DC 17"), "a high roll succeeds")
     Check(SaidSince(said, "Maren takes 9 thunder damage from War Stomp (half)."), "and takes half")
     Eq(HP(), hp - 9, "on the sheet")
+end)
+
+Section("a creature's action", function()
+    maren:Do(F.AddCreature, "Green Dragonflight Whelp") -- three Rend attacks; Emerald Gas Breath, recharge 5-6
+    world:Advance(2)
+    local key = Key("Green Dragonflight Whelp")
+    local whelp = R.CREATURES["Green Dragonflight Whelp"]
+    Eq(whelp.attacksPerAction, 3, "the list knows how many attacks its action is")
+    Eq(whelp.forces[1].recharge, 5, "and what brings its breath back")
+    Eq(R.CREATURES["Felhound"].forces[1].kind, "bonus", "a bonus action is known as one")
+    Eq(R.CREATURES["Gelihast"].forces[1].swap, 2, "and what takes the place of two attacks")
+    Eq(R.CREATURES["Mechanostrider"].attacksPerAction, 1, "a creature without more has one attack")
+    local function ToWhelp()
+        maren:Do(F.NextTurn)
+        world:Advance(2)
+        for _ = 1, 8 do
+            if F.session.turn ~= key then
+                maren:Do(F.NextTurn)
+                world:Advance(2)
+            end
+        end
+    end
+    if F.session.turn ~= key then ToWhelp() end
+    Eq(F.session.turn, key, "the whelp's turn comes up")
+    F.target = F.Me()
+    addon:State().hp = addon:MaxHP()
+    Eq(F.CreatureAttacksLeft(key), 3, "it has three attacks")
+    Check(not F.CreatureWhy("force", 1, key, F.Me()), "or its breath")
+    for _ = 1, 3 do
+        dice = { 2 }
+        maren:Do(F.CreatureStrike, 1)
+        world:Advance(3)
+    end
+    Eq(F.CreatureAttacksLeft(key), 0, "three attacks are its action")
+    Check(F.CreatureWhy("attack", 1, key), "a fourth is refused")
+    Check(F.CreatureWhy("force", 1, key, F.Me()), "and so is its breath after attacking")
+    -- the next round it breathes instead
+    ToWhelp()
+    Eq(F.CreatureAttacksLeft(key), 3, "a new turn frees its attacks")
+    local said = #maren.said
+    dice = { 1, 1, 1, 1, 1, 1, 1, 1 }
+    maren:Do(F.CreatureForce, 1)
+    world:Advance(2)
+    Check(SaidSince(said, "uses Emerald Gas Breath"), "it breathes")
+    Check(F.CreatureWhy("attack", 1, key), "the breath is its action: no attack after it")
+    Check(tostring(F.CreatureWhy("force", 1, key, F.Me())):find("already caught", 1, true), "nobody is caught twice in a turn")
+    Check(not F.CreatureWhy("force", 1, key, Key("Felguard")), "but it catches someone else")
+    F.owedSave, F.pendingSaves[F.Me()] = nil, nil
+    -- its breath is used up until a 5 or a 6 at the start of its turn
+    said = #maren.said
+    dice = { 3 }
+    ToWhelp()
+    Check(SaidSince(said, "rolls a 3: Emerald Gas Breath is not back yet."), "a low roll at the start of its turn doesn't bring it back")
+    Check(tostring(F.CreatureWhy("force", 1, key, F.Me())):find("used up", 1, true), "so it is refused")
+    Check(not F.CreatureWhy("attack", 1, key), "its attacks are free")
+    said = #maren.said
+    dice = { 5 }
+    ToWhelp()
+    Check(SaidSince(said, "rolls a 5: Emerald Gas Breath is back."), "a 5 brings it back")
+    Check(not F.CreatureWhy("force", 1, key, F.Me()), "and it can breathe again")
+    dice = {}
+    F.target = nil
 end)
 
 Section("a reload", function()
