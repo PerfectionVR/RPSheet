@@ -287,3 +287,5 @@ Blocked messages and versions:
 - [ ] O35. Let a fight run for a few rounds. *The log stays at its newest line; scroll it back up and it stays where you put it while new lines arrive; scroll to the end and it follows again.*
 - [ ] O36. Drag the combat window short and tall, narrow and wide. *The top part never takes more than about half; the log keeps a few lines; no part lies over another.*
 - [ ] O37. As a player who doesn't run the session type `/sheet session`. *The window says who runs it and has no tools.*
+- [ ] O38. In a running fight with a creature in it, look above the tabs of the combat window. *"Target: no one" and a button for everyone else in the fight. Click one: it is filled in the accent colour, its name stands after "Target:" and is red in the roster. Click it again: no one.*
+- [ ] O39. With no one picked click your attack. *Nothing is rolled; the row asks who the attack is for. Click the creature: the attack is rolled and the log says whether it hits. Do it again and click "Call it off": nothing is rolled, the attack is not spent.*

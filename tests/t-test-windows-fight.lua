@@ -7,7 +7,7 @@ dofile(ARG3 .. "/t-test-windows-base.lua")
 Start()
 
 local FT = ns.Fight
-local characters, rows, actions, greyed, running, tabs = 0, 0, 0, 0, 0, 0
+local characters, rows, actions, greyed, running, tabs, targets = 0, 0, 0, 0, 0, 0, 0
 local CLICKABLE = { RPSheetButton = true, RPSheetTab = true, RPSheetBar = true }
 
 -- The parts of the combat window and of the session window, while they are shown,
@@ -181,6 +181,36 @@ for index, key in ipairs(R.CLASS_ORDER) do
         if not FT.MyTurn() then
             Problem(label .. ": alone in the session, the roll didn't start the character's turn")
         else
+            -- an attack with no one picked asks who it is for, and goes on at the answer
+            Try(label .. " add a target", function() FT.AddCreature("Felguard"); F.Settle() end)
+            local felguard, aimedAt = Creature("Felguard"), nil
+            for _, entry in ipairs(FT.Actions()) do
+                if entry.section == "Attack" and not entry.why and not aimedAt then aimedAt = entry end
+            end
+            if felguard and aimedAt then
+                FT.target = nil
+                Ask(label, "Felguard")
+                if FT.target ~= felguard then Problem(label .. ": the target button didn't pick the creature") end
+                Ask(label, "Felguard")
+                if FT.target then Problem(label .. ": a second click on the target button didn't let go of it") end
+                local lines = #FT.LogLines()
+                Try(label .. " attack, no target", function() FT.Act(aimedAt); F.Settle() end)
+                if not FT.aiming then Problem(label .. ": an attack with no target didn't ask for one") end
+                if #FT.LogLines() ~= lines then Problem(label .. ": an attack with no target was rolled before one was picked") end
+                Look(label .. " asking for a target")
+                Ask(label, "Felguard")
+                Dismiss()
+                if FT.aiming or FT.target ~= felguard then Problem(label .. ": picking a target didn't aim the attack") end
+                local last = F.Plain(FT.LogText(FT.LogLines()[#FT.LogLines()]) or "")
+                if #FT.LogLines() == lines or not (last:find("hit", 1, true) or last:find("miss", 1, true)) then
+                    Problem(label .. ": the aimed attack wasn't resolved: " .. last:sub(1, 80))
+                end
+                targets = targets + 1
+            end
+            if felguard then FT.RemoveCreature(felguard) end
+            FT.target, FT.aiming = nil, nil
+            RPSheet.busy = false
+            FT.used.action, FT.used.attacks, FT.used.bonus = nil, nil, nil
             Look(label .. " turn")
             LookAtTabs(label .. " turn")
             FT.tab = nil
@@ -256,6 +286,7 @@ for index, key in ipairs(R.CLASS_ORDER) do
     end
 end
 
+if targets == 0 then Problem("no attack was aimed through the target buttons") end
 if running == 0 then Problem("no action of any class left something running for the window to list") end
 Finish("fight", ("%d characters, %d rows hovered, %d tabs opened, %d actions clicked, %d greyed with a reason, %d running things ended, %d owner rows used"):format(
     characters, rows, tabs, actions, greyed, running, owner))
