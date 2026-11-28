@@ -93,6 +93,7 @@ local function Advance(from)
     end
     session.turn = session.order[index]
     Say(TurnLine(session, newRound))
+    if F.CreatureTurnStarts then F.CreatureTurnStarts(session.turn) end -- (FightCreatureTurn.lua)
 end
 
 ---------------------------------------------------------------------------
