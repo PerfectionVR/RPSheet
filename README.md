@@ -101,6 +101,10 @@ handles the numbers and gives short summaries in its own words.
   with "End turn" under it. In the middle are your buttons. At the bottom is the
   fight's log, which scrolls by itself: what the session said, hits in red, misses in
   grey, healing in green. What can be clicked is a button, a tab or a bar.
+- **Your target** is picked in the row of buttons above your actions, one for everyone
+  else in the fight (a click on their health bar does the same). An attack roll at
+  your target is settled by the session: it says whether it hits. An attack clicked
+  with no one picked asks who it is for first.
 - **On your turn** the buttons are what your character can do, behind tabs: its attack,
   abilities, cantrips, prepared spells and the actions everyone has. What it can't do
   right now is a greyed button that says why (action used, no slot left, not your
