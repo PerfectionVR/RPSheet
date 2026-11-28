@@ -72,11 +72,12 @@ function UI.AddButton(parent, relWidth, text, onClick, tipTitle, tipBody, look)
 end
 
 -- A strip of tabs: `tabs` is a list of { name, label, tip }, `open` the name of the
--- one showing (nil: none of them), `pick(name)` is called for a click on another.
+-- one showing (nil: none of them), `pick(name)` is called for a click on another. Returns the tabs made, in order.
 function UI.AddTabStrip(parent, tabs, open, pick)
-    local theme = Theme()
+    local theme, made = Theme(), {}
     for _, tab in ipairs(tabs) do
         local button = AceGUI:Create("RPSheetTab")
+        made[#made + 1] = button
         button:SetStyle(theme, tab.name == open)
         button:SetText(tab.label or tab.name)
         button:SetRelativeWidth(0.999 / #tabs)
@@ -87,6 +88,7 @@ function UI.AddTabStrip(parent, tabs, open, pick)
         if tab.tip then UI.AttachTooltip(button, tab.name, tab.tip) end
         parent:AddChild(button)
     end
+    return made
 end
 
 -- A small filled square in a line of text.

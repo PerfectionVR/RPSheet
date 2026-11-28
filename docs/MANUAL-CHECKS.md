@@ -51,10 +51,10 @@ rest is grouped by window and can be done in any order.
 - [ ] B8b. Make the sheet as narrow as it goes. *Buttons whose text no longer fits grow taller and wrap the text; nothing is cut and no button lies over another.*
 - [ ] B8c. On the Traits tab switch a passive off. *Its button turns grey and still switches back on.*
 - [ ] B8d. Open the item browser, the stable and the crafting window. *Their tabs and buttons look like the sheet's; a button that can't be used is grey and does nothing.*
-- [ ] B8e. Look at the sheet. *A darker rail down the left with who the character is and six pages with icons; the open page has a strip in the accent colour and a coloured icon, the others are grey. Hit points are a slim bar with its text above. Armor Class and the other numbers are tiles, four to a row.*
-- [ ] B8f. Click each page on the rail. *The page opens under a small heading with its name; the rest of the sheet stays.*
+- [ ] B8e. Look at the sheet. *On top who the character is and the numbers that are always there; under them one strip of six tabs, then the open page's rows. No rail on the left.*
+- [ ] B8f. Click each tab. *The page's rows change under the strip; the top part stays; the open tab is underlined in the accent colour.*
 - [ ] B8g. On Actions look at a spell. *Its name is on the left, its dice and save on the right in grey, a thin line under it, and it lights up under the mouse. The ? is at the right end.*
-- [ ] B8h. Check the icons on the rail in both games. *Six icons, none a green or empty square.*
+- [ ] B8h. Drag the sheet narrow. *It stops at 340 pixels and the six tabs stay on one line.*
 - [ ] B8i. Try each theme under Appearance. *Text stays readable on every ground; the wash under the mouse is faint, not a glow.*
 - [ ] B8j. Open the settings, the wizard and a level dialog. *Buttons are filled shapes without an edge, tabs are names on a thin line with the open one underlined in the accent colour, and nothing but ticks, sliders and that line is in the accent colour.*
 - [ ] B8k. On a caster look at the spell slots. *Up to four slots of a level show as squares, lit while left; spending one dims a square.*

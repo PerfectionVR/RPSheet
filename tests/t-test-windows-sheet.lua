@@ -24,15 +24,15 @@ end
 
 local function Rows() return RPSheet.body.children end
 
--- The pages on the window's rail, and the rows above and below the open page's heading.
-local function Pages() return RPSheet.window.railItems end
+-- The tabs of the sheet's pages, and the rows above them and below them.
+local function Pages() return RPSheet.sheetPages end
 local function Split()
     local top, below, seenPage = {}, {}, false
     for _, part in ipairs(Rows()) do
         if part.GetUserData and part:GetUserData("page") then
             seenPage = true
         elseif seenPage then
-            below[#below + 1] = part
+            if part.type ~= "RPSheetTab" then below[#below + 1] = part end
         else
             top[#top + 1] = part
         end
@@ -62,7 +62,7 @@ local function Walk(label, key)
         for _, part in ipairs(Pages()) do
             if part.open then open = part.text:GetText() end
         end
-        if #Pages() ~= #TABS then Problem(where .. ": the rail has " .. #Pages() .. " pages") end
+        if #Pages() ~= #TABS then Problem(where .. ": the strip has " .. #Pages() .. " pages") end
         if open ~= tab then Problem(where .. ": the open tab is " .. tostring(open)) end
         CheckOverlap(RPSheet.body, where)
         CheckFlowRows(RPSheet.body, where)

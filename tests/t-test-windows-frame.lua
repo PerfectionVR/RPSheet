@@ -209,17 +209,15 @@ end)
 ---------------------------------------------------------------------------
 -- Resizing
 ---------------------------------------------------------------------------
-local RAIL = 126 -- the side rail's width (UI/WindowRail.lua)
+local RAIL = 0 -- the sheet has no side rail (UI/WindowRail.lua)
 local function CheckWidth(label, width)
     local where = ("%s at width %d"):format(label, width)
-    local pages = RPSheet.window.railItems
-    Check(where .. ": " .. #pages .. " pages on the rail", #pages == #TABS)
-    -- the rail's entries stay inside the rail, and the rows start right of it
-    local rail = RPSheet.window.rail
+    local pages = RPSheet.sheetPages
+    Check(where .. ": " .. #pages .. " tabs in the strip", #pages == #TABS)
+    -- the tabs stand on one line
     for _, page in ipairs(pages) do
-        Check(where .. ": a rail entry runs past the rail", page.frame:GetRight() <= rail:GetRight() + 0.5)
+        Check(where .. ": the tabs wrap", math.abs(page.frame:GetTop() - pages[1].frame:GetTop()) < 0.5)
     end
-    Check(where .. ": the rows start under the rail", RPSheet.body.content:GetLeft() >= rail:GetRight() - 0.5)
     local edge = RPSheet.body.content:GetLeft() + RPSheet.body.content:GetWidth()
     rowsChecked = rowsChecked + CheckFlowRows(RPSheet.body, where)
     CheckOverlap(RPSheet.body, where)
