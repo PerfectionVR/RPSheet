@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.17.0
+
+- The combat window has a target row above your actions: a button for everyone else
+  in the fight. The one you pick is who your attacks are for, and the session says
+  whether an attack roll hits them.
+- An attack clicked in the combat window with no one picked asks who it is for
+  before anything is rolled. "No one in the fight" rolls it as before; "Call it
+  off" rolls nothing.
+
+
 ## 0.16.0
 
 - The combat window is in three parts that keep their place: on top who is here,

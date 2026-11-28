@@ -23,7 +23,7 @@ local function AddAction(self, body, entry)
             self:Print(("%s: %s"):format(entry.name, entry.why))
         end, entry.name, ("%sNot now: %s|r\n\n%s%s"):format(RED, entry.why, takes, entry.tip or ""), "rowoff")
     else
-        UI.AddButton(body, wide and 1 or 0.5, text, function() entry.run() end,
+        UI.AddButton(body, wide and 1 or 0.5, text, function() F.Act(entry) end,
             entry.name, takes .. (entry.tip or "") .. "\n" .. ns.ROLL_MODE_HELP, "row")
     end
 end
@@ -73,7 +73,7 @@ function UI.AddFightTurn(self, body, session, mine)
     tabs[#tabs + 1] = { name = YOU, tip = "The group you fight in, and leaving the fight." }
     -- the open one: the player's choice until the turn moves, then what fits the moment
     local turn = ("%s:%s:%s"):format(session.id, session.phase, tostring(session.turn))
-    if turn ~= shownTurn then shownTurn, F.tab = turn, nil end
+    if turn ~= shownTurn then shownTurn, F.tab, F.aiming = turn, nil, nil end
     local open
     for _, tab in ipairs(tabs) do
         if tab.name == F.tab then open = tab.name end

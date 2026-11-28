@@ -451,6 +451,7 @@ Integrations\FightOwnerTools.lua
 Integrations\FightStatBlocks.lua
 Integrations\FightLog.lua
 UI\FightWindowRoster.lua
+UI\FightWindowTarget.lua
 UI\FightWindowTurn.lua
 UI\FightWindowRunning.lua
 UI\FightAsk.lua

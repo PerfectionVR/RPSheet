@@ -26,7 +26,7 @@ function UI.AddFightRoster(self, body, session)
         local bar = UI.AddBar(body, UI.HealthColor(member.hp, member.max), function()
             F.target = F.target ~= key and key or nil
             F.Changed()
-        end, member.name, ("Click to pick %s: your attacks are aimed at them, and the session says whether an attack roll hits. Click again to pick no one.%s"):format(
+        end, member.name, ("Click to pick %s: your attacks are aimed at them, as with the target buttons of your combat window. Click again to pick no one.%s"):format(
             member.name, F.IsOwner() and "\nAs the session's owner you also pick here who a saving throw, damage or healing is for, and who a creature of yours attacks." or ""))
         bar:SetRelativeWidth(0.43)
         bar:SetValue(member.hp, member.max)

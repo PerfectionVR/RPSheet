@@ -1,8 +1,8 @@
 -- The combat window: this character's place in the session it is in, in three parts
 -- that keep their place (UI/Panes.lua). On top who is here, each with a health bar
 -- (UI/FightWindowRoster.lua), this character's own line and the button that ends its
--- turn; in the middle, behind tabs, the buttons for what it can do now
--- (UI/FightWindowTurn.lua); at the bottom the fight's log. What can be clicked is a
+-- turn; in the middle who its attacks are for (UI/FightWindowTarget.lua) and, behind
+-- tabs, the buttons for what it can do now (UI/FightWindowTurn.lua); at the bottom the fight's log. What can be clicked is a
 -- button, a tab or a bar (UI/Parts.lua).
 -- Whoever runs the session does that from a window of its own
 -- (UI/FightSessionWindow.lua).
@@ -117,6 +117,7 @@ function RPSheet:PopulateFight()
         AddHead(self, panes.head, session, mine)
         if mine then
             UI.AddFightRunning(self, panes.main)
+            UI.AddFightTarget(self, panes.main, session)
             UI.AddFightTurn(self, panes.main, session, mine)
         end
         UI.AddFightLog(self, panes.log)

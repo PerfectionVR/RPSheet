@@ -1000,3 +1000,12 @@ parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
 - **`UI.AddFightLog`** is one label with every line (`F.LogLines`, 60 at most).
 - **Tests:** `t-test-windows-fight.lua` reads the rows of both windows' parts and
   checks that the parts have room and don't overlap.
+
+## Added in 0.17.0: the target row
+
+- **`UI/FightWindowTarget.lua`**: `UI.AddFightTarget` puts a button for everyone but
+  this character (`F.Others()`) above the tabs of the combat window; a click sets
+  `F.target`, the same pick the roster's health bars set. `F.Act(entry)` runs a
+  button of the tabs: an entry of the "Attack" section with no target is held in
+  `F.aiming` and the row asks who it is for. Spells and abilities are not held: what
+  rolls an attack is only known from the line they make.
