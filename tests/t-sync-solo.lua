@@ -133,12 +133,26 @@ Section("the creature attacks", function()
     world:Advance(6)
     Check(SaidSince(said, "for 11 slashing + 6 fire damage"), "a hit rolls the attack's damage: " .. tostring(SaidSince(said, "Felguard attacks")))
     Eq(HP(), hp - 17, "which the character's own sheet takes, one type after the other")
+    -- its action is two attacks: a third is refused until it is given another action
+    Eq(F.CreatureAttacksLeft(key), 0, "two attacks are its action")
+    hp, said = HP(), #maren.said
+    local printed = #maren.printed
+    dice = { 19, 4, 4, 3, 3 }
+    maren:Do(F.CreatureStrike, 1)
+    world:Advance(6)
+    Check(not SaidSince(said, "Felguard attacks"), "a third attack in the turn is not rolled")
+    Eq(HP(), hp, "and deals nothing")
+    Check(tostring(maren.printed[#maren.printed]):find("has made its 2 attacks this turn", 1, true) and #maren.printed > printed, "the owner is told why: " .. tostring(maren.printed[#maren.printed]))
+    Check(F.CreatureWhy("force", 1, key), "nor can it force a save after attacking")
+    maren:Do(F.CreatureAnotherAction)
+    Eq(F.CreatureAttacksLeft(key), 2, "another action frees its attacks")
     hp, said = HP(), #maren.said
     dice = { 20, 1, 1, 1, 1, 1, 1, 1, 1 } -- a natural 20: 4d8 + 3 and 4d6
     maren:Do(F.CreatureStrike, 1)
     world:Advance(6)
     Check(SaidSince(said, "a critical hit on Maren for 7 slashing + 4 fire damage"), "a natural 20 doubles the dice: " .. tostring(SaidSince(said, "Felguard attacks")))
     Eq(HP(), hp - 11, "and that lands too")
+    maren:Do(F.CreatureAnotherAction)
     -- with no one picked it is aimed at its only opponent
     F.target = nil
     Eq(F.CreatureTarget(key), F.Me(), "alone with one opponent, the creature is aimed at them")

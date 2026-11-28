@@ -1009,3 +1009,14 @@ parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
   button of the tabs: an entry of the "Attack" section with no target is held in
   `F.aiming` and the row asks who it is for. Spells and abilities are not held: what
   rolls an attack is only known from the line they make.
+
+## Added in 0.17.1: a creature's action
+
+- **`Integrations/FightCreatureTurn.lua`** counts, on the owner's client, what the
+  templated combatant whose turn it is has done: `F.CreatureWhy(kind, index, key,
+  target)` is the reason an attack or a forced save is refused, `F.CreatureSpent`
+  counts one, `F.CreatureAttacksLeft(key)` is for the window, and
+  `F.CreatureAnotherAction()` starts the count again. `F.CreatureStrike` and
+  `F.CreatureForce` ask it first. A creature flagged `multi` gets two attacks: the
+  list doesn't say how many it has. Acting for a combatant whose turn it isn't
+  (`key` given) is not counted. The count is not kept over a reload.

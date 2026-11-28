@@ -449,6 +449,7 @@ Integrations\FightTimers.lua
 Integrations\FightCreatures.lua
 Integrations\FightOwnerTools.lua
 Integrations\FightStatBlocks.lua
+Integrations\FightCreatureTurn.lua
 Integrations\FightLog.lua
 UI\FightWindowRoster.lua
 UI\FightWindowTarget.lua
