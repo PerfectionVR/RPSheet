@@ -979,3 +979,24 @@ parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
   a window that wants one; without it a window's least width is 340.
 - `UI.HeaderSection` puts the summary on the first row.
 - The combat tiles are gathered and share their rows evenly (`UI/SheetCombat.lua`).
+
+## Added in 0.16.0: windows in parts, and the session window
+
+- **`UI/Panes.lua`**: `UI.NewPanedWindow(status, onShow)` returns a window and its
+  `panes` (`head`, `main`, `log`; also `panes[1..3]`, `panes.window`). Each part is a
+  scroll frame with a flow of rows. The window's layout is `RPSheetPanes`, registered
+  with the widget library: the head is as tall as its rows up to 45% of the window,
+  the log gets 30% (at least 58 pixels) and whatever the middle leaves free, the
+  middle the rest. `panes:Clear()` before the rows are made, `panes:SetOut()` after;
+  SetOut keeps the log at its last line unless the player scrolled back up.
+- **`UI/FightWindow.lua`** is the player's window (`RPSheet.fightWindow`,
+  `RPSheet.fightPanes`). `UI.AddFightPrimary` (`UI/FightWindowTurn.lua`) is "End
+  turn" and, for the owner, the button to the session window.
+- **`UI/FightSessionWindow.lua`** is the owner's window (`RPSheet.sessionWindow`,
+  `RPSheet.sessionPanes`, `F.ShowSessionWindow`, `F.ToggleSessionWindow`,
+  `RPSheet:PopulateSession`). `RPSheet:PopulateFight` fills both. `F.Start` and a
+  hand-over open it; it hides itself once the session it showed is over or no longer
+  this client's. The creature list fills its middle part.
+- **`UI.AddFightLog`** is one label with every line (`F.LogLines`, 60 at most).
+- **Tests:** `t-test-windows-fight.lua` reads the rows of both windows' parts and
+  checks that the parts have room and don't overlap.

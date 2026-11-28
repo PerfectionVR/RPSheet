@@ -10,11 +10,49 @@ local FT = ns.Fight
 local characters, rows, actions, greyed, running, tabs = 0, 0, 0, 0, 0, 0
 local CLICKABLE = { RPSheetButton = true, RPSheetTab = true, RPSheetBar = true }
 
+-- The parts of the combat window and of the session window, while they are shown,
+-- and every row in them.
+local function Panes()
+    local list = {}
+    for _, key in ipairs({ "fightPanes", "sessionPanes" }) do
+        local panes = RPSheet[key]
+        if panes and panes.window.frame:IsShown() then
+            for _, pane in ipairs(panes) do list[#list + 1] = pane end
+        end
+    end
+    return list
+end
+local function Parts()
+    local all = {}
+    for _, pane in ipairs(Panes()) do
+        for _, part in ipairs(pane.children) do all[#all + 1] = part end
+    end
+    return all
+end
+local function OverlapAll(where)
+    for _, pane in ipairs(Panes()) do
+        CheckOverlap(pane, where)
+        -- a part with rows has room on the screen, inside its window
+        local frame, content = pane.frame, pane.parent.content
+        if #pane.children > 0 and (frame:GetHeight() < 10 or frame:GetBottom() < content:GetBottom() - 0.5 or frame:GetTop() > content:GetTop() + 0.5) then
+            Problem(("%s: a part of the window has no room (%d high)"):format(where, frame:GetHeight()))
+        end
+    end
+    -- the parts don't lie over each other
+    local panes = Panes()
+    for index = 2, #panes do
+        local above, below = panes[index - 1], panes[index]
+        if above.parent == below.parent and above.frame:IsShown() and below.frame:IsShown() and below.frame:GetTop() > above.frame:GetBottom() + 0.5 then
+            Problem(where .. ": two parts of the window overlap")
+        end
+    end
+end
+
 -- Clicks the window's row that reads `needle` and types `text` into the box it opens.
 local owner = 0
 local function Ask(where, needle, text)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
-    for _, part in ipairs(RPSheet.fightBody.children) do
+    for _, part in ipairs(Parts()) do
         -- (only what reads as something to click: the fight's log repeats the names)
         if CLICKABLE[part.type] and F.Plain(PartText(part)):find(needle, 1, true) then
             owner = owner + 1
@@ -37,7 +75,7 @@ end
 
 -- What can be clicked in this window is a button, a tab or a bar, and nothing else is.
 local function CheckClickable(where)
-    for _, part in ipairs(RPSheet.fightBody.children) do
+    for _, part in ipairs(Parts()) do
         if not CLICKABLE[part.type] and part.GetUserData and part:GetUserData("onClick") then
             Problem(("%s: plain text that can be clicked: %s"):format(where, F.Plain(PartText(part)):sub(1, 40)))
         end
@@ -48,30 +86,30 @@ end
 local function LookAtTabs(where)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
     local names = {}
-    for _, part in ipairs(RPSheet.fightBody.children) do
+    for _, part in ipairs(Parts()) do
         if part.type == "RPSheetTab" then names[#names + 1] = F.Plain(PartText(part)) end
     end
     if #names < 2 then Problem(where .. ": only " .. #names .. " tabs") end
     for _, name in ipairs(names) do
         tabs = tabs + 1
-        for _, part in ipairs(RPSheet.fightBody.children) do
+        for _, part in ipairs(Parts()) do
             if part.type == "RPSheetTab" and F.Plain(PartText(part)) == name then
                 Try(where .. " tab " .. name, function() F.Click(part.frame); F.Settle() end)
                 break
             end
         end
         Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
-        CheckOverlap(RPSheet.fightBody, where .. " tab " .. name)
+        OverlapAll(where .. " tab " .. name)
         CheckClickable(where .. " tab " .. name)
-        for _, part in ipairs(RPSheet.fightBody.children) do HoverPart(where .. " tab " .. name, part) end
+        for _, part in ipairs(Parts()) do HoverPart(where .. " tab " .. name, part) end
     end
 end
 
 local function Look(where)
     Try(where .. " fill", function() RPSheet:PopulateFight(); F.Settle() end)
-    CheckOverlap(RPSheet.fightBody, where)
+    OverlapAll(where)
     CheckClickable(where)
-    for _, part in ipairs(RPSheet.fightBody.children) do
+    for _, part in ipairs(Parts()) do
         HoverPart(where, part)
         rows = rows + 1
     end
@@ -88,6 +126,7 @@ for index, key in ipairs(R.CLASS_ORDER) do
         Look(label .. " idle")
         Try(label .. " start", function() FT.Start(); F.Settle() end)
         if not (FT.IsOwner() and FT.Mine()) then Problem(label .. ": starting a session didn't put the character in it") end
+        if not (RPSheet.sessionWindow and RPSheet.sessionWindow.frame:IsShown()) then Problem(label .. ": starting a session didn't open the session window") end
         Try(label .. " mark", function() FT.SetMark(8); F.Settle() end)
         Look(label .. " gathering")
         -- the owner's rows: a combatant of their own, picked, hurt, healed and asked for a save
@@ -207,6 +246,7 @@ for index, key in ipairs(R.CLASS_ORDER) do
         end
         Try(label .. " end", function() FT.End(); F.Settle() end)
         if FT.session then Problem(label .. ": the session is still there after its end") end
+        if RPSheet.sessionWindow.frame:IsShown() then Problem(label .. ": the session window is still open after the session") end
         if RPSheet:State().fightTimers then Problem(label .. ": rounds are still counted after the session") end
         Look(label .. " after the fight")
         if not FT.HasSnapshot() then Problem(label .. ": no state from before the fight is kept") end
