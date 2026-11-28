@@ -1,27 +1,26 @@
 -- The pages of the sheet. The top part (hit points, rests, conditions, combat numbers,
--- the weapon) is always there; the rest of the sheet is split over pages and only the
--- open one is drawn. The pages are picked on the window's side rail
--- (UI/WindowRail.lua).
+-- the weapon) is always there; under it is a strip of tabs, and under the tabs the
+-- rows of the open page. Only the open page is drawn.
 local _, ns = ...
 local UI = ns.UI
 
--- Puts the pages on the window's rail and returns the open one. `tabs` is a list of
--- { name, icon, tip, ... }. The choice is kept per game character. Over the entries
--- the rail says who the character is.
+-- Adds the strip of tabs and returns the open one. `tabs` is a list of
+-- { name, tip, ... }. The choice is kept per game character. `self.sheetPages` lists
+-- the tabs shown: { frame, name, open, text }.
 function UI.AddTabBar(self, body, tabs)
     local saved = self.db.char
     local open = tabs[1]
     for _, tab in ipairs(tabs) do
         if tab.name == saved.sheetTab then open = tab end
     end
-    self.window:SetRail(self.db.profile.theme, (self:Summary() or "No class chosen yet"):gsub(" %- ", "\n"), tabs, open.name, function(name)
+    -- The lower part starts here, after a blank line.
+    UI.AddHeading(body, ""):SetUserData("page", true)
+    self.sheetPages = {}
+    for index, button in ipairs(UI.AddTabStrip(body, tabs, open.name, function(name)
         saved.sheetTab = name
         self:PopulateSoon()
-    end)
-    -- The page starts here. Its name is lit on the rail and its first section has a
-    -- heading of its own, so the mark itself is empty.
-    local mark = UI.AddHeading(body, "")
-    mark:SetText("")
-    mark:SetUserData("page", true)
+    end)) do
+        self.sheetPages[index] = { frame = button.frame, name = tabs[index].name, open = tabs[index] == open, text = button.text }
+    end
     return open
 end

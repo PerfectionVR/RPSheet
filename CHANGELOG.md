@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.15.2
+
+- The sheet is in two parts again: the numbers that are always there on top, and
+  under them a strip of tabs (Actions, Checks, Skills, Traits, Items, Trade) with the
+  open page's rows. The rail down the left side is gone, and the sheet can be as
+  narrow as before (340 pixels).
+- Who the character is stands on the sheet's first line.
+
+
 ## 0.15.1
 
 - Fixed: the text of a bar on the sheet (hit points, hit dice, resources) was drawn

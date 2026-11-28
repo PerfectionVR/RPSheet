@@ -968,3 +968,14 @@ parser), `Integrations/FightStatBlocks.lua`, `UI/FightWindowCreatures.lua`.
   (`UI.AddCreaturePicker`); `UI.AddCreatureTurn` lists a templated creature's rolls.
 - **Tests:** `tests/t-sync-solo.lua` (one client, no group, `math.random` scripted, and
   the list held against the site file).
+
+## Changed in 0.15.2: the sheet's pages are tabs again
+
+- `UI.AddTabBar` (`UI/SheetTabs.lua`) adds an empty heading (user data `page`: the
+  lower part starts here) and a strip of tabs with `UI.AddTabStrip`, which now
+  returns the tabs it made. `RPSheet.sheetPages` lists them as
+  `{ frame, name, open, text }`; the tests read the pages from there.
+- The sheet no longer uses the rail. `window:SetRail` (`UI/WindowRail.lua`) stays for
+  a window that wants one; without it a window's least width is 340.
+- `UI.HeaderSection` puts the summary on the first row.
+- The combat tiles are gathered and share their rows evenly (`UI/SheetCombat.lua`).
