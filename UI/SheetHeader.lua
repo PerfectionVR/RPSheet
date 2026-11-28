@@ -4,8 +4,10 @@ local _, ns = ...
 local UI = ns.UI
 
 function UI.HeaderSection(self, body)
-    -- (who the character is stands on the window's rail: UI/SheetTabs.lua)
-    if not self:Summary() then
+    local summary = self:Summary()
+    if summary then
+        UI.AddLabel(body, 1, UI.GREY .. summary .. "|r")
+    else
         UI.AddLabel(body, 1, UI.GREY .. "No class chosen yet.|r")
         UI.AddLabel(body, 1, UI.ACCENT .. "Create your character|r", function()
             ns.OpenWizard()
